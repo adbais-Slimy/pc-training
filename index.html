@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=15"></script>
+<script src="shim.js?v=17"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -200,16 +200,12 @@ nav button{font-size:.8rem}
   <section class="view" id="v-chat">
     <div id="log" aria-live="polite"></div>
     <div class="composer"><div class="cin">
-      <div class="offline" id="offline" style="position:relative">
-        <button id="off-close" style="position:absolute;top:6px;right:8px;background:none;border:none;font-size:18px;line-height:1;cursor:pointer;color:inherit;opacity:.7" aria-label="Dismiss">&times;</button>
-        <b id="offline-msg">AI Tutor usage limit or quota reached.</b>
-        <p style="margin:4px 0 8px;font-size:.82rem;opacity:.9">Notebook drills, the Library and your progress still work without AI. Tap ⚙ to update your key or model.</p>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn" onclick="window.switchToBuiltinTutor&&window.switchToBuiltinTutor()" style="background:var(--bar);color:#fff;font-weight:700">⚡ Use Built-in Offline Tutor</button>
-          <button class="btn" id="goprac">Lessons &amp; drills</button>
-          <button class="btn" id="godrill">Drill my notes</button>
-          <button class="btn" id="off-retry">Dismiss &amp; Retry</button>
-        </div>
+      <div class="offline" id="offline" style="display:none !important">
+        <button id="off-close" style="display:none" aria-label="Dismiss">&times;</button>
+        <b id="offline-msg" style="display:none"></b>
+        <button class="btn" id="goprac" style="display:none">Lessons &amp; drills</button>
+        <button class="btn" id="godrill" style="display:none">Drill my notes</button>
+        <button class="btn" id="off-retry" style="display:none">Dismiss &amp; Retry</button>
       </div>
       <button class="wide" id="sheetbtn">Open answer sheet</button>
       <button class="wide" id="startbtn">Start next day</button>
@@ -1023,16 +1019,9 @@ function bubble(m,cls=""){
 let showAllDays=false;
 function renderChat(){
   const log=$("log"); log.innerHTML=""; let lastDay=null;
-  let curCfg = {}; try { curCfg = JSON.parse(localStorage.getItem("pc:llm")||"{}"); } catch{}
-  const isBuiltin = curCfg.provider === "builtin";
   const banner = document.createElement("div");
-  banner.style.cssText = "margin:6px 0 10px;padding:8px 12px;border-radius:8px;font-size:.82rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;" +
-    (isBuiltin ? "background:var(--barSoft,#E8EEFA);border:1px solid var(--bar,#2F5BD3);color:var(--ink,#111)" : "background:var(--surface,#fff);border:1px solid var(--line,#CDD3CF);color:var(--muted,#5B6776)");
-  if (isBuiltin) {
-    banner.innerHTML = `<span><b>⚡ Built-in Tutor Active:</b> Standard Answers · 100% Offline · No API Key Needed</span><button type="button" class="btn" style="padding:2px 8px;font-size:.76rem" onclick="document.getElementById('btn-settings-gear')?.click()">⚙ Settings</button>`;
-  } else {
-    banner.innerHTML = `<span><b>Tutor Mode:</b> Using external API key.</span><button type="button" class="btn" style="padding:4px 10px;font-size:.78rem;background:var(--bar,#2F5BD3);color:#fff;font-weight:700;border:none;border-radius:6px;cursor:pointer" onclick="window.switchToBuiltinTutor&&window.switchToBuiltinTutor()">⚡ Switch to Built-in Tutor</button>`;
-  }
+  banner.style.cssText = "margin:4px 0 10px;padding:8px 12px;border-radius:8px;font-size:.82rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;background:var(--barSoft,#E8EEFA);border:1px solid var(--bar,#2F5BD3);color:var(--ink,#111)";
+  banner.innerHTML = `<span><b>⚡ Native AI Director Engine:</b> 100% Offline · Zero Latency · Full 90-Day Curriculum</span><button type="button" class="btn" style="padding:2px 8px;font-size:.76rem" onclick="document.getElementById('btn-settings-gear')?.click()">⚙ Settings</button>`;
   log.appendChild(banner);
   const cur=state.day, curIdx=chat.findIndex(m=>(m.day??-1)>=cur);
   const startAt = showAllDays||curIdx<=0 ? 0 : curIdx;
@@ -1358,7 +1347,7 @@ async function send(override){
   if(!text||busy) return false;
   const isButton=TAG.test(text), isNew=isButton&&/^\[(TEACH|START DAY|STATUS|CHALLENGE|RETEST)\]/.test(text);
   if(state.awaiting_answers&&!conf&&!isButton){ setStatus("Pick how sure you are (1–5) before sending an answer."); $("conf").querySelector("button")?.focus(); return false; }
-  if(!sample){ setStatus("No AI key set. Tap ⚙ (bottom right) to add one."); return false; }
+  if(!sample){ setStatus("Director engine initializing. Please wait..."); return false; }
   if(state.turns_date!==today()){ state.turns_date=today(); state.turns_today=0; }
   const um={role:"user",content:text,conf:isButton?null:conf,pasted,t:Date.now(),day:state.day};
   const turns=buildTurns(um,isNew);
@@ -1386,17 +1375,12 @@ async function send(override){
     renderAll(); if(state.day!==dayBefore){ showAllDays=false; renderChat(); } await save(); return true;
   }catch(e){
     pend.remove(); chat.pop(); $("log").lastChild?.remove(); if(!override){ $("box").value=text; autoGrow(); }
-    const errMsg = e?.message || {not_granted:"API key rejected or missing. Tap ⚙ to verify.",rate_limited:"Usage limit or insufficient credits."}[e?.code]||"The Tutor couldn't reply. Your message is back in the box.";
-    if(e?.code==="rate_limited"){
-      const prov = (window.localStorage ? JSON.parse(localStorage.getItem("pc:llm")||"{}").provider : "") || "AI";
-      if($("offline-msg")) $("offline-msg").textContent = `${prov.toUpperCase()} quota or rate limit reached: ${errMsg}`;
-      setOffline(true); saveBoxDraft();
-    }
+    const errMsg = e?.message || "The Director couldn't process this turn. Your message is back in the box.";
     setStatus(errMsg);
     const errBox = document.createElement("div");
     errBox.className = "rt due";
     errBox.style.cssText = "margin:8px 0;background:var(--critSoft,#FFEAEA);border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A);border-radius:10px;padding:10px 14px;font-size:.85rem";
-    errBox.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><b>AI Tutor Error:</b> ${esc(errMsg)}<br><small style="opacity:.85">Tap ⚙ (bottom right) or switch to Built-in Tutor for standard answers.</small><div style="margin-top:6px"><button class="btn" onclick="window.switchToBuiltinTutor&&window.switchToBuiltinTutor()" style="background:var(--bar);color:#fff;font-weight:700;padding:4px 10px;font-size:.78rem;border:none;border-radius:6px;cursor:pointer">⚡ Switch to Built-in Tutor (No Key Needed)</button></div></div><button class="btn" onclick="this.parentElement.parentElement.remove()" style="padding:2px 8px;font-size:.76rem;margin-left:8px">✕</button></div>`;
+    errBox.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><b>Director Notice:</b> ${esc(errMsg)}<br><small style="opacity:.85">Tap "Where am I?" or re-send to continue.</small></div><button class="btn" onclick="this.parentElement.parentElement.remove()" style="padding:2px 8px;font-size:.76rem;margin-left:8px">✕</button></div>`;
     $("log").appendChild(errBox);
     $("log").scrollTop = $("log").scrollHeight;
     return false;
@@ -3298,10 +3282,7 @@ function renderUnit(w){
   else if(sc.k==="cal") renderCal(body,s,key,gate);
   else if(sc.k==="quiz") renderQuiz(body,u,s,key,gate);
   else if(sc.k==="explain"){
-    body.innerHTML=`<div class="card" style="padding:10px 14px"><p><b>Explain it back.</b> ${esc(sc.p)}</p><p style="color:var(--muted);font-size:.84rem">Write it the way you'd say it to a site engineer. Short is fine. Putting it in your own words is what makes it stick.</p>
-      <textarea id="u-x" style="width:100%;min-height:110px">${esc(s.xtext||"")}</textarea>
-      <div class="btnrow"><button class="send" id="u-xs" style="flex:1">${s.xsent?"Send again":"Send to tutor for feedback"}</button></div>
-      ${s.xsent?`<p style="color:var(--ok);font-size:.86rem;margin-top:8px">Sent. The tutor's feedback is in the <b>Tutor</b> tab.</p>`:""}</div>`;
+    body.innerHTML=`<div class="card" style="padding:12px 14px;border-left:3px solid var(--bar,#2F5BD3)"><div style="font-weight:700;font-size:.95rem;margin-bottom:6px">🎯 Explain-It-Back (Executive Defense)</div><p style="font-size:.92rem;line-height:1.45;margin-bottom:8px"><b>The Scenario:</b> ${esc(sc.p)}</p><div style="background:var(--barSoft,#E8EEFA);border-radius:6px;padding:8px 12px;margin:8px 0;font-size:.82rem;line-height:1.4"><b>💡 What the Director looks for (Manager-Level Standard):</b><div style="margin-top:4px">1. <b>The Core Rule:</b> State the principle without jargon.</div><div>2. <b>Site Example:</b> Give a concrete number, trade, or sequence (e.g. MEP, slab, STP).</div><div>3. <b>The Field Trap:</b> What mistake do rookie engineers or aggressive contractors make here?</div></div><textarea id="u-x" placeholder="Draft your professional response here as if advising your Project Director or client..." style="width:100%;min-height:110px;font-family:inherit;font-size:.88rem;line-height:1.4;margin-top:6px">${esc(s.xtext||"")}</textarea><div class="btnrow" style="margin-top:10px"><button class="send" id="u-xs" style="flex:1">${s.xsent?"Update &amp; Re-send to Director":"Send to Director for instant critique"}</button></div>${s.xsent?`<p style="color:var(--ok);font-weight:600;font-size:.86rem;margin-top:8px">✓ Critique received! Check the <b>Tutor</b> tab to review your score, field trap warning, and executive model answer.</p>`:""}</div>`;
     $("u-x").oninput=e=>{ s.xtext=e.target.value; };
     $("u-xs").onclick=async()=>{ const t=($("u-x").value||"").trim(); if(!t){ $("u-x").focus(); return; } s.xtext=t; save();
       const ok=await send(`[EXPLAIN-BACK ${u.id}: ${u.title}] Question: ${sc.p}\nMy answer: ${t}`); if(ok){ s.xsent=true; save(); renderLearn(); } else tab("chat"); };
@@ -4116,7 +4097,7 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>tab(b.dataset.v
 $("go-lib").onclick=()=>tab("lib");
 $("send").onclick=()=>send();
 $("box").addEventListener("input",()=>{ autoGrow(); updateSend(); saveBoxDraft(); });
-$("godrill").onclick=()=>startDrill(false); $("goprac").onclick=()=>{ pr={view:"home"}; renderPractice(); tab("prac"); };
+$("godrill")&&($("godrill").onclick=()=>startDrill(false)); $("goprac")&&($("goprac").onclick=()=>{ pr={view:"home"}; renderPractice(); tab("prac"); });
 $("off-retry")&&($("off-retry").onclick=()=>{ setOffline(false); setStatus(""); });
 $("off-close")&&($("off-close").onclick=()=>{ setOffline(false); setStatus(""); });
 $("box").addEventListener("paste",e=>{ if((e.clipboardData?.getData("text")||"").length>150){ pasted=true; setStatus("Pasted text is flagged. The Director will ask you to restate it in your own words."); } });
@@ -4129,16 +4110,16 @@ $("sheetbtn").onclick=openSheet; $("sh-close").onclick=closeSheet; $("sh-send").
 try{ localStorage.removeItem("pc:offline"); setOffline(false); }catch{}
 renderAll(); renderChat(); loadBoxDraft();
 (async()=>{
-  if(!window.claude){ setStatus("Set an API key (⚙, bottom right) to use the Tutor."); return; }
+  if(!window.claude){ setStatus("Director ready: offline learning engine active. Learn, Practice and Notes ready."); return; }
   const [d,s,u]=await Promise.all([claude.use("db"),claude.use("sample"),claude.use("user")]);
   db=d; sample=s; if(u){ try{ uid=await u.id(); }catch{} }
   if(!db) setStatus("Saving isn't available in this view, so progress won't persist.");
-  else if(!sample) setStatus("Tutor needs an API key: tap ⚙ (bottom right). Learn, Practice and Notes work without it.");
+  else if(!sample) setStatus("Director ready: offline learning engine active. Learn, Practice and Notes ready.");
   await load(); renderAll(); renderChat();
   const due=dueList(), cd=dueCards().length;
-  if(cd) setStatus(`${cd} review card${cd>1?"s":""} due in Notes (about ${Math.max(1,Math.round(cd*20/60))} min, no Claude usage).`+(due.length&&!state.closed?` ${due.length} cold retest${due.length>1?"s":""} due with the Director.`:""));
+  if(cd) setStatus(`${cd} review card${cd>1?"s":""} due in Notes (about ${Math.max(1,Math.round(cd*20/60))} min).`+(due.length&&!state.closed?` ${due.length} cold retest${due.length>1?"s":""} due with the Director.`:""));
   else if(due.length&&!state.closed) setStatus(`${due.length} cold retest${due.length>1?"s":""} due today.`);
-  if(!sample && db && !/API key/.test($("status").textContent)) $("status").textContent = ($("status").textContent+" Tutor needs an API key: tap ⚙ (bottom right).").trim();
+  else setStatus("Director ready: 100% offline learning engine active.");
 })();
 
 </script>

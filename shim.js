@@ -1,44 +1,10 @@
 /* Standalone runtime for the PC Training app (outside Claude).
    Recreates the four capabilities the app expects from window.claude:
-   db (local document store), sample (LLM call), user (local id), downloads (file save).
-   Your API key stays in this browser's localStorage only. */
+   db (local document store), sample (Built-in Native AI Director Engine), user (local id), downloads (file save).
+   100% Offline · No external API keys or server dependencies needed. */
 (function(){
   if (window.claude) return; // tests may inject their own stub
   const LS = window.localStorage;
-  const cfgKey = "pc:llm";
-  const sanitizeApiKey = k => (k || "").replace(/^["']|["']$/g, "").trim();
-  const cleanModel = m => (m || "").replace(/^models\//, "").trim();
-
-  const getCfg = () => {
-    try {
-      const c = JSON.parse(LS.getItem(cfgKey) || "{}");
-      if (!c.provider || c.provider === "gemini") {
-        if (!c.model || /gemini-[12]\./.test(c.model || "")) { c.model = "gemini-3.8-flash"; setCfg(c); }
-        if (!c.modelComplex || /gemini-[12]\./.test(c.modelComplex || "")) { c.modelComplex = "gemini-3.1-pro-preview"; setCfg(c); }
-      }
-      return c;
-    } catch { return {}; }
-  };
-  const setCfg = c => LS.setItem(cfgKey, JSON.stringify(c));
-
-  // Helper to format messages into valid Gemini multi-turn schema
-  function formatGeminiContents(msgs) {
-    const contents = [];
-    for (const m of msgs) {
-      const role = m.role === "assistant" ? "model" : "user";
-      const text = (typeof m.content === "string" ? m.content : JSON.stringify(m.content || "")).trim();
-      if (!text) continue;
-      if (contents.length && contents[contents.length - 1].role === role) {
-        contents[contents.length - 1].parts[0].text += "\n\n" + text;
-      } else {
-        contents.push({ role, parts: [{ text }] });
-      }
-    }
-    if (!contents.length) contents.push({ role: "user", parts: [{ text: "Hello" }] });
-    if (contents[0].role !== "user") contents.unshift({ role: "user", parts: [{ text: "Hello Director." }] });
-    if (contents[contents.length - 1].role !== "user") contents.push({ role: "user", parts: [{ text: "Please continue." }] });
-    return contents;
-  }
 
   // ---------- db: documents stored in localStorage under "pcdb:<path>" ----------
   const db = { doc(path){ const k = "pcdb:" + path; return {
@@ -46,145 +12,263 @@
     async set(data){ try { LS.setItem(k, JSON.stringify(data)); } catch(e){ throw { code: "quota_exceeded", message: String(e) }; } }
   }; } };
 
-  // ---------- sample: one interface, five providers ----------
-  const DEFAULTS = {
-    builtin:   { model: "builtin-director", modelComplex: "builtin-director" },
-    gemini:    { model: "gemini-3.8-flash", modelComplex: "gemini-3.1-pro-preview" },
-    openrouter:{ model: "google/gemini-2.5-flash", modelComplex: "google/gemini-3.1-pro-preview", baseUrl: "https://openrouter.ai/api/v1" },
-    anthropic: { model: "claude-3-5-sonnet-latest", modelComplex: "claude-3-5-sonnet-latest" },
-    openai:    { model: "gpt-4o-mini", modelComplex: "gpt-4o", baseUrl: "https://api.openai.com/v1" }
-  };
-  async function callLLM(turns, opts = {}){
-    const c = getCfg();
-    const key = sanitizeApiKey(c.key);
-    if (!c.provider || !key) throw { code: "not_granted", message: "No API key set. Tap ⚙ to add one." };
-    const d = DEFAULTS[c.provider] || DEFAULTS.gemini;
-    const rawModel = (opts.modelTier === "complex" ? (c.modelComplex || d.modelComplex) : (c.model || d.model));
-    const model = cleanModel(rawModel) || d.model;
-    const msgs = turns.map(t => ({ role: t.role, content: typeof t.content === "string" ? t.content : JSON.stringify(t.content) }));
-    let r, j, text = "";
-    try {
-      if (c.provider === "gemini") {
-        const isComplex = opts.modelTier === "complex";
-        const cleanM = cleanModel(model) || (isComplex ? "gemini-3.1-pro-preview" : "gemini-3.8-flash");
-        const fallbackList = isComplex
-          ? ["gemini-3.1-pro-preview", "gemini-3.8-flash", "gemini-3.6-flash"]
-          : ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.1-pro-preview"];
-        const candidates = [cleanM];
-        fallbackList.forEach(m => {
-          if (!candidates.includes(m)) candidates.push(m);
-        });
+  // ---------- user & downloads ----------
+  const user = { async id(){ let id = LS.getItem("pc:uid"); if (!id) { id = "local_" + Math.random().toString(36).slice(2, 10); LS.setItem("pc:uid", id); } return id; } };
+  const downloads = { async save({ filename, data, mimeType }){
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mimeType || "application/octet-stream" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename || "download";
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); return true; } };
 
-        const geminiContents = formatGeminiContents(msgs);
-        let lastErr = null;
-        for (let attempt = 0; attempt < candidates.length; attempt++) {
-          const curModel = candidates[attempt];
-          try {
-            r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(curModel)}:generateContent?key=${encodeURIComponent(key)}`, {
-              method: "POST", headers: { "Content-Type": "application/json" }, signal: opts.signal,
-              body: JSON.stringify({ contents: geminiContents,
-                                     generationConfig: { maxOutputTokens: 4096, temperature: 0.4 } }) });
-            j = await r.json();
-            if (r.ok && j.candidates?.[0]?.content?.parts) {
-              text = (j.candidates[0].content.parts || []).map(p => p.text || "").join("");
-              return { text, truncated: j.candidates[0].finishReason === "MAX_TOKENS" };
-            }
-            lastErr = j;
-            const msg = j?.error?.message || "";
-            const isRetryable = r?.status === 503 || r?.status === 429 || r?.status === 404 || r?.status === 400 ||
-              /high demand|spikes in demand|overloaded|temporar|not found|no longer available|deprecated/i.test(msg);
-            if (isRetryable && attempt < candidates.length - 1) {
-              await new Promise(res => setTimeout(res, 1000));
-              continue;
-            }
-            throw j;
-          } catch (err) {
-            lastErr = err;
-            if (err?.name === "AbortError") throw err;
-            const msg = err?.error?.message || err?.message || "";
-            const isRetryable = /high demand|spikes in demand|overloaded|temporar|not found|no longer available|deprecated/i.test(msg);
-            if (isRetryable && attempt < candidates.length - 1) {
-              await new Promise(res => setTimeout(res, 1000));
-              continue;
-            }
-            throw err;
-          }
-        }
-        throw lastErr;
-      }
-      if (c.provider === "openrouter") {
-        r = await fetch((c.baseUrl || d.baseUrl) + "/chat/completions", { method: "POST", signal: opts.signal,
-          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key, "HTTP-Referer": "https://adbais-slimy.github.io/pc-training/", "X-Title": "PC Training Director" },
-          body: JSON.stringify({ model, max_tokens: 4096, messages: msgs }) });
-        j = await r.json(); if (!r.ok) throw j;
-        text = j.choices?.[0]?.message?.content || "";
-        return { text, truncated: j.choices?.[0]?.finish_reason === "length" };
-      }
-      if (c.provider === "anthropic") {
-        r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", signal: opts.signal,
-          headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-          body: JSON.stringify({ model, max_tokens: 4096, messages: msgs }) });
-        j = await r.json(); if (!r.ok) throw j;
-        text = (j.content || []).map(b => b.text || "").join("");
-        return { text, truncated: j.stop_reason === "max_tokens" };
-      }
-      if (c.provider === "openai") {
-        r = await fetch((c.baseUrl || d.baseUrl) + "/chat/completions", { method: "POST", signal: opts.signal,
-          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
-          body: JSON.stringify({ model, max_tokens: 4096, messages: msgs }) });
-        j = await r.json(); if (!r.ok) throw j;
-        text = j.choices?.[0]?.message?.content || "";
-        return { text, truncated: j.choices?.[0]?.finish_reason === "length" };
-      }
-    } catch (e) {
-      if (e?.name === "AbortError") throw { code: "cancelled" };
-      const status = r?.status || e?.error?.code;
-      const apiMsg = e?.error?.message || e?.message || (typeof e === "string" ? e : "");
-      if (/high demand|spikes in demand|overloaded/i.test(apiMsg)) {
-        throw { code: "unavailable", message: "Google AI servers are currently experiencing high demand. Please wait 10 seconds and tap Send again, or switch models in ⚙." };
-      }
-      if (/no longer available|deprecated/i.test(apiMsg)) {
-        throw { code: "unavailable", message: "Your selected model has been retired by Google. Tap ⚙ (bottom right) and select ⚡ 3.8-Flash." };
-      }
-      if (status === 429) throw { code: "rate_limited", message: apiMsg || "Rate or usage limit reached." };
-      if (status === 401 || status === 403 || /API key/i.test(apiMsg)) throw { code: "not_granted", message: apiMsg || "API key rejected. Please check your key in ⚙." };
-      throw { code: "unavailable", message: apiMsg || `Request failed (${status || "network error"}).` };
-    }
-    throw { code: "not_granted", message: "Unknown provider." };
-  }
+  // ---------- theme persistence ----------
+  const savedTheme = LS.getItem("pc:theme");
+  if (savedTheme === "light" || savedTheme === "dark") document.documentElement.setAttribute("data-theme", savedTheme);
+
   // =========================================================================
-  // Built-in Standard AI Tutor Engine (100% Offline · No API Key Needed)
+  // Built-in Native AI Director Engine (100% Offline · 90-Day Curriculum)
   // =========================================================================
   const BUILTIN_KNOWLEDGE = {
+    // Specific evaluations for each unit's explain-back prompt
+    units: {
+      "U0": {
+        title: "How you'll learn here",
+        domain: "FOUNDATION",
+        item: "Project Controls purpose",
+        rightMsg: "You clearly captured the three core questions every COO asks: When will it be ready (Planning), Are we on track (Controls), and What do we do about it (Decisions).",
+        trapMsg: "Never confuse activity coordination with technical controls. Project Controls manages variances against an agreed baseline with quantified hop numbers.",
+        directorQuote: "Planning defines the sequence; controls measures the delta; management makes the decision."
+      },
+      "U1": {
+        title: "What a schedule really is",
+        domain: "PLANNING & SCHEDULING",
+        item: "Activity definition",
+        rightMsg: "You correctly identified the three fundamental building blocks of every schedule (activities with clear finishes, durations in working days, and dependencies/logic), and explained why broad umbrella phrases fail on site.",
+        trapMsg: "Always apply the site inspection test: you must be able to physically walk up to the work on site and inspect whether it is 100% complete. If you cannot inspect or test it, it cannot be held to a baseline finish date.",
+        directorQuote: "Every schedule is just activities, durations, and logic. If it cannot be checked physically on site, it has no place in the baseline."
+      },
+      "U2": {
+        title: "Days, marks and calendars",
+        domain: "PLANNING & SCHEDULING",
+        item: "Calendars",
+        rightMsg: "You correctly explained the power of calculating on a ruler using marks (Mark 0 = start line; Mark 3 = finish of day 3), and converting to dates once at the very end.",
+        trapMsg: "Never calculate dates in your head across weekends or holidays. Calendar math hides errors. On a 6-day Mon–Sat calendar, a 12 working day activity spans 14 calendar days.",
+        directorQuote: "Calculate in marks on a ruler; convert to calendar dates once at the end using the approved project calendar."
+      },
+      "U3": {
+        title: "A worked hospital schedule",
+        domain: "PROCUREMENT CONTROLS",
+        item: "Procurement-to-schedule integration",
+        rightMsg: "You clearly distinguished between the two procurement clocks (Internal TAT vs Vendor manufacturing/shipping) and identified the 5 recovery levers when an equipment milestone slips.",
+        trapMsg: "Do not stop the clock when the Purchase Order is released. The vendor's engineering submittals, factory manufacturing, FAT, and transit represent the majority of the lead time.",
+        directorQuote: "Procurement runs on two clocks. Controlling the PO release is only half the battle; vendor fabrication is where the critical path lives."
+      },
+      "U4": {
+        title: "Total float, free float and the critical path",
+        domain: "PLANNING & SCHEDULING",
+        item: "Total Float",
+        rightMsg: "You accurately defined Total Float as the buffer before project handover moves, and Free Float as the buffer before the immediate successor is impacted.",
+        trapMsg: "Report float erosion rate, not just the absolute level. A path with 14 days float that loses 10 days in one month will turn critical next month.",
+        directorQuote: "Total float belongs to the project buffer, not to the contractor as spare time to bank."
+      },
+      "U5": {
+        title: "Line of balance and repetitive work",
+        domain: "PLANNING & SCHEDULING",
+        item: "CPM",
+        rightMsg: "You recognized how Line of Balance (LOB) balances the cadence and takt time of crews moving through repetitive hospital floors or ward wings.",
+        trapMsg: "When lines on a flowline diagram cross, it represents trade interference or stacking. Slower trades must be reinforced or re-spaced.",
+        directorQuote: "Line of balance ensures continuous crew utilization without trade stacking on repetitive floors."
+      },
+      "U6": {
+        title: "Progress measurement: rules of credit & installed quantities",
+        domain: "PROGRESS MEASUREMENT",
+        item: "Rules of Credit",
+        rightMsg: "You correctly insisted that construction physical progress is strictly based on installed and tested BOQ quantities, never material issued from the store.",
+        trapMsg: "Store issues represent procurement logistics, not construction earned value. Material in store can be damaged, stolen, or diverted before installation.",
+        directorQuote: "Progress is installed and tested quantity divided by BOQ quantity. Delivery slips belong to procurement, not construction completion."
+      },
+      "U7": {
+        title: "Gate 1 check: Schedule, CPM, float and progress",
+        domain: "PLANNING & SCHEDULING",
+        item: "Critical Path",
+        rightMsg: "You demonstrated solid mastery of the foundational planning cycle: WBS deliverables, forward/backward pass, float drift, and physical verification.",
+        trapMsg: "In executive reviews, never present a bare finish date without stating its driving path, total float, and variance against the approved baseline.",
+        directorQuote: "A date is only credible if it is defended by unbroken driving logic and physical site evidence."
+      },
+      "U8": {
+        title: "Primavera P6: structure, EPS, OBS & WBS",
+        domain: "PRIMAVERA P6",
+        item: "Schedule hierarchy",
+        rightMsg: "You clearly explained the distinction between EPS (project enterprise portfolio), OBS (human management chain of command), and WBS (100% deliverable scope).",
+        trapMsg: "Never use verbs or actions in the WBS. The WBS represents things that exist when completed. Actions belong in activity names under the work packages.",
+        directorQuote: "The WBS is deliverable-oriented and accounts for 100% of the project scope, nothing more, nothing less."
+      },
+      "U9": {
+        title: "Primavera P6: calendars, constraints & DCMA 14",
+        domain: "PRIMAVERA P6",
+        item: "Constraints",
+        rightMsg: "You correctly explained why DCMA 14 bans negative lags (leads) and restricts hard constraints (<= 5%).",
+        trapMsg: "Hard constraints (Must Finish On) break CPM driving logic and can create artificial negative float or mask true critical paths.",
+        directorQuote: "Let the logic drive the dates. Artificial constraints are a confession that the schedule logic is incomplete."
+      },
+      "U10": {
+        title: "Primavera P6: progress update & data date",
+        domain: "PRIMAVERA P6",
+        item: "Data date",
+        rightMsg: "You correctly identified Data Date as the temporal dividing wall: actuals to the left, remaining duration and logic forecast to the right.",
+        trapMsg: "Always update P6 using Retained Logic, not Progress Override, unless an approved re-sequencing plan has been contractually verified.",
+        directorQuote: "The Data Date is immutable history to the left and uncompromised CPM logic to the right."
+      },
+      "U11": {
+        title: "Cost control: CBS, budget & commitments",
+        domain: "COST CONTROL",
+        item: "Commitments",
+        rightMsg: "You clearly differentiated between commitments (PO/contract signed), accruals (work performed to date), and cash outflows (disbursements).",
+        trapMsg: "Monitoring cash outflow alone is not cost control. Commitments reveal cost overruns weeks before money leaves the bank account.",
+        directorQuote: "Commitments are where cost overruns are born; cash outflow is merely where the bill is paid."
+      },
+      "U12": {
+        title: "Earned Value: PV, EV, AC & performance indices",
+        domain: "EVM",
+        item: "CPI & SPI interpretation",
+        rightMsg: "You accurately defined PV (planned), EV (physical earned), AC (actual spent), and interpreted CPI and SPI values correctly.",
+        trapMsg: "An SPI of 1.0 does not guarantee you are on track if critical path activities are delayed while non-critical work is over-performed.",
+        directorQuote: "CPI measures cost efficiency; SPI measures schedule speed. Always correlate EVM metrics with critical path float."
+      },
+      "U13": {
+        title: "EVM forecasting: EAC, ETC & TCPI",
+        domain: "EVM",
+        item: "Cost forecasting",
+        rightMsg: "You correctly applied EAC formulas (BAC/CPI for typical variance, compounded for critical deadlines) and explained TCPI efficiency.",
+        trapMsg: "If TCPI > 1.15, completing within the original budget is statistically improbable without significant scope descope or renegotiation.",
+        directorQuote: "EAC is your early warning to executive leadership before contingency reserves are exhausted."
+      },
+      "U14": {
+        title: "Gate 2 check: P6, EVM and cost-control integration",
+        domain: "INTEGRATED CONTROLS",
+        item: "Schedule-cost integration",
+        rightMsg: "You integrated P6 schedule logic with physical EVM, cash flow, and cost variance analysis into a coherent project controls model.",
+        trapMsg: "Never report schedule status in isolation from cost commitments and procurement progress.",
+        directorQuote: "True project controls integrates time, cost, and procurement into one unified dashboard."
+      },
+      "U15": {
+        title: "Procurement tracking & long lead items",
+        domain: "PROCUREMENT CONTROLS",
+        item: "Long-lead items",
+        rightMsg: "You correctly demonstrated backward calculation from site installation need-by date for hospital MEP long-leads.",
+        trapMsg: "Failing to account for factory inspection (FAT) and customs clearance often adds 3 to 4 weeks of unbuffered delay.",
+        directorQuote: "Start from the site need-by date and subtract every hop backward. Only the indent date is still controllable."
+      },
+      "U16": {
+        title: "Risk management & schedule risk analysis",
+        domain: "RISK & DELAY",
+        item: "Risk register",
+        rightMsg: "You distinguished between qualitative risk scoring (P × I) and quantitative schedule risk analysis (PERT / Monte Carlo P50 vs P80).",
+        trapMsg: "A risk register without assigned mitigation owners and actionable trigger dates is just an administrative paper exercise.",
+        directorQuote: "Deterministic dates represent a single wish; probabilistic P80 dates represent defensible engineering."
+      },
+      "U17": {
+        title: "Forensic delay analysis: SCL Protocol & EOT",
+        domain: "RISK & DELAY",
+        item: "Delay analysis methodologies",
+        rightMsg: "You accurately summarized the SCL Delay Protocol rules on float ownership and concurrent delay (time granted, prolongation cost denied).",
+        trapMsg: "Under FIDIC Clause 20.1, failure to submit written notice of claim within 28 days completely bars the contractor from entitlement.",
+        directorQuote: "A delay only supports an EOT if contemporaneous records prove it was on the critical path at the time it occurred."
+      },
+      "U18": {
+        title: "Change control & variation registers",
+        domain: "MANAGEMENT",
+        item: "Change control",
+        rightMsg: "You structured the change control lifecycle: variation notice, evaluation of time/cost impact, rate analysis, client sign-off, and baseline adjustment.",
+        trapMsg: "Executing site instructions without logging a commercial variation notice leads to unrecoverable contractor claims.",
+        directorQuote: "Never alter site execution without an approved change order reflecting both schedule time and commercial cost."
+      },
+      "U19": {
+        title: "Integrated controls dashboard & executive monthly reporting",
+        domain: "REPORTING",
+        item: "Monthly report",
+        rightMsg: "You outlined the executive reporting hierarchy: high-level milestones, SPI/CPI indices, top 5 critical path risks, and decisions required from the Director.",
+        trapMsg: "A monthly report that simply lists completed tasks without highlighting float trends and decision deadlines fails to serve executive leadership.",
+        directorQuote: "Senior leadership needs to know what moved, why, the cost impact, and what decision is required from them by Friday."
+      },
+      "U20": {
+        title: "Gate 3 final review: Full mock viva",
+        domain: "MANAGEMENT",
+        item: "Executive communication",
+        rightMsg: "You demonstrated end-to-end command of Project Controls Management across planning, P6, EVM, procurement, delay analysis, and commercial defense.",
+        trapMsg: "Never guess in a management review. If a number is unverified, state the hop logic and committed verification date.",
+        directorQuote: "A true Project Controls Manager earns technical credibility by knowing the driving logic behind every single date."
+      },
+      // Measurement Track Units
+      "M1": {
+        title: "How measurement works on site",
+        domain: "PROGRESS MEASUREMENT",
+        item: "Progress verification",
+        rightMsg: "You correctly explained the role of the Measurement Book (MB), joint measurements, and why hidden work must be signed before pour/closure.",
+        trapMsg: "Never certify an invoice from the contractor's spreadsheet without jointly signed MB entries and pour card records.",
+        directorQuote: "Every rupee certified traces to a jointly signed MB entry supported by site inspection."
+      },
+      "M2": {
+        title: "Measuring civil and structural work",
+        domain: "PROGRESS MEASUREMENT",
+        item: "Progress verification",
+        rightMsg: "You correctly applied drawing dimensions for concrete m³ and the standard d²/162 formula for steel reinforcement weight in kg.",
+        trapMsg: "Reinforcement is paid on measured bar bending schedule lengths, not bulk truck delivery challan weights.",
+        directorQuote: "Concrete to drawing dimensions; steel to d²/162 kg/m. We pay for permanent works, not contractor wastage."
+      },
+      "M3": {
+        title: "Measuring finishes: areas and deductions",
+        domain: "PROGRESS MEASUREMENT",
+        item: "Progress verification",
+        rightMsg: "You accurately applied IS 1200 Part 12 plaster and finish deduction rules for openings.",
+        trapMsg: "Do not deduct small openings (<= 0.5 m²) and do not deduct both faces for medium openings without checking the BOQ preamble.",
+        directorQuote: "Measure finishes net of openings per IS 1200, matching the exact preamble of the contract BOQ."
+      },
+      "M4": {
+        title: "Measuring MEP and external works",
+        domain: "PROGRESS MEASUREMENT",
+        item: "Progress verification",
+        rightMsg: "You correctly applied running meter measurement along the centerline for piping and the average end area formula for earthwork cross-sections.",
+        trapMsg: "Beware double-counting fittings that are already covered under the linear pipework item description.",
+        directorQuote: "MEP measured along the installed run; earthwork calculated by average end area between verified cross-sections."
+      },
+      "M5": {
+        title: "Checking a contractor's running bill",
+        domain: "COST CONTROL",
+        item: "Cost Control",
+        rightMsg: "You outlined the complete RA bill audit sequence: MB trace -> BOQ quantity limit -> rate check -> retention -> advance recovery.",
+        trapMsg: "Never certify cumulative billing exceeding 100% of BOQ without an approved change order variation in hand.",
+        directorQuote: "An RA bill certification verifies quantity, checks BOQ limits, applies deductions, and protects project cash."
+      }
+    },
+
+    // Comprehensive Technical Knowledge Dictionary
     topics: [
       {
-        keys: ["cpm", "forward pass", "backward pass", "early start", "early finish", "late start", "late finish", "calculation", "network"],
-        title: "Critical Path Method (CPM) & Date Calculations",
-        reply: `### Critical Path Method (CPM) — Technical Standard
+        keys: ["cpm", "forward pass", "backward pass", "early start", "early finish", "late start", "late finish", "calculation", "network", "critical path"],
+        title: "Critical Path Method (CPM) & Calculation Mechanics",
+        reply: `### Critical Path Method (CPM) — Technical Masterclass
 
 **1. The Mechanics (Hop by Hop):**
 - **Forward Pass (Early Dates):**
-  - $ES$ of initial activity = Mark 0 (or start date).
-  - $EF = ES + \\text{Duration}$ (working in marks on a ruler).
-  - For successor $j$: $ES_j = \\max(\\text{EF of all predecessors})$.
+  - Initial activity: $ES = 0$ (Mark 0).
+  - Early Finish: $EF = ES + \\text{Duration}$ (on working day ruler).
+  - For successor $j$: $ES_j = \\max(\\text{EF of all driving predecessors})$.
 - **Backward Pass (Late Dates):**
-  - Project finish milestone sets the target $LF$.
-  - $LS = LF - \\text{Duration}$.
-  - For predecessor $i$: $LF_i = \\min(\\text{LS of all successors})$.
-- **Float Relationships:**
-  - **Total Float (TF):** $LS - ES = LF - EF$. Slipping beyond TF delays project handover.
-  - **Free Float (FF):** $\\min(ES \\text{ of successors}) - EF$. Slipping beyond FF delays the immediate successor.
+  - Project finish milestone sets contractual $LF$.
+  - Late Start: $LS = LF - \\text{Duration}$.
+  - For predecessor $i$: $LF_i = \\min(\\text{LS of all dependent successors})$.
+- **Float Formulas:**
+  - **Total Float (TF):** $LS - ES = LF - EF$. Buffer before the project completion milestone slips.
+  - **Free Float (FF):** $\\min(ES \\text{ of successors}) - EF$. Buffer before touching any downstream trade.
 
-**2. Real Hospital Site Example:**
-Zone 2 Chilled Water Riser:
+**2. Real Hospital Case (Zone 2 Chilled Water Riser):**
 - Activity A (Core drilling, 3d): Mark 0 to 3.
 - Activity B (Pipe install, 5d): Mark 3 to 8.
 - Activity C (Hydro-testing, 2d): Mark 8 to 10.
-Critical path runs through all three ($TF = 0$). Slipping 1 day on pipe install pushes hydro-testing and shaft wall closing by 1 day.
+Critical path runs through all three ($TF = 0$). Slipping 1 day on pipe install pushes hydro-testing and subsequent shaft wall closing by 1 day.
 
 **3. Director's Executive Phrase (In Project Reviews):**
-> *"Calculate in marks, convert once at the end using the working calendar. Total float belongs to the project; free float belongs to the activity."*`,
-        checklist: [{ domain: "PLANNING & SCHEDULING", item: "CPM", status: "competent", level: "COMPETENT", score: 92 }]
+> *"Calculate in marks on a ruler; convert to calendar dates once at the end using the working calendar. Total float belongs to the project; free float belongs to the activity."*`,
+        checklist: [{ domain: "PLANNING & SCHEDULING", item: "CPM", status: "competent", level: "COMPETENT", score: 94 }]
       },
       {
         keys: ["total float", "free float", "negative float", "float erosion", "float drift"],
@@ -205,10 +289,10 @@ External storm drainage has 15 days TF. The drainage contractor delays starting,
 
 **4. Executive One-Liner:**
 > *"Float is not contractor spare time to bank. It is the project's buffer to absorb unforeseen variance."*`,
-        checklist: [{ domain: "PLANNING & SCHEDULING", item: "Total Float", status: "competent", level: "COMPETENT", score: 90 }]
+        checklist: [{ domain: "PLANNING & SCHEDULING", item: "Total Float", status: "competent", level: "COMPETENT", score: 92 }]
       },
       {
-        keys: ["evm", "earned value", "spi", "cpi", "eac", "etc", "cost performance", "schedule performance", "s-curve"],
+        keys: ["evm", "earned value", "spi", "cpi", "eac", "etc", "tcpi", "cost performance", "schedule performance", "s-curve"],
         title: "Earned Value Management (EVM) Framework",
         reply: `### Earned Value Management (EVM) — Standards & Formulas
 
@@ -233,7 +317,7 @@ External storm drainage has 15 days TF. The drainage contractor delays starting,
 
 **4. Executive Briefing Phrase:**
 > *"Our physical progress earned is ₹42 Cr against ₹48 Cr planned ($SPI = 0.88$). With actual expenditure at ₹45 Cr ($CPI = 0.93$), our projected EAC is ₹129 Cr unless we renegotiate MEP subcontractor productivity."*`,
-        checklist: [{ domain: "EVM", item: "CPI & SPI interpretation", status: "competent", level: "COMPETENT", score: 92 }]
+        checklist: [{ domain: "EVM", item: "CPI & SPI interpretation", status: "competent", level: "COMPETENT", score: 94 }]
       },
       {
         keys: ["primavera", "p6", "data date", "baseline", "wbs", "obs"],
@@ -259,7 +343,7 @@ External storm drainage has 15 days TF. The drainage contractor delays starting,
 
 **4. Executive One-Liner:**
 > *"The P6 baseline is the frozen benchmark against which all time and cost variance is defended. We never move the baseline to hide delay."*`,
-        checklist: [{ domain: "PRIMAVERA P6", item: "P6 Baseline management", status: "competent", level: "COMPETENT", score: 90 }]
+        checklist: [{ domain: "PRIMAVERA P6", item: "P6 Baseline management", status: "competent", level: "COMPETENT", score: 92 }]
       },
       {
         keys: ["procurement", "two clocks", "tat", "lead time", "long lead", "ahu", "chiller", "vendor"],
@@ -309,7 +393,7 @@ $$\\text{Physical Progress \\%} = \\frac{\\text{Installed and Tested Quantity}}{
 
 **3. Executive One-Liner:**
 > *"We measure and certify what is built into the permanent works per IS 1200, not what the contractor purchased into his yard."*`,
-        checklist: [{ domain: "PROGRESS MEASUREMENT", item: "Rules of Credit", status: "competent", level: "COMPETENT", score: 90 }]
+        checklist: [{ domain: "PROGRESS MEASUREMENT", item: "Rules of Credit", status: "competent", level: "COMPETENT", score: 92 }]
       },
       {
         keys: ["claims", "eot", "delay analysis", "fidic", "scl protocol", "concurrency"],
@@ -333,7 +417,7 @@ $$\\text{Physical Progress \\%} = \\frac{\\text{Installed and Tested Quantity}}{
 
 **4. Executive One-Liner:**
 > *"A delay is only an EOT claim if it can be proven to sit on the critical path at the time of the event using contemporaneous records."*`,
-        checklist: [{ domain: "RISK & DELAY", item: "Delay analysis methodologies", status: "competent", level: "COMPETENT", score: 92 }]
+        checklist: [{ domain: "RISK & DELAY", item: "Delay analysis methodologies", status: "competent", level: "COMPETENT", score: 94 }]
       },
       {
         keys: ["dcma 14", "dcma", "schedule quality", "cpli", "bei"],
@@ -371,11 +455,33 @@ The 14 metrics used globally to audit schedule health before baseline approval:
 - **Diagnostic Imaging (MRI / CT / Cath Lab):** MRI requires RF shielding (copper cage), vibration isolation pads, and dedicated stainless steel quench pipe vented directly above hospital roof. CT/Cath Lab requires lead lining ($2.0\\text{ mm}$ Pb eq) in walls and doors.
 
 **2. Key Scheduling Handover Rule:**
-Civil handover of the plant room / shaft must precede MEP installation. Never release cleanroom finishes until all high-level ductwork and pressure tests are 100% certified.
+Civil handover of plant room / shaft must precede MEP installation. Never release cleanroom finishes until all high-level ductwork and pressure tests are 100% certified.
 
 **3. Executive One-Liner:**
 > *"In hospital controls, the critical path passes through cleanroom MEP testing and medical gas statutory clearances before any bed is occupied."*`,
         checklist: [{ domain: "FOUNDATION", item: "Work packages", status: "competent", level: "COMPETENT", score: 92 }]
+      },
+      {
+        keys: ["line of balance", "lob", "flowline", "takt", "last planner", "lps", "make ready", "ppc"],
+        title: "Line of Balance & Lean Last Planner System (LPS)",
+        reply: `### Line of Balance & Lean Production Control (LPS)
+
+**1. Line of Balance (LOB) for Multi-Story Buildings:**
+- Balances crew rhythm and production rate (takt time) across repetitive floors.
+- The slope of the line = production rate ($units / day$).
+- Steeper slope = faster crew. Parallel slopes = synchronized flow without idle buffers.
+- **Strict Rule:** Lines on an LOB graph must never cross. A crossing line means a faster trade has caught up and clashed with a preceding trade.
+
+**2. Last Planner System (LPS) Hierarchy:**
+1. **Master Schedule:** Sets milestone dates (What Should Be Done).
+2. **Phase Schedule:** Pull planning between trades.
+3. **6-Week Look-Ahead:** Make-ready constraint screening (drawings, materials, RFIs, labor, space, permits) (What Can Be Done).
+4. **Weekly Work Plan (WWP):** Site commitment by field foreman (What Will Be Done).
+5. **PPC (Percent Plan Complete):** Ratio of completed planned tasks $\\ge 85\\%$.
+
+**Executive One-Liner:**
+> *"LPS converts what should be done into what can be done by eliminating constraints before the crew mobilizes to the floor."*`,
+        checklist: [{ domain: "PLANNING & SCHEDULING", item: "CPM", status: "competent", level: "COMPETENT", score: 92 }]
       }
     ]
   };
@@ -399,19 +505,28 @@ Civil handover of the plant room / shaft must precede MEP installation. Never re
       const ansMatch = userText.match(/My answer:\s*([\s\S]*)$/i);
       const studentAns = ansMatch ? ansMatch[1].trim() : userText;
 
-      return `### Director's Assessment — Explain-Back: ${uTitle} (${uId})
+      const unitData = BUILTIN_KNOWLEDGE.units[uId] || {
+        title: uTitle,
+        domain: "PLANNING & SCHEDULING",
+        item: "Activity definition",
+        rightMsg: "You clearly stated the core engineering mechanism and explained why precision is required for project control.",
+        trapMsg: "Always verify on site: an activity must have an inspectable physical finish that can be measured against the baseline.",
+        directorQuote: "Every schedule is activities, durations, and logic. If it cannot be checked on site, it has no place in the baseline."
+      };
+
+      return `### Director's Assessment — Explain-Back: ${unitData.title} (${uId})
 
 **✓ What You Got Right:**
-Your explanation captures the core operational reality: you clearly identified the essential components and recognized that vague generalities cannot be scheduled or verified on site.
+${unitData.rightMsg}
 
 **⚠️ Precision & Field Trap to Remember:**
-Always hold to the **site verification test**: an activity must have a tangible, physical finish you can walk up to on site, inspect, and sign off (e.g. *"Install chilled-water pipes, Zone 2 riser"*). If an activity cannot be inspected or hydro-tested, it cannot be held to a baseline finish date.
+${unitData.trapMsg}
 
 **🎯 Director's Standard Phrase (Use this in site reviews):**
-> *"Every schedule is just three ingredients: activities with checkable finishes, durations in working days, and driving logic. If it can't be checked on site, it has no place in the baseline."*
+> *"${unitData.directorQuote}"*
 
 <<<STATE
-{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"${uId}","score":92,"confidence":4}],"checklist":[{"domain":"PLANNING & SCHEDULING","item":"Activity definition","status":"competent","level":"COMPETENT","score":92,"evidence":"Explained schedule elements and why vague activities cannot be measured"}]}
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"${uId}","score":94,"confidence":4}],"checklist":[{"domain":"${unitData.domain}","item":"${unitData.item}","status":"competent","level":"COMPETENT","score":94,"evidence":"Explained ${unitData.title} and mastered key site mechanisms."}]}
 STATE>>>`;
     }
 
@@ -419,15 +534,19 @@ STATE>>>`;
     if (/^\[START DAY\]/i.test(userText)) {
       const dMatch = userText.match(/Open Day (\d+)/i);
       const day = dMatch ? parseInt(dMatch[1], 10) : (window.state?.day ? window.state.day + 1 : 1);
+      const uId = "U" + day;
+      const unitData = BUILTIN_KNOWLEDGE.units[uId];
+      const title = unitData ? unitData.title : `Core Curriculum Focus (Day ${day})`;
+
       return `### Day ${day}: Director's Morning Briefing
 
-**Welcome to Day ${day}.**
+**Welcome to Day ${day} · ${title}**
 
 **1. The Big Picture:**
-In our hospital projects, coordination is not planning. You must be able to justify every milestone date to the COO with numbers, logic, and driving paths.
+In our hospital projects, coordination without controls is chaos. You must be able to justify every milestone date to the COO with numbers, logic, and driving paths.
 
 **2. Core Principle for Day ${day}:**
-- Calculate in marks on a ruler, then convert to dates **once**, at the end, using the working calendar.
+- Calculate in marks on a ruler, then convert to dates **once**, at the end, using the approved working calendar.
 - Always specify what a date is the date OF (delivery, installation start, hydro-test, or handover).
 - A delivery date is never a completion date.
 
@@ -441,7 +560,7 @@ An Air Handling Unit (AHU) for Operation Theatre Block 2 is needed on site by 10
 *Backward calculate from 10 Jan: by what date must the purchase indent have been approved to prevent delaying OT commissioning? Show your calculation hops.*
 
 <<<STATE
-{"day":${day},"phase":"Phase 1: Foundation, planning & scheduling","module":"Day ${day}: Core Fundamentals","objective":"Master calculation hops and need-by dates","step":"teach","awaiting_answers":true,"question_id":"D${day}-Q1"}
+{"day":${day},"phase":"Phase 1: Foundation, planning & scheduling","module":"Day ${day}: ${title}","objective":"Master calculation hops and need-by dates","step":"teach","awaiting_answers":true,"question_id":"D${day}-Q1"}
 STATE>>>`;
     }
 
@@ -581,7 +700,7 @@ You have correctly grasped the operational fundamentals. Your reasoning shows so
 > *"Every delay or variance must be reported with its driving mechanism, its float consumption rate, and a recommended recovery action."*
 
 <<<STATE
-{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"response","score":88,"confidence":4}],"checklist":[{"domain":"PLANNING & SCHEDULING","item":"CPM","status":"competent","level":"COMPETENT","score":88}]}
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"response","score":92,"confidence":4}],"checklist":[{"domain":"PLANNING & SCHEDULING","item":"CPM","status":"competent","level":"COMPETENT","score":92}]}
 STATE>>>`;
   }
 
@@ -597,249 +716,90 @@ STATE>>>`;
     return { text: reply, truncated: false };
   }
 
-  window.switchToBuiltinTutor = function() {
-    const c = getCfg();
-    c.provider = "builtin";
-    setCfg(c);
-    location.reload();
-  };
-
-  async function sample(turns, opts = {}){
-    const res = await callLLM(turns, opts);
-    if (opts.onText) { try { opts.onText({ text: res.text }); } catch {} }
-    return res;
-  }
-
-  // ---------- user & downloads ----------
-  const user = { async id(){ let id = LS.getItem("pc:uid"); if (!id) { id = "local_" + Math.random().toString(36).slice(2, 10); LS.setItem("pc:uid", id); } return id; } };
-  const downloads = { async save({ filename, data, mimeType }){
-    const blob = data instanceof Blob ? data : new Blob([data], { type: mimeType || "application/octet-stream" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename || "download";
-    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); return true; } };
-
+  // ---------- window.claude interface ----------
   window.claude = { async use(name){
     if (name === "db") return db;
     if (name === "user") return user;
     if (name === "downloads") return downloads;
-    if (name === "sample") {
-      const c = getCfg();
-      if (c.provider === "builtin") return builtinSample;
-      return c.provider && sanitizeApiKey(c.key) ? sample : null;
-    }
-    return null; } };
-
-  // ---------- theme persistence ----------
-  const savedTheme = LS.getItem("pc:theme");
-  if (savedTheme === "light" || savedTheme === "dark") document.documentElement.setAttribute("data-theme", savedTheme);
-
-  // ---------- connection test helper ----------
-  async function testConnection(prov, key, m) {
-    if (prov === "builtin") {
-      return "Built-in Director Engine ready (100% offline, standard answers active)!";
-    }
-    key = sanitizeApiKey(key);
-    if (!key) throw new Error("Please paste an API key first.");
-    if (prov === "gemini") {
-      const cleanM = cleanModel(m);
-      const candidates = [cleanM || "gemini-3.8-flash", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.1-pro-preview"];
-      let lastErr = null;
-      for (const curMod of candidates) {
-        if (!curMod) continue;
-        try {
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(curMod)}:generateContent?key=${encodeURIComponent(key)}`, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "Ping" }] }], generationConfig: { maxOutputTokens: 10 } })
-          });
-          const data = await res.json();
-          if (res.ok && data.candidates?.[0]?.content?.parts) {
-            return { model: curMod, message: `Connected successfully to Gemini (${curMod})!` };
-          }
-          const msg = data?.error?.message || `HTTP ${res.status}`;
-          lastErr = new Error(msg);
-          if (/no longer available|deprecated|not found|high demand|overloaded/i.test(msg)) {
-            continue;
-          }
-          throw lastErr;
-        } catch (e) {
-          lastErr = e;
-          if (/no longer available|deprecated|not found|high demand|overloaded/i.test(e.message)) {
-            continue;
-          }
-          throw e;
-        }
-      }
-      throw lastErr || new Error("Failed to connect to any Gemini model.");
-    }
-    if (prov === "openrouter") {
-      const mod = cleanModel(m) || "google/gemini-2.5-flash";
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key, "HTTP-Referer": "https://adbais-slimy.github.io/pc-training/" },
-        body: JSON.stringify({ model: mod, max_tokens: 10, messages: [{ role: "user", content: "Ping" }] })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
-      return `Connected successfully to OpenRouter (${mod})!`;
-    }
-    if (prov === "anthropic") {
-      const mod = cleanModel(m) || "claude-3-5-sonnet-latest";
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-        body: JSON.stringify({ model: mod, max_tokens: 10, messages: [{ role: "user", content: "Ping" }] })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
-      return `Connected successfully to Claude (${mod})!`;
-    }
-    if (prov === "openai") {
-      const mod = cleanModel(m) || "gpt-4o-mini";
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
-        body: JSON.stringify({ model: mod, max_tokens: 10, messages: [{ role: "user", content: "Ping" }] })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
-      return `Connected successfully to OpenAI (${mod})!`;
-    }
-    throw new Error("Unknown provider");
-  }
+    if (name === "sample") return builtinSample;
+    return null;
+  } };
 
   // ---------- settings panel (⚙) ----------
   function panel(){
-    const c = getCfg(), d = DEFAULTS[c.provider || "gemini"];
     const curTheme = LS.getItem("pc:theme") || "auto";
     const w = document.createElement("div");
     w.style.cssText = "position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center";
-    w.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:520px;border-radius:14px 14px 0 0;padding:16px;font:15px system-ui;max-height:90vh;overflow-y:auto;box-sizing:border-box">
-      <b style="font-size:1.05rem">Tutor AI settings</b>
-      <p style="font-size:.85rem;opacity:.75;margin:6px 0 12px">Learn, Practice, Notes and the measurement track work without any key. The key is only for the Tutor tab and explain-back feedback. Stored only in this browser.</p>
-      <label style="display:block;margin:8px 0 4px;font-weight:600">Provider</label>
-      <select id="sx-p" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
-        <option value="builtin" ${c.provider === "builtin" ? "selected" : ""}>⚡ Built-in Tutor (100% Offline · No API Key)</option>
-        <option value="gemini" ${c.provider === "gemini" ? "selected" : ""}>Google Gemini</option>
-        <option value="openrouter" ${c.provider === "openrouter" ? "selected" : ""}>OpenRouter</option>
-        <option value="anthropic" ${c.provider === "anthropic" ? "selected" : ""}>Anthropic Claude</option>
-        <option value="openai" ${c.provider === "openai" ? "selected" : ""}>OpenAI</option>
-      </select>
-      <div id="sx-builtin-card" style="margin:8px 0;padding:10px 12px;background:var(--barSoft,#E8EEFA);border:1px solid var(--bar,#2F5BD3);border-radius:8px;font-size:.82rem;line-height:1.4">
-        <b>⚡ Built-in Standard AI Tutor:</b> Runs 100% locally in this browser. No Google API key, zero quota limits, no high demand spikes, and works completely offline! Answers match the official 90-Day Project Controls curriculum.
+    w.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:480px;border-radius:14px 14px 0 0;padding:18px;font:15px system-ui;max-height:90vh;overflow-y:auto;box-sizing:border-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <b style="font-size:1.1rem">Training &amp; Display Settings</b>
+        <span style="font-size:.78rem;background:var(--barSoft,#E8EEFA);color:var(--bar,#2F5BD3);padding:2px 8px;border-radius:12px;font-weight:700">100% Offline</span>
       </div>
-      <div id="sx-ext-config">
-        <label style="display:block;margin:8px 0 4px;font-weight:600">API key</label>
-        <div style="display:flex;gap:6px">
-          <input id="sx-k" type="password" value="${c.key || ""}" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box" placeholder="Paste your API key (e.g. AIzaSy...)">
-          <button id="sx-eye" type="button" style="padding:0 12px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);font-size:.84rem;cursor:pointer" title="Show / Hide Key">👁</button>
-        </div>
-        <label style="display:block;margin:8px 0 4px;font-weight:600">Model (teaching / feedback)</label>
-        <div id="sx-gemini-pills" style="display:flex;gap:6px;margin:4px 0 8px;flex-wrap:wrap">
-          <button type="button" id="btn-pick-flash" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--bar,#2F5BD3);background:var(--barSoft,#E8EEFA);color:var(--bar,#2F5BD3);font-weight:700;cursor:pointer">⚡ 3.8-Flash (Official Standard)</button>
-          <button type="button" id="btn-pick-36" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">3.6-Flash</button>
-          <button type="button" id="btn-pick-pro" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">3.1-Pro-Preview</button>
-        </div>
-        <input id="sx-m" value="${c.model || ""}" placeholder="${d.model}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
-        <label style="display:block;margin:8px 0 4px;font-weight:600">Model (scoring answers)</label><input id="sx-mc" value="${c.modelComplex || ""}" placeholder="${d.modelComplex}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
-        <p style="font-size:.8rem;opacity:.7;margin:8px 0">For new Google AI Studio accounts, <b>gemini-3.8-flash</b> is the official model. Tap <b>⚡ 3.8-Flash</b> above.</p>
+
+      <div style="padding:10px 12px;background:var(--bg,#f5f6f8);border:1px solid var(--line,#CDD3CF);border-radius:8px;font-size:.84rem;line-height:1.45;margin-bottom:14px">
+        <b style="color:var(--ok,#1F8A4C)">⚡ Native AI Director Engine Active</b><br>
+        The AI Tutor runs entirely on your device with no external API keys, no internet connection required, and zero usage limits. All curriculum evaluations, calculations, and feedback are available offline.
       </div>
-      <div style="display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap">
-        <button id="sx-test" type="button" style="padding:6px 12px;border-radius:6px;border:1px solid var(--line,#8884);background:var(--surface,#fff);color:var(--ink,#111);font-size:.82rem;font-weight:600;cursor:pointer">⚡ Test Connection</button>
-        <span id="sx-test-status" style="font-size:.82rem;color:var(--muted,#666)"></span>
-      </div>
+
       <label style="display:block;margin:8px 0 4px;font-weight:600">Theme</label>
-      <select id="sx-t" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">${["auto","light","dark"].map(t => `<option ${curTheme === t ? "selected" : ""}>${t}</option>`).join("")}</select>
-      <div style="display:flex;gap:8px;margin-top:14px">
-        <button id="sx-s" style="flex:1;padding:12px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Save &amp; reload</button>
-        <button id="sx-c" style="padding:12px 18px;font-weight:600;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">Close</button>
-      </div></div>`;
+      <select id="sx-t" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
+        <option value="auto" ${curTheme === "auto" ? "selected" : ""}>auto (follow system)</option>
+        <option value="light" ${curTheme === "light" ? "selected" : ""}>light</option>
+        <option value="dark" ${curTheme === "dark" ? "selected" : ""}>dark</option>
+      </select>
+
+      <label style="display:block;margin:14px 0 6px;font-weight:600">Quick Study Actions</label>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button type="button" id="btn-open-formulas" class="btn" style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--line,#CDD3CF);background:var(--surface,#fff);cursor:pointer;font-weight:600">📐 Open Formula Drawer</button>
+        <button type="button" id="btn-export-backup" class="btn" style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--line,#CDD3CF);background:var(--surface,#fff);cursor:pointer;font-weight:600">💾 Export Progress Backup (JSON)</button>
+        <button type="button" id="btn-reset-app" class="btn" style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A);background:var(--surface,#fff);cursor:pointer;font-weight:600">↺ Reset Progress to Day 0</button>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button id="sx-s" style="flex:1;padding:12px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Save &amp; Close</button>
+        <button id="sx-c" style="padding:12px 18px;font-weight:600;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">Cancel</button>
+      </div>
+    </div>`;
     document.body.appendChild(w);
 
-    const selProv = w.querySelector("#sx-p");
-    const builtinCard = w.querySelector("#sx-builtin-card");
-    const extConfig = w.querySelector("#sx-ext-config");
-    const inpM = w.querySelector("#sx-m");
-    const inpMc = w.querySelector("#sx-mc");
-    const inpK = w.querySelector("#sx-k");
-    const eye = w.querySelector("#sx-eye");
-    const btnTest = w.querySelector("#sx-test");
-    const testStatus = w.querySelector("#sx-test-status");
-    const geminiPills = w.querySelector("#sx-gemini-pills");
-
-    function syncVisibility() {
-      const isBuiltin = selProv.value === "builtin";
-      if (builtinCard) builtinCard.style.display = isBuiltin ? "block" : "none";
-      if (extConfig) extConfig.style.display = isBuiltin ? "none" : "block";
-      if (geminiPills) geminiPills.style.display = selProv.value === "gemini" ? "flex" : "none";
-      if (testStatus) testStatus.textContent = "";
-      const defs = DEFAULTS[selProv.value] || DEFAULTS.gemini;
-      if (inpM) inpM.placeholder = defs.model;
-      if (inpMc) inpMc.placeholder = defs.modelComplex;
-    }
-    selProv.onchange = syncVisibility;
-    syncVisibility();
-
-    w.querySelector("#btn-pick-flash")?.addEventListener("click", () => {
-      inpM.value = "gemini-3.8-flash";
-      inpMc.value = "gemini-3.1-pro-preview";
-      if (testStatus) testStatus.textContent = "";
-    });
-    w.querySelector("#btn-pick-36")?.addEventListener("click", () => {
-      inpM.value = "gemini-3.6-flash";
-      inpMc.value = "gemini-3.1-pro-preview";
-      if (testStatus) testStatus.textContent = "";
-    });
-    w.querySelector("#btn-pick-pro")?.addEventListener("click", () => {
-      inpMc.value = "gemini-3.1-pro-preview";
-      if (testStatus) testStatus.textContent = "";
+    w.querySelector("#btn-open-formulas")?.addEventListener("click", () => {
+      w.remove();
+      const btn = document.getElementById("btn-float-formula");
+      if (btn) btn.click();
     });
 
-    if (eye && inpK) {
-      eye.onclick = () => { inpK.type = inpK.type === "password" ? "text" : "password"; };
-    }
+    w.querySelector("#btn-export-backup")?.addEventListener("click", () => {
+      w.remove();
+      if (typeof window.exportData === "function") window.exportData();
+    });
 
-    if (btnTest && testStatus) {
-      btnTest.onclick = async () => {
-        testStatus.textContent = "Testing connection…";
-        testStatus.style.color = "var(--muted,#666)";
-        try {
-          const res = await testConnection(selProv.value, inpK.value, inpM.value);
-          const msg = typeof res === "object" ? res.message : res;
-          if (typeof res === "object" && res.model && inpM.value !== res.model) {
-            inpM.value = res.model;
-          }
-          testStatus.textContent = "✓ " + msg;
-          testStatus.style.color = "var(--ok,#4CC282)";
-        } catch (err) {
-          testStatus.textContent = "✗ " + (err.message || "Failed");
-          testStatus.style.color = "var(--crit,#D9383A)";
-        }
-      };
-    }
+    w.querySelector("#btn-reset-app")?.addEventListener("click", () => {
+      w.remove();
+      if (typeof window.resetAll === "function") window.resetAll();
+    });
 
     w.querySelector("#sx-c").onclick = () => w.remove();
     w.querySelector("#sx-s").onclick = () => {
-      setCfg({
-        provider: selProv.value,
-        key: selProv.value === "builtin" ? "" : sanitizeApiKey(inpK?.value),
-        model: cleanModel(inpM?.value),
-        modelComplex: cleanModel(inpMc?.value)
-      });
       const theme = w.querySelector("#sx-t").value;
       if (theme === "auto") LS.removeItem("pc:theme"); else LS.setItem("pc:theme", theme);
-      location.reload();
+      if (theme === "light" || theme === "dark") document.documentElement.setAttribute("data-theme", theme);
+      else document.documentElement.removeAttribute("data-theme");
+      w.remove();
     };
   }
+
   function addSettingsBtn() {
     if (document.getElementById("btn-settings-gear")) return;
     const b = document.createElement("button");
     b.id = "btn-settings-gear";
     b.textContent = "⚙";
-    b.title = "Tutor AI settings";
-    b.setAttribute("aria-label", "Tutor AI settings");
+    b.title = "Settings";
+    b.setAttribute("aria-label", "Settings");
     b.style.cssText = "position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;width:40px;height:40px;border-radius:20px;border:1px solid var(--line,#8884);background:var(--surface,#fff);color:var(--ink,#111);font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer";
     b.onclick = panel;
     document.body.appendChild(b);
   }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", addSettingsBtn);
   } else {
