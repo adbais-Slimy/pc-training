@@ -17,13 +17,13 @@
 
   // ---------- sample: one interface, three providers ----------
   const DEFAULTS = {
-    gemini:    { model: "gemini-2.5-flash", modelComplex: "gemini-2.5-pro" },
-    anthropic: { model: "claude-sonnet-4-5", modelComplex: "claude-sonnet-4-5" },
+    gemini:    { model: "gemini-2.0-flash", modelComplex: "gemini-1.5-pro" },
+    anthropic: { model: "claude-3-5-sonnet-latest", modelComplex: "claude-3-5-sonnet-latest" },
     openai:    { model: "gpt-4o-mini", modelComplex: "gpt-4o", baseUrl: "https://api.openai.com/v1" }
   };
   async function callLLM(turns, opts = {}){
     const c = getCfg(); if (!c.provider || !c.key) throw { code: "not_granted", message: "No API key set. Tap ⚙ to add one." };
-    const d = DEFAULTS[c.provider] || {};
+    const d = DEFAULTS[c.provider] || DEFAULTS.gemini;
     const model = (opts.modelTier === "complex" ? (c.modelComplex || d.modelComplex) : (c.model || d.model));
     const msgs = turns.map(t => ({ role: t.role, content: typeof t.content === "string" ? t.content : JSON.stringify(t.content) }));
     let r, j, text = "";
@@ -56,9 +56,10 @@
     } catch (e) {
       if (e?.name === "AbortError") throw { code: "cancelled" };
       const status = r?.status;
-      if (status === 429) throw { code: "rate_limited", message: "Rate or usage limit reached." };
-      if (status === 401 || status === 403) throw { code: "not_granted", message: "API key rejected." };
-      throw { code: "unavailable", message: (e?.error?.message || e?.message || String(e)) };
+      const apiMsg = e?.error?.message || e?.message || (typeof e === "string" ? e : "");
+      if (status === 429) throw { code: "rate_limited", message: apiMsg || "Rate or usage limit reached." };
+      if (status === 401 || status === 403) throw { code: "not_granted", message: apiMsg || "API key rejected." };
+      throw { code: "unavailable", message: apiMsg || `Request failed (${status || "network error"}).` };
     }
     throw { code: "not_granted", message: "Unknown provider." };
   }
@@ -100,7 +101,7 @@
       <label style="display:block;margin:8px 0 4px">API key</label><input id="sx-k" type="password" value="${c.key || ""}" style="width:100%;padding:8px" placeholder="Paste your API key">
       <label style="display:block;margin:8px 0 4px">Model (teaching / feedback)</label><input id="sx-m" value="${c.model || ""}" placeholder="${d.model}" style="width:100%;padding:8px">
       <label style="display:block;margin:8px 0 4px">Model (scoring answers)</label><input id="sx-mc" value="${c.modelComplex || ""}" placeholder="${d.modelComplex}" style="width:100%;padding:8px">
-      <p style="font-size:.8rem;opacity:.7;margin:8px 0">Model names change. Check the current ones in Google AI Studio, the Anthropic console or OpenAI before relying on the defaults. On free tiers, don't paste client-confidential figures.</p>
+      <p style="font-size:.8rem;opacity:.7;margin:8px 0">On free tiers, don't paste client-confidential figures. Leave models blank to use the recommended defaults.</p>
       <label style="display:block;margin:8px 0 4px">Theme</label>
       <select id="sx-t" style="width:100%;padding:8px">${["auto","light","dark"].map(t => `<option ${curTheme === t ? "selected" : ""}>${t}</option>`).join("")}</select>
       <div style="display:flex;gap:8px;margin-top:14px">
@@ -108,6 +109,16 @@
         <button id="sx-c" style="padding:12px 18px;font-weight:600;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">Close</button>
       </div></div>`;
     document.body.appendChild(w);
+
+    const selProv = w.querySelector("#sx-p");
+    const inpM = w.querySelector("#sx-m");
+    const inpMc = w.querySelector("#sx-mc");
+    selProv.onchange = () => {
+      const defs = DEFAULTS[selProv.value] || DEFAULTS.gemini;
+      inpM.placeholder = defs.model;
+      inpMc.placeholder = defs.modelComplex;
+    };
+
     w.querySelector("#sx-c").onclick = () => w.remove();
     w.querySelector("#sx-s").onclick = () => { setCfg({ provider: w.querySelector("#sx-p").value, key: w.querySelector("#sx-k").value.trim(),
       model: w.querySelector("#sx-m").value.trim(), modelComplex: w.querySelector("#sx-mc").value.trim() });

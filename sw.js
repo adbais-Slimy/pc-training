@@ -1,7 +1,9 @@
-const CACHE_NAME = 'pc-training-v6';
+const CACHE_NAME = 'pc-training-v7';
 const PRECACHE_URLS = [
   './index.html',
-  './shim.js?v=2'
+  './shim.js?v=3',
+  './icon.svg',
+  './manifest.json'
 ];
 
 // Install: precache core assets

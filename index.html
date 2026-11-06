@@ -4,10 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Project Controls — 90-Day Programme</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=2"></script>
+<script src="shim.js?v=3"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -901,9 +903,23 @@ function haptic(ok){
   } catch(e){}
 }
 
+let sharedAudioCtx = null;
+function getAudioCtx(){
+  try {
+    if(!sharedAudioCtx && (window.AudioContext || window.webkitAudioContext)){
+      sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(sharedAudioCtx && sharedAudioCtx.state === 'suspended'){
+      sharedAudioCtx.resume();
+    }
+    return sharedAudioCtx;
+  } catch(e){ return null; }
+}
+
 function playTone(type){
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAudioCtx();
+    if(!ctx) return;
     const osc = ctx.createOscillator(), g = ctx.createGain();
     osc.connect(g); g.connect(ctx.destination);
     const now = ctx.currentTime;
