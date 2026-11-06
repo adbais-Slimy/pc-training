@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B2433" />
+      <stop offset="100%" stop-color="#2F5BD3" />
+    </linearGradient>
+    <linearGradient id="barGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6F93F2" />
+      <stop offset="100%" stop-color="#FFFFFF" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+  
+  <!-- App Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  
+  <!-- Subtle Grid lines -->
+  <path d="M 96 140 L 416 140 M 96 220 L 416 220 M 96 300 L 416 300 M 96 380 L 416 380" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="2" stroke-dasharray="6 6" />
+  <path d="M 160 96 L 160 416 M 256 96 L 256 416 M 352 96 L 352 416" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="2" stroke-dasharray="6 6" />
+  
+  <!-- Schedule Bar 1 -->
+  <rect x="96" y="160" width="160" height="36" rx="8" fill="#4CC282" filter="url(#shadow)" />
+  
+  <!-- Schedule Bar 2 (Critical - Red) -->
+  <rect x="216" y="238" width="180" height="36" rx="8" fill="#EE6A5E" filter="url(#shadow)" />
+  
+  <!-- Schedule Bar 3 -->
+  <rect x="140" y="316" width="140" height="36" rx="8" fill="#6F93F2" filter="url(#shadow)" />
+  
+  <!-- Milestone Diamond -->
+  <polygon points="416,256 436,236 456,256 436,276" fill="#E3A240" filter="url(#shadow)" />
+  
+  <!-- Connecting Logic link -->
+  <path d="M 256 178 L 276 178 L 276 256 L 216 256" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-opacity="0.75" />
+  
+  <!-- Badge Label: "PC" -->
+  <text x="96" y="440" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="52" fill="#FFFFFF" letter-spacing="4">PROJECT CONTROLS</text>
+</svg>
