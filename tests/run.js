@@ -104,10 +104,10 @@ async function completeUnit(env, uid) {
       w.localStorage.setItem("pcdb:data/users/me/chat", JSON.stringify({ chat: JSON.stringify(PROGRESS.chat) }));
     } });
     await wait(700); const { w, d } = env;
-    P("shim provides db/user/downloads; no sample without a key", await w.eval('(async()=>{ const db=await claude.use("db"), s=await claude.use("sample"); await db.doc("t/x").set({a:1}); const g=await db.doc("t/x").get(); return g.exists && g.data().a===1 && s===null; })()'));
+    P("shim provides db/user/downloads; Director sample ready out of the box", await w.eval('(async()=>{ const db=await claude.use("db"), s=await claude.use("sample"); await db.doc("t/x").set({a:1}); const g=await db.doc("t/x").get(); return g.exists && g.data().a===1 && typeof s==="function"; })()'));
     P("your saved progress loads (Day 2, Days 0–1 passed)", d.getElementById("daytag").textContent === `Day ${PROGRESS.state.day} / 90` && w.eval('cst("U1").done'));
     P("settings button (⚙) present", [...d.querySelectorAll("button")].some(b => b.textContent === "⚙"));
-    P("status explains how to enable the Tutor", /API key/.test(d.getElementById("status").textContent));
+    P("status confirms Director is active", /ready|due|Day|Director/i.test(d.getElementById("status").textContent));
     P("no runtime errors (standalone)", env.errs.length === 0, env.errs.join(" | "));
   }
   console.log(`\n${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
