@@ -26,7 +26,7 @@ Learn, Practice, Notes and the Site measurement track **work without any key**.
 ## What's inside
 | Path | What it is |
 |---|---|
-| `app/index.html` | The app (Learn days 0–20 + Gate 1, measurement track M1–M5, Practice, Notes, Tutor) |
+| `app/index.html` | The app (Learn days 0–20 + Gate 1, measurement track M1–M6, Practice, Notes, Tutor) |
 | `app/shim.js` | Local storage, AI provider and downloads (replaces Claude's runtime) |
 | `AGENTS.md` | Project rules for Antigravity's agent: architecture, non-negotiables, roadmap |
 | `.agents/rules/tutor-style.md` | Exactly how the AI tutor must answer you |
