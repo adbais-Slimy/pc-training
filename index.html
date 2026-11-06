@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=14"></script>
+<script src="shim.js?v=15"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -205,6 +205,7 @@ nav button{font-size:.8rem}
         <b id="offline-msg">AI Tutor usage limit or quota reached.</b>
         <p style="margin:4px 0 8px;font-size:.82rem;opacity:.9">Notebook drills, the Library and your progress still work without AI. Tap ⚙ to update your key or model.</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn" onclick="window.switchToBuiltinTutor&&window.switchToBuiltinTutor()" style="background:var(--bar);color:#fff;font-weight:700">⚡ Use Built-in Offline Tutor</button>
           <button class="btn" id="goprac">Lessons &amp; drills</button>
           <button class="btn" id="godrill">Drill my notes</button>
           <button class="btn" id="off-retry">Dismiss &amp; Retry</button>
@@ -1022,6 +1023,17 @@ function bubble(m,cls=""){
 let showAllDays=false;
 function renderChat(){
   const log=$("log"); log.innerHTML=""; let lastDay=null;
+  let curCfg = {}; try { curCfg = JSON.parse(localStorage.getItem("pc:llm")||"{}"); } catch{}
+  const isBuiltin = curCfg.provider === "builtin";
+  const banner = document.createElement("div");
+  banner.style.cssText = "margin:6px 0 10px;padding:8px 12px;border-radius:8px;font-size:.82rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;" +
+    (isBuiltin ? "background:var(--barSoft,#E8EEFA);border:1px solid var(--bar,#2F5BD3);color:var(--ink,#111)" : "background:var(--surface,#fff);border:1px solid var(--line,#CDD3CF);color:var(--muted,#5B6776)");
+  if (isBuiltin) {
+    banner.innerHTML = `<span><b>⚡ Built-in Tutor Active:</b> Standard Answers · 100% Offline · No API Key Needed</span><button type="button" class="btn" style="padding:2px 8px;font-size:.76rem" onclick="document.getElementById('btn-settings-gear')?.click()">⚙ Settings</button>`;
+  } else {
+    banner.innerHTML = `<span><b>Tutor Mode:</b> Using external API key.</span><button type="button" class="btn" style="padding:4px 10px;font-size:.78rem;background:var(--bar,#2F5BD3);color:#fff;font-weight:700;border:none;border-radius:6px;cursor:pointer" onclick="window.switchToBuiltinTutor&&window.switchToBuiltinTutor()">⚡ Switch to Built-in Tutor</button>`;
+  }
+  log.appendChild(banner);
   const cur=state.day, curIdx=chat.findIndex(m=>(m.day??-1)>=cur);
   const startAt = showAllDays||curIdx<=0 ? 0 : curIdx;
   if(startAt>0){ const b=document.createElement("button"); b.className="btn older"; b.textContent=`Show earlier days (${startAt} messages)`; b.onclick=()=>{ showAllDays=true; renderChat(); log.scrollTop=0; }; log.appendChild(b); }
@@ -1384,7 +1396,7 @@ async function send(override){
     const errBox = document.createElement("div");
     errBox.className = "rt due";
     errBox.style.cssText = "margin:8px 0;background:var(--critSoft,#FFEAEA);border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A);border-radius:10px;padding:10px 14px;font-size:.85rem";
-    errBox.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><b>AI Tutor Error:</b> ${esc(errMsg)}<br><small style="opacity:.85">Tap ⚙ (bottom right) to test your connection or update your key.</small></div><button class="btn" onclick="this.parentElement.parentElement.remove()" style="padding:2px 8px;font-size:.76rem;margin-left:8px">✕</button></div>`;
+    errBox.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><b>AI Tutor Error:</b> ${esc(errMsg)}<br><small style="opacity:.85">Tap ⚙ (bottom right) or switch to Built-in Tutor for standard answers.</small><div style="margin-top:6px"><button class="btn" onclick="window.switchToBuiltinTutor&&window.switchToBuiltinTutor()" style="background:var(--bar);color:#fff;font-weight:700;padding:4px 10px;font-size:.78rem;border:none;border-radius:6px;cursor:pointer">⚡ Switch to Built-in Tutor (No Key Needed)</button></div></div><button class="btn" onclick="this.parentElement.parentElement.remove()" style="padding:2px 8px;font-size:.76rem;margin-left:8px">✕</button></div>`;
     $("log").appendChild(errBox);
     $("log").scrollTop = $("log").scrollHeight;
     return false;
