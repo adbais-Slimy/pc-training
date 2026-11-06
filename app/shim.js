@@ -240,6 +240,136 @@
       }
     },
 
+    // Daily Briefings for Days 0 through 20 (Phase 1 Curriculum)
+    dayBriefings: {
+      0: {
+        bigPic: "A project manager manages people and day-to-day coordination; a project controls manager manages variance against an approved baseline with quantified numbers.",
+        principle: "- Planning answers: When will it be ready?\n- Controls answers: Are we on track, and what is the variance delta?\n- Decisions answers: What management action is required by when?",
+        scenario: "Your Project Director asks: 'Our site engineers track dates in Excel every day. Why do we need formal Project Controls?'",
+        vivaQ: "In two sentences, what are the three fundamental questions every Project Controls system must answer for executive leadership?"
+      },
+      1: {
+        bigPic: "A schedule is not a list of wishes on a calendar. It is a mathematical model of physical construction sequence.",
+        principle: "- An activity must have a tangible, inspectable physical finish.\n- Durations are estimated in working days based on crew productivity, not arbitrary calendar slots.\n- Relationships are based on physical dependencies (FS), not administrative convenience.",
+        scenario: "An MEP contractor submits an activity: 'Basement MEP Works — 90 days'. It has no broken-down logic or intermediate test milestones.",
+        vivaQ: "Why does an umbrella activity like 'Basement MEP' fail the site inspection test, and what are the 3 building blocks of every real schedule activity?"
+      },
+      2: {
+        bigPic: "Never do calendar date math in your head. Calculate on a ruler using marks (Mark 0 = start line), then convert to calendar dates once at the very end using the project calendar.",
+        principle: "- An activity of duration D starting at Mark S finishes at Mark S + D.\n- Calendar math hides weekends, holidays, and weather windows.\n- On a 6-day Mon–Sat calendar, 12 working days spans 14 calendar days.",
+        scenario: "An excavation activity of 12 working days starts on Monday 2 Nov (that is Day 1). The project works 6 days a week (Mon–Sat; Sundays off). A site engineer says it finishes on 14 Nov (2 + 12).",
+        vivaQ: "What is its correct calendar finish date? Count working days from start date as day 1, skipping Sundays."
+      },
+      3: {
+        bigPic: "Procurement runs on two distinct clocks: Clock 1 (Internal TAT) and Clock 2 (Vendor manufacturing, FAT, and shipping). Controlling the PO release is only half the battle.",
+        principle: "- Start from the site installation need-by date and subtract every calendar duration backward.\n- A delivery date is never a completion date.\n- When a delivery slips, you have 5 recovery levers: Expedite, Substitute, Re-sequence, Absorb, or Accept.",
+        scenario: "An Air Handling Unit (AHU) for Operation Theatre Block 2 is needed on site by 10 Jan.\n- Transit: 10 calendar days.\n- Vendor manufacturing & FAT: 70 calendar days.\n- Internal PO release TAT: 48 calendar days.",
+        vivaQ: "Backward calculate from 10 Jan: by what date must the purchase indent have been approved to prevent delaying OT commissioning? Show your calculation hops."
+      },
+      4: {
+        bigPic: "Zero float defines the critical path. But near-critical paths with small or eroding float cause 80% of project surprises.",
+        principle: "- Total Float: LS - ES = LF - EF (buffer before project completion slips).\n- Free Float: min(ES of successors) - EF (buffer before touching downstream trade).\n- Report the float erosion rate, not just the absolute level.",
+        scenario: "Activity X has Early Start 10, Early Finish 16, Late Start 14, Late Finish 20. Its dependent successor Activity Y has Early Start 18.",
+        vivaQ: "Calculate Total Float and Free Float for Activity X. If Activity X slips by 3 working days, does project completion move? Does Activity Y move?"
+      },
+      5: {
+        bigPic: "For repetitive floors in hospital towers, Line of Balance (LOB) synchronizes crew velocity (takt time) and prevents trade stacking.",
+        principle: "- The slope of the line = production rate (units/day).\n- Parallel slopes = synchronized continuous workflow without idle gaps.\n- Strict Rule: Lines on a flowline graph must never cross. A crossing line means trade clash.",
+        scenario: "Drywall framing progresses at 1 floor every 4 days. False ceiling crew works at 1 floor every 2 days and starts 2 floors behind framing.",
+        vivaQ: "Explain what happens when their flowlines intersect, and what controls decision must be taken before the false ceiling crew catches up."
+      },
+      6: {
+        bigPic: "Never credit store deliveries as construction progress. Progress is strictly installed and tested quantity divided by total BOQ quantity.",
+        principle: "- Physical progress = Installed BOQ Quantity / Total BOQ Quantity.\n- Material delivery slips belong to procurement logistics, not permanent works.\n- Materials on site may qualify for a Secured Advance under contract terms, never for construction earned value.",
+        scenario: "Electrical contractor claims 75% progress on cabling because 1,800 rm of 2,400 rm cable was issued from site stores, but site inspection shows only 1,200 rm is pulled in conduit.",
+        vivaQ: "What is the true physical progress % you report to the COO, and what do you instruct the billing team regarding their RA bill claim?"
+      },
+      7: {
+        bigPic: "You have completed the Foundation Phase. In executive reviews, every milestone date must be defended with logic, marks, and verified quantities.",
+        principle: "- A finish date without driving logic is an unanchored wish.\n- In reviews: state the driving path, the total float, and the float loss rate.\n- If a date slips, present priced mitigation options with quantified rework risks.",
+        scenario: "The Hospital Chief Operating Officer asks you to defend the project handover milestone date before the Board of Directors.",
+        vivaQ: "Summarize the 3 non-negotiable rules for defending a milestone date in an executive steering committee."
+      },
+      8: {
+        bigPic: "Primavera P6 hierarchy organizes complex projects: EPS is the corporate portfolio; OBS is human management accountability; WBS is 100% deliverable scope.",
+        principle: "- WBS elements are physical deliverables (nouns), never actions or coordination verbs.\n- The 100% Rule: WBS includes all contract scope and nothing outside it.\n- Work packages at Level 4 form assignable Control Accounts.",
+        scenario: "A planning junior creates WBS elements named 'Pour concrete', 'Install ducting', 'Coordinate drawings'.",
+        vivaQ: "Why is using verbs in WBS elements a fundamental error, and how should WBS Level 3 and Level 4 elements be correctly titled?"
+      },
+      9: {
+        bigPic: "DCMA 14 health checks ensure the schedule logic reflects physical reality without artificial masking.",
+        principle: "- Hard constraints (Must Finish On) break CPM backward-pass calculations.\n- Negative lags (leads) are strictly banned: lead is an admission that activity decomposition is incomplete.\n- Lags and hard constraints must each be <= 5% of total relationships.",
+        scenario: "A contractor uses 18 'Must Finish On' constraints and 12 negative lags (leads) to force the P6 schedule to hit contractual milestone dates.",
+        vivaQ: "Why does DCMA 14 strictly ban negative lags, and what does a hard constraint do to backward-pass float calculations?"
+      },
+      10: {
+        bigPic: "The Data Date is the frozen boundary between recorded actuals and forward forecast. Always schedule using Retained Logic.",
+        principle: "- Actuals sit to the left of the Data Date; CPM logic recalculates the remaining work to the right.\n- Retained Logic respects original logic links when out-of-sequence work occurs.\n- Progress Override distorts float and creates artificial schedule acceleration.",
+        scenario: "A subcontractor starts floor tiling before waterproofing test sign-off, resulting in out-of-sequence progress in P6.",
+        vivaQ: "Explain how Retained Logic calculates remaining duration vs Progress Override, and what action the Controls Manager must take."
+      },
+      11: {
+        bigPic: "Cost control tracks commitments at the point of PO / contract release, long before cash leaves the bank.",
+        principle: "- Budget (BAC) = approved baseline target.\n- Commitments = POs and contracts signed (future liabilities).\n- Incurred / Accruals = physical work performed to date.\n- Cash Outflow = actual disbursements.",
+        scenario: "Site accountant reports: 'We are under budget because cash outflow is only ₹20 Cr against ₹30 Cr budgeted.' Yet ₹45 Cr in POs have been signed.",
+        vivaQ: "Explain why monitoring cash outflow alone creates a false sense of security, and define the role of commitments."
+      },
+      12: {
+        bigPic: "Earned Value Management (EVM) measures cost efficiency (CPI) and schedule velocity (SPI) against verified physical work.",
+        principle: "- CV = EV - AC (> 0 favourable); SV = EV - PV (> 0 ahead).\n- CPI = EV / AC (> 1.0 under budget); SPI = EV / PV (> 1.0 ahead of plan).\n- EV is based strictly on physical installed quantities, never expenditures.",
+        scenario: "Project BAC = ₹100 Cr. At Month 6: PV = ₹50 Cr, EV = ₹40 Cr, AC = ₹48 Cr.",
+        vivaQ: "Calculate CV, SV, CPI, and SPI. State whether the project is over/under budget and ahead/behind schedule in executive terms."
+      },
+      13: {
+        bigPic: "EAC predicts where the project will finish financially before contingency reserves run out.",
+        principle: "- Typical variance EAC = BAC / CPI.\n- Compounded variance EAC = AC + (BAC - EV) / (CPI * SPI).\n- TCPI = (BAC - EV) / (BAC - AC). If TCPI > 1.15, finishing on budget is statistically improbable.",
+        scenario: "BAC = ₹100 Cr, EV = ₹40 Cr, AC = ₹48 Cr (CPI = 0.833). Client demands project finish within the original ₹100 Cr budget.",
+        vivaQ: "Calculate the typical EAC (BAC / CPI). Then calculate the To-Complete Performance Index (TCPI). Is finishing within ₹100 Cr realistic?"
+      },
+      14: {
+        bigPic: "Gate 2 integrates schedule driving paths with EVM cost performance and procurement lead times.",
+        principle: "- A high SPI does not protect against a critical path delay if non-critical work was front-loaded.\n- True project controls links the P6 schedule, the Cost Breakdown Structure (CBS), and procurement registers.\n- Correlate SPI with Total Float on the driving sequence.",
+        scenario: "Executive steering committee asks for a unified status report on the 500-bed hospital project.",
+        vivaQ: "How do you explain a project that has an SPI of 1.05 but is 20 calendar days late on the critical hospital OT handover path?"
+      },
+      15: {
+        bigPic: "Long-lead equipment (Chillers, DG sets, Medical Gas LMO tank, MRI) controls hospital commissioning.",
+        principle: "- Long-lead items require backward calculation from installation need-date.\n- Factory Acceptance Testing (FAT), shipping, port customs, and rigging access must have explicit durations.\n- Track vendor engineering submittals before manufacturing begins.",
+        scenario: "Chiller manufacturing lead time is 16 weeks, transit 2 weeks, installation 3 weeks, testing 2 weeks. Hospital opening is 1 June.",
+        vivaQ: "Backward calculate the latest date the PO must be placed with the manufacturer to hit 1 June opening."
+      },
+      16: {
+        bigPic: "Deterministic single-date schedules are a statistical illusion. P80 confidence accounts for path merge bias.",
+        principle: "- 3-point duration estimates (Optimistic, Most Likely, Pessimistic) model uncertainty.\n- Merge bias: when multiple parallel paths meet, the milestone slips to the worst-case path delay.\n- Commit contracts at P80; manage internal teams to P50.",
+        scenario: "Three parallel critical paths merge at the Operation Theatre commissioning milestone. Each has a 70% probability of finishing on time.",
+        vivaQ: "What is the probability that all three finish on time without delay? Explain why deterministic CPM underestimates milestone risk."
+      },
+      17: {
+        bigPic: "Under SCL Delay Protocol, concurrent delay entitles the contractor to an EOT (relieving LDs) but zero prolongation costs.",
+        principle: "- Float belongs to the project until consumed by whichever party slips first.\n- Employer delay + Contractor delay running concurrently = EOT granted, prolongation cost denied.\n- Under FIDIC Clause 20.1, failure to give notice within 28 days bars the claim completely.",
+        scenario: "Client delayed OT civil foundation by 30 days. Concurrently, contractor had zero ducting labor on site for 25 days due to internal wage disputes.",
+        vivaQ: "As Controls Manager, what is your contractual assessment of the contractor's claim for 30 days EOT and 30 days prolongation expenses?"
+      },
+      18: {
+        bigPic: "Scope creep without Change Request Notices (CRNs) destroys project margins and erodes schedule float.",
+        principle: "- Site instructions must never be executed on verbal requests.\n- All variations require evaluated time impact (days) and cost impact (₹).\n- Baseline dates are frozen; they are amended only when formal variations or approved EOTs change contractual scope.",
+        scenario: "Head of Surgery asks site engineers to add 4 extra medical gas pendant outlets in each Operation Theatre.",
+        vivaQ: "What is the exact 4-step change control process before any site work commences on the surgeon's request?"
+      },
+      19: {
+        bigPic: "Executives need decisions, driving paths, and cost exposures, not 1,000-line activity printouts.",
+        principle: "- Executive reporting answers: Where are we, where should we be, why the gap, impact (days first, then ₹), forecast, risks, recovery options, decision needed by when.\n- Focus on the driving critical path and near-critical float erosion velocity.",
+        scenario: "You have 5 minutes to brief the Hospital COO on the monthly project controls status.",
+        vivaQ: "State the 8 essential elements that must fit on the executive one-page dashboard."
+      },
+      20: {
+        bigPic: "Gate 3 Final Review: End-to-end mastery across planning, P6, EVM, procurement, delay analysis, and commercial defense.",
+        principle: "- Technical credibility comes from knowing the driving logic behind every date.\n- Present with confidence: state the physical fact, the contractual clause, and the recommended management action.\n- Stand firm on verified quantities and contemporaneous records.",
+        scenario: "You are seated before the Board of Directors for the final Controls Manager qualification.",
+        vivaQ: "Deliver your opening executive statement on how you ensure transparent project controls, protect project cash, and defend milestone dates."
+      }
+    },
+
     // Comprehensive Technical Knowledge Dictionary
     topics: [
       {
@@ -864,30 +994,31 @@ STATE>>>`;
       const uId = "U" + day;
       const unitData = BUILTIN_KNOWLEDGE.units[uId];
       const title = unitData ? unitData.title : `Core Curriculum Focus (Day ${day})`;
+      const b = BUILTIN_KNOWLEDGE.dayBriefings[day] || {
+        bigPic: "In our hospital projects, coordination without controls is chaos. You must be able to justify every milestone date to the COO with numbers, logic, and driving paths.",
+        principle: "- Calculate in marks on a ruler, then convert to dates once, at the end, using the approved working calendar.\n- Always specify what a date is the date OF (delivery, installation start, hydro-test, or handover).\n- A delivery date is never a completion date.",
+        scenario: "An Air Handling Unit (AHU) for Operation Theatre Block 2 is needed on site by 10 Jan.\n- Transit: 10 calendar days.\n- Vendor manufacturing & testing: 70 calendar days.\n- Internal PO release TAT: 48 calendar days.",
+        vivaQ: "Backward calculate from 10 Jan: by what date must the purchase indent have been approved to prevent delaying OT commissioning? Show your calculation hops."
+      };
 
       return `### Day ${day}: Director's Morning Briefing
 
 **Welcome to Day ${day} · ${title}**
 
 **1. The Big Picture:**
-In our hospital projects, coordination without controls is chaos. You must be able to justify every milestone date to the COO with numbers, logic, and driving paths.
+${b.bigPic}
 
 **2. Core Principle for Day ${day}:**
-- Calculate in marks on a ruler, then convert to dates **once**, at the end, using the approved working calendar.
-- Always specify what a date is the date OF (delivery, installation start, hydro-test, or handover).
-- A delivery date is never a completion date.
+${b.principle}
 
 **3. Hospital Case Scenario:**
-An Air Handling Unit (AHU) for Operation Theatre Block 2 is needed on site by 10 Jan.
-- Transit: 10 calendar days.
-- Vendor manufacturing & testing: 70 calendar days.
-- Internal PO release TAT: 48 calendar days.
+${b.scenario}
 
 **4. Viva Question for You:**
-*Backward calculate from 10 Jan: by what date must the purchase indent have been approved to prevent delaying OT commissioning? Show your calculation hops.*
+*${b.vivaQ}*
 
 <<<STATE
-{"day":${day},"phase":"Phase 1: Foundation, planning & scheduling","module":"Day ${day}: ${title}","objective":"Master calculation hops and need-by dates","step":"teach","awaiting_answers":true,"question_id":"D${day}-Q1"}
+{"day":${day},"phase":"Phase 1: Foundation, planning & scheduling","module":"Day ${day}: ${title}","objective":"Master Day ${day} core competencies","step":"teach","awaiting_answers":true,"question_id":"D${day}-Q1"}
 STATE>>>`;
     }
 
@@ -1024,6 +1155,77 @@ STATE>>>`;
       }
     }
     const lowerUser = userText.toLowerCase();
+
+    // Context A1: Day 2 Calendar Date Check (D2-Q1)
+    if (/D2-Q1|excavation activity of 12 working days starts on Monday 2 Nov/i.test(lastAssistantText)) {
+      const mentions14Nov = /14\s*nov|saturday|sat|14th\s*nov/i.test(lowerUser);
+      return `### 📅 Director's Evaluation — Calendar Working Days Calculation
+
+${mentions14Nov ? `**✓ Correct Finish Date: Saturday 14 November**
+You correctly counted working days on the project calendar skipping Sunday!` : `**🔍 Calendar Conversion Hop Check:**
+- Day 1: Mon 2 Nov, Day 2: Tue 3 Nov, Day 3: Wed 4 Nov, Day 4: Thu 5 Nov, Day 5: Fri 6 Nov, Day 6: Sat 7 Nov.
+- **Sun 8 Nov is skipped** (non-working day).
+- Day 7: Mon 9 Nov, Day 8: Tue 10 Nov, Day 9: Wed 11 Nov, Day 10: Thu 12 Nov, Day 11: Fri 13 Nov, Day 12: **Sat 14 Nov**.`}
+
+**🎯 Why This Distinguishes a Controls Manager from a Site Junior:**
+- Rookie engineers calculate $2 + 12 = 14$ and think it finishes on the 14th without knowing whether Sunday was counted.
+- Here, 12 working days spans **13 calendar days** (finish on 14 Nov). On a 5-day calendar, it would have spanned **16 calendar days** (finish on 17 Nov).
+
+**Executive Phrasing:**
+> *"Never do calendar date math in your head. Calculate marks on a ruler and convert to calendar dates once at the end using the verified working calendar."*
+
+<<<STATE
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"cal-d2","score":${mentions14Nov ? 96 : 88},"confidence":4}],"checklist":[{"domain":"PLANNING & SCHEDULING","item":"Calendars","status":"competent","level":"COMPETENT","score":${mentions14Nov ? 96 : 88},"evidence":"Calculated 12 working days skipping non-working Sundays per approved calendar."}]}
+STATE>>>`;
+    }
+
+    // Context A2: Day 4 Float & Successor Slip Check (D4-Q1)
+    if (/D4-Q1|Activity X has Early Start 10.*Early Finish 16/i.test(lastAssistantText)) {
+      const mentionsTF4 = /\btf\b.*4|total float.*4|\b4\b/i.test(lowerUser);
+      const mentionsFF2 = /\bff\b.*2|free float.*2|\b2\b/i.test(lowerUser);
+      return `### ⏱ Director's Evaluation — Total Float & Free Float Mechanics
+
+**1. Float Formulas Applied:**
+- $\\text{Total Float (TF)} = LS - ES = 14 - 10 =$ **4 working days**.
+- $\\text{Free Float (FF)} = \\min(ES_Y) - EF_X = 18 - 16 =$ **2 working days**.
+${mentionsTF4 && mentionsFF2 ? "✓ Both float values calculated accurately!" : ""}
+
+**2. Impact of 3-Day Slip on Activity X:**
+- **Project Completion:** Does **NOT** move, because the slip of 3 days is less than the Total Float of 4 days (1 day of buffer remains).
+- **Successor Activity Y:** **DOES move by 1 day!** Because the slip of 3 days exceeds Activity X's Free Float of 2 days, Activity Y's Early Start is pushed from Mark 18 to Mark 19.
+
+**Executive Phrasing:**
+> *"Total Float protects the project completion milestone; Free Float protects the immediate downstream trade. Consuming free float pushes the successor without delaying the project."*
+
+<<<STATE
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"float-d4","score":${mentionsTF4 && mentionsFF2 ? 96 : 90},"confidence":5}],"checklist":[{"domain":"PLANNING & SCHEDULING","item":"Total Float","status":"competent","level":"COMPETENT","score":${mentionsTF4 && mentionsFF2 ? 96 : 90},"evidence":"Demonstrated mastery of TF (4d), FF (2d), and downstream trade impact."}]}
+STATE>>>`;
+    }
+
+    // Context A3: Day 12 EVM Performance Indices Check (D12-Q1)
+    if (/D12-Q1|BAC = ₹?100 Cr.*PV = ₹?50 Cr.*EV = ₹?40 Cr/i.test(lastAssistantText)) {
+      const mentionsCPI = /0\.83|83/i.test(lowerUser);
+      const mentionsSPI = /0\.80|0\.8|80/i.test(lowerUser);
+      return `### 📊 Director's Evaluation — EVM Indices & Health Assessment
+
+**1. Core Variance Calculations:**
+- $\\text{Cost Variance (CV)} = EV - AC = 40 - 48 = -₹8\\text{ Cr}$ (Cost overrun).
+- $\\text{Schedule Variance (SV)} = EV - PV = 40 - 50 = -₹10\\text{ Cr}$ (Behind schedule).
+- $\\text{Cost Performance Index (CPI)} = \\frac{EV}{AC} = \\frac{40}{48} = \\mathbf{0.833}$. ${mentionsCPI ? "✓ Correct!" : ""}
+- $\\text{Schedule Performance Index (SPI)} = \\frac{EV}{PV} = \\frac{40}{50} = \\mathbf{0.800}$. ${mentionsSPI ? "✓ Correct!" : ""}
+
+**2. The Executive Briefing to the COO:**
+- We are earning only **83 paise of physical value for every rupee spent**.
+- We are progressing at only **80% of our planned baseline velocity**.
+- The project is concurrently **over budget and behind schedule**.
+
+**Executive Phrasing:**
+> *"With an SPI of 0.80 and CPI of 0.83, our delay is compounding cost overruns. We must arrest trade productivity loss on the critical path before contingency is fully depleted."*
+
+<<<STATE
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"evm-d12","score":${mentionsCPI && mentionsSPI ? 96 : 90},"confidence":5}],"checklist":[{"domain":"EVM","item":"CPI & SPI interpretation","status":"competent","level":"COMPETENT","score":${mentionsCPI && mentionsSPI ? 96 : 90},"evidence":"Calculated CPI (0.833) and SPI (0.800) and evaluated dual cost/schedule overrun."}]}
+STATE>>>`;
+    }
 
     // Context A: Answering Morning Briefing AHU Procurement Calculation
     if (/Air Handling Unit.*10 Jan|backward calculate.*10 Jan|D\d+-Q1/i.test(lastAssistantText)) {
