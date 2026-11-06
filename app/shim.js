@@ -82,27 +82,6 @@
     if (name === "sample") { const c = getCfg(); return c.provider && c.key ? sample : null; }
     return null; } };
 
-  // ---------- auto-restore: seed localStorage from auto-restore.json on first visit ----------
-  // Runs once silently. If the user already has progress (any pcdb: state key) it does nothing.
-  (async function autoRestore(){
-    try {
-      // Mirror user.id() so we write to the same key the app will read.
-      let id = LS.getItem("pc:uid");
-      if (!id) { id = "local_" + Math.random().toString(36).slice(2, 10); LS.setItem("pc:uid", id); }
-      const stateKey = "pcdb:data/users/" + id + "/state";
-      const chatKey  = "pcdb:data/users/" + id + "/chat";
-      if (LS.getItem(stateKey)) return; // already have progress — leave it alone
-      const r = await fetch("auto-restore.json");
-      if (!r.ok) return;
-      const j = await r.json();
-      if (!j || !j.state || !Array.isArray(j.chat)) return;
-      // Store in the same shape save() uses: { state: "<json string>" } / { chat: "<json string>" }
-      LS.setItem(stateKey, JSON.stringify({ state: JSON.stringify(j.state) }));
-      LS.setItem(chatKey,  JSON.stringify({ chat:  JSON.stringify(j.chat)  }));
-      console.info("[pc-training] Auto-restored Day-2 progress from auto-restore.json");
-    } catch(_) { /* silent — missing file or quota error */ }
-  })();
-
   // ---------- theme persistence ----------
   const savedTheme = LS.getItem("pc:theme");
   if (savedTheme === "light" || savedTheme === "dark") document.documentElement.setAttribute("data-theme", savedTheme);
