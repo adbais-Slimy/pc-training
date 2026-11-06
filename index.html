@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=9"></script>
+<script src="shim.js?v=10"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -1374,12 +1374,19 @@ async function send(override){
     renderAll(); if(state.day!==dayBefore){ showAllDays=false; renderChat(); } await save(); return true;
   }catch(e){
     pend.remove(); chat.pop(); $("log").lastChild?.remove(); if(!override){ $("box").value=text; autoGrow(); }
+    const errMsg = e?.message || {not_granted:"API key rejected or missing. Tap ⚙ to verify.",rate_limited:"Usage limit or insufficient credits."}[e?.code]||"The Tutor couldn't reply. Your message is back in the box.";
     if(e?.code==="rate_limited"){
       const prov = (window.localStorage ? JSON.parse(localStorage.getItem("pc:llm")||"{}").provider : "") || "AI";
-      if($("offline-msg")) $("offline-msg").textContent = `${prov.toUpperCase()} quota or rate limit reached: ${e?.message || "Check your credit balance."}`;
+      if($("offline-msg")) $("offline-msg").textContent = `${prov.toUpperCase()} quota or rate limit reached: ${errMsg}`;
       setOffline(true); saveBoxDraft();
     }
-    setStatus(e?.message || {not_granted:"API key rejected or missing. Tap ⚙ to verify.",rate_limited:"Usage limit or insufficient credits."}[e?.code]||"The Tutor couldn't reply. Your message is back in the box.");
+    setStatus(errMsg);
+    const errBox = document.createElement("div");
+    errBox.className = "rt due";
+    errBox.style.cssText = "margin:8px 0;background:var(--critSoft,#FFEAEA);border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A);border-radius:10px;padding:10px 14px;font-size:.85rem";
+    errBox.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><b>AI Tutor Error:</b> ${esc(errMsg)}<br><small style="opacity:.85">Tap ⚙ (bottom right) to test your connection or update your key.</small></div><button class="btn" onclick="this.parentElement.parentElement.remove()" style="padding:2px 8px;font-size:.76rem;margin-left:8px">✕</button></div>`;
+    $("log").appendChild(errBox);
+    $("log").scrollTop = $("log").scrollHeight;
     return false;
   }finally{ busy=false; updateSend(); }
 }
