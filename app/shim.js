@@ -168,9 +168,20 @@
       const theme = w.querySelector("#sx-t").value; if (theme === "auto") LS.removeItem("pc:theme"); else LS.setItem("pc:theme", theme);
       location.reload(); };
   }
-  document.addEventListener("DOMContentLoaded", () => {
-    const b = document.createElement("button"); b.textContent = "⚙"; b.title = "Tutor AI settings"; b.setAttribute("aria-label", "Tutor AI settings");
-    b.style.cssText = "position:fixed;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:40;width:40px;height:40px;border-radius:20px;border:1px solid #8884;background:var(--surface,#fff);font-size:18px";
-    b.onclick = panel; document.body.appendChild(b);
-  });
+  function addSettingsBtn() {
+    if (document.getElementById("btn-settings-gear")) return;
+    const b = document.createElement("button");
+    b.id = "btn-settings-gear";
+    b.textContent = "⚙";
+    b.title = "Tutor AI settings";
+    b.setAttribute("aria-label", "Tutor AI settings");
+    b.style.cssText = "position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;width:40px;height:40px;border-radius:20px;border:1px solid var(--line,#8884);background:var(--surface,#fff);color:var(--ink,#111);font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer";
+    b.onclick = panel;
+    document.body.appendChild(b);
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", addSettingsBtn);
+  } else {
+    addSettingsBtn();
+  }
 })();

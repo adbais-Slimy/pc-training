@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=7"></script>
+<script src="shim.js?v=8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -896,8 +896,8 @@ const MASTER = (() => {
 })();
 const $=id=>document.getElementById(id);
 const key=(d,i)=>(d+"::"+i).toLowerCase();
-const today=()=>new Date().toISOString().slice(0,10);
-const addDays=n=>{ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); };
+const today=()=>{ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+const addDays=n=>{ const d=new Date(); d.setDate(d.getDate()+n); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
 const esc=s=>{ const d=document.createElement("div"); d.textContent=String(s??""); return d.innerHTML; };
 const fresh=()=>({v:3, course:{}, day:0, phase:"Phase 1: Foundation, planning & scheduling", module:"Day 0: How you'll learn", objective:"Understand how the course works", awaiting_answers:false, step:"teach", question_id:"", attempts:0,
   items:{}, domain_scores:{}, calib:[], reviews:{}, parking:[], gate:"Diagnostic in progress", note:"", bank:{}, selfdrill:{}, sr:{}, practice:[], patterns:{}, deliverables:{}, weekly:[], exam:false, closed:false, close_summary:"", turns_today:0, turns_date:today()});
@@ -959,9 +959,10 @@ function playTone(type){
 }
 
 function md(s){
+  if(!s) return "";
   let html;
-  if(window.marked&&window.DOMPurify) html=DOMPurify.sanitize(marked.parse(s,{breaks:true}));
-  else { const d=document.createElement("div"); d.textContent=s; html=`<div style="white-space:pre-wrap">${d.innerHTML}</div>`; }
+  if(window.marked&&window.DOMPurify) html=DOMPurify.sanitize(marked.parse(String(s),{breaks:true}));
+  else { const d=document.createElement("div"); d.textContent=String(s); html=`<div style="white-space:pre-wrap">${d.innerHTML}</div>`; }
   const w=document.createElement("div"); w.innerHTML=html;
   w.querySelectorAll("table").forEach(t=>{ const d=document.createElement("div"); d.className="tw"; t.replaceWith(d); d.appendChild(t); });
   return w.innerHTML;
@@ -1146,9 +1147,10 @@ function renderProg(){
   $("exp").onclick=exportData; $("rst").onclick=resetAll; $("pack").onclick=sendPack;
   $("restore").onchange=async e=>{ const f=e.target.files[0]; if(!f) return;
     try{ const j=JSON.parse(await f.text()); if(!j.state||!Array.isArray(j.chat)) throw 0;
-      if(!confirm(`Restore the backup from ${String(j.exported||"").slice(0,10)}? Your current progress will be replaced.`)) return;
+      if(!confirm(`Restore the backup from ${String(j.exported||"").slice(0,10)}? Your current progress will be replaced.`)){ e.target.value = ""; return; }
       state=migrate(j.state); chat=j.chat; renderAll(); renderChat(); await save(); setStatus("Backup restored."); tab("chat"); }
-    catch{ setStatus("That file isn't a backup from this app."); } };
+    catch{ setStatus("That file isn't a backup from this app."); }
+    finally{ e.target.value = ""; } };
 }
 
 // ---------- library ----------
@@ -1231,7 +1233,16 @@ async function save(){
     let keep=chat, body=JSON.stringify(keep);
     while(body.length>200000&&keep.length>10){ keep=keep.slice(10); body=JSON.stringify(keep); }
     const overflow=chat.slice(0,chat.length-keep.length);
-    if(overflow.length){ await db.doc(`${paths().base}/archive_${Date.now()}`).set({chat:JSON.stringify(overflow)}); chat=keep; }
+    if(overflow.length){
+      await db.doc(`${paths().base}/archive_${Date.now()}`).set({chat:JSON.stringify(overflow)});
+      chat=keep;
+      try{
+        const allKeys = Object.keys(localStorage).filter(k => k.includes("archive_"));
+        if(allKeys.length > 3){
+          allKeys.sort().slice(0, allKeys.length - 3).forEach(k => localStorage.removeItem(k));
+        }
+      }catch{}
+    }
     await db.doc(paths().c).set({chat:body});
   }catch(e){ setStatus("Progress didn't save this turn. It will retry on your next message."); }
 }
@@ -2937,16 +2948,22 @@ function renderUnit(w){
   const next=$("u-next"), gate=(ok,label)=>{ next.disabled=!ok; if(label) next.textContent=label; };
   next.onclick=()=>{ if(s.screen<u.screens.length-1){ s.screen++; save(); renderLearn(); w.parentElement.scrollTop=0; } };
 
-  // Swipe support for unit navigation
-  let touchStartX = null;
-  w.ontouchstart = e => { if(e.touches.length === 1) touchStartX = e.touches[0].clientX; };
+  // Swipe support for unit navigation (ensures swipe is horizontal, not vertical scroll)
+  let touchStartX = null, touchStartY = null;
+  w.ontouchstart = e => {
+    if(e.touches.length === 1){
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  };
   w.ontouchend = e => {
-    if(touchStartX == null || e.changedTouches.length === 0) return;
-    const diff = e.changedTouches[0].clientX - touchStartX;
-    touchStartX = null;
-    if(Math.abs(diff) > 55){
-      if(diff < 0 && !next.disabled){ next.click(); }
-      else if(diff > 0 && s.screen > 0){ $("u-back").click(); }
+    if(touchStartX == null || touchStartY == null || e.changedTouches.length === 0) return;
+    const diffX = e.changedTouches[0].clientX - touchStartX;
+    const diffY = e.changedTouches[0].clientY - touchStartY;
+    touchStartX = null; touchStartY = null;
+    if(Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY) * 1.4){
+      if(diffX < 0 && !next.disabled){ next.click(); }
+      else if(diffX > 0 && s.screen > 0){ $("u-back").click(); }
     }
   };
   const body=$("u-body"), key=String(s.screen);
@@ -3037,8 +3054,6 @@ function renderUnitDone(body,u,s,gate){
     if(u.card){ state.bank[u.card.id]={...u.card,day:u.day??state.day,items:[]}; srOf(u.card.id); }
     if(!u.track){ const nx=UNITS.filter(x=>!x.track)[UNITS.filter(x=>!x.track).indexOf(u)+1]; state.day=Math.max(state.day, u.day+1); state.module=nx?`Day ${nx.day}: ${nx.title}`:"Next block"; }
     renderAll(); save();
-    // Auto-backup: silently offer a download after completing a main day
-    if(!u.track && window.claude){ (async()=>{ try{ const dl=await claude.use("downloads"); if(dl) await dl.save({filename:`pc-training-backup-day${state.day}-${today()}.json`, data:JSON.stringify({exported:new Date().toISOString(),state,chat},null,2)}); }catch{} })(); }
   }
   const nx=u.track?UNITS.filter(x=>x.track===u.track)[UNITS.filter(x=>x.track===u.track).indexOf(u)+1]:UNITS.filter(x=>!x.track)[UNITS.filter(x=>!x.track).indexOf(u)+1];
   body.innerHTML=ok?`<div class="drill" style="border-color:var(--ok);border-width:2px"><div class="q">✓ ${u.track?u.id:"Day "+u.day} complete</div>
@@ -3703,17 +3718,23 @@ function wireDrill(){
   $("dr-end")&&($("dr-end").onclick=()=>{ drillQ=[]; renderBook(); });
   const cardEl = $("bookwrap").querySelector(".drill");
   if(cardEl){
-    let tX = null;
-    cardEl.ontouchstart = e => { if(e.touches.length === 1) tX = e.touches[0].clientX; };
+    let tX = null, tY = null;
+    cardEl.ontouchstart = e => {
+      if(e.touches.length === 1){
+        tX = e.touches[0].clientX;
+        tY = e.touches[0].clientY;
+      }
+    };
     cardEl.ontouchend = e => {
-      if(tX == null || e.changedTouches.length === 0) return;
-      const diff = e.changedTouches[0].clientX - tX;
-      tX = null;
-      if(Math.abs(diff) > 55){
+      if(tX == null || tY == null || e.changedTouches.length === 0) return;
+      const diffX = e.changedTouches[0].clientX - tX;
+      const diffY = e.changedTouches[0].clientY - tY;
+      tX = null; tY = null;
+      if(Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY) * 1.4){
         const ansOn = $("dr-ans") && $("dr-ans").classList.contains("on");
         if(!ansOn && $("dr-show")){ $("dr-show").click(); }
         else if(ansOn){
-          const btn = diff < 0 ? $("bookwrap").querySelector('[data-r="got"]') : $("bookwrap").querySelector('[data-r="missed"]');
+          const btn = diffX < 0 ? $("bookwrap").querySelector('[data-r="got"]') : $("bookwrap").querySelector('[data-r="missed"]');
           if(btn) btn.click();
         }
       }
@@ -3775,6 +3796,7 @@ async function resetAll(){
   state=fresh(); chat=[{role:"assistant",content:SEED,t:Date.now(),day:0}]; renderAll(); renderChat(); await save(); tab("chat");
 }
 function tab(v){
+  if(v !== "prac" && drillTimerInterval){ clearInterval(drillTimerInterval); drillTimerInterval = null; }
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
   if(v==="chat") $("log").scrollTop=$("log").scrollHeight;
