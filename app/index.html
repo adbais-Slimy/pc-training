@@ -892,7 +892,46 @@ const fresh=()=>({v:3, course:{}, day:0, phase:"Phase 1: Foundation, planning & 
   items:{}, domain_scores:{}, calib:[], reviews:{}, parking:[], gate:"Diagnostic in progress", note:"", bank:{}, selfdrill:{}, sr:{}, practice:[], patterns:{}, deliverables:{}, weekly:[], exam:false, closed:false, close_summary:"", turns_today:0, turns_date:today()});
 let state=fresh(), chat=[{role:"assistant",content:SEED,t:Date.now(),day:0}];
 let db=null, sample=null, uid=null, conf=null, pasted=false, busy=false;
-let libFilter="week", bookFilter="";
+let libFilter="week", bookFilter="", drillTimerActive=false, drillTimerSec=0, drillTimerInterval=null;
+
+// ---- Feedback utilities: Haptics & Audio ----
+function haptic(ok){
+  try {
+    if(navigator.vibrate) navigator.vibrate(ok ? 40 : [50, 40, 50]);
+  } catch(e){}
+}
+
+function playTone(type){
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    const now = ctx.currentTime;
+    if(type === "pass" || type === "correct"){
+      osc.frequency.setValueAtTime(523.25, now); // C5
+      osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+      osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+      g.gain.setValueAtTime(0.12, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+      osc.start(now); osc.stop(now + 0.45);
+    } else if(type === "done"){
+      osc.frequency.setValueAtTime(440, now); // A4
+      osc.frequency.setValueAtTime(554.37, now + 0.12); // C#5
+      osc.frequency.setValueAtTime(659.25, now + 0.24); // E5
+      osc.frequency.setValueAtTime(880, now + 0.36); // A5
+      g.gain.setValueAtTime(0.15, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+      osc.start(now); osc.stop(now + 0.6);
+    } else if(type === "miss"){
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.setValueAtTime(196, now + 0.1);
+      g.gain.setValueAtTime(0.1, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.start(now); osc.stop(now + 0.25);
+    }
+  } catch(e){}
+}
 
 function md(s){
   let html;
@@ -1022,6 +1061,32 @@ function renderProg(){
    <div><b style="color:${gap==null?'inherit':gap>10?'var(--crit)':gap<-10?'var(--warn)':'var(--ok)'}">${gap==null?"—":(gap>0?"+":"")+gap}</b><span>${gap==null?"Calibration after 3 scored answers":gap>10?"Overconfident: your confidence runs above your scores":gap<-10?"Underconfident":"Well calibrated"}</span></div>
    <div><b>${Object.keys(state.bank).length}</b><span>Notebook cards</span></div></div>`;
   h+=`<h2 class="sec">Final rating weights</h2><table class="wt">${Object.entries(WEIGHTS).map(([k,v])=>{ const s=state.domain_scores[k]; return `<tr><td>${esc(k)} <small style="color:var(--muted)">${v}%</small><div class="m"><i style="width:${s||0}%"></i></div></td><td>${s==null?"—":s}</td></tr>`; }).join("")}</table>`;
+
+  // Study Activity Calendar Heatmap (90 days)
+  const actDays = new Set();
+  (state.practice||[]).forEach(x => { if(x.t) actDays.add(new Date(x.t).toISOString().slice(0,10)); });
+  UNITS.forEach(u => { const s = cst(u.id); if(s.doneAt) actDays.add(s.doneAt); });
+  chat.forEach(m => { if(m.t) actDays.add(new Date(m.t).toISOString().slice(0,10)); });
+  if(state.turns_date) actDays.add(state.turns_date);
+
+  let gridSvg = "";
+  const nowD = new Date();
+  for(let col = 0; col < 13; col++){
+    for(let row = 0; row < 7; row++){
+      const dayOffset = (12 - col) * 7 + (6 - row);
+      const d = new Date(nowD.getTime() - dayOffset * 864e5).toISOString().slice(0,10);
+      const active = actDays.has(d);
+      gridSvg += `<rect x="${col * 14}" y="${row * 14}" width="11" height="11" rx="2" fill="${active ? 'var(--ok)' : 'var(--barSoft)'}"/>`;
+    }
+  }
+  h += `<h2 class="sec">Study streak &amp; activity (last 90 days)</h2>
+    <div class="card" style="padding:12px 14px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <small style="color:var(--muted)">${actDays.size} active days logged</small>
+        <span style="font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:4px">Less <i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--barSoft)"></i> <i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--ok)"></i> More</span>
+      </div>
+      <svg viewBox="0 0 182 98" style="width:100%;max-width:320px;height:auto;display:block">${gridSvg}</svg>
+    </div>`;
   const pats=Object.entries(state.patterns||{}).sort((a,b)=>b[1].count-a[1].count);
   if(pats.length){ h+=`<h2 class="sec">Your error patterns</h2>`+pats.map(([,x])=>`<div class="pat"><b>${esc(x.name)}</b> <small>seen ${x.count}×${x.last!=null?` · last on ${x.last>0?"Day "+x.last:"diagnostic"}`:""}</small><br>${esc(x.fix)}</div>`).join(""); }
   const DLV=["Project Controls Framework (hospital)","Planning basis + schedule logic (hospital block)","P6: build & update a sample schedule","Baseline vs current analysis","Cost-control model","EVM analysis","Procurement control dashboard","Cash-flow forecast + risk register","Delay analysis + recovery programme","Change register","Integrated controls dashboard","Monthly report + executive presentation"];
@@ -1570,6 +1635,30 @@ function renderPractice(){
     <div class="btnrow">${[1,2,3].map(l=>unitDone(GUIDED_UNIT[l])?`<button class="btn" data-gl="${l}" style="flex:1">Level ${l}${gbest(l)!=null?` · best ${gbest(l)}%`:""}</button>`:`<button class="btn" disabled style="flex:1">Level ${l} 🔒 ${unitTitle(GUIDED_UNIT[l])}</button>`).join("")}</div>
     <p style="color:var(--muted);font-size:.8rem;margin:8px 0 0">Level 1: finish-to-start · Level 2: with lags · Level 3: with SS links. Move up after three runs at 90%+.</p></div>`;
   h+=`<div class="score"><div><b>${last7.length}</b><span>drills this week</span></div><div><b>${last7.length?Math.round(last7.reduce((a,x)=>a+x.score,0)/last7.length):"—"}</b><span>average score this week</span></div></div>`;
+
+  // Performance Trend Line / Graph
+  if(log.length > 1){
+    const recent = log.slice(-15);
+    const pts = recent.map((x,i)=>{
+      const px = 10 + (i / (recent.length - 1)) * 280;
+      const py = 50 - (Math.max(0, Math.min(100, x.score)) / 100) * 40;
+      return `${px},${py}`;
+    });
+    h += `<div class="card" style="padding:10px 14px;margin-bottom:14px">
+      <b style="font-size:.9rem">Performance trend (last ${recent.length} drills)</b>
+      <svg viewBox="0 0 300 65" style="width:100%;height:65px;margin-top:6px;display:block">
+        <line x1="10" y1="10" x2="290" y2="10" stroke="var(--line)" stroke-dasharray="3"/>
+        <line x1="10" y1="50" x2="290" y2="50" stroke="var(--line)"/>
+        <polyline fill="none" stroke="var(--bar)" stroke-width="2.5" points="${pts.join(" ")}"/>
+        ${recent.map((x,i)=>{
+          const px = 10 + (i / (recent.length - 1)) * 280;
+          const py = 50 - (Math.max(0, Math.min(100, x.score)) / 100) * 40;
+          return `<circle cx="${px}" cy="${py}" r="3" fill="${x.score>=80?'var(--ok)':'var(--crit)'}"/>`;
+        }).join("")}
+      </svg>
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted)"><span>Earlier</span><span>Latest: ${recent[recent.length-1].score}%</span></div>
+    </div>`;
+  }
   const open=DRILLS.filter(d=>practiceUnlocked(d.week,d.id));
   const rec=open.map(d=>{ const xs=log.filter(x=>x.type===d.id).slice(-3); return {d, s:xs.length?xs.reduce((a,x)=>a+x.score,0)/xs.length:-1}; }).sort((a,b)=>a.s-b.s)[0];
   if(rec) h+=`<div class="rt due"><div><b>Do this next:</b> ${esc(rec.d.title)}<br><small>${rec.s<0?"Not tried yet":`Your last scores average ${Math.round(rec.s)}`}</small></div><button class="btn" data-d="${rec.d.id}">Start</button></div>`;
@@ -1656,11 +1745,18 @@ function solution(q){
 const LABELS={pf:"Project duration",crit:"Critical path",ex:"Ex-works date",po:"PO date",ind:"Indent date",margin:"Days of margin",last:"Last loss",avg:"Average loss",left:"Updates left",acc:"Accelerating",overall:"Overall %",best:"Biggest-weight package",claim:"Claim %",inst:"Installed %",tested:"Tested %",over:"Over-claim"};
 function renderDrill(w){
   const d=DRILLS.find(x=>x.id===pr.drill), q=pr.q;
-  w.innerHTML=`<div class="btnrow" style="margin:0 0 10px"><button class="btn" id="pr-back">← Practice</button>${d.lesson?`<button class="btn" id="pr-les">Lesson</button>`:""}</div>
+  if(drillTimerInterval) clearInterval(drillTimerInterval);
+  drillTimerSec = 0;
+  drillTimerInterval = setInterval(()=>{
+    drillTimerSec++;
+    const el = $("pr-timer");
+    if(el) el.textContent = `⏱ ${drillTimerSec}s`;
+  }, 1000);
+  w.innerHTML=`<div class="btnrow" style="margin:0 0 10px"><button class="btn" id="pr-back">← Practice</button><span id="pr-timer" style="padding:6px 12px;background:var(--barSoft);border-radius:8px;font-size:.84rem;font-weight:700">⏱ 0s</span>${d.lesson?`<button class="btn" id="pr-les">Lesson</button>`:""}</div>
     <h2 class="sec">${esc(d.title)}</h2><div class="card" style="padding:4px 14px 14px" id="pr-q">${drillBody(q)}</div>
     <div class="btnrow"><button class="send" id="pr-check">Check my answers</button><button class="btn" id="pr-new">New problem</button></div><div id="pr-res"></div>`;
-  $("pr-back").onclick=()=>{ pr={view:"home"}; renderPractice(); };
-  d.lesson&&($("pr-les").onclick=()=>{ pr={view:"lesson",lesson:d.lesson}; renderPractice(); });
+  $("pr-back").onclick=()=>{ if(drillTimerInterval) clearInterval(drillTimerInterval); pr={view:"home"}; renderPractice(); };
+  d.lesson&&($("pr-les").onclick=()=>{ if(drillTimerInterval) clearInterval(drillTimerInterval); pr={view:"lesson",lesson:d.lesson}; renderPractice(); });
   $("pr-new").onclick=()=>startPractice(d.id);
   w.querySelectorAll("[data-choice] button").forEach(b=>b.onclick=()=>{ b.parentElement.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false")); });
   w.querySelectorAll("#critpick [data-c],#yn [data-y],#bestpick [data-b]").forEach(b=>b.onclick=()=>{
@@ -1674,11 +1770,15 @@ function renderDrill(w){
     w.querySelectorAll("[data-choice]").forEach(g=>{ const s=g.querySelector("[aria-pressed=true]"); if(s) vals[g.dataset.choice]=s.dataset.v; });
     const filled=Object.entries(vals).filter(([k,v])=>Array.isArray(v)?v.length:v!=="").length;
     if(filled<1){ $("pr-res").innerHTML=`<p class="status">Fill in your answers first. Write what you'd say, even if unsure.</p>`; return; }
+    if(drillTimerInterval) clearInterval(drillTimerInterval);
+    const durationSec = drillTimerSec;
     const g=grade(q,vals), score=Math.round(g.filter(x=>x.ok).length/g.length*100);
+    haptic(score >= 80);
+    if(score >= 80) playTone("correct"); else playTone("miss");
     w.querySelectorAll("#pr-q [data-k]").forEach(i=>{ const r=g.find(x=>x.k===i.dataset.k); if(r){ i.style.borderColor=r.ok?"var(--ok)":"var(--crit)"; i.style.borderWidth="2px"; } });
     const wrong=g.filter(x=>!x.ok);
     const weak=[...new Set(wrong.map(x=>x.k.includes(".")?x.k.split(".")[1].toUpperCase():LABELS[x.k]||x.k))];
-    $("pr-res").innerHTML=`<div class="card" style="padding:4px 14px 12px;margin-top:12px"><h2 class="sec" style="margin-top:10px">Score ${score}/100</h2>
+    $("pr-res").innerHTML=`<div class="card" style="padding:4px 14px 12px;margin-top:12px"><h2 class="sec" style="margin-top:10px">Score ${score}/100 <small style="color:var(--muted);font-size:.85rem">(completed in ${durationSec}s)</small></h2>
       ${wrong.length?`<p><b>Wrong:</b> ${wrong.map(x=>`${x.k.includes(".")?x.k.replace(".", " ").toUpperCase():LABELS[x.k]||x.k} (you: ${esc(Array.isArray(x.got)?x.got.join(","):x.got||"blank")}, correct: <b>${esc(x.exp)}</b>)`).join(" · ")}</p>`:"<p>All correct.</p>"}
       <div class="md">${md(solution(q))}</div></div>`;
     state.practice=(state.practice||[]); state.practice.push({t:Date.now(),type:d.id,score,weak,reported:false}); state.practice=state.practice.slice(-300);
@@ -2807,6 +2907,19 @@ function renderUnit(w){
   $("u-back").onclick=()=>{ s.screen=Math.max(0,s.screen-1); save(); renderLearn(); w.parentElement.scrollTop=0; };
   const next=$("u-next"), gate=(ok,label)=>{ next.disabled=!ok; if(label) next.textContent=label; };
   next.onclick=()=>{ if(s.screen<u.screens.length-1){ s.screen++; save(); renderLearn(); w.parentElement.scrollTop=0; } };
+
+  // Swipe support for unit navigation
+  let touchStartX = null;
+  w.ontouchstart = e => { if(e.touches.length === 1) touchStartX = e.touches[0].clientX; };
+  w.ontouchend = e => {
+    if(touchStartX == null || e.changedTouches.length === 0) return;
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+    if(Math.abs(diff) > 55){
+      if(diff < 0 && !next.disabled){ next.click(); }
+      else if(diff > 0 && s.screen > 0){ $("u-back").click(); }
+    }
+  };
   const body=$("u-body"), key=String(s.screen);
   if(sc.k==="read"){ body.innerHTML=`<div class="card" style="padding:4px 14px"><div class="md">${md(sc.t)}</div></div>`; gate(true); }
   else if(sc.k==="ruler"){ const acts=sc.acts.map(a=>({...a,pred:a.pred.map(p=>({...p}))})); cpm(acts); body.innerHTML=`<div class="card" style="padding:10px 12px">${rulerHtml(acts,{})}</div><div class="card" style="padding:4px 14px"><div class="md">${md(sc.t)}</div></div>`; gate(true); }
@@ -2860,7 +2973,8 @@ function renderQuiz(body,u,s,key,gate){
     s.quiz={key,pick,i:0,right:0,chosen:null,wrong:[],order:pick.map(qi=>[...sc.bank[qi].o.keys()].sort(()=>Math.random()-.5))}; }
   const z=s.quiz, n=z.pick.length;
   if(z.i>=n){ const pct=Math.round(z.right/n*100), pass=pct>=80;
-    if(pass){ s.passed=true; s.score=Math.max(s.score||0,pct); s.ok[key]=true; }
+    if(pass){ s.passed=true; s.score=Math.max(s.score||0,pct); s.ok[key]=true; playTone("pass"); }
+    else { playTone("miss"); }
     body.innerHTML=`<div class="drill"><div class="q">${pass?"✓ Passed":"Not yet"}: ${z.right} of ${n}</div>
       ${pass?`<p>You've shown you understand this unit. ${z.wrong.length?"Read the one you missed again below.":""}</p>`:`<p>You need ${Math.ceil(n*0.8)} of ${n}. That's normal on a first try: the explanations you just read are the lesson. Go back over the steps (use <b>Back</b>), then try a fresh set of questions.</p>`}
       ${z.wrong.length?`<p style="font-size:.86rem"><b>Missed:</b><br>${z.wrong.map(q=>"• "+esc(q)).join("<br>")}</p>`:""}
@@ -2876,7 +2990,15 @@ function renderQuiz(body,u,s,key,gate){
     h+=`<button class="btn" data-o="${oi}" style="display:block;width:100%;text-align:left;margin:6px 0;padding:10px;${st}">${esc(t)}${ch!=null&&(ok||ch===oi)?`<br><small style="color:${ok?"var(--ok)":"var(--crit)"}">${ok?"✓ ":"✗ "}${esc(why)}</small>`:""}</button>`; });
   if(z.chosen!=null) h+=`<div class="btnrow"><button class="send" id="q-next" style="flex:1">${z.i+1<n?"Next question":"See result"}</button></div>`;
   h+=`</div>`; body.innerHTML=h;
-  body.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{ if(z.chosen!=null) return; z.chosen=+b.dataset.o; if(Qn.o[z.chosen][1]) z.right++; else z.wrong.push(Qn.q); save(); renderLearn(); });
+  body.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{
+    if(z.chosen!=null) return;
+    z.chosen=+b.dataset.o;
+    const ok = !!Qn.o[z.chosen][1];
+    haptic(ok);
+    if(ok){ z.right++; playTone("correct"); }
+    else { z.wrong.push(Qn.q); playTone("miss"); }
+    save(); renderLearn();
+  });
   $("q-next")&&($("q-next").onclick=()=>{ z.i++; z.chosen=null; save(); renderLearn(); });
   gate(false,"Finish the check");
 }
@@ -3541,8 +3663,29 @@ function drillHtml(){
 function wireDrill(){
   $("dr-show")&&($("dr-show").onclick=()=>$("dr-ans").classList.add("on"));
   $("dr-end")&&($("dr-end").onclick=()=>{ drillQ=[]; renderBook(); });
+  const cardEl = $("bookwrap").querySelector(".drill");
+  if(cardEl){
+    let tX = null;
+    cardEl.ontouchstart = e => { if(e.touches.length === 1) tX = e.touches[0].clientX; };
+    cardEl.ontouchend = e => {
+      if(tX == null || e.changedTouches.length === 0) return;
+      const diff = e.changedTouches[0].clientX - tX;
+      tX = null;
+      if(Math.abs(diff) > 55){
+        const ansOn = $("dr-ans") && $("dr-ans").classList.contains("on");
+        if(!ansOn && $("dr-show")){ $("dr-show").click(); }
+        else if(ansOn){
+          const btn = diff < 0 ? $("bookwrap").querySelector('[data-r="got"]') : $("bookwrap").querySelector('[data-r="missed"]');
+          if(btn) btn.click();
+        }
+      }
+    };
+  }
   $("bookwrap").querySelectorAll("[data-r]").forEach(b=>b.onclick=async()=>{
-    const e=drillQ[drillI]; state.selfdrill=state.selfdrill||{}; state.selfdrill[e.id]={r:b.dataset.r,date:today(),reported:false}; srRate(e.id,b.dataset.r);
+    const e=drillQ[drillI]; state.selfdrill=state.selfdrill||{}; state.selfdrill[e.id]={r:b.dataset.r,date:today(),reported:false};
+    haptic(b.dataset.r === "got");
+    if(b.dataset.r === "got") playTone("correct");
+    srRate(e.id,b.dataset.r);
     drillI++; renderBook(); renderBadges(); await save(); });
 }
 function handoffPack(){
