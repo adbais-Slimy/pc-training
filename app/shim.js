@@ -6,7 +6,16 @@
   if (window.claude) return; // tests may inject their own stub
   const LS = window.localStorage;
   const cfgKey = "pc:llm";
-  const getCfg = () => { try { return JSON.parse(LS.getItem(cfgKey) || "{}"); } catch { return {}; } };
+  const getCfg = () => {
+    try {
+      const c = JSON.parse(LS.getItem(cfgKey) || "{}");
+      if (c.provider === "gemini") {
+        if (/gemini-(1\.[05]|2\.[05])/.test(c.model || "")) { c.model = "gemini-3.8-flash"; setCfg(c); }
+        if (/gemini-(1\.[05]|2\.[05])/.test(c.modelComplex || "")) { c.modelComplex = "gemini-3.8-flash"; setCfg(c); }
+      }
+      return c;
+    } catch { return {}; }
+  };
   const setCfg = c => LS.setItem(cfgKey, JSON.stringify(c));
 
   // ---------- db: documents stored in localStorage under "pcdb:<path>" ----------
@@ -17,7 +26,7 @@
 
   // ---------- sample: one interface, three providers ----------
   const DEFAULTS = {
-    gemini:    { model: "gemini-2.0-flash", modelComplex: "gemini-1.5-pro" },
+    gemini:    { model: "gemini-3.8-flash", modelComplex: "gemini-3.8-flash" },
     anthropic: { model: "claude-3-5-sonnet-latest", modelComplex: "claude-3-5-sonnet-latest" },
     openai:    { model: "gpt-4o-mini", modelComplex: "gpt-4o", baseUrl: "https://api.openai.com/v1" }
   };
@@ -30,7 +39,7 @@
     try {
       if (c.provider === "gemini") {
         r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(c.key)}`, {
-          method: "POST", headers: { "Content-Type": "application/json" }, signal: opts.signal,
+          method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": c.key }, signal: opts.signal,
           body: JSON.stringify({ contents: msgs.map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
                                  generationConfig: { maxOutputTokens: 4096, temperature: 0.4 } }) });
         j = await r.json(); if (!r.ok) throw j;
