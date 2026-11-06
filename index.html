@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=8"></script>
+<script src="shim.js?v=9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -903,7 +903,7 @@ const fresh=()=>({v:3, course:{}, day:0, phase:"Phase 1: Foundation, planning & 
   items:{}, domain_scores:{}, calib:[], reviews:{}, parking:[], gate:"Diagnostic in progress", note:"", bank:{}, selfdrill:{}, sr:{}, practice:[], patterns:{}, deliverables:{}, weekly:[], exam:false, closed:false, close_summary:"", turns_today:0, turns_date:today()});
 let state=fresh(), chat=[{role:"assistant",content:SEED,t:Date.now(),day:0}];
 let db=null, sample=null, uid=null, conf=null, pasted=false, busy=false;
-let libFilter="week", bookFilter="", drillTimerActive=false, drillTimerSec=0, drillTimerInterval=null;
+let libFilter="week", libSearchQuery="", bookFilter="", speedMode=false, drillTimerActive=false, drillTimerSec=0, drillTimerInterval=null;
 
 // ---- Feedback utilities: Haptics & Audio ----
 function haptic(ok){
@@ -1055,12 +1055,15 @@ function renderBook(){
   if(entries.length){ const f=srForecast();
     h+=`<div class="rt ${f.now?"due":""}"><div><b>${f.now?`${f.now} card${f.now>1?"s":""} due for review`:"Nothing due right now"}</b><br><small>Tomorrow ${f.tomorrow} · within 7 days ${f.week} · about 20 seconds a card</small></div></div>
       <div class="btnrow" style="margin:6px 0 12px">${f.now?`<button class="send" id="drillbtn" style="flex:1">Review ${f.now} due</button>`:""}<button class="btn" id="drillall">Drill all ${deck().length}</button></div>`; }
-  h+=`<input id="bq" type="search" placeholder="Search the notebook" value="${esc(bookFilter)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;margin-bottom:12px">`;
+  h+=`<input id="bq" type="search" placeholder="Search the notebook (e.g. FIDIC, EOT, IS 1200, float)..." value="${esc(bookFilter)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;margin-bottom:12px">`;
+  if(q){
+    h+=`<p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Found ${shown.length} card${shown.length===1?"":"s"} matching “${esc(bookFilter)}”</p>`;
+  }
   if(!entries.length) h+=`<div class="empty">Empty for now. Each concept the Director teaches lands here as a card.</div>`;
   else if(!shown.length) h+=`<div class="empty">No cards match “${esc(bookFilter)}”.</div>`;
   shown.forEach(e=>{
     const due=state.reviews[e.id] && state.reviews[e.id]<=today();
-    h+=`<details class="card"><summary><b>${esc(e.title)}</b><small>${due?'<span class="danger">Retest due</span>':e.day!=null?(e.day>0?"Day "+e.day:"Diagnostic"):""}</small></summary><div class="in">
+    h+=`<details class="card" ${q?"open":""}><summary><b>${esc(e.title)}</b><small>${due?'<span class="danger">Retest due</span>':e.day!=null?(e.day>0?"Day "+e.day:"Diagnostic"):""}</small></summary><div class="in">
       <h4>Rule</h4><p class="rule">${esc(e.rule)}</p>
       ${e.explain?`<h4>Why</h4><p>${esc(e.explain)}</p>`:""}
       ${e.example?`<h4>Worked example</h4><p>${esc(e.example)}</p>`:""}
@@ -1156,26 +1159,38 @@ function renderProg(){
 // ---------- library ----------
 function renderLib(){
   const wk=weekOf(state.day);
-  const list=LIBRARY.filter(l=>libFilter==="all"||(libFilter==="week"?l.week===wk:l.week<=wk)).sort((a,b)=>a.week-b.week);
+  const q = libSearchQuery.trim().toLowerCase();
+  let list = LIBRARY;
+  if(q){
+    list = LIBRARY.filter(l => [l.name, l.domain, l.what, l.use, l.say, JSON.stringify(l.table||[])].join(" ").toLowerCase().includes(q));
+  } else {
+    list = LIBRARY.filter(l=>libFilter==="all"||(libFilter==="week"?l.week===wk:l.week<=wk)).sort((a,b)=>a.week-b.week);
+  }
+
   let h=`<h2 class="sec">Standards library</h2><p class="lead">What each standard is for and the one line you'd use in a review. The Director brings each in when its week arrives. This is not reading homework.</p>
-   <div class="filter">${[["week",`This week (W${wk})`],["sofar","Up to now"],["all","All"],["videos","Videos"]].map(([k,l])=>`<button aria-pressed="${libFilter===k}" data-f="${k}">${l}</button>`).join("")}</div>`;
-  if(libFilter==="videos"){
+    <input id="lq" type="search" placeholder="Search standards, clauses, FIDIC, IS 1200, float, EOT..." value="${esc(libSearchQuery)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;margin-bottom:10px">
+    ${q ? `<p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Found ${list.length} standard${list.length===1?"":"s"} matching “${esc(libSearchQuery)}”</p>` : `<div class="filter">${[["week",`This week (W${wk})`],["sofar","Up to now"],["all","All"],["videos","Videos"]].map(([k,l])=>`<button aria-pressed="${libFilter===k}" data-f="${k}">${l}</button>`).join("")}</div>`}`;
+
+  if(!q && libFilter==="videos"){
     const open=VIDEOS.filter(v=>v.week<=Math.max(2,wk+1)), locked=VIDEOS.length-open.length;
     h+=`<p class="lead">Watch the one listed for your current week before its lesson, then do the drill. A video doesn't count as evidence; the drills and the Director do.</p>`;
     let last=""; open.forEach(v=>{ if(v.topic!==last){ h+=`<h2 class="sec">W${v.week} · ${esc(v.topic)}</h2>`; last=v.topic; }
       h+=`<div class="rt"><div><span class="pill">${esc(v.tier||"")}</span><br><a href="${v.url}" target="_blank" rel="noopener" style="color:var(--bar);font-weight:600">${esc(v.title)}</a><br><small>${esc(v.why)}</small></div></div>`; });
     if(locked) h+=`<p class="lead" style="margin-top:12px">${locked} more video${locked>1?"s":""} unlock as you reach later weeks.</p>`;
-    $("libwrap").innerHTML=h; $("libwrap").querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ libFilter=b.dataset.f; renderLib(); }); return;
+    $("libwrap").innerHTML=h;
+    const lq=$("lq"); if(lq){ lq.oninput=()=>{ libSearchQuery=lq.value; const pos=lq.selectionStart; renderLib(); const n=$("lq"); if(n){ n.focus(); n.setSelectionRange(pos,pos); } }; }
+    $("libwrap").querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ libFilter=b.dataset.f; renderLib(); }); return;
   }
-  if(!list.length) h+=`<div class="empty">Nothing is scheduled for Week ${wk}. Try “Up to now”.</div>`;
+  if(!list.length) h+=`<div class="empty">${q ? `No standards match “${esc(libSearchQuery)}”.` : `Nothing is scheduled for Week ${wk}. Try “Up to now”.`}</div>`;
   list.forEach(l=>{
-    h+=`<details class="card"><summary><b>${esc(l.name)}</b><small>W${l.week} · ${esc(l.domain)}</small></summary><div class="in">
+    h+=`<details class="card" ${q?"open":""}><summary><b>${esc(l.name)}</b><small>W${l.week} · ${esc(l.domain)}</small></summary><div class="in">
       <h4>What it is</h4><p>${esc(l.what)}</p><h4>Why you'd use it</h4><p>${esc(l.use)}</p><h4>In a review</h4><p class="rule">${esc(l.say)}</p>
       ${l.table?`<div class="md"><div class="tw"><table><thead><tr><th>Check</th><th>What it tests</th><th>Threshold</th></tr></thead><tbody>${l.table.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>`:""}
     </div></details>`;
   });
   h+=`<p class="lead" style="margin-top:14px">Check thresholds and clauses against the current edition and your actual contract before relying on them in a dispute.</p>`;
   $("libwrap").innerHTML=h;
+  const lq=$("lq"); if(lq){ lq.oninput=()=>{ libSearchQuery=lq.value; const pos=lq.selectionStart; renderLib(); const n=$("lq"); if(n){ n.focus(); n.setSelectionRange(pos,pos); } }; }
   $("libwrap").querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ libFilter=b.dataset.f; renderLib(); });
 }
 function applyExam(){
@@ -1725,12 +1740,180 @@ function renderLesson(w){
   d&&($("pr-go").onclick=()=>startPractice(d.id));
 }
 function startPractice(id){ const d=DRILLS.find(x=>x.id===id); pr={view:"drill",drill:id,q:d.gen(),checked:false,res:null}; renderPractice(); $("pracwrap").parentElement.scrollTop=0; }
+function openFormulaDrawer(){
+  const old = $("formula-modal");
+  if(old){ old.remove(); return; }
+  const m = document.createElement("div");
+  m.id = "formula-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:70;display:flex;justify-content:flex-end";
+  m.innerHTML = `<div style="width:100%;max-width:440px;height:100%;background:var(--surface,#fff);color:var(--ink,#111);padding:18px;overflow-y:auto;box-shadow:-4px 0 20px rgba(0,0,0,.3);font:14px system-ui">
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:14px">
+      <b style="font-size:1.05rem">📐 Project Controls Formula Sheet</b>
+      <button id="form-close" style="background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
+    </div>
+
+    <h3 style="font-size:.9rem;color:var(--bar);margin:12px 0 6px">1. Critical Path Method (CPM)</h3>
+    <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;line-height:1.6">
+      • <b>Forward Pass:</b> EF = ES + Duration<br>
+      • <b>Merge ES:</b> ES = max(EF of all predecessors)<br>
+      • <b>Backward Pass:</b> LS = LF − Duration<br>
+      • <b>Burst LF:</b> LF = min(LS of all successors)<br>
+      • <b>Total Float (TF):</b> TF = LS − ES = LF − EF<br>
+      • <b>Free Float (FF):</b> FF = min(ES of successors) − EF<br>
+      • <b>Critical Path:</b> Sequence where TF = 0 (ES=LS, EF=LF)
+    </div>
+
+    <h3 style="font-size:.9rem;color:var(--bar);margin:14px 0 6px">2. Earned Value Management (EVM)</h3>
+    <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;line-height:1.6">
+      • <b>Cost Variance (CV):</b> EV − AC (&gt;0 under budget)<br>
+      • <b>Schedule Variance (SV):</b> EV − PV (&gt;0 ahead of plan)<br>
+      • <b>CPI:</b> EV ÷ AC (&gt;1.0 efficient / under budget)<br>
+      • <b>SPI:</b> EV ÷ PV (&gt;1.0 progressing faster than plan)<br>
+      • <b>EAC (standard):</b> BAC ÷ CPI<br>
+      • <b>VAC:</b> BAC − EAC<br>
+      • <b>TCPI:</b> (BAC − EV) ÷ (BAC − AC)
+    </div>
+
+    <h3 style="font-size:.9rem;color:var(--bar);margin:14px 0 6px">3. Procurement &amp; Float Erosion</h3>
+    <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;line-height:1.6">
+      • <b>Ex-works Date:</b> Need date − Transit days<br>
+      • <b>PO Date:</b> Ex-works date − Manufacture days<br>
+      • <b>Indent Date:</b> PO date − Internal TAT (count Mon–Sat working days, skip Sundays)<br>
+      • <b>Average Float Lost:</b> (TF_start − TF_current) ÷ Updates<br>
+      • <b>Updates to Zero Float:</b> Current TF ÷ Last update's loss
+    </div>
+
+    <h3 style="font-size:.9rem;color:var(--bar);margin:14px 0 6px">4. Physical Progress (% Progress)</h3>
+    <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;line-height:1.6">
+      • <b>Overall Progress:</b> &Sigma; (Weight_i &times; Progress_i) ÷ 100<br>
+      • <b>Rule of Credit:</b> Measure installed work, never billed materials issued from store
+    </div>
+
+    <div style="margin-top:16px"><button id="form-dismiss" style="width:100%;padding:10px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Done</button></div>
+  </div>`;
+  document.body.appendChild(m);
+  m.onclick = e => { if(e.target === m) m.remove(); };
+  m.querySelector("#form-close").onclick = () => m.remove();
+  m.querySelector("#form-dismiss").onclick = () => m.remove();
+}
+
+function renderAON(acts, sol, isSolution = false, askList = []){
+  if(!acts || !acts.length) return "";
+  const askSet = new Set(askList);
+  const critSet = new Set(sol?.crit || []);
+
+  const ranks = {};
+  acts.forEach(a => { ranks[a.id] = 0; });
+  for (let iter = 0; iter < 10; iter++) {
+    acts.forEach(a => {
+      (a.pred || []).forEach(p => {
+        if (ranks[p.id] != null && ranks[a.id] <= ranks[p.id]) {
+          ranks[a.id] = ranks[p.id] + 1;
+        }
+      });
+    });
+  }
+  const cols = [];
+  acts.forEach(a => {
+    const r = ranks[a.id] || 0;
+    cols[r] = cols[r] || [];
+    cols[r].push(a);
+  });
+
+  const nodeW = 92, nodeH = 50, colGap = 36, rowGap = 16, padX = 12, padY = 12;
+  const maxRows = Math.max(...cols.map(c => (c ? c.length : 0)));
+  const totalW = padX * 2 + cols.length * nodeW + (cols.length - 1) * colGap;
+  const totalH = padY * 2 + maxRows * nodeH + (maxRows - 1) * rowGap;
+
+  const pos = {};
+  cols.forEach((colActs, cIdx) => {
+    const colH = colActs.length * nodeH + (colActs.length - 1) * rowGap;
+    const startY = padY + (totalH - padY * 2 - colH) / 2;
+    colActs.forEach((a, rIdx) => {
+      const x = padX + cIdx * (nodeW + colGap);
+      const y = startY + rIdx * (nodeH + rowGap);
+      pos[a.id] = { x, y, a };
+    });
+  });
+
+  let arrowsSvg = "";
+  acts.forEach(a => {
+    (a.pred || []).forEach(p => {
+      const pPos = pos[p.id];
+      const aPos = pos[a.id];
+      if(pPos && aPos){
+        const x1 = pPos.x + nodeW;
+        const y1 = pPos.y + nodeH / 2;
+        const x2 = aPos.x;
+        const y2 = aPos.y + nodeH / 2;
+        const isCritLink = isSolution && critSet.has(p.id) && critSet.has(a.id);
+        const color = isCritLink ? "var(--crit, #EE6A5E)" : "var(--line, #999)";
+        const width = isCritLink ? "2.5" : "1.5";
+        const midX = (x1 + x2) / 2;
+        arrowsSvg += `<path d="M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="${width}" marker-end="${isCritLink ? 'url(#arr-crit)' : 'url(#arr)'}" />`;
+        if(p.type && (p.type !== "FS" || p.lag)){
+          arrowsSvg += `<text x="${midX}" y="${(y1 + y2) / 2 - 3}" font-size="8.5" fill="${color}" text-anchor="middle" font-weight="700">${p.type}${p.lag ? '+' + p.lag : ''}</text>`;
+        }
+      }
+    });
+  });
+
+  let nodesSvg = "";
+  acts.forEach(a => {
+    const p = pos[a.id];
+    if(!p) return;
+    const isCrit = isSolution && critSet.has(a.id);
+    const stroke = isCrit ? "var(--crit, #EE6A5E)" : "var(--line, #CDD3CF)";
+    const isAsked = !isSolution && askSet.has(a.id);
+
+    const dur = a.dur ?? 0;
+    const es = isAsked ? "?" : (a.es ?? 0);
+    const ef = isAsked ? "?" : (a.ef ?? 0);
+    const ls = isAsked ? "?" : (a.ls ?? 0);
+    const lf = isAsked ? "?" : (a.lf ?? 0);
+    const tf = isAsked ? "?" : (a.tf ?? 0);
+
+    nodesSvg += `<g transform="translate(${p.x}, ${p.y})">
+      <rect width="${nodeW}" height="${nodeH}" rx="6" fill="var(--surface)" stroke="${stroke}" stroke-width="${isCrit ? '2.5' : '1.2'}" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.06))"/>
+      <line x1="0" y1="16" x2="${nodeW}" y2="16" stroke="${stroke}" stroke-width="0.8"/>
+      <line x1="0" y1="34" x2="${nodeW}" y2="34" stroke="${stroke}" stroke-width="0.8"/>
+      <line x1="30" y1="0" x2="30" y2="16" stroke="${stroke}" stroke-width="0.8"/>
+      <line x1="62" y1="0" x2="62" y2="16" stroke="${stroke}" stroke-width="0.8"/>
+      <line x1="30" y1="34" x2="30" y2="50" stroke="${stroke}" stroke-width="0.8"/>
+      <line x1="62" y1="34" x2="62" y2="50" stroke="${stroke}" stroke-width="0.8"/>
+      <text x="15" y="12" font-size="9" font-weight="700" fill="var(--muted)" text-anchor="middle">${es}</text>
+      <text x="46" y="12" font-size="9" font-weight="800" fill="var(--bar)" text-anchor="middle">${dur}d</text>
+      <text x="77" y="12" font-size="9" font-weight="700" fill="var(--muted)" text-anchor="middle">${ef}</text>
+      <text x="46" y="27" font-size="9.5" font-weight="800" fill="${isCrit ? 'var(--crit)' : 'var(--ink)'}" text-anchor="middle">${a.id}: ${esc(a.name.slice(0, 9))}</text>
+      <text x="15" y="45" font-size="9" font-weight="600" fill="var(--muted)" text-anchor="middle">${ls}</text>
+      <text x="46" y="45" font-size="9" font-weight="800" fill="${isCrit ? 'var(--crit)' : 'var(--muted)'}" text-anchor="middle">${isAsked ? 'TF ?' : 'TF ' + tf}</text>
+      <text x="77" y="45" font-size="9" font-weight="600" fill="var(--muted)" text-anchor="middle">${lf}</text>
+    </g>`;
+  });
+
+  return `<div style="overflow-x:auto;padding:8px 6px;margin:10px 0;background:var(--bg);border-radius:10px;border:1px solid var(--line)">
+    <div style="display:flex;justify-content:space-between;padding:2px 8px 6px;font-size:.76rem;color:var(--muted)">
+      <span><b>Activity-on-Node (AON) Network Diagram</b></span>
+      ${isSolution ? `<span style="color:var(--crit);font-weight:700">● Red Line = Critical Path (TF = 0)</span>` : `<span>Boxes: [ES|Dur|EF] / [ID: Name] / [LS|TF|LF]</span>`}
+    </div>
+    <svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" style="display:block;min-width:${Math.min(totalW, 360)}px;margin:0 auto">
+      <defs>
+        <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0, 6 3, 0 6" fill="var(--line)" /></marker>
+        <marker id="arr-crit" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0, 6 3, 0 6" fill="var(--crit, #EE6A5E)" /></marker>
+      </defs>
+      ${arrowsSvg}
+      ${nodesSvg}
+    </svg>
+  </div>`;
+}
+
 const inp=(k,type="number",w="4.2em")=>`<input data-k="${k}" type="${type}" inputmode="${type==="number"?"decimal":"text"}" style="width:${type==="date"?"100%":w};padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit">`;
 function drillBody(q){
   if(q.type==="cpm"){
     const tbl=`<div class="md"><div class="tw"><table><thead><tr><th>ID</th><th>Activity</th><th>Dur (wd)</th><th>Predecessors</th></tr></thead><tbody>${q.acts.map(a=>`<tr><td>${a.id}</td><td>${esc(a.name)}</td><td>${a.dur}</td><td>${a.pred.length?a.pred.map(relTxt).join(", "):"—"}</td></tr>`).join("")}</tbody></table></div></div>`;
     const grid=`<div class="md"><div class="tw"><table><thead><tr><th></th><th>ES</th><th>EF</th><th>LS</th><th>LF</th><th>TF</th><th>FF</th></tr></thead><tbody>${q.ask.map(id=>`<tr><td><b>${id}</b></td>${["es","ef","ls","lf","tf","ff"].map(f=>`<td>${inp(id+"."+f,"number","3.2em")}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>`;
     return `<p>Durations are working days. Use day numbers from 0 (ES 0 = starts at the beginning of day 1).</p>${tbl}
+      <details style="margin:10px 0" open><summary style="cursor:pointer;font-weight:700;font-size:.88rem;color:var(--bar);margin-bottom:6px">📊 Activity-on-Node (AON) Network Diagram (tap to view)</summary>${renderAON(q.acts, q.sol, false, q.ask)}</details>
       <h4 style="margin:12px 0 4px">Q1. Project duration (working days)</h4>${inp("pf")}
       <h4 style="margin:12px 0 4px">Q2. Fill in for ${q.ask.join(", ")}</h4>${grid}
       <h4 style="margin:12px 0 4px">Q3. Tap every activity on the critical path</h4><div class="filter" id="critpick">${q.acts.map(a=>`<button aria-pressed="false" data-c="${a.id}">${a.id}</button>`).join("")}</div>`;
@@ -1786,16 +1969,69 @@ const LABELS={pf:"Project duration",crit:"Critical path",ex:"Ex-works date",po:"
 function renderDrill(w){
   const d=DRILLS.find(x=>x.id===pr.drill), q=pr.q;
   if(drillTimerInterval) clearInterval(drillTimerInterval);
-  drillTimerSec = 0;
-  drillTimerInterval = setInterval(()=>{
-    drillTimerSec++;
+  drillTimerSec = speedMode ? 60 : 0;
+
+  const updateTimerDisplay = () => {
     const el = $("pr-timer");
-    if(el) el.textContent = `⏱ ${drillTimerSec}s`;
+    if(!el) return;
+    if(speedMode){
+      el.textContent = `⚡ ${drillTimerSec}s left`;
+      if(drillTimerSec <= 10){
+        el.style.background = "var(--critSoft)";
+        el.style.color = "var(--crit)";
+      } else if(drillTimerSec <= 20){
+        el.style.background = "var(--warnSoft)";
+        el.style.color = "var(--warn)";
+      } else {
+        el.style.background = "var(--barSoft)";
+        el.style.color = "inherit";
+      }
+    } else {
+      el.textContent = `⏱ ${drillTimerSec}s`;
+      el.style.background = "var(--barSoft)";
+      el.style.color = "inherit";
+    }
+  };
+
+  drillTimerInterval = setInterval(()=>{
+    if(speedMode){
+      drillTimerSec--;
+      updateTimerDisplay();
+      if(drillTimerSec <= 0){
+        clearInterval(drillTimerInterval);
+        drillTimerInterval = null;
+        playTone("miss");
+        haptic(false);
+        const chk = $("pr-check");
+        if(chk) chk.click();
+      }
+    } else {
+      drillTimerSec++;
+      updateTimerDisplay();
+    }
   }, 1000);
-  w.innerHTML=`<div class="btnrow" style="margin:0 0 10px"><button class="btn" id="pr-back">← Practice</button><span id="pr-timer" style="padding:6px 12px;background:var(--barSoft);border-radius:8px;font-size:.84rem;font-weight:700">⏱ 0s</span>${d.lesson?`<button class="btn" id="pr-les">Lesson</button>`:""}</div>
-    <h2 class="sec">${esc(d.title)}</h2><div class="card" style="padding:4px 14px 14px" id="pr-q">${drillBody(q)}</div>
-    <div class="btnrow"><button class="send" id="pr-check">Check my answers</button><button class="btn" id="pr-new">New problem</button></div><div id="pr-res"></div>`;
+
+  w.innerHTML=`<div class="btnrow" style="margin:0 0 10px;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="btn" id="pr-back">← Practice</button>
+      <span id="pr-timer" style="padding:6px 12px;background:var(--barSoft);border-radius:8px;font-size:.84rem;font-weight:700">${speedMode ? `⚡ 60s left` : `⏱ 0s`}</span>
+      <button class="btn" id="pr-speed-btn" style="${speedMode ? "background:var(--warnSoft);color:var(--warn);border-color:var(--warn);font-weight:700" : ""}" title="Toggle 60-second sudden-death countdown mode">${speedMode ? "⚡ Speed: 60s" : "⏱ Stopwatch"}</button>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="btn" id="pr-formula" title="Quick Formula & Engineering Reference">📐 Formulas</button>
+      ${d.lesson?`<button class="btn" id="pr-les">Lesson</button>`:""}
+    </div>
+  </div>
+  <h2 class="sec">${esc(d.title)}</h2><div class="card" style="padding:4px 14px 14px" id="pr-q">${drillBody(q)}</div>
+  <div class="btnrow"><button class="send" id="pr-check">Check my answers</button><button class="btn" id="pr-new">New problem</button></div><div id="pr-res"></div>`;
+
   $("pr-back").onclick=()=>{ if(drillTimerInterval) clearInterval(drillTimerInterval); pr={view:"home"}; renderPractice(); };
+  $("pr-speed-btn").onclick=()=>{
+    speedMode = !speedMode;
+    renderDrill(w);
+  };
+  const fBtn = $("pr-formula");
+  if(fBtn) fBtn.onclick = openFormulaDrawer;
   d.lesson&&($("pr-les").onclick=()=>{ if(drillTimerInterval) clearInterval(drillTimerInterval); pr={view:"lesson",lesson:d.lesson}; renderPractice(); });
   $("pr-new").onclick=()=>startPractice(d.id);
   w.querySelectorAll("[data-choice] button").forEach(b=>b.onclick=()=>{ b.parentElement.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false")); });
@@ -1811,17 +2047,26 @@ function renderDrill(w){
     const filled=Object.entries(vals).filter(([k,v])=>Array.isArray(v)?v.length:v!=="").length;
     if(filled<1){ $("pr-res").innerHTML=`<p class="status">Fill in your answers first. Write what you'd say, even if unsure.</p>`; return; }
     if(drillTimerInterval) clearInterval(drillTimerInterval);
-    const durationSec = drillTimerSec;
+    const durationSec = speedMode ? (60 - Math.max(0, drillTimerSec)) : drillTimerSec;
     const g=grade(q,vals), score=Math.round(g.filter(x=>x.ok).length/g.length*100);
     haptic(score >= 80);
     if(score >= 80) playTone("correct"); else playTone("miss");
     w.querySelectorAll("#pr-q [data-k]").forEach(i=>{ const r=g.find(x=>x.k===i.dataset.k); if(r){ i.style.borderColor=r.ok?"var(--ok)":"var(--crit)"; i.style.borderWidth="2px"; } });
     const wrong=g.filter(x=>!x.ok);
     const weak=[...new Set(wrong.map(x=>x.k.includes(".")?x.k.split(".")[1].toUpperCase():LABELS[x.k]||x.k))];
-    $("pr-res").innerHTML=`<div class="card" style="padding:4px 14px 12px;margin-top:12px"><h2 class="sec" style="margin-top:10px">Score ${score}/100 <small style="color:var(--muted);font-size:.85rem">(completed in ${durationSec}s)</small></h2>
-      ${wrong.length?`<p><b>Wrong:</b> ${wrong.map(x=>`${x.k.includes(".")?x.k.replace(".", " ").toUpperCase():LABELS[x.k]||x.k} (you: ${esc(Array.isArray(x.got)?x.got.join(","):x.got||"blank")}, correct: <b>${esc(x.exp)}</b>)`).join(" · ")}</p>`:"<p>All correct.</p>"}
-      <div class="md">${md(solution(q))}</div></div>`;
-    state.practice=(state.practice||[]); state.practice.push({t:Date.now(),type:d.id,score,weak,reported:false}); state.practice=state.practice.slice(-300);
+    const speedBadge = speedMode && score >= 80 ? `<span class="pill" style="background:var(--warnSoft);color:var(--warn);font-weight:700">⚡ 60s Speed Challenge Passed!</span>` : "";
+    const solvedDiagram = q.type === "cpm" ? `<div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)"><h4 style="margin:0 0 8px;color:var(--crit)">Solved Network Diagram & Critical Path:</h4>${renderAON(q.acts, q.sol, true, [])}</div>` : "";
+
+    $("pr-res").innerHTML=`<div class="card" style="padding:4px 14px 12px;margin-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-top:10px">
+        <h2 class="sec" style="margin:0">Score ${score}/100 <small style="color:var(--muted);font-size:.85rem">(completed in ${durationSec}s)</small></h2>
+        ${speedBadge}
+      </div>
+      ${wrong.length?`<p style="margin-top:8px"><b>Wrong:</b> ${wrong.map(x=>`${x.k.includes(".")?x.k.replace(".", " ").toUpperCase():LABELS[x.k]||x.k} (you: ${esc(Array.isArray(x.got)?x.got.join(","):x.got||"blank")}, correct: <b>${esc(x.exp)}</b>)`).join(" · ")}</p>`:"<p style=\"margin-top:8px\">All correct.</p>"}
+      <div class="md">${md(solution(q))}</div>
+      ${solvedDiagram}
+    </div>`;
+    state.practice=(state.practice||[]); state.practice.push({t:Date.now(),type:d.id,score,weak,speed:speedMode,durationSec,reported:false}); state.practice=state.practice.slice(-300);
     await save();
   };
 }
@@ -2910,10 +3155,56 @@ function renderLearn(){
   const cur=currentUnit(), MAIN=UNITS.filter(u=>!u.track), doneN=MAIN.filter(u=>cst(u.id).done).length;
   const pct=Math.round(doneN/MAIN.length*100);
   const streak=(()=>{ let s=0, d=today(); for(let i=0;i<90;i++){ const prev=new Date(d); prev.setDate(prev.getDate()-1); d=prev.toISOString().slice(0,10); if(MAIN.some(u=>cst(u.id).doneAt===d)) s++; else break; } if(MAIN.some(u=>cst(u.id).doneAt===today())) s++; return s; })();
-  let h=`<div style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><b style="font-stretch:80%">Day ${state.day} / 90</b>${streak>1?`<span style="font-size:.82rem">🔥 ${streak}-day streak</span>`:""}</div>
-    <div style="height:8px;background:var(--barSoft);border-radius:4px;overflow:hidden"><div style="width:${pct}%;height:100%;background:var(--bar);border-radius:4px;transition:width .3s"></div></div>
-    <div style="display:flex;justify-content:space-between;font-size:.76rem;color:var(--muted);margin-top:4px"><span>${doneN} units passed</span><span>${dueCards().length} cards due</span><span>${pct}%</span></div></div>`;
+  // Daily Goal Calculation
+  const tStr = today();
+  const lessonDoneToday = MAIN.some(u => cst(u.id).doneAt === tStr);
+  const drillsToday = (state.practice || []).filter(x => {
+    if(!x.t) return false;
+    const d = new Date(x.t);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` === tStr;
+  }).length;
+  const cardsToday = Object.values(state.selfdrill || {}).filter(x => x.date === tStr).length;
+
+  const targetLesson = 1, targetDrills = 2, targetCards = 5;
+  const pL = lessonDoneToday ? 1 : 0;
+  const pD = Math.min(1, drillsToday / targetDrills);
+  const pC = Math.min(1, cardsToday / targetCards);
+  const dailyPct = Math.round((pL * 0.4 + pD * 0.3 + pC * 0.3) * 100);
+
+  const radius = 22;
+  const circum = 2 * Math.PI * radius;
+  const dashOffset = circum * (1 - dailyPct / 100);
+  const ringColor = dailyPct >= 100 ? "var(--ok, #4CC282)" : "var(--bar, #2F5BD3)";
+
+  let h=`<div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <b style="font-stretch:80%">Day ${state.day} / 90</b>
+      ${streak>0?`<span style="font-size:.82rem;font-weight:700;color:var(--warn)">🔥 ${streak}-day streak</span>`:""}
+    </div>
+    <div style="height:6px;background:var(--barSoft);border-radius:3px;overflow:hidden;margin-bottom:12px">
+      <div style="width:${pct}%;height:100%;background:var(--bar);border-radius:3px;transition:width .3s"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding-top:8px;border-top:1px dashed var(--line)">
+      <div style="position:relative;width:52px;height:52px;flex:none;display:flex;align-items:center;justify-content:center">
+        <svg width="52" height="52" viewBox="0 0 52 52" style="transform:rotate(-90deg);display:block">
+          <circle cx="26" cy="26" r="${radius}" fill="none" stroke="var(--barSoft)" stroke-width="4.5" />
+          <circle cx="26" cy="26" r="${radius}" fill="none" stroke="${ringColor}" stroke-width="4.5" stroke-dasharray="${circum.toFixed(1)}" stroke-dashoffset="${dashOffset.toFixed(1)}" stroke-linecap="round" style="transition:stroke-dashoffset .5s ease" />
+        </svg>
+        <span style="position:absolute;font-size:.76rem;font-weight:800;color:var(--ink)">${dailyPct >= 100 ? "✓" : dailyPct + "%"}</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.84rem;font-weight:700;color:var(--ink)">${dailyPct >= 100 ? "🎉 Daily Target Complete!" : "Today's Target"}</span>
+          <span style="font-size:.74rem;color:var(--muted)">${doneN} units passed</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;font-size:.74rem;color:var(--muted)">
+          <span>📖 Lesson: <b>${lessonDoneToday ? "1/1 ✓" : "0/1"}</b></span>
+          <span>⏱️ Drills: <b>${drillsToday}/${targetDrills}</b></span>
+          <span>🗂️ Cards: <b>${cardsToday}/${targetCards}</b></span>
+        </div>
+      </div>
+    </div>
+  </div>`;
   h+=`<p class="lead">One unit a day. Each one teaches, shows, lets you try, then checks. You move on when you pass the check (4 out of 5).</p>`;
   if(cur) h+=`<div class="drill" style="border-color:var(--bar);border-width:2px"><small style="color:var(--muted)">${cur.day===0?"Start here":"Today"} · about ${cur.mins} min</small><div class="q">Day ${cur.day}: ${esc(cur.title.replace(/^Day 0: /,""))}</div>
     ${cst(cur.id).screen>0?`<p style="margin:0 0 8px;color:var(--muted)">You're on step ${cst(cur.id).screen+1} of ${cur.screens.length}.</p>`:""}
