@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=5"></script>
+<script src="shim.js?v=6"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -200,7 +200,16 @@ nav button{font-size:.8rem}
   <section class="view" id="v-chat">
     <div id="log" aria-live="polite"></div>
     <div class="composer"><div class="cin">
-      <div class="offline" id="offline"><b id="offline-msg">AI Tutor usage limit or quota reached.</b> Notebook drills, the Library and your progress still work, and anything you type here is kept as a draft.<br><button class="btn" id="goprac">Lessons &amp; drills</button> <button class="btn" id="godrill">Drill my notes</button> <button class="btn" id="off-retry">Dismiss &amp; Retry</button></div>
+      <div class="offline" id="offline" style="position:relative">
+        <button id="off-close" style="position:absolute;top:6px;right:8px;background:none;border:none;font-size:18px;line-height:1;cursor:pointer;color:inherit;opacity:.7" aria-label="Dismiss">&times;</button>
+        <b id="offline-msg">AI Tutor usage limit or quota reached.</b>
+        <p style="margin:4px 0 8px;font-size:.82rem;opacity:.9">Notebook drills, the Library and your progress still work without AI. Tap ⚙ to update your key or model.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn" id="goprac">Lessons &amp; drills</button>
+          <button class="btn" id="godrill">Drill my notes</button>
+          <button class="btn" id="off-retry">Dismiss &amp; Retry</button>
+        </div>
+      </div>
       <button class="wide" id="sheetbtn">Open answer sheet</button>
       <button class="wide" id="startbtn">Start next day</button>
       <button class="btn" id="shortbtn" style="display:none;width:100%;margin:-2px 0 8px">Packed day? Short session (about 20 min)</button>
@@ -3639,9 +3648,18 @@ function courseReport(){
 }
 
 // ---------- offline: drafts, drill, handoff pack ----------
-function setOffline(on){ $("offline").classList.toggle("on",on); try{ on?localStorage.setItem("pc:offline",today()):localStorage.removeItem("pc:offline"); }catch{} }
+function setOffline(on){
+  $("offline").classList.toggle("on", !!on);
+  try { localStorage.removeItem("pc:offline"); } catch {}
+}
 function saveBoxDraft(){ try{ localStorage.setItem("pc:box",$("box").value); }catch{} }
-function loadBoxDraft(){ try{ const v=localStorage.getItem("pc:box"); if(v&&!$("box").value){ $("box").value=v; autoGrow(); updateSend(); } if(localStorage.getItem("pc:offline")===today()) setOffline(true); }catch{} }
+function loadBoxDraft(){
+  try{
+    const v=localStorage.getItem("pc:box");
+    if(v&&!$("box").value){ $("box").value=v; autoGrow(); updateSend(); }
+    localStorage.removeItem("pc:offline");
+  }catch{}
+}
 // ---- spaced repetition (SM-2 style, no Claude usage) ----
 function deck(){
   const cards=Object.values(state.bank).map(e=>({id:e.id,title:e.title,rule:e.rule,example:e.example,trap:e.trap,src:"Notes"}));
@@ -3768,6 +3786,7 @@ $("send").onclick=()=>send();
 $("box").addEventListener("input",()=>{ autoGrow(); updateSend(); saveBoxDraft(); });
 $("godrill").onclick=()=>startDrill(false); $("goprac").onclick=()=>{ pr={view:"home"}; renderPractice(); tab("prac"); };
 $("off-retry")&&($("off-retry").onclick=()=>{ setOffline(false); setStatus(""); });
+$("off-close")&&($("off-close").onclick=()=>{ setOffline(false); setStatus(""); });
 $("box").addEventListener("paste",e=>{ if((e.clipboardData?.getData("text")||"").length>150){ pasted=true; setStatus("Pasted text is flagged. The Director will ask you to restate it in your own words."); } });
 $("box").addEventListener("keydown",e=>{ if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){ e.preventDefault(); send(); } });
 document.querySelectorAll("#quick button").forEach(b=>b.onclick=()=>prefill(b.dataset.q));
@@ -3775,7 +3794,7 @@ $("startbtn").onclick=()=>send(`[START DAY] Open Day ${state.day+1}. Begin with 
 $("shortbtn").onclick=()=>send(`[START DAY] [SHORT] Open Day ${state.day+1} as a short session for a packed work day: one concept taught with one worked example, one attempt, cold retests only if due, then close. Aim for about 12 messages. Set Practice drills as follow-up if useful.`);
 $("sheetbtn").onclick=openSheet; $("sh-close").onclick=closeSheet; $("sh-send").onclick=sendSheet;
 
-try{ if(!localStorage.getItem("pc:v3clean")){ Object.keys(localStorage).forEach(k=>{ if(/^pcsheet:|^pc:box$|^pc:offline$/.test(k)) localStorage.removeItem(k); }); localStorage.setItem("pc:v3clean","1"); } }catch{}
+try{ localStorage.removeItem("pc:offline"); setOffline(false); }catch{}
 renderAll(); renderChat(); loadBoxDraft();
 (async()=>{
   if(!window.claude){ setStatus("Set an API key (⚙, bottom right) to use the Tutor."); return; }
