@@ -96,14 +96,14 @@
     w.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:520px;border-radius:14px 14px 0 0;padding:16px;font:15px system-ui">
       <b style="font-size:1.05rem">Tutor AI settings</b>
       <p style="font-size:.85rem;opacity:.75;margin:6px 0 12px">Learn, Practice, Notes and the measurement track work without any key. The key is only for the Tutor tab and explain-back feedback. It's stored only in this browser.</p>
-      <label style="display:block;margin:8px 0 4px">Provider</label>
-      <select id="sx-p" style="width:100%;padding:8px">${["gemini","anthropic","openai"].map(p => `<option ${c.provider === p ? "selected" : ""}>${p}</option>`).join("")}</select>
-      <label style="display:block;margin:8px 0 4px">API key</label><input id="sx-k" type="password" value="${c.key || ""}" style="width:100%;padding:8px" placeholder="Paste your API key">
-      <label style="display:block;margin:8px 0 4px">Model (teaching / feedback)</label><input id="sx-m" value="${c.model || ""}" placeholder="${d.model}" style="width:100%;padding:8px">
-      <label style="display:block;margin:8px 0 4px">Model (scoring answers)</label><input id="sx-mc" value="${c.modelComplex || ""}" placeholder="${d.modelComplex}" style="width:100%;padding:8px">
+      <label style="display:block;margin:8px 0 4px;font-weight:600">Provider</label>
+      <select id="sx-p" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">${["gemini","anthropic","openai"].map(p => `<option ${c.provider === p ? "selected" : ""}>${p}</option>`).join("")}</select>
+      <label style="display:block;margin:8px 0 4px;font-weight:600">API key</label><input id="sx-k" type="password" value="${c.key || ""}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box" placeholder="Paste your API key">
+      <label style="display:block;margin:8px 0 4px;font-weight:600">Model (teaching / feedback)</label><input id="sx-m" value="${c.model || ""}" placeholder="${d.model}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
+      <label style="display:block;margin:8px 0 4px;font-weight:600">Model (scoring answers)</label><input id="sx-mc" value="${c.modelComplex || ""}" placeholder="${d.modelComplex}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
       <p style="font-size:.8rem;opacity:.7;margin:8px 0">On free tiers, don't paste client-confidential figures. Leave models blank to use the recommended defaults.</p>
-      <label style="display:block;margin:8px 0 4px">Theme</label>
-      <select id="sx-t" style="width:100%;padding:8px">${["auto","light","dark"].map(t => `<option ${curTheme === t ? "selected" : ""}>${t}</option>`).join("")}</select>
+      <label style="display:block;margin:8px 0 4px;font-weight:600">Theme</label>
+      <select id="sx-t" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">${["auto","light","dark"].map(t => `<option ${curTheme === t ? "selected" : ""}>${t}</option>`).join("")}</select>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button id="sx-s" style="flex:1;padding:12px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Save &amp; reload</button>
         <button id="sx-c" style="padding:12px 18px;font-weight:600;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">Close</button>
