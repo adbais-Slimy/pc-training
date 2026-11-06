@@ -1,0 +1,13 @@
+{
+  "name": "pc-training",
+  "version": "3.0.0",
+  "private": true,
+  "description": "90-day Planning & Project Controls training app (standalone export)",
+  "scripts": {
+    "test": "node tests/run.js",
+    "start": "npx serve app"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  }
+}

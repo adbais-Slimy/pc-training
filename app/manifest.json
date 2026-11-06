@@ -1,0 +1,11 @@
+{
+  "name": "Project Controls — 90-Day Programme",
+  "short_name": "PC Training",
+  "description": "90-day Planning & Project Controls training app",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#E9ECE8",
+  "theme_color": "#2F5BD3",
+  "orientation": "portrait",
+  "icons": []
+}
