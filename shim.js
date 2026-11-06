@@ -103,7 +103,10 @@
       <p style="font-size:.8rem;opacity:.7;margin:8px 0">Model names change. Check the current ones in Google AI Studio, the Anthropic console or OpenAI before relying on the defaults. On free tiers, don't paste client-confidential figures.</p>
       <label style="display:block;margin:8px 0 4px">Theme</label>
       <select id="sx-t" style="width:100%;padding:8px">${["auto","light","dark"].map(t => `<option ${curTheme === t ? "selected" : ""}>${t}</option>`).join("")}</select>
-      <div style="display:flex;gap:8px;margin-top:10px"><button id="sx-s" style="flex:1;padding:10px;font-weight:700">Save & reload</button><button id="sx-c" style="padding:10px">Close</button></div></div>`;
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button id="sx-s" style="flex:1;padding:12px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Save &amp; reload</button>
+        <button id="sx-c" style="padding:12px 18px;font-weight:600;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">Close</button>
+      </div></div>`;
     document.body.appendChild(w);
     w.querySelector("#sx-c").onclick = () => w.remove();
     w.querySelector("#sx-s").onclick = () => { setCfg({ provider: w.querySelector("#sx-p").value, key: w.querySelector("#sx-k").value.trim(),
