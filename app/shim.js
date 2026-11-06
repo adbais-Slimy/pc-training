@@ -604,6 +604,147 @@ Civil handover of plant room / shaft must precede MEP installation. Never releas
 **4. Executive One-Liner:**
 > *"A deterministic finish date is a statistical illusion. We budget our commitments at P80, using quantitative risk simulation to defend our float reserve."*`,
         checklist: [{ domain: "RISK & DELAY", item: "Schedule risk analysis", status: "competent", level: "COMPETENT", score: 94 }]
+      },
+      {
+        keys: ["fast tracking", "crashing", "compression", "schedule compression", "crash cost", "cost slope"],
+        title: "Fast-Tracking vs Crashing (Schedule Compression)",
+        reply: `### Schedule Compression: Fast-Tracking vs. Crashing
+
+**1. The Two Industry Compression Techniques:**
+- **Fast-Tracking (Re-Sequencing):**
+  - Overlapping activities that were originally planned in sequence (converting Finish-to-Start $FS$ to Start-to-Start $SS$ with lead/lag).
+  - *Cost impact:* Zero direct cost increase.
+  - *Risk impact:* High rework risk.
+  - *Hospital Site Example:* Starting false ceiling framing ($SS + 5\\text{d}$) before medical gas copper piping is 100% hydro-tested. If a brazed joint leaks, you must dismantle newly installed ceiling grids.
+- **Crashing (Resource Acceleration):**
+  - Shortening activity durations on the critical path by adding direct resources (overtime, double shifts, extra gangs, specialized equipment).
+  - *Cost impact:* Direct cost increase.
+  - *Risk impact:* Minimum rework risk, but risks trade stacking and declining productivity (law of diminishing returns).
+  - *Hospital Site Example:* Mobilizing a second team of certified copper brazers for OT gas lines on a night shift.
+
+**2. The Crash Cost Slope Formula:**
+$$\\text{Cost Slope} = \\frac{\\text{Crash Cost} - \\text{Normal Cost}}{\\text{Normal Duration} - \\text{Crash Duration}} = \\frac{\\Delta \\text{Cost}}{\\Delta \\text{Time}}$$
+*Rule:* Always crash the critical activity with the **lowest cost slope** first to achieve the cheapest schedule recovery.
+
+**3. Executive Briefing Phrase:**
+> *"We do not fast-track finishes over uncertified MEP testing because rework wipes out all time gains. We crash critical path ducting using night shifts with a verified cost slope of ₹35,000 per day recovered."*`,
+        checklist: [{ domain: "PLANNING & SCHEDULING", item: "Schedule compression", status: "competent", level: "COMPETENT", score: 94 }]
+      },
+      {
+        keys: ["out of sequence", "retained logic", "progress override", "actual dates", "scheduling options"],
+        title: "P6 Out-of-Sequence Progress & Retained Logic",
+        reply: `### Primavera P6: Out-of-Sequence Logic & Scheduling Options
+
+**1. What is Out-of-Sequence (OOS) Progress?**
+- An activity has progress recorded (Actual Start or Actual Finish) before its driving predecessor has finished.
+- *Hospital Site Example:* Brick masonry starts on the 3rd floor before the 3rd-floor RCC slab de-shuttering activity has formally completed in the schedule.
+
+**2. The 3 P6 Calculation Modes:**
+1. **Retained Logic (Industry Standard):**
+   - Respects the original network logic. The remaining duration of the out-of-sequence activity cannot finish until its predecessor finishes.
+   - Recommended by AACE and DCMA specifications.
+2. **Progress Override:**
+   - Ignores the network logic. Treats the predecessor as no longer driving, allowing the successor to finish immediately.
+   - *Danger:* Distorts Total Float and hides real critical path delays.
+3. **Actual Dates:**
+   - Backward-calculates dates using actual durations; rarely permitted in contractual baselines.
+
+**3. Controls Manager Action When OOS Occurs:**
+- Investigate the field reality: If the predecessor was truly bypassed safely, update the network logic to reflect the new physical sequence. Never leave raw out-of-sequence errors unresolved.
+
+**4. Executive One-Liner:**
+> *"Retained Logic preserves network integrity. If the site legitimately changed the sequence, we amend the logic links rather than using Progress Override to fudge the float."*`,
+        checklist: [{ domain: "PRIMAVERA P6", item: "P6 Scheduling options", status: "competent", level: "COMPETENT", score: 94 }]
+      },
+      {
+        keys: ["physical progress", "financial progress", "billing progress", "commercial progress", "progress curve"],
+        title: "Physical Progress vs. Financial / Billing Progress",
+        reply: `### Physical Progress vs. Financial Progress: The Critical Distinction
+
+**1. The Universal Confusion on Site:**
+- **Financial Progress (Billing %):** $\\frac{\\text{Cumulative Certified / Paid Billing}}{\\text{Total Contract Value}} \\times 100$.
+- **Physical Progress (Earned Value %):** $\\sum \\left( \\frac{\\text{Installed BOQ Qty}}{\\text{Total BOQ Qty}} \\times \\text{BOQ Item Weightage} \\right) \\times 100$.
+- *The Trap:* On many projects, Financial Progress is reported as $65\\%$ while Physical Progress is only $48\\%$. This happens because of mobilization advances, uninstalled equipment delivery billing, and front-loaded earthwork rates.
+
+**2. The Rules of Credit:**
+- Progress must be earned strictly against physical milestones:
+  - Equipment (Pumps/AHU): $60\\%$ delivery to foundation, $25\\%$ piping/cabling hookup, $15\\%$ testing & commissioning.
+  - Pipework: $70\\%$ erection & alignment, $20\\%$ hydro-test / flushing, $10\\%$ insulation & tagging.
+- Material lying in store or yard is **zero percent** physical construction progress.
+
+**3. Executive Briefing Phrase:**
+> *"Never report financial billings as construction progress to the Board. We are at 48% physical progress earned in the permanent works against 65% cash drawn by the contractor."*`,
+        checklist: [{ domain: "PROGRESS MEASUREMENT", item: "Rules of Credit", status: "competent", level: "COMPETENT", score: 94 }]
+      },
+      {
+        keys: ["variation", "variation order", "change order", "change management", "scope creep", "baseline change"],
+        title: "Variation Orders (VO), Scope Creep & Baseline Change Control",
+        reply: `### Change Management, Variation Orders (VO) & Baseline Control
+
+**1. What Constitutes a Valid Variation Order (VO)?**
+- Written instruction from the Engineer / Employer altering:
+  1. Scope of work (additions, omissions, substitutions).
+  2. Quality or characteristics of any item.
+  3. Levels, positions, or dimensions.
+  4. Specified sequence or timing of execution.
+
+**2. Scope Creep vs. Authorized Variation:**
+- **Scope Creep:** Informal site additions requested by hospital end-users (e.g., doctors requesting extra oxygen outlets or room partition shifts) without commercial approval.
+- **The Golden Rule:** Site engineers must never execute scope changes on verbal instructions. All changes require an approved **Change Request Notice (CRN)** evaluating both **Time Impact (days)** and **Cost Impact (₹)**.
+
+**3. When Does the Baseline Change?**
+- **Schedule Revision (Update):** Performed monthly. Logic and remaining durations updated to reflect site reality; original baseline bars remain frozen.
+- **Contractual Re-Baselining:** Permitted **only** when a formal Extension of Time (EOT) or major Employer scope variation is contractually approved.
+
+**4. Executive One-Liner:**
+> *"We do not alter the contractual baseline for contractor delays. The baseline is only amended when formal variations or approved EOTs change the project scope."*`,
+        checklist: [{ domain: "FOUNDATION", item: "Change management", status: "competent", level: "COMPETENT", score: 92 }]
+      },
+      {
+        keys: ["report", "one pager", "dashboard", "monthly report", "coo report", "executive report"],
+        title: "The Executive One-Pager: Reporting to the COO & Board",
+        reply: `### Executive Reporting: The 8-Element Project Controls One-Pager
+
+**1. The 8 Mandatory Questions Every Executive Report Answers:**
+1. **Where Are We Today?** Cumulative physical progress earned vs planned (e.g. $52\\%$ actual vs $60\\%$ planned).
+2. **Where Should We Be?** Baseline milestone commitments for this reporting cycle.
+3. **Why the Gap?** Root cause of variance on the **critical path** (never list non-critical peripheral issues).
+4. **Time & Cost Impact:** Days slipped first (e.g. $+18$ calendar days on OT handover), followed by financial exposure (₹3.2 Cr potential LD / prolongation).
+5. **Driving Path Sequence:** The 3 to 5 activities currently controlling project completion.
+6. **Key Two-Clock Procurement Watches:** Critical long-lead equipment (Chillers, DG sets, Medical Gas Manifold, Elevators).
+7. **Priced Recovery Options:** At least two evaluated mitigation scenarios (Crashing cost vs Fast-tracking rework risk).
+8. **Decision Needed by When:** Clear, unambiguous approval requested from the COO/Board by a specific calendar date.
+
+**2. Field Trap to Avoid:**
+- Do not submit 100-page activity dumps from P6. Executives need driving paths, float erosion velocity, commercial exposure, and decisions.
+
+**3. Executive Briefing Phrase:**
+> *"Our handover is forecast for 14 May vs 25 April baseline (+19 days), driven by chiller plantroom clearance. We can recover 12 days by pre-fabricating header piping for ₹8.5 Lakhs. Decision needed by 15 November."*`,
+        checklist: [{ domain: "FOUNDATION", item: "Project Controls reporting", status: "competent", level: "COMPETENT", score: 94 }]
+      },
+      {
+        keys: ["time impact analysis", "tia", "delay methodology", "window analysis", "as planned vs as built", "collapsed as built"],
+        title: "Delay Analysis Methodologies (TIA, Window Analysis, As-Built)",
+        reply: `### Forensic Delay Analysis Methodologies: AACE 29R-03 & SCL
+
+**1. The 4 Recognized Methodologies:**
+1. **Time Impact Analysis (TIA):**
+   - *Nature:* Prospective / Contemporary.
+   - *Process:* Injects a fragnet (sub-network of delay activities) into the schedule update immediately preceding the delay event.
+   - *Best used for:* Live ongoing projects, change order time evaluation, and dispute prevention.
+2. **Window Analysis (Contemporaneous Period Analysis):**
+   - *Nature:* Retrospective.
+   - *Process:* Examines the schedule update by update (month by month), identifying how the critical path dynamically shifted and who caused the delay in each window.
+   - *Best used for:* Major multi-year disputes and arbitration; highest legal credibility.
+3. **Impacted As-Planned (IAP):**
+   - *Nature:* Prospective theoretical. Injects all employer delays into the original baseline.
+   - *Flaw:* Ignores actual site progress and contractor's concurrent delays. Weakest in arbitration.
+4. **Collapsed As-Built (But-For Analysis):**
+   - *Nature:* Retrospective. Takes the as-built schedule and subtracts employer delays to see when the project *would* have finished "but for" those delays.
+
+**2. Executive One-Liner:**
+> *"In live hospital execution, we enforce Time Impact Analysis (TIA) for contemporaneous claims. In post-completion arbitration, Window Analysis provides the unshakeable truth."*`,
+        checklist: [{ domain: "RISK & DELAY", item: "Delay analysis methodologies", status: "competent", level: "COMPETENT", score: 95 }]
       }
     ]
   };
@@ -872,46 +1013,164 @@ STATE>>>`;
       }
     }
 
-    // 9. Answer evaluation
-    const isVivaAnswer = turns.some(t => t.content && (t.content.includes("VIVA-") || t.content.includes("Viva")));
-    if (isVivaAnswer) {
-      return `### 🎓 Director's Viva Defense Evaluation
+    // -------------------------------------------------------------
+    // Intelligent Response Understanding & Context Analysis
+    // -------------------------------------------------------------
+    let lastAssistantText = "";
+    for (let i = turns.length - 2; i >= 0; i--) {
+      if (turns[i].role === "assistant") {
+        lastAssistantText = turns[i].content || "";
+        break;
+      }
+    }
+    const lowerUser = userText.toLowerCase();
 
-**✓ Executive Defense Score: 95 / 100 (Manager-Level Standard)**
+    // Context A: Answering Morning Briefing AHU Procurement Calculation
+    if (/Air Handling Unit.*10 Jan|backward calculate.*10 Jan|D\d+-Q1/i.test(lastAssistantText)) {
+      const mentionsSept = /sept|september|4\s*sep|04\s*sep|128/i.test(lowerUser);
+      const mentionsHops = /10|70|48|transit|vendor|tat/i.test(lowerUser);
+      return `### 🚚 Director's Evaluation — Procurement Lead Time Calculation
 
-**1. Strengths in Your Defense:**
-- You correctly separated the driving critical path from non-critical contractor noise.
-- You stood firm on demanding contemporaneous physical records (daily labor logs, site walk inspections, verified BOQ quantities) rather than accepting contractor narratives at face value.
+${mentionsSept ? `**✓ Outstanding Accuracy: 4 September (128 Calendar Days)**
+You nailed the backward hop-by-hop calculation!
+- **Site Need:** 10 January
+- **Minus 10 days transit:** 31 December
+- **Minus 70 days vendor mfg & FAT:** 22 October
+- **Minus 48 days internal PO release TAT:** **4 September** (Total 128 calendar days)` : `**🔍 Calculation Hop Audit:**
+Let's verify the exact hops together:
+- Total lead time = $10\\text{d (transit)} + 70\\text{d (mfg/FAT)} + 48\\text{d (internal TAT)} = 128\\text{ calendar days}$.
+- Stepping backward 128 calendar days from 10 January lands on **4 September**.`}
 
-**2. The Director's Refinement (What Sharpens Your Standing with the Board):**
-- When presenting to a COO or Board, always open with the **commercial exposure first**:
-  - State the daily Liquidated Damages (LD) liability.
-  - State whether an Extension of Time (EOT) would relieve LDs without granting prolongation cost (the SCL concurrent delay rule).
-  - Provide a clear, actionable two-week recovery mitigation plan.
+**🎯 What Makes a Manager-Level Answer:**
+- You accounted for **both procurement clocks** (Internal TAT + Vendor manufacturing).
+- If internal approvals slipped past 4 September, the AHU delivery slips past 10 January and immediately delays cleanroom OT ducting on the critical path.
 
-**3. Model Board Statement (Use This Phrasing):**
-> *"We hold contractors accountable to verified installed BOQ quantities and unbroken driving logic in Primavera P6. Unsubstantiated claims are rejected at the gate, protecting project cash and preserving schedule integrity."*
+**Executive Phrasing:**
+> *"The purchase indent must be approved by 4 September to preserve our 10 January OT installation date. Every day lost in internal approvals is a day lost on hospital handover."*
 
 <<<STATE
-{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"viva","score":95,"confidence":5}],"checklist":[{"domain":"RISK & DELAY","item":"Delay analysis methodologies","status":"competent","level":"COMPETENT","score":95,"evidence":"Passed senior management viva defense with robust contractual grounding."}]}
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"procurement-ahu","score":${mentionsSept ? 96 : 88},"confidence":4}],"checklist":[{"domain":"PROCUREMENT CONTROLS","item":"Procurement TAT","status":"competent","level":"COMPETENT","score":${mentionsSept ? 96 : 88},"evidence":"Calculated two-clock backward lead time for critical hospital AHU."}]}
 STATE>>>`;
     }
 
-    // 10. Generic answer evaluation if user is submitting an answer
+    // Context B: Answering Cable Physical Progress Challenge
+    if (/1,?800.*cable.*2,?500|CHALLENGE-EVM/i.test(lastAssistantText)) {
+      const mentions58 = /58|58%|1,?450/i.test(lowerUser);
+      const rejects72 = /reject|refuse|disallow|cannot|not 72|zero|store/i.test(lowerUser);
+      return `### 📊 Director's Evaluation — Physical Progress & RA Bill Challenge
+
+${mentions58 ? `**✓ Correct Physical Progress: 58% ($1,450 / 2,500\text{ rm}$)**
+You correctly refused to credit the contractor with 72% based on store issues!` : `**🔍 Physical Progress Calculation Check:**
+- Total BOQ Quantity: $2,500\\text{ rm}$
+- Material issued from store: $1,800\\text{ rm}$ ($72\\%$)
+- Work actually installed in permanent works: $1,450\\text{ rm}$
+$$\\text{Real Physical Progress} = \\frac{1,450\\text{ rm}}{2,500\\text{ rm}} \\times 100 = 58\\%$$`}
+
+**1. Commercial Action with Billing Team:**
+${rejects72 ? `✓ You correctly advised the team to **reject the 72% billing claim** and certify strictly 58% for installed cable.` : `Reject the 72% claim. Certify only the 1,450 rm installed. Store delivery slips belong to procurement logistics, not permanent construction completion.`}
+
+**2. Grounding in Indian & International Standards (IS 1200 & AACE):**
+- Progress can only be earned when work is built into the permanent structure and passes quality/testing requirements.
+- Material lying in store qualifies only for a **Secured Advance** (if explicitly permitted by contract, typically at $75\\%$ of invoice with an indemnity bond and transit insurance), never for progress percentage.
+
+**Executive Phrasing:**
+> *"We certify 58% installed and megger-tested progress. Delivery slips do not constitute physical completion under IS 1200."*
+
+<<<STATE
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"cable-evm","score":${mentions58 ? 96 : 90},"confidence":5}],"checklist":[{"domain":"PROGRESS MEASUREMENT","item":"Rules of Credit","status":"competent","level":"COMPETENT","score":${mentions58 ? 96 : 90},"evidence":"Distinguished installed permanent works (58%) from store issues (72%) per IS 1200."}]}
+STATE>>>`;
+    }
+
+    // Context C: Answering Drainage Float & Rain Delay Retest
+    if (/external drainage.*Mark 14|RETEST-CPM/i.test(lastAssistantText)) {
+      const mentions6 = /\b6\b|6\s*days|six/i.test(lowerUser);
+      const mentionsNoMove = /not\s*move|no|handover\s*stays|at\s*28|26/i.test(lowerUser);
+      const mentionsNoEOT = /no\s*eot|reject|not\s*entitled|float\s*absorbed/i.test(lowerUser);
+      return `### ⏱ Director's Evaluation — Float Consumption & EOT Defense
+
+**1. Total Float Calculation:**
+- Handover constraint: Mark 28; Early Finish: Mark 22.
+- $\\text{Total Float} = 28 - 22 =$ **6 working days**. ${mentions6 ? "✓ Correct!" : ""}
+
+**2. Impact of 4-Day Rain Halt:**
+- New Early Finish: $22 + 4 =$ **Mark 26**.
+- Because $26 \\le 28$, **the handover date does NOT move**. ${mentionsNoMove ? "✓ Correct!" : ""}
+
+**3. Contractor's EOT Claim:**
+- **REJECTED.** ${mentionsNoEOT ? "✓ Spot-on contractual defense!" : "Under the SCL Delay Protocol, total float belongs to the project until consumed."}
+- The rain event consumed 4 days of the 6 days of total float, leaving 2 working days of buffer. Because the critical completion date was not delayed, the contractor suffered zero critical delay and is entitled to **zero days EOT**.
+
+**Executive Phrasing:**
+> *"The 4-day rain event consumed float from 6 days to 2 days without delaying the contract handover date. Under standard contract terms, non-critical delays do not warrant an EOT."*
+
+<<<STATE
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"drainage-float","score":${mentions6 && mentionsNoMove ? 96 : 90},"confidence":4}],"checklist":[{"domain":"PLANNING & SCHEDULING","item":"Total Float","status":"competent","level":"COMPETENT","score":${mentions6 && mentionsNoMove ? 96 : 90},"evidence":"Defended float ownership and rejected non-critical rain EOT claim."}]}
+STATE>>>`;
+    }
+
+    // Context D: Viva Defense Evaluation
+    const isVivaAnswer = turns.some(t => t.content && (t.content.includes("VIVA-") || t.content.includes("Viva"))) || /VIVA-|Senior Management Viva|hot seat/i.test(lastAssistantText);
+    if (isVivaAnswer) {
+      const hasContract = /scl|fidic|clause|is\s*1200|protocol|contract|28\s*days/i.test(lowerUser);
+      const hasEVM = /evm|cpi|spi|eac|earned\s*value|installed|ac\b/i.test(lowerUser);
+      const hasFloat = /float|erosion|velocity|critical\s*path|driving|occupancy/i.test(lowerUser);
+      const score = (hasContract || hasEVM || hasFloat) ? 96 : 92;
+      return `### 🎓 Director's Viva Defense Evaluation
+
+**✓ Executive Defense Score: ${score} / 100 (Manager-Level Standard)**
+
+**1. Key Strengths in Your Argument:**
+- You grounded your position in objective, inspectable site evidence rather than commercial rhetoric.
+- You separated the driving critical path from non-critical contractor noise.
+
+**2. The Director's Refinements for the Boardroom:**
+- Always quantify the **commercial and time exposure first** (e.g. ₹ per day in LDs, weeks of critical delay).
+- When dealing with contractor claims: require contemporaneous baseline-linked fragnet updates (TIA) and verified daily manpower records.
+- For executive reviews: present recovery options with costs and rework risks clearly quantified.
+
+**Model Board Statement:**
+> *"We hold all contractors to verified installed quantities and unbroken driving logic in Primavera P6. Unsubstantiated claims are rejected at the gate, protecting project cash and preserving schedule integrity."*
+
+<<<STATE
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"viva","score":${score},"confidence":5}],"checklist":[{"domain":"RISK & DELAY","item":"Delay analysis methodologies","status":"competent","level":"COMPETENT","score":${score},"evidence":"Defended complex project controls dilemma before senior executive board."}]}
+STATE>>>`;
+    }
+
+    // Context E: General Answer & Technical Input Evaluation
+    const termsFound = [];
+    if (/cpm|forward pass|backward pass|critical path/i.test(lowerUser)) termsFound.push("Critical Path Method (CPM)");
+    if (/float|free float|total float|negative float|erosion/i.test(lowerUser)) termsFound.push("Float Management");
+    if (/evm|cpi|spi|eac|earned value|pv|ac\b/i.test(lowerUser)) termsFound.push("Earned Value Management (EVM)");
+    if (/p6|primavera|data date|wbs|retained logic/i.test(lowerUser)) termsFound.push("Primavera P6 Controls");
+    if (/procurement|lead time|tat|two clocks|vendor/i.test(lowerUser)) termsFound.push("Two-Clock Procurement");
+    if (/is 1200|boq|billing|ra bill|deduction|rebar/i.test(lowerUser)) termsFound.push("IS 1200 & Quantity Measurement");
+    if (/scl|eot|delay|concurrent|fidic|notice/i.test(lowerUser)) termsFound.push("Delay Analysis & Contract Administration");
+    if (/hospital|mep|mgps|cleanroom|ot|chiller/i.test(lowerUser)) termsFound.push("Hospital Systems & MEP Coordination");
+
+    const snippet = userText.length > 120 ? userText.slice(0, 115) + "…" : userText;
+    const score = Math.min(96, Math.max(88, 86 + termsFound.length * 2));
+
     return `### Director's Assessment & Technical Evaluation
 
 **✓ Your Input Analysis:**
-You have correctly grasped the operational fundamentals. Your reasoning shows solid field intuition and applies practical site logic.
+You noted: *"“${snippet}”"*
 
-**🎯 Key Project Controls Standard to Keep in Mind:**
-- Keep your explanations structured: always state the **cause**, the **time impact on critical path**, the **cost exposure**, and the **management decision required**.
-- Show calculation hops explicitly. In technical reviews, a bare number is treated as a guess; showing the calculation proves control.
+${termsFound.length ? `**Key Competencies Recognized:**
+${termsFound.map(t => `• **${t}:** Applied practical field logic with sound technical awareness.`).join("\n")}` : `**Operational Grounding:**
+You have correctly grasped the fundamental site mechanism and applied practical construction logic.`}
+
+**🎯 Manager-Level Standard to Remember:**
+- Every schedule or cost variance reported to leadership must follow the **4-Part Defense Rule**:
+  1. **The Root Cause:** State what physically happened on site.
+  2. **The Driving Path Impact:** Number of working days consumed on the critical path.
+  3. **The Commercial Exposure:** ₹ impact, potential LD liability, or contractor claim exposure.
+  4. **The Decision Required:** Recommended mitigation action with a specific decision deadline for the COO.
 
 **Executive Phrasing:**
 > *"Every delay or variance must be reported with its driving mechanism, its float consumption rate, and a recommended recovery action."*
 
 <<<STATE
-{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"response","score":92,"confidence":4}],"checklist":[{"domain":"PLANNING & SCHEDULING","item":"CPM","status":"competent","level":"COMPETENT","score":92}]}
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"response","score":${score},"confidence":4}],"checklist":[{"domain":"PLANNING & SCHEDULING","item":"CPM","status":"competent","level":"COMPETENT","score":${score}}]}
 STATE>>>`;
   }
 
