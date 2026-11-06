@@ -38,13 +38,44 @@
     let r, j, text = "";
     try {
       if (c.provider === "gemini") {
-        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(c.key)}`, {
-          method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": c.key }, signal: opts.signal,
-          body: JSON.stringify({ contents: msgs.map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
-                                 generationConfig: { maxOutputTokens: 4096, temperature: 0.4 } }) });
-        j = await r.json(); if (!r.ok) throw j;
-        text = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("");
-        return { text, truncated: j.candidates?.[0]?.finishReason === "MAX_TOKENS" };
+        const candidates = [model];
+        if (model === "gemini-3.8-flash") candidates.push("gemini-3.6-flash");
+        else if (!candidates.includes("gemini-3.8-flash")) candidates.push("gemini-3.8-flash");
+
+        let lastErr = null;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const curModel = candidates[Math.min(attempt, candidates.length - 1)];
+          try {
+            r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(curModel)}:generateContent?key=${encodeURIComponent(c.key)}`, {
+              method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": c.key }, signal: opts.signal,
+              body: JSON.stringify({ contents: msgs.map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+                                     generationConfig: { maxOutputTokens: 4096, temperature: 0.4 } }) });
+            j = await r.json();
+            if (r.ok && j.candidates?.[0]?.content?.parts) {
+              text = (j.candidates[0].content.parts || []).map(p => p.text || "").join("");
+              return { text, truncated: j.candidates[0].finishReason === "MAX_TOKENS" };
+            }
+            lastErr = j;
+            const msg = j?.error?.message || "";
+            const isHighDemand = r?.status === 503 || r?.status === 429 || /high demand|spikes in demand|overloaded|temporar/i.test(msg);
+            if (isHighDemand && attempt < 2) {
+              await new Promise(res => setTimeout(res, 1200 * (attempt + 1)));
+              continue;
+            }
+            throw j;
+          } catch (err) {
+            lastErr = err;
+            if (err?.name === "AbortError") throw err;
+            const msg = err?.error?.message || err?.message || "";
+            const isHighDemand = /high demand|spikes in demand|overloaded|temporar/i.test(msg);
+            if (isHighDemand && attempt < 2) {
+              await new Promise(res => setTimeout(res, 1200 * (attempt + 1)));
+              continue;
+            }
+            throw err;
+          }
+        }
+        throw lastErr;
       }
       if (c.provider === "anthropic") {
         r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", signal: opts.signal,
@@ -66,6 +97,9 @@
       if (e?.name === "AbortError") throw { code: "cancelled" };
       const status = r?.status;
       const apiMsg = e?.error?.message || e?.message || (typeof e === "string" ? e : "");
+      if (/high demand|spikes in demand|overloaded/i.test(apiMsg)) {
+        throw { code: "unavailable", message: "Google AI servers are experiencing temporary high demand right now. Please tap Send again in a few seconds, or switch provider in ⚙." };
+      }
       if (status === 429) throw { code: "rate_limited", message: apiMsg || "Rate or usage limit reached." };
       if (status === 401 || status === 403) throw { code: "not_granted", message: apiMsg || "API key rejected." };
       throw { code: "unavailable", message: apiMsg || `Request failed (${status || "network error"}).` };
