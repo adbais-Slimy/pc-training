@@ -12,9 +12,9 @@
   const getCfg = () => {
     try {
       const c = JSON.parse(LS.getItem(cfgKey) || "{}");
-      if (c.provider === "gemini") {
-        if (!c.model || /gemini-(1\.[05]|2\.[05]|3\.[0-9]-flash)/.test(c.model || "")) { c.model = "gemini-2.5-flash"; setCfg(c); }
-        if (!c.modelComplex || /gemini-(1\.[05]|2\.[05]|3\.[0-9]-flash)/.test(c.modelComplex || "")) { c.modelComplex = "gemini-3.1-pro-preview"; setCfg(c); }
+      if (!c.provider || c.provider === "gemini") {
+        if (!c.model || /gemini-[12]\./.test(c.model || "")) { c.model = "gemini-3.8-flash"; setCfg(c); }
+        if (!c.modelComplex || /gemini-[12]\./.test(c.modelComplex || "")) { c.modelComplex = "gemini-3.1-pro-preview"; setCfg(c); }
       }
       return c;
     } catch { return {}; }
@@ -48,7 +48,7 @@
 
   // ---------- sample: one interface, four providers ----------
   const DEFAULTS = {
-    gemini:    { model: "gemini-2.5-flash", modelComplex: "gemini-3.1-pro-preview" },
+    gemini:    { model: "gemini-3.8-flash", modelComplex: "gemini-3.1-pro-preview" },
     openrouter:{ model: "google/gemini-2.5-flash", modelComplex: "google/gemini-3.1-pro-preview", baseUrl: "https://openrouter.ai/api/v1" },
     anthropic: { model: "claude-3-5-sonnet-latest", modelComplex: "claude-3-5-sonnet-latest" },
     openai:    { model: "gpt-4o-mini", modelComplex: "gpt-4o", baseUrl: "https://api.openai.com/v1" }
@@ -64,8 +64,13 @@
     let r, j, text = "";
     try {
       if (c.provider === "gemini") {
-        const candidates = [model];
-        ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3.1-pro-preview"].forEach(m => {
+        const isComplex = opts.modelTier === "complex";
+        const cleanM = cleanModel(model) || (isComplex ? "gemini-3.1-pro-preview" : "gemini-3.8-flash");
+        const fallbackList = isComplex
+          ? ["gemini-3.1-pro-preview", "gemini-3.8-flash", "gemini-3.6-flash"]
+          : ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.1-pro-preview"];
+        const candidates = [cleanM];
+        fallbackList.forEach(m => {
           if (!candidates.includes(m)) candidates.push(m);
         });
 
@@ -85,7 +90,8 @@
             }
             lastErr = j;
             const msg = j?.error?.message || "";
-            const isRetryable = r?.status === 503 || r?.status === 429 || r?.status === 404 || /high demand|spikes in demand|overloaded|temporar|not found|no longer available|deprecated/i.test(msg);
+            const isRetryable = r?.status === 503 || r?.status === 429 || r?.status === 404 || r?.status === 400 ||
+              /high demand|spikes in demand|overloaded|temporar|not found|no longer available|deprecated/i.test(msg);
             if (isRetryable && attempt < candidates.length - 1) {
               await new Promise(res => setTimeout(res, 1000));
               continue;
@@ -134,7 +140,10 @@
       const status = r?.status || e?.error?.code;
       const apiMsg = e?.error?.message || e?.message || (typeof e === "string" ? e : "");
       if (/high demand|spikes in demand|overloaded/i.test(apiMsg)) {
-        throw { code: "unavailable", message: "Google AI servers are currently experiencing high demand across Flash models. Please wait 10 seconds and tap Send again, or switch to 'gemini-2.5-flash-lite' in ⚙." };
+        throw { code: "unavailable", message: "Google AI servers are currently experiencing high demand. Please wait 10 seconds and tap Send again, or switch models in ⚙." };
+      }
+      if (/no longer available|deprecated/i.test(apiMsg)) {
+        throw { code: "unavailable", message: "Your selected model has been retired by Google. Tap ⚙ (bottom right) and select ⚡ 3.8-Flash." };
       }
       if (status === 429) throw { code: "rate_limited", message: apiMsg || "Rate or usage limit reached." };
       if (status === 401 || status === 403 || /API key/i.test(apiMsg)) throw { code: "not_granted", message: apiMsg || "API key rejected. Please check your key in ⚙." };
@@ -171,16 +180,35 @@
     key = sanitizeApiKey(key);
     if (!key) throw new Error("Please paste an API key first.");
     if (prov === "gemini") {
-      const mod = cleanModel(m) || "gemini-2.5-flash";
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(mod)}:generateContent?key=${encodeURIComponent(key)}`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "Ping" }] }], generationConfig: { maxOutputTokens: 10 } })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data?.error?.message || `HTTP ${res.status}`);
+      const cleanM = cleanModel(m);
+      const candidates = [cleanM || "gemini-3.8-flash", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.1-pro-preview"];
+      let lastErr = null;
+      for (const curMod of candidates) {
+        if (!curMod) continue;
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(curMod)}:generateContent?key=${encodeURIComponent(key)}`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "Ping" }] }], generationConfig: { maxOutputTokens: 10 } })
+          });
+          const data = await res.json();
+          if (res.ok && data.candidates?.[0]?.content?.parts) {
+            return { model: curMod, message: `Connected successfully to Gemini (${curMod})!` };
+          }
+          const msg = data?.error?.message || `HTTP ${res.status}`;
+          lastErr = new Error(msg);
+          if (/no longer available|deprecated|not found|high demand|overloaded/i.test(msg)) {
+            continue;
+          }
+          throw lastErr;
+        } catch (e) {
+          lastErr = e;
+          if (/no longer available|deprecated|not found|high demand|overloaded/i.test(e.message)) {
+            continue;
+          }
+          throw e;
+        }
       }
-      return `Connected successfully to Gemini (${mod})!`;
+      throw lastErr || new Error("Failed to connect to any Gemini model.");
     }
     if (prov === "openrouter") {
       const mod = cleanModel(m) || "google/gemini-2.5-flash";
@@ -240,13 +268,13 @@
       </div>
       <label style="display:block;margin:8px 0 4px;font-weight:600">Model (teaching / feedback)</label>
       <div id="sx-gemini-pills" style="display:flex;gap:6px;margin:4px 0 8px;flex-wrap:wrap">
-        <button type="button" id="btn-pick-flash" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">Default: 2.5-Flash</button>
-        <button type="button" id="btn-pick-lite" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--bar,#2F5BD3);background:var(--barSoft,#E8EEFA);color:var(--bar,#2F5BD3);font-weight:700;cursor:pointer">⚡ 2.5-Flash-Lite (Fix High Demand)</button>
+        <button type="button" id="btn-pick-flash" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--bar,#2F5BD3);background:var(--barSoft,#E8EEFA);color:var(--bar,#2F5BD3);font-weight:700;cursor:pointer">⚡ 3.8-Flash (Official Standard)</button>
+        <button type="button" id="btn-pick-36" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">3.6-Flash</button>
         <button type="button" id="btn-pick-pro" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">3.1-Pro-Preview</button>
       </div>
       <input id="sx-m" value="${c.model || ""}" placeholder="${d.model}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
       <label style="display:block;margin:8px 0 4px;font-weight:600">Model (scoring answers)</label><input id="sx-mc" value="${c.modelComplex || ""}" placeholder="${d.modelComplex}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
-      <p style="font-size:.8rem;opacity:.7;margin:8px 0">If Gemini servers report high demand, tap <b>⚡ 2.5-Flash-Lite</b> above for low-congestion fast responses.</p>
+      <p style="font-size:.8rem;opacity:.7;margin:8px 0">For new Google AI Studio accounts, <b>gemini-3.8-flash</b> is the official model. Tap <b>⚡ 3.8-Flash</b> above.</p>
       <label style="display:block;margin:8px 0 4px;font-weight:600">Theme</label>
       <select id="sx-t" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">${["auto","light","dark"].map(t => `<option ${curTheme === t ? "selected" : ""}>${t}</option>`).join("")}</select>
       <div style="display:flex;gap:8px;margin-top:14px">
@@ -265,13 +293,13 @@
     const geminiPills = w.querySelector("#sx-gemini-pills");
 
     w.querySelector("#btn-pick-flash")?.addEventListener("click", () => {
-      inpM.value = "gemini-2.5-flash";
-      inpMc.value = "gemini-2.5-flash";
+      inpM.value = "gemini-3.8-flash";
+      inpMc.value = "gemini-3.1-pro-preview";
       if (testStatus) testStatus.textContent = "";
     });
-    w.querySelector("#btn-pick-lite")?.addEventListener("click", () => {
-      inpM.value = "gemini-2.5-flash-lite";
-      inpMc.value = "gemini-2.5-flash-lite";
+    w.querySelector("#btn-pick-36")?.addEventListener("click", () => {
+      inpM.value = "gemini-3.6-flash";
+      inpMc.value = "gemini-3.1-pro-preview";
       if (testStatus) testStatus.textContent = "";
     });
     w.querySelector("#btn-pick-pro")?.addEventListener("click", () => {
@@ -288,7 +316,11 @@
         testStatus.textContent = "Testing connection…";
         testStatus.style.color = "var(--muted,#666)";
         try {
-          const msg = await testConnection(selProv.value, inpK.value, inpM.value);
+          const res = await testConnection(selProv.value, inpK.value, inpM.value);
+          const msg = typeof res === "object" ? res.message : res;
+          if (typeof res === "object" && res.model && inpM.value !== res.model) {
+            inpM.value = res.model;
+          }
           testStatus.textContent = "✓ " + msg;
           testStatus.style.color = "var(--ok,#4CC282)";
         } catch (err) {
