@@ -237,6 +237,14 @@
         rightMsg: "You outlined the complete RA bill audit sequence: MB trace -> BOQ quantity limit -> rate check -> retention -> advance recovery.",
         trapMsg: "Never certify cumulative billing exceeding 100% of BOQ without an approved change order variation in hand.",
         directorQuote: "An RA bill certification verifies quantity, checks BOQ limits, applies deductions, and protects project cash."
+      },
+      "M6": {
+        title: "Rate analysis, extra items & material reconciliation",
+        domain: "COST CONTROL",
+        item: "Cost Control",
+        rightMsg: "You clearly grasped the first-principles rate analysis (Material + Labor + Machinery + 15% CP&OH), the 125% deviation threshold, and the necessity of rigorous material reconciliation against permissible wastage limits.",
+        trapMsg: "Never certify non-BOQ rates based on verbal quotes alone. Demand supplier invoices, labor deployment slips, and contractor quotation breakdowns before submitting to the client.",
+        directorQuote: "An extra item rate must be built from verified market invoices, standard labor constants, and 15% CP&OH. Theoretical reconciliation protects project cash from unaccounted site wastage."
       }
     },
 
@@ -875,6 +883,37 @@ $$\\text{Cost Slope} = \\frac{\\text{Crash Cost} - \\text{Normal Cost}}{\\text{N
 **2. Executive One-Liner:**
 > *"In live hospital execution, we enforce Time Impact Analysis (TIA) for contemporaneous claims. In post-completion arbitration, Window Analysis provides the unshakeable truth."*`,
         checklist: [{ domain: "RISK & DELAY", item: "Delay analysis methodologies", status: "competent", level: "COMPETENT", score: 95 }]
+      },
+      {
+        keys: ["extra item", "star item", "non boq", "rate analysis", "cpwd analysis", "15% cp&oh", "cp&oh", "material reconciliation", "wastage", "penal rate"],
+        title: "Rate Analysis, Extra Items & Material Reconciliation",
+        reply: `### Rate Analysis, Extra Items & Material Reconciliation — Field Masterclass
+
+**1. Extra Items (Non-BOQ / Star Items) from First Principles:**
+Under CPWD and standard contracts, any item not covered in the original BOQ must be derived from first principles:
+- **Prime Cost:**
+  - *Material at Site:* Verified purchase invoices + freight + loading/unloading + 2–5% handling wastage.
+  - *Labor Cost:* Standard labor coefficients (CPWD Analysis of Rates / DSR) × notified minimum / market wages.
+  - *Machinery & Tools:* Plant running charges, scaffolding, and testing consumables.
+- **Contractor's Profit & Overheads (CP & OH):** Standard **15%** added to Prime Cost.
+- **The 125% Deviation Rule:** If an existing BOQ item exceeds 125% of its original quantity, the excess quantity beyond 125% is subject to market rate analysis, not automatic BOQ pricing.
+
+**2. Material Reconciliation & Permissible Wastage:**
+On projects with client-issued materials (or auditing contractor-procured bulk materials):
+- **Theoretical Consumption:** Calculated strictly from structural drawings and standard consumption coefficients (e.g. 0.285 MT steel/m³ RCC, 0.45 bags cement/m² 12 mm plaster).
+- **Permissible Wastage Standards:**
+  - *Cement:* **2%**
+  - *Reinforcement Steel:* **3%** (for standard rolling margins, cut off-cuts)
+  - *Structural Steel:* **4–5%**
+- **Allowable Consumption:** $\\text{Theoretical} \\times (1 + \\text{Permissible }\\%)$.
+- **Reconciliation & Penal Recovery:**
+  - If $\\text{Actual} \\le \\text{Allowable}$: Compliant.
+  - If $\\text{Actual} > \\text{Allowable}$: The delta is **Excess Wastage**.
+  - Contractual penalty: Excess wastage is deducted from the final/running bill at the specified **Penal Rate** (typically 1.5× to 2.0× procurement rate).
+
+**3. Director's Standard Phrase (To Contractor / Billing Team):**
+> *"An extra item rate must be built from verified invoices, standard labor constants, and exactly 15% CP&OH. Theoretical material reconciliation protects the project against paying for site negligence or unauthorized off-site diversion."*`,
+        checklist: [{ domain: "COST CONTROL", item: "Cost Control", status: "competent", level: "COMPETENT", score: 95 }]
       }
     ]
   };
@@ -1348,6 +1387,8 @@ STATE>>>`;
     if (/is 1200|boq|billing|ra bill|deduction|rebar/i.test(lowerUser)) termsFound.push("IS 1200 & Quantity Measurement");
     if (/scl|eot|delay|concurrent|fidic|notice/i.test(lowerUser)) termsFound.push("Delay Analysis & Contract Administration");
     if (/hospital|mep|mgps|cleanroom|ot|chiller/i.test(lowerUser)) termsFound.push("Hospital Systems & MEP Coordination");
+    if (/extra item|star item|non-?boq|rate analysis|cpwd|15%|cp&oh/i.test(lowerUser)) termsFound.push("First-Principles Rate Analysis & CP&OH");
+    if (/material recon|reconciliation|wastage|permissible wastage|penal rate|penal recovery/i.test(lowerUser)) termsFound.push("Material Reconciliation & Permissible Wastage");
 
     const snippet = userText.length > 120 ? userText.slice(0, 115) + "…" : userText;
     const score = Math.min(96, Math.max(88, 86 + termsFound.length * 2));
@@ -1422,7 +1463,8 @@ STATE>>>`;
 
       <label style="display:block;margin:14px 0 6px;font-weight:600">Quick Study Actions</label>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button type="button" id="btn-open-formulas" class="btn" style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--line,#CDD3CF);background:var(--surface,#fff);cursor:pointer;font-weight:600">📐 Open Formula Drawer</button>
+        <button type="button" id="btn-open-formulas" class="btn" style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--line,#CDD3CF);background:var(--surface,#fff);cursor:pointer;font-weight:600">📐 Open Field Tools &amp; Formulas</button>
+        <button type="button" id="btn-force-refresh" class="btn" style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3);background:var(--surface,#fff);cursor:pointer;font-weight:600">⚡ Force Reload &amp; Update App (Clears Cache)</button>
         <button type="button" id="btn-export-backup" class="btn" style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--line,#CDD3CF);background:var(--surface,#fff);cursor:pointer;font-weight:600">💾 Export Progress Backup (JSON)</button>
         <button type="button" id="btn-reset-app" class="btn" style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A);background:var(--surface,#fff);cursor:pointer;font-weight:600">↺ Reset Progress to Day 0</button>
       </div>
@@ -1438,6 +1480,23 @@ STATE>>>`;
       w.remove();
       const btn = document.getElementById("btn-float-formula");
       if (btn) btn.click();
+    });
+
+    w.querySelector("#btn-force-refresh")?.addEventListener("click", async () => {
+      w.remove();
+      if ('caches' in window) {
+        try {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        } catch(e) {}
+      }
+      if ('serviceWorker' in navigator) {
+        try {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r => r.unregister()));
+        } catch(e) {}
+      }
+      window.location.reload(true);
     });
 
     w.querySelector("#btn-export-backup")?.addEventListener("click", () => {

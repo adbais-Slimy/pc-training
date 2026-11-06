@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=20"></script>
+<script src="shim.js?v=21"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -654,7 +654,7 @@ APP PROTOCOL v3 — COURSE MODE (restarted at Day 0). These rules refine the pro
 WHY THE CHANGE: his previous run failed. Test-first chat teaching with long messages left him unable to understand basic concepts (Day 4 ran 18 days on the forward pass). Teaching now happens in the app's Learn tab: authored units (Day 0–10: what a schedule is, marks & calendars, FS/SS/FF and lags, forward pass, backward pass, float and critical path, impact statements, WBS, baseline and data date, durations from quantities). Each unit = why → plain idea → visual worked example → guided try → misconception-targeted check (pass 4/5) → explain-back → spaced card. The day advances only when a unit's check is passed.
 
 PROGRAMME STRUCTURE (his choice, adopted): Block 1 Foundation Days 0–20 (Gate 1 Day 20) · Block 2 Controls core Days 21–50 (P6, progress, cost, EVM, procurement & cash flow, risk; Gate 2 Day 50) · Block 3 Advanced Days 51–70 (delay & EOT, change & contracts, integrated cycle, reporting, portfolio & digital; Gate 3 Day 70) · Block 4 Capstone Days 71–90 (full project simulations, monthly reports, viva, interleaved revision, final exam Day 90). Days 11–20 cover calendars & constraints, negative float, near-critical & float erosion, levels & look-ahead/PPC, flow-line for floors & road chainages, histograms & levelling, procurement ROS & float, contractor-schedule quality checks, updating & recovery, Gate 1.
-SITE MEASUREMENT TRACK (parallel, M1–M5, opens after Day 1): MB & joint measurement & measure-before-cover; civil (concrete to drawing, steel kg = d²/162 × length, excavation in original ground); finishes and deduction rules (typical IS 1200 Part 12 plaster bands ≤0.5 / 0.5–3 / >3 m², always per the contract's BOQ preamble); MEP by item description & stage payments, external works by average end area; RA bill 6-point check (MB, BOQ limit, BOQ item, rate, work done vs material, this bill = cum − previous). He wasn't sure how measurement is done on site — teach practically, and always defer to the specific contract's method of measurement.
+SITE MEASUREMENT TRACK (parallel, M1–M6, opens after Day 1): MB & joint measurement & measure-before-cover; civil (concrete to drawing, steel kg = d²/162 × length, excavation in original ground); finishes and deduction rules (typical IS 1200 Part 12 plaster bands ≤0.5 / 0.5–3 / >3 m², always per the contract's BOQ preamble); MEP by item description & stage payments, external works by average end area; RA bill 6-point check (MB, BOQ limit, BOQ item, rate, work done vs material, this bill = cum − previous); Rate analysis, extra / star items (first principles, 15% CP&OH, 125% deviation limit) & material reconciliation (theoretical consumption vs actual issued, permissible wastage 2% cement / 3% steel, penal recovery). He wasn't sure how measurement is done on site — teach practically, and always defer to the specific contract's method of measurement.
 EXAMPLES: vary them across hospitals, commercial buildings, residential towers and external works/infrastructure (roads by chainage, drainage, STP, compound walls, landscaping, street lighting). He works in hospital PMC but must be able to plan and control any building or external-works project.
 
 YOUR ROLE NOW: TUTOR, not examiner.
@@ -1689,7 +1689,7 @@ const DRILLS=[
 ];
 
 let pr={view:"home", lesson:null, drill:null, q:null, checked:false, res:null};
-const DRILL_UNIT={cpm1:"U4",cpm2:"U5",cpm3:"U6",duration:"U10",float:"U13",ppc:"U14",flowline:"U15",manpower:"U16",proc:"U17",steel:"M2",plaster:"M3",endarea:"M4",rabill:"M5"};
+const DRILL_UNIT={cpm1:"U4",cpm2:"U5",cpm3:"U6",duration:"U10",float:"U13",ppc:"U14",flowline:"U15",manpower:"U16",proc:"U17",steel:"M2",plaster:"M3",endarea:"M4",rabill:"M5",recon:"M6"};
 const LESSON_UNIT={L1:"U1",L4:"U3",L5:"U4",L6:"U5",L7:"U6",L2:"U8",L3:"U9",P1:"U10",P2:"U10",L8:"U14",P5:"U14",P3:"U15",P6:"U16",L13:"U17",P4:"U17"};
 const GUIDED_UNIT={1:"U4",2:"U5",3:"U6"};
 function unitDone(id){ return !!(id&&cst(id).done); }
@@ -1766,52 +1766,301 @@ function openFormulaDrawer(){
   const m = document.createElement("div");
   m.id = "formula-modal";
   m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:70;display:flex;justify-content:flex-end";
-  m.innerHTML = `<div style="width:100%;max-width:440px;height:100%;background:var(--surface,#fff);color:var(--ink,#111);padding:18px;overflow-y:auto;box-shadow:-4px 0 20px rgba(0,0,0,.3);font:14px system-ui">
-    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:14px">
-      <b style="font-size:1.05rem">📐 Project Controls Formula Sheet</b>
+  m.innerHTML = `<div style="width:100%;max-width:480px;height:100%;background:var(--surface,#fff);color:var(--ink,#111);padding:18px;overflow-y:auto;box-shadow:-4px 0 20px rgba(0,0,0,.3);font:14px system-ui;display:flex;flex-direction:column;box-sizing:border-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px">
+      <b style="font-size:1.05rem">📐 Field Tools &amp; Formulas</b>
       <button id="form-close" style="background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
     </div>
 
-    <h3 style="font-size:.9rem;color:var(--bar);margin:12px 0 6px">1. Critical Path Method (CPM)</h3>
-    <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;line-height:1.6">
-      • <b>Forward Pass:</b> EF = ES + Duration<br>
-      • <b>Merge ES:</b> ES = max(EF of all predecessors)<br>
-      • <b>Backward Pass:</b> LS = LF − Duration<br>
-      • <b>Burst LF:</b> LF = min(LS of all successors)<br>
-      • <b>Total Float (TF):</b> TF = LS − ES = LF − EF<br>
-      • <b>Free Float (FF):</b> FF = min(ES of successors) − EF<br>
-      • <b>Critical Path:</b> Sequence where TF = 0 (ES=LS, EF=LF)
+    <!-- Navigation Tabs -->
+    <div style="display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:12px;scrollbar-width:thin">
+      <button class="btn f-tab-btn" data-tab="tab-ref" style="font-size:.78rem;padding:4px 8px;font-weight:700;background:var(--barSoft,#E8EEFA);color:var(--bar,#2F5BD3)">📐 Sheet</button>
+      <button class="btn f-tab-btn" data-tab="tab-steel" style="font-size:.78rem;padding:4px 8px">🧮 Steel</button>
+      <button class="btn f-tab-btn" data-tab="tab-plaster" style="font-size:.78rem;padding:4px 8px">🧱 Plaster</button>
+      <button class="btn f-tab-btn" data-tab="tab-evm" style="font-size:.78rem;padding:4px 8px">📊 EVM</button>
+      <button class="btn f-tab-btn" data-tab="tab-recon" style="font-size:.78rem;padding:4px 8px">📋 Recon</button>
     </div>
 
-    <h3 style="font-size:.9rem;color:var(--bar);margin:14px 0 6px">2. Earned Value Management (EVM)</h3>
-    <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;line-height:1.6">
-      • <b>Cost Variance (CV):</b> EV − AC (&gt;0 under budget)<br>
-      • <b>Schedule Variance (SV):</b> EV − PV (&gt;0 ahead of plan)<br>
-      • <b>CPI:</b> EV ÷ AC (&gt;1.0 efficient / under budget)<br>
-      • <b>SPI:</b> EV ÷ PV (&gt;1.0 progressing faster than plan)<br>
-      • <b>EAC (standard):</b> BAC ÷ CPI<br>
-      • <b>VAC:</b> BAC − EAC<br>
-      • <b>TCPI:</b> (BAC − EV) ÷ (BAC − AC)
+    <!-- TAB 1: FORMULAS SHEET -->
+    <div id="tab-ref" class="f-tab-pane" style="display:block;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 4px">1. Critical Path Method (CPM)</h3>
+      <div style="background:var(--bg);padding:8px 10px;border-radius:6px;border:1px solid var(--line);font-size:.82rem;line-height:1.5;margin-bottom:10px">
+        • <b>Forward:</b> EF = ES + Duration · Merge: ES = max(EF of predecessors)<br>
+        • <b>Backward:</b> LS = LF − Duration · Burst: LF = min(LS of successors)<br>
+        • <b>Total Float (TF):</b> LS − ES = LF − EF · <b>Free Float (FF):</b> min(ES_succ) − EF<br>
+        • <b>Critical Path:</b> Longest path where TF = 0 (or minimum float)
+      </div>
+
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 4px">2. Earned Value Management (EVM)</h3>
+      <div style="background:var(--bg);padding:8px 10px;border-radius:6px;border:1px solid var(--line);font-size:.82rem;line-height:1.5;margin-bottom:10px">
+        • <b>CV:</b> EV − AC (&gt;0 under budget) · <b>SV:</b> EV − PV (&gt;0 ahead)<br>
+        • <b>CPI:</b> EV ÷ AC (&gt;1.0 cost efficient) · <b>SPI:</b> EV ÷ PV (&gt;1.0 schedule efficient)<br>
+        • <b>EAC:</b> BAC ÷ CPI · <b>VAC:</b> BAC − EAC · <b>TCPI:</b> (BAC − EV) ÷ (BAC − AC)
+      </div>
+
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 4px">3. Procurement &amp; Float Erosion</h3>
+      <div style="background:var(--bg);padding:8px 10px;border-radius:6px;border:1px solid var(--line);font-size:.82rem;line-height:1.5;margin-bottom:10px">
+        • <b>Dispatch:</b> ROS − Transit (cd) · <b>PO Date:</b> Dispatch − Manufacture (cd)<br>
+        • <b>Indent Date:</b> PO Date − Internal TAT (Mon–Sat working days, skip Sundays)<br>
+        • <b>Procurement Float:</b> ROS (Late Start) − Forecast Delivery Date
+      </div>
+
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 4px">4. Site Measurement &amp; Quantity Surveying (IS 1200)</h3>
+      <div style="background:var(--bg);padding:8px 10px;border-radius:6px;border:1px solid var(--line);font-size:.82rem;line-height:1.5;margin-bottom:10px">
+        • <b>Steel Weight:</b> kg/m = d² ÷ 162 (d in mm) · Total weight = length × Nos × kg/m<br>
+        • <b>Plaster Deductions (IS 1200 Pt 12):</b><br>
+        &nbsp;&nbsp;≤ 0.5 m²: <i>no deduction</i><br>
+        &nbsp;&nbsp;0.5–3.0 m²: <i>deduct 1 face only (no jamb extras)</i><br>
+        &nbsp;&nbsp;&gt; 3.0 m²: <i>deduct both faces (reveals measured separately)</i><br>
+        • <b>Earthwork Volume:</b> V = (A1 + A2) ÷ 2 × Distance (average end area)
+      </div>
+
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 4px">5. Extra Items &amp; Material Reconciliation</h3>
+      <div style="background:var(--bg);padding:8px 10px;border-radius:6px;border:1px solid var(--line);font-size:.82rem;line-height:1.5;margin-bottom:10px">
+        • <b>Extra Item Derived Rate:</b> (Material + Labor + Machinery) × 1.15 (15% CP&amp;OH)<br>
+        • <b>Deviation Limit:</b> Up to 125% of BOQ paid at BOQ rate; excess at market rate<br>
+        • <b>Material Reconciliation:</b> Max Allowable = Theoretical × (1 + Permissible %)<br>
+        &nbsp;&nbsp;Cement permissible wastage: <b>2%</b> · Rebar steel: <b>3%</b><br>
+        &nbsp;&nbsp;Excess Wastage = Actual − Max Allowable · Recovered at contract penal rate
+      </div>
     </div>
 
-    <h3 style="font-size:.9rem;color:var(--bar);margin:14px 0 6px">3. Procurement &amp; Float Erosion</h3>
-    <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;line-height:1.6">
-      • <b>Ex-works Date:</b> Need date − Transit days<br>
-      • <b>PO Date:</b> Ex-works date − Manufacture days<br>
-      • <b>Indent Date:</b> PO date − Internal TAT (count Mon–Sat working days, skip Sundays)<br>
-      • <b>Average Float Lost:</b> (TF_start − TF_current) ÷ Updates<br>
-      • <b>Updates to Zero Float:</b> Current TF ÷ Last update's loss
+    <!-- TAB 2: STEEL CALCULATOR -->
+    <div id="tab-steel" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 8px">🧮 Interactive Steel Bar Calculator</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem">
+        <label style="display:block;margin-bottom:4px;font-weight:600">Bar Diameter (d, mm):</label>
+        <select id="calc-steel-d" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--line);margin-bottom:10px;background:var(--surface);color:inherit">
+          <option value="8">8 mm</option>
+          <option value="10">10 mm</option>
+          <option value="12" selected>12 mm</option>
+          <option value="16">16 mm</option>
+          <option value="20">20 mm</option>
+          <option value="25">25 mm</option>
+          <option value="32">32 mm</option>
+        </select>
+
+        <label style="display:block;margin-bottom:4px;font-weight:600">Bar Length (m):</label>
+        <input type="number" id="calc-steel-len" value="6.5" step="0.1" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--line);margin-bottom:10px;background:var(--surface);color:inherit;box-sizing:border-box">
+
+        <label style="display:block;margin-bottom:4px;font-weight:600">Number of Bars (Nos):</label>
+        <input type="number" id="calc-steel-nos" value="40" step="1" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--line);margin-bottom:12px;background:var(--surface);color:inherit;box-sizing:border-box">
+
+        <div style="background:var(--surface);padding:10px;border-radius:6px;border:1px solid var(--barSoft);line-height:1.6">
+          <div>Unit weight (d² ÷ 162): <b id="calc-steel-uw">0.889 kg/m</b></div>
+          <div>Total length: <b id="calc-steel-tl">260.0 m</b></div>
+          <div style="font-size:1.05rem;color:var(--bar);margin-top:4px">Total Weight: <b id="calc-steel-kg">231.1 kg</b> (<span id="calc-steel-mt">0.231 MT</span>)</div>
+        </div>
+      </div>
     </div>
 
-    <h3 style="font-size:.9rem;color:var(--bar);margin:14px 0 6px">4. Physical Progress (% Progress)</h3>
-    <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);font-size:.85rem;line-height:1.6">
-      • <b>Overall Progress:</b> &Sigma; (Weight_i &times; Progress_i) ÷ 100<br>
-      • <b>Rule of Credit:</b> Measure installed work, never billed materials issued from store
+    <!-- TAB 3: PLASTER DEDUCTOR -->
+    <div id="tab-plaster" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 8px">🧱 IS 1200 Opening Plaster Deductor</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <div style="flex:1">
+            <label style="display:block;font-weight:600">Wall Length (m):</label>
+            <input type="number" id="calc-pl-wl" value="6.0" step="0.1" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--line);box-sizing:border-box">
+          </div>
+          <div style="flex:1">
+            <label style="display:block;font-weight:600">Wall Height (m):</label>
+            <input type="number" id="calc-pl-wh" value="3.0" step="0.1" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--line);box-sizing:border-box">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <div style="flex:1">
+            <label style="display:block;font-weight:600">Opening Width (m):</label>
+            <input type="number" id="calc-pl-ow" value="1.2" step="0.1" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--line);box-sizing:border-box">
+          </div>
+          <div style="flex:1">
+            <label style="display:block;font-weight:600">Opening Height (m):</label>
+            <input type="number" id="calc-pl-oh" value="1.5" step="0.1" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--line);box-sizing:border-box">
+          </div>
+        </div>
+        <div style="background:var(--surface);padding:10px;border-radius:6px;border:1px solid var(--barSoft);line-height:1.6">
+          <div>Gross Plaster Area (both faces): <b id="calc-pl-gross">36.00 m²</b></div>
+          <div>Opening Area: <b id="calc-pl-oa">1.80 m²</b></div>
+          <div>IS 1200 Rule Applied: <b id="calc-pl-rule" style="color:var(--bar)">0.5–3.0 m² (Deduct 1 Face)</b></div>
+          <div>Deduction: <b id="calc-pl-ded">1.80 m²</b></div>
+          <div style="font-size:1.05rem;color:var(--ok);margin-top:4px">Net Payable Area: <b id="calc-pl-net">34.20 m²</b></div>
+        </div>
+      </div>
     </div>
 
-    <div style="margin-top:16px"><button id="form-dismiss" style="width:100%;padding:10px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Done</button></div>
+    <!-- TAB 4: EVM FORECASTER -->
+    <div id="tab-evm" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 8px">📊 EVM Stress &amp; Forecast Engine</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div><label style="font-weight:600">BAC (Budget, ₹L):</label><input type="number" id="calc-evm-bac" value="1000" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--line);box-sizing:border-box"></div>
+          <div><label style="font-weight:600">PV (Planned, ₹L):</label><input type="number" id="calc-evm-pv" value="450" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--line);box-sizing:border-box"></div>
+          <div><label style="font-weight:600">EV (Earned, ₹L):</label><input type="number" id="calc-evm-ev" value="400" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--line);box-sizing:border-box"></div>
+          <div><label style="font-weight:600">AC (Actual, ₹L):</label><input type="number" id="calc-evm-ac" value="480" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--line);box-sizing:border-box"></div>
+        </div>
+        <div style="background:var(--surface);padding:10px;border-radius:6px;border:1px solid var(--barSoft);line-height:1.6">
+          <div style="display:flex;justify-content:space-between"><span>CPI (EV ÷ AC):</span> <b id="calc-evm-cpi" style="color:var(--crit)">0.83</b></div>
+          <div style="display:flex;justify-content:space-between"><span>SPI (EV ÷ PV):</span> <b id="calc-evm-spi" style="color:var(--crit)">0.89</b></div>
+          <div style="display:flex;justify-content:space-between"><span>CV / SV (₹ Lakh):</span> <span><b id="calc-evm-cv">−80 L</b> / <b id="calc-evm-sv">−50 L</b></span></div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px;border-top:1px dashed var(--line);padding-top:4px"><span>Forecast at Completion (EAC):</span> <b id="calc-evm-eac" style="font-size:1.05rem;color:var(--crit)">₹1,204.8 L</b></div>
+          <div style="display:flex;justify-content:space-between"><span>Variance at Completion (VAC):</span> <b id="calc-evm-vac">−204.8 L</b></div>
+          <div style="display:flex;justify-content:space-between"><span>TCPI (to hit original budget):</span> <b id="calc-evm-tcpi">1.15</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: RECON & RATE ANALYSIS -->
+    <div id="tab-recon" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 8px">📋 Extra Items &amp; Material Recon</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem">
+        <b style="color:var(--bar);display:block;margin-bottom:4px">Part 1: Extra Item Rate Builder</b>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+          <div><label>Material (₹):</label><input type="number" id="calc-rc-mat" value="3100" style="width:100%;padding:4px;box-sizing:border-box"></div>
+          <div><label>Labor (₹):</label><input type="number" id="calc-rc-lab" value="420" style="width:100%;padding:4px;box-sizing:border-box"></div>
+          <div><label>Machinery (₹):</label><input type="number" id="calc-rc-mach" value="150" style="width:100%;padding:4px;box-sizing:border-box"></div>
+          <div><label>CP&amp;OH (%):</label><input type="number" id="calc-rc-cpoh" value="15" readonly style="width:100%;padding:4px;background:#eee;box-sizing:border-box"></div>
+        </div>
+        <div style="background:var(--surface);padding:6px 8px;border-radius:6px;margin-bottom:10px">
+          Prime: ₹<span id="calc-rc-prime">3670</span> · CP&amp;OH: ₹<span id="calc-rc-cpohval">551</span> · <b>Rate: ₹<span id="calc-rc-totrate" style="color:var(--bar)">4221</span></b>
+        </div>
+
+        <b style="color:var(--bar);display:block;margin-bottom:4px">Part 2: Material Reconciliation</b>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+          <div><label>Theoretical:</label><input type="number" id="calc-rc-theo" value="4000" style="width:100%;padding:4px;box-sizing:border-box"></div>
+          <div><label>Permissible %:</label><input type="number" id="calc-rc-perm" value="2" style="width:100%;padding:4px;box-sizing:border-box"></div>
+          <div><label>Actual Issued:</label><input type="number" id="calc-rc-act" value="4150" style="width:100%;padding:4px;box-sizing:border-box"></div>
+          <div><label>Penal Rate (₹):</label><input type="number" id="calc-rc-penrate" value="450" style="width:100%;padding:4px;box-sizing:border-box"></div>
+        </div>
+        <div style="background:var(--surface);padding:6px 8px;border-radius:6px">
+          Max Allowable: <b id="calc-rc-allow">4080</b> · Excess: <b id="calc-rc-ex" style="color:var(--crit)">70</b><br>
+          <div style="font-size:1rem;color:var(--crit);margin-top:2px">Penal Recovery: <b id="calc-rc-pen">₹31,500</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;padding-top:10px;border-top:1px solid var(--line)">
+      <button id="form-dismiss" style="width:100%;padding:10px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Done</button>
+    </div>
   </div>`;
   document.body.appendChild(m);
+
+  // Tab switching logic
+  const tabBtns = m.querySelectorAll(".f-tab-btn");
+  const tabPanes = m.querySelectorAll(".f-tab-pane");
+  tabBtns.forEach(b => {
+    b.onclick = () => {
+      tabBtns.forEach(btn => {
+        btn.style.background = "";
+        btn.style.color = "";
+        btn.style.fontWeight = "normal";
+      });
+      tabPanes.forEach(p => p.style.display = "none");
+      b.style.background = "var(--barSoft,#E8EEFA)";
+      b.style.color = "var(--bar,#2F5BD3)";
+      b.style.fontWeight = "700";
+      const target = m.querySelector("#" + b.dataset.tab);
+      if (target) target.style.display = "block";
+    };
+  });
+
+  // Steel Calculator Events
+  function updateSteel(){
+    const d = parseFloat(m.querySelector("#calc-steel-d").value)||0;
+    const len = parseFloat(m.querySelector("#calc-steel-len").value)||0;
+    const nos = parseFloat(m.querySelector("#calc-steel-nos").value)||0;
+    const uw = +(d * d / 162).toFixed(3);
+    const tl = +(len * nos).toFixed(1);
+    const kg = +(tl * uw).toFixed(1);
+    m.querySelector("#calc-steel-uw").textContent = uw + " kg/m";
+    m.querySelector("#calc-steel-tl").textContent = tl + " m";
+    m.querySelector("#calc-steel-kg").textContent = kg.toLocaleString("en-IN") + " kg";
+    m.querySelector("#calc-steel-mt").textContent = (kg / 1000).toFixed(3) + " MT";
+  }
+  ["calc-steel-d", "calc-steel-len", "calc-steel-nos"].forEach(id => {
+    m.querySelector("#" + id)?.addEventListener("input", updateSteel);
+  });
+
+  // Plaster Deductor Events
+  function updatePlaster(){
+    const wl = parseFloat(m.querySelector("#calc-pl-wl").value)||0;
+    const wh = parseFloat(m.querySelector("#calc-pl-wh").value)||0;
+    const ow = parseFloat(m.querySelector("#calc-pl-ow").value)||0;
+    const oh = parseFloat(m.querySelector("#calc-pl-oh").value)||0;
+    const gross = +(2 * wl * wh).toFixed(2);
+    const oa = +(ow * oh).toFixed(2);
+    let ruleText = "≤ 0.5 m² (No Deduction)", ded = 0;
+    if (oa > 3.0) { ruleText = "> 3.0 m² (Deduct Both Faces)"; ded = +(oa * 2).toFixed(2); }
+    else if (oa > 0.5) { ruleText = "0.5–3.0 m² (Deduct 1 Face)"; ded = oa; }
+    const net = Math.max(0, +(gross - ded).toFixed(2));
+    m.querySelector("#calc-pl-gross").textContent = gross.toFixed(2) + " m²";
+    m.querySelector("#calc-pl-oa").textContent = oa.toFixed(2) + " m²";
+    m.querySelector("#calc-pl-rule").textContent = ruleText;
+    m.querySelector("#calc-pl-ded").textContent = ded.toFixed(2) + " m²";
+    m.querySelector("#calc-pl-net").textContent = net.toFixed(2) + " m²";
+  }
+  ["calc-pl-wl", "calc-pl-wh", "calc-pl-ow", "calc-pl-oh"].forEach(id => {
+    m.querySelector("#" + id)?.addEventListener("input", updatePlaster);
+  });
+
+  // EVM Calculator Events
+  function updateEVM(){
+    const bac = parseFloat(m.querySelector("#calc-evm-bac").value)||0;
+    const pv = parseFloat(m.querySelector("#calc-evm-pv").value)||0;
+    const ev = parseFloat(m.querySelector("#calc-evm-ev").value)||0;
+    const ac = parseFloat(m.querySelector("#calc-evm-ac").value)||0;
+    const cv = +(ev - ac).toFixed(1);
+    const sv = +(ev - pv).toFixed(1);
+    const cpi = ac > 0 ? +(ev / ac).toFixed(2) : 1;
+    const spi = pv > 0 ? +(ev / pv).toFixed(2) : 1;
+    const eac = cpi > 0 ? +(bac / cpi).toFixed(1) : bac;
+    const vac = +(bac - eac).toFixed(1);
+    const tcpi = (bac - ac) > 0 ? +((bac - ev) / (bac - ac)).toFixed(2) : 1;
+
+    const cpiEl = m.querySelector("#calc-evm-cpi");
+    cpiEl.textContent = cpi.toFixed(2);
+    cpiEl.style.color = cpi >= 1 ? "var(--ok,#1F8A4C)" : "var(--crit,#D9383A)";
+
+    const spiEl = m.querySelector("#calc-evm-spi");
+    spiEl.textContent = spi.toFixed(2);
+    spiEl.style.color = spi >= 1 ? "var(--ok,#1F8A4C)" : "var(--crit,#D9383A)";
+
+    m.querySelector("#calc-evm-cv").textContent = (cv >= 0 ? "+" : "") + cv + " L";
+    m.querySelector("#calc-evm-sv").textContent = (sv >= 0 ? "+" : "") + sv + " L";
+    m.querySelector("#calc-evm-eac").textContent = "₹" + eac.toLocaleString("en-IN") + " L";
+    m.querySelector("#calc-evm-vac").textContent = (vac >= 0 ? "+" : "") + vac + " L";
+    m.querySelector("#calc-evm-tcpi").textContent = tcpi.toFixed(2);
+  }
+  ["calc-evm-bac", "calc-evm-pv", "calc-evm-ev", "calc-evm-ac"].forEach(id => {
+    m.querySelector("#" + id)?.addEventListener("input", updateEVM);
+  });
+
+  // Recon & Rate Analysis Events
+  function updateRecon(){
+    const mat = parseFloat(m.querySelector("#calc-rc-mat").value)||0;
+    const lab = parseFloat(m.querySelector("#calc-rc-lab").value)||0;
+    const mach = parseFloat(m.querySelector("#calc-rc-mach").value)||0;
+    const prime = Math.round(mat + lab + mach);
+    const cpoh = Math.round(prime * 0.15);
+    const totrate = prime + cpoh;
+    m.querySelector("#calc-rc-prime").textContent = prime;
+    m.querySelector("#calc-rc-cpohval").textContent = cpoh;
+    m.querySelector("#calc-rc-totrate").textContent = totrate;
+
+    const theo = parseFloat(m.querySelector("#calc-rc-theo").value)||0;
+    const perm = parseFloat(m.querySelector("#calc-rc-perm").value)||0;
+    const act = parseFloat(m.querySelector("#calc-rc-act").value)||0;
+    const penrate = parseFloat(m.querySelector("#calc-rc-penrate").value)||0;
+    const allow = +(theo * (1 + perm / 100)).toFixed(1);
+    const excess = Math.max(0, +(act - allow).toFixed(1));
+    const penalty = Math.round(excess * penrate);
+    m.querySelector("#calc-rc-allow").textContent = allow;
+    m.querySelector("#calc-rc-ex").textContent = excess;
+    m.querySelector("#calc-rc-pen").textContent = "₹" + penalty.toLocaleString("en-IN");
+  }
+  ["calc-rc-mat", "calc-rc-lab", "calc-rc-mach", "calc-rc-theo", "calc-rc-perm", "calc-rc-act", "calc-rc-penrate"].forEach(id => {
+    m.querySelector("#" + id)?.addEventListener("input", updateRecon);
+  });
+
   m.onclick = e => { if(e.target === m) m.remove(); };
   m.querySelector("#form-close").onclick = () => m.remove();
   m.querySelector("#form-dismiss").onclick = () => m.remove();
@@ -3238,7 +3487,7 @@ function renderLearn(){
   UNITS.forEach((u,i)=>{ if(u.track) return; const s=cst(u.id), open=unitOpen(i);
     h+=`<div class="rt ${u===cur?"due":""}"><div><b>Day ${u.day}</b>${u.gate?" 🏁":""} · ${esc(u.title.replace(/^Day 0: /,""))}<br><small>${s.done?`✓ passed${s.score!=null?` · ${s.score}%`:""} · tap to revise`:open?`about ${u.mins} min`:"Unlocks when the previous unit is passed"}</small></div>${open?`<button class="btn" data-u="${u.id}">${s.done?"Revise":"Open"}</button>`:`<small>🔒</small>`}</div>`; });
   const MT=UNITS.filter(u=>u.track==="M");
-  h+=`<h2 class="sec">Site measurement track (alongside the days)</h2><p class="lead">How quantities are measured on site and how bills are checked: MB and joint measurement, civil, finishes, MEP and external works, RA bills. Opens after Day 1. Do one whenever you have a spare 25 minutes; it doesn't hold up the main days.</p>`;
+  h+=`<h2 class="sec">Site measurement track (alongside the days)</h2><p class="lead">How quantities are measured on site and how bills are checked: MB and joint measurement, civil, finishes, MEP and external works, RA bills, rate analysis & reconciliation. Opens after Day 1. Do one whenever you have a spare 25 minutes; it doesn't hold up the main days.</p>`;
   MT.forEach(u=>{ const i=UNITS.indexOf(u), s=cst(u.id), open=unitOpen(i);
     h+=`<div class="rt"><div><b>${u.id}</b> · ${esc(u.title)}<br><small>${s.done?`✓ passed${s.score!=null?` · ${s.score}%`:""} · tap to revise`:open?`about ${u.mins} min`:(cst("U1").done?"Unlocks after the previous measurement unit":"Opens after Day 1")}</small></div>${open?`<button class="btn" data-u="${u.id}">${s.done?"Revise":"Open"}</button>`:`<small>🔒</small>`}</div>`; });
   ROADMAP.forEach(r=>{ h+=`<h2 class="sec">${esc(r.title)} (Days ${r.days})</h2><div class="rt"><div><small>${esc(r.items)}</small><br><small style="color:var(--muted)">Written to the same standard once the previous gate is passed.</small></div><small>🔒</small></div>`; });
@@ -3734,7 +3983,7 @@ const ROADMAP=[
  {days:"71–90",title:"Block 4: Capstone",items:"Full project simulations (hospital, commercial building, external works/infrastructure) · monthly reports and recovery plans end to end · viva-style questioning · interleaved revision of everything · final exam on Day 90"},
 ];
 
-// ================= SITE MEASUREMENT TRACK (parallel, M1–M5) =================
+// ================= SITE MEASUREMENT TRACK (parallel, M1–M6) =================
 function genSteel(){
   const rows=[]; const dias=[8,10,12,16,20,25];
   const n=rnd(2,3); [...dias].sort(()=>Math.random()-.5).slice(0,n).forEach(d=>{ rows.push({d,nos:rnd(8,60),len:rnd(20,120)/10}); });
@@ -3762,13 +4011,38 @@ function genRABill(){
   const ret=pick([5,10]);
   return {type:"rabill", sel, x, ret, ans:{over:String(x), cert:Math.round(cert), held:Math.round(held), net:Math.round(cert*(1-ret/100))}};
 }
+function genRecon(){
+  const extraItems=[
+    {n:"Lead-lined drywall 2.0 mm Pb (CT room)",u:"m²",mat:rnd(2800,3400),lab:rnd(350,500),mach:rnd(100,200)},
+    {n:"Conductive vinyl flooring (OT complex)",u:"m²",mat:rnd(1400,1800),lab:rnd(220,320),mach:rnd(80,150)},
+    {n:"Heavy duty epoxy screed 4 mm",u:"m²",mat:rnd(900,1200),lab:rnd(180,260),mach:rnd(50,100)},
+    {n:"Precast RCC drain cover slab with angle frame",u:"rm",mat:rnd(1600,2200),lab:rnd(300,420),mach:rnd(150,250)}
+  ];
+  const item=pick(extraItems);
+  const prime=item.mat+item.lab+item.mach;
+  const cpoh=Math.round(prime*0.15);
+  const extraRate=prime+cpoh;
+  const isCement=Math.random()<.5;
+  const matType=isCement?"Cement (bags)":"Reinforcement steel (MT)";
+  const theo=isCement?rnd(3500,5500):rnd(120,250);
+  const permPct=isCement?2:3;
+  const maxAllow=+(theo*(1+permPct/100)).toFixed(1);
+  const isExcess=Math.random()<.65;
+  const actual=isExcess?+(theo*(1+(permPct+rnd(15,35)/10)/100)).toFixed(1):+(theo*(1+(permPct-rnd(5,15)/10)/100)).toFixed(1);
+  const excess=Math.max(0,+(actual-maxAllow).toFixed(1));
+  const penalRate=isCement?450:75000;
+  const penalty=Math.round(excess*penalRate);
+  return {type:"recon",item,prime,cpoh,extraRate,matType,theo,permPct,maxAllow,actual,excess,penalRate,penalty,
+    ans:{rate:extraRate,allow:Math.round(maxAllow),excess:Math.round(excess),pen:penalty}};
+}
 DRILLS.push(
  {id:"steel", gen:genSteel, title:"Measurement: reinforcement weight from a bar schedule", week:1, lesson:null},
  {id:"plaster", gen:genPlaster, title:"Measurement: plaster with opening deductions", week:1, lesson:null},
  {id:"endarea", gen:genEndArea, title:"Measurement: earthwork by average end area", week:1, lesson:null},
  {id:"rabill", gen:genRABill, title:"Measurement: checking a running (RA) bill", week:1, lesson:null},
+ {id:"recon", gen:genRecon, title:"Measurement: material reconciliation and extra items", week:1, lesson:null},
 );
-Object.assign(LABELS,{total:"Total",uw0:"Unit weight",gross:"Gross area",ded:"Deductions",net:"Net",first:"First stretch volume",over:"Item over BOQ",cert:"Certified this bill",held:"Held (over BOQ)"});
+Object.assign(LABELS,{total:"Total",uw0:"Unit weight",gross:"Gross area",ded:"Deductions",net:"Net",first:"First stretch volume",over:"Item over BOQ",cert:"Certified this bill",held:"Held (over BOQ)",rate:"Extra item rate",allow:"Max allowable",excess:"Excess wastage",pen:"Penal recovery"});
 const _db3=drillBody;
 drillBody=function(q){
   if(q.type==="steel") return `<p>Bar schedule for <b>${esc(q.el)}</b>. Unit weight (kg/m) = d² ÷ 162, with d in mm.</p>${tbl(["Dia (mm)","No. of bars","Length each (m)"],q.rows.map(r=>[r.d,r.nos,r.len]))}
@@ -3782,6 +4056,10 @@ drillBody=function(q){
   if(q.type==="rabill") return `<p>Running bill check. Rates are BOQ rates (₹). Quantities in BOQ units.</p>${tbl(["#","Item","Unit","Rate","BOQ qty","Previous cum.","Claimed cum."],q.sel.map((it,i)=>[i+1,it.n,it.u,it.rate,it.boq,it.prev,it.cum]))}
     <p style="font-size:.86rem;color:var(--muted)">Certify only up to BOQ quantity; any excess is held until a variation is approved. Retention ${q.ret}%.</p>
     ${Q("Q1. Which item is claimed beyond its BOQ quantity?",choice("over",q.sel.map((it,i)=>[String(i),"#"+(i+1)])))}${Q("Q2. Amount certified this bill (before retention), ₹",inp("cert","number","8em"))}${Q("Q3. Value held pending variation, ₹",inp("held","number","8em"))}${Q("Q4. Net payable after retention, ₹",inp("net","number","8em"))}`;
+  if(q.type==="recon") return `<p><b>Part A: Extra Item Rate Analysis</b> for <b>${esc(q.item.n)}</b> (Unit: ${q.item.u}):</p>${tbl(["Component","Cost (₹)"],[["Material at site (with lead & handling)",`₹${q.item.mat}`],["Labor deploy (constants & wage rates)",`₹${q.item.lab}`],["Machinery, tools & scaffolding",`₹${q.item.mach}`],["Subtotal Prime Cost",`₹${q.prime}`],["Contractor's Profit & Overheads (CP & OH @ 15%)",`₹${q.cpoh}`]])}
+    ${Q(`Q1. Derived rate per ${q.item.u} (Prime Cost + 15% CP&OH), ₹`,inp("rate","number","7em"))}
+    <p style="margin-top:14px"><b>Part B: Material Reconciliation</b> for <b>${esc(q.matType)}</b>:</p>${tbl(["Parameter","Quantity"],[["Theoretical consumption from drawings",`${q.theo}`],["Permissible wastage limit",`${q.permPct}%`],["Actual consumption on site",`${q.actual}`],["Penal rate for excess wastage",`₹${q.penalRate.toLocaleString("en-IN")}`]])}
+    ${Q("Q2. Maximum allowable consumption (round to integer)",inp("allow","number","7em"))}${Q("Q3. Excess wastage beyond permissible limit (0 if none)",inp("excess","number","7em"))}${Q("Q4. Penal recovery amount to deduct from bill, ₹",inp("pen","number","8em"))}`;
   return _db3(q);
 };
 const _gr3=grade;
@@ -3792,6 +4070,7 @@ grade=function(q,vals){
   if(q.type==="plaster"){ num("gross",a.gross,.02); num("ded",a.ded,.02); num("net",a.net,.03); return out; }
   if(q.type==="endarea"){ num("first",a.first,.05); num("total",a.total,.1); return out; }
   if(q.type==="rabill"){ str("over",a.over); num("cert",a.cert,1); num("held",a.held,1); num("net",a.net,2); return out; }
+  if(q.type==="recon"){ num("rate",a.rate,2); num("allow",a.allow,1); num("excess",a.excess,1); num("pen",a.pen,10); return out; }
   return _gr3(q,vals);
 };
 const _so3=solution;
@@ -3801,6 +4080,7 @@ solution=function(q){
   if(q.type==="plaster") return `- Gross = 2 faces × ${q.L} × ${q.H} = **${a.gross} m²**\n`+q.ops.map(o=>`- ${o.n} ${o.w}×${o.h} = ${o.a} m² → ${o.rule===0?"≤ 0.5: no deduction":o.rule===1?"0.5–3: deduct one face → "+o.a:"> 3: deduct both faces → "+(+(o.a*2).toFixed(2))}`).join("\n")+`\n- Deductions = **${a.ded} m²** → net = ${a.gross} − ${a.ded} = **${a.net} m²**\n\nAlways check the deduction rule in **your** contract's BOQ preamble. It can differ.`;
   if(q.type==="endarea") return q.parts.map((v,i)=>`- Ch ${q.ch[i]}–${q.ch[i+1]}: (${q.A[i]} + ${q.A[i+1]}) ÷ 2 × ${q.step} = **${v} m³**`).join("\n")+`\n- **Total = ${a.total} m³**\n\nThe cross-sections are taken jointly on site (ground levels before and after) and signed. The volume is in the original, undisturbed position, not the loose volume.`;
   if(q.type==="rabill") return q.sel.map((it,i)=>`- #${i+1} ${it.n}: certifiable cum = min(${it.cum}, BOQ ${it.boq}) = ${Math.min(it.cum,it.boq)} → this bill ${Math.min(it.cum,it.boq)} − ${it.prev} = ${it.ok} × ₹${it.rate} = ₹${(it.ok*it.rate).toLocaleString("en-IN")}${it.ex?` · **excess ${it.ex} ${it.u} held** (₹${(it.ex*it.rate).toLocaleString("en-IN")}) until a variation is approved`:""}`).join("\n")+`\n- Certified = **₹${a.cert.toLocaleString("en-IN")}**; held = **₹${a.held.toLocaleString("en-IN")}**\n- Net = certified × (1 − ${q.ret}%) = **₹${a.net.toLocaleString("en-IN")}**\n\nThen check that every quantity traces to a jointly signed MB entry.`;
+  if(q.type==="recon") return `**Part A: Extra Item Rate Analysis**\n- Prime Cost = Material ₹${q.item.mat} + Labor ₹${q.item.lab} + Machinery ₹${q.item.mach} = **₹${q.prime}**\n- CP & OH @ 15% = ₹${q.prime} × 0.15 = **₹${q.cpoh}**\n- **Derived Rate = ₹${a.rate} per ${q.item.u}**\n\n**Part B: Material Reconciliation**\n- Max Allowable = ${q.theo} × (1 + ${q.permPct}%) = **${q.maxAllow}**\n- Actual Consumed = **${q.actual}**\n- Excess Wastage = ${q.actual} − ${q.maxAllow} = **${q.excess}**\n- **Penal Recovery = ${q.excess} × ₹${q.penalRate.toLocaleString("en-IN")} = ₹${a.pen.toLocaleString("en-IN")}**\n\nAlways ensure non-BOQ rates are backed by verified market invoices and standard labor constants. Material reconciliation must be executed before certifying final bills.`;
   return _so3(q);
 };
 const MUNITS=[
@@ -3958,6 +4238,48 @@ Measured MEP quantities also feed **progress**: installed rm ÷ BOQ rm, the same
    {q:"Certified this bill ₹4,00,000, retention 5%. Net?",o:[["₹3,80,000",true,"4,00,000 × 0.95."],["₹4,20,000",false,"Retention is deducted."],["₹20,000",false,"That's the retention amount."],["₹4,00,000",false,"Deduct the retention."]]}]},
   {k:"explain",p:"Explain to your billing engineer the 6-point check, and what happens to quantity claimed beyond BOQ."},
   {k:"apply",task:"Take last month's RA bill on one project. Check 3 high-value items against the 6 points. Note any item over BOQ, any extra item, and what approval each needs.",good:["MB traceability checked for each item","Cumulative vs BOQ for each item","Extra or excess items flagged with the approval needed","This-bill quantity, not cumulative, certified"],tmpl:"Project / bill no.: \nItem | MB ref | cum vs BOQ | rate ok? | work done? | finding\n\nApprovals needed: "},
+  {k:"done"}]},
+ {id:"M6",track:"M",title:"Rate analysis, extra items & material reconciliation",mins:30,
+  card:{id:"c-star-recon",title:"Extra items by first principles; reconciliation within permissible wastage",rule:"Non-BOQ items: analyze from first principles (Material at site + Labor + Machinery/Scaffolding + 15% CP&OH). Deviation items beyond 125%: derive market rate for excess quantity. Material reconciliation: Theoretical consumption (drawings & coefficients) vs Actual consumption; allowable wastage (Cement 2%, Steel 3%); recover excess at contract penal rate.",example:"CT room lead drywall: Material ₹3,100 + Labor ₹420 + Plant ₹150 = ₹3,670 prime cost + 15% CP&OH (₹551) = ₹4,221/m². Cement reconciliation: 4,000 bags theoretical + 2% wastage = 4,080 allowable. Actual issued 4,150 bags → 70 bags excess charged at penal rate ₹450/bag = ₹31,500 recovery.",trap:"Paying extra items on supplier quotation without labor breakdown or markup check; skipping material reconciliation at final bill."},
+  screens:[
+  {k:"read",t:`**Why it matters.** On every construction project, two issues spark the most heated commercial disputes:
+1. **Non-BOQ items (Extra items / Star items):** Scope changes or specialized items (e.g. lead lining for CT room, conductive vinyl for OT, extra deep excavation) that have no line item in the original BOQ.
+2. **Material reconciliation:** Client-issued or bulk-controlled materials (cement, structural steel, rebar). Who pays for site wastage, theft, or over-break?
+
+If the PMC doesn't master rate analysis and reconciliation, either the contractor inflates costs with arbitrary quotes, or the client loses millions in unrecovered material.`},
+  {k:"read",t:`**1. Rate Analysis from First Principles (CPWD & Standard Practice)**
+When an item is not in the BOQ, you build the rate from zero:
+- **Material cost at site:** Invoices + loading/unloading + freight + handling + permissible material wastage (e.g. 2–5%).
+- **Labour cost:** Standard labour coefficients (e.g. CPWD Analysis of Rates / DSR) × notified minimum / market wage rates.
+- **Machinery & Equipment:** Hourly equipment charges (cranes, pumps, scaffolding, power).
+- **Subtotal = Prime Cost**
+- **Contractor's Profit & Overheads (CP & OH):** Standard **15%** added to Prime Cost (under CPWD and most Indian contracts).
+- **Taxes:** GST applied as per contractual conditions.
+
+**The 125% Deviation Rule:**
+Under standard FIDIC / CPWD contracts, if a regular BOQ item exceeds its original BOQ quantity by more than **25%** (i.e. reaches > 125% of BOQ), the quantity up to 125% is paid at the BOQ rate; the quantity *beyond* 125% is subject to market rate analysis!`},
+  {k:"read",t:`**2. Material Reconciliation & Penal Recovery**
+On projects where material is issued by the client, or for verifying structural consumption against structural drawings:
+1. **Theoretical Consumption:** Calculated strictly from approved drawings and standard consumption coefficients (e.g. 0.285 tonnes steel per m³ RCC, 0.45 bags cement per m² 12 mm plaster).
+2. **Permissible Wastage:**
+   - **Cement:** typically **2%**
+   - **Reinforcement Steel:** typically **3%** (for cut pieces, offcuts beyond standard 12 m lengths)
+   - **Structural Steel:** typically **4–5%**
+3. **Allowable Consumption** = Theoretical Consumption × (1 + Permissible Wastage %)
+4. **Actual Consumption** = Total material physically issued or consumed on site.
+5. **Reconciliation Outcome:**
+   - If Actual ≤ Allowable: **Fully in order.**
+   - If Actual > Allowable: The difference is **Excess Wastage**.
+   - Under standard contracts, Excess Wastage is recovered from the contractor's bill at a **Penal Rate** (often 1.5× to 2.0× the procurement rate or specified penal rate).`},
+  {k:"drill",id:"recon",t:"Extra item rate derivation and material reconciliation. New numbers each time."},
+  {k:"quiz",bank:[
+   {q:"In CPWD and standard Indian contracts, what percentage is added for Contractor's Profit & Overheads (CP & OH) in first-principles rate analysis?",o:[["15%",true,"Standard CPWD and public sector norm is 15% on Prime Cost."],["10%",false,"10% is rarely used today; 15% is the recognized standard."],["25%",false,"25% is inflated unless agreed under special EPC risk."],["0%",false,"Contractor is entitled to overhead and profit."]]},
+   {q:"A BOQ item quantity is 1,000 m². Total executed quantity reaches 1,400 m². Under the standard 25% deviation clause, how is it billed?",o:[["1,250 m² at BOQ rate; remaining 150 m² at derived market rate",true,"Deviation limit is 125% (1,000 × 1.25 = 1,250); excess 150 m² requires market rate analysis."],["All 1,400 m² at BOQ rate",false,"Deviation clause protects both parties once quantity exceeds 125%."],["All 1,400 m² at market rate",false,"Only the excess beyond 125% is re-rated."],["Hold payment for the entire item",false,"Work within limit is payable."]]},
+   {q:"What is the standard permissible wastage for cement in structural works during material reconciliation?",o:[["2%",true,"CPWD / IS specifications allow 2% permissible wastage for cement."],["5%",false,"5% is too high for cement."],["0%",false,"Zero wastage is physically impossible on site."],["10%",false,"10% would represent massive negligence or pilferage."]]},
+   {q:"Theoretical cement consumption is 5,000 bags. Permissible wastage is 2%. Contractor consumed 5,200 bags. What is the excess wastage subject to penal recovery?",o:[["100 bags",true,"Max allowable = 5,000 × 1.02 = 5,100 bags. Actual = 5,200 bags. Excess = 5,200 − 5,100 = 100 bags."],["200 bags",false,"Don't forget to allow the 2% (100 bags) permissible wastage."],["0 bags",false,"5,200 exceeds the 5,100 allowable limit."],["50 bags",false,"Check the arithmetic: 5,200 − 5,100 = 100."]]},
+   {q:"Why should a contractor's quotation for an extra item never be accepted without first-principles analysis?",o:[["Quotations often include unverified markups, inflated labor hours, and undocumented supply rates",true,"PMC must verify vouchers, labor outputs, and add exactly 15% CP&OH."],["Contractors are not allowed to submit quotes",false,"They submit quotes, but PMC must analyze them."],["Software calculates it automatically",false,"No software replaces contractual rate analysis."],["It delays the project",false,"Rigorous cost control protects client funds."]]}]},
+  {k:"explain",p:"Explain to a site engineer how to carry out cement reconciliation on a concrete pour, and how penal recovery is calculated if actual consumption exceeds permissible wastage."},
+  {k:"apply",task:"Take one non-BOQ extra item or one major material (cement or steel) from your current project. Either: (A) derive an extra item rate from first principles (Material + Labor + Machinery + 15% CP&OH); or (B) execute a material reconciliation statement comparing theoretical consumption vs actual issued with permissible wastage.",good:["Breakdown shows material, labor, machinery and 15% CP&OH, OR theoretical vs actual consumption","Clear quotation vouchers or drawing references cited","Permissible wastage limit stated (e.g. 2% cement, 3% steel)","Penal recovery or certified rate clearly calculated"],tmpl:"Project: \nItem / Material: \nMethod: [Rate Analysis / Reconciliation]\nCalculations:\n- Theoretical / Prime: \n- Wastage / CP&OH: \n- Certified Rate / Net Recovery: \nContractual reference (Clause / DSR): "},
   {k:"done"}]},
 ];
 MUNITS.forEach(u=>{ u.day=null; const a=u.screens.find(s=>s.k==="apply"); if(a){ APPLY[u.id]={task:a.task,good:a.good,tmpl:a.tmpl}; } });
