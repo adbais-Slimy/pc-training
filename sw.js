@@ -1,7 +1,7 @@
-const CACHE_NAME = 'pc-training-v11';
+const CACHE_NAME = 'pc-training-v12';
 const PRECACHE_URLS = [
   './index.html',
-  './shim.js?v=7',
+  './shim.js?v=8',
   './icon.svg',
   './manifest.json'
 ];
@@ -25,16 +25,32 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch: Network-First for HTML and JS, falling back to cache when offline
+// Fetch: Network-First for HTML/JS, cache CDN libs & fonts for offline, network for APIs
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Cross-origin requests (CDN libs, APIs): always go to network
+  // Cache CDN libraries and Google Fonts for seamless offline access
+  if (url.hostname === 'cdnjs.cloudflare.com' || url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        const fetchPromise = fetch(event.request).then((networkResponse) => {
+          if (networkResponse.ok) {
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse.clone()));
+          }
+          return networkResponse;
+        }).catch(() => cached);
+        return cached || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Other cross-origin requests (e.g. LLM APIs): always go directly to network
   if (url.origin !== self.location.origin) {
     return;
   }
 
-  // Same-origin: Try network first so changes show on the very first refresh
+  // Same-origin: Try network first so changes show immediately on reload
   event.respondWith(
     fetch(event.request)
       .then((response) => {
