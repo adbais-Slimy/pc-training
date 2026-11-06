@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=17"></script>
+<script src="shim.js?v=18"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -219,8 +219,25 @@ nav button{font-size:.8rem}
         <button data-q="[TEACH] I don't understand this. Explain it from zero in plain words with one small hospital example: ">Explain simply</button>
         <button data-q="[EXPLAIN-BACK] Make me explain the last concept back in my own words, then give me one twist scenario.">Make me explain it</button>
         <button data-q="[CHALLENGE] One cold viva question on something in my notebook. No hints.">Challenge me</button>
+        <button data-q="[VIVA] Mock interview question from a Client Project Director for a Planning &amp; Controls Manager role.">🎓 Mock Viva</button>
         <button data-q="[REAL] Apply today's module to a real situation on my project: ">My project</button>
         <button data-q="[STATUS] Where am I: weighted score, gate status, weakest 3 items, and what comes next.">Where am I?</button>
+      </div>
+      <div class="topic-bar" id="topic-bar" style="display:flex;gap:6px;overflow-x:auto;padding:5px 0 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-top:2px">
+        <span style="font-size:.76rem;font-weight:700;color:var(--muted);white-space:nowrap;align-self:center;margin-right:2px">⚡ Masterclasses:</span>
+        <button type="button" class="btn" data-topic="cpm" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">📐 CPM &amp; Float</button>
+        <button type="button" class="btn" data-topic="evm" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">📊 EVM &amp; TCPI</button>
+        <button type="button" class="btn" data-topic="p6" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">⏱ P6 &amp; Data Date</button>
+        <button type="button" class="btn" data-topic="procurement" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">🚚 Two Clocks</button>
+        <button type="button" class="btn" data-topic="scl" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">⚖️ SCL Delay &amp; EOT</button>
+        <button type="button" class="btn" data-topic="fidic" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">📜 FIDIC &amp; Notice</button>
+        <button type="button" class="btn" data-topic="hospital" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">🏥 Hospital MEP</button>
+        <button type="button" class="btn" data-topic="is 1200" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">🏗 IS 1200 Rules</button>
+        <button type="button" class="btn" data-topic="dcma 14" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">📋 DCMA 14 Health</button>
+        <button type="button" class="btn" data-topic="earned schedule" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">⌛ Earned Schedule</button>
+        <button type="button" class="btn" data-topic="cash flow" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">📈 Cash S-Curve</button>
+        <button type="button" class="btn" data-topic="wbs" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">🗂 WBS 100% Rule</button>
+        <button type="button" class="btn" data-topic="risk" style="font-size:.76rem;padding:3px 8px;white-space:nowrap">🎲 Risk &amp; Monte Carlo</button>
       </div>
       <div class="status" id="status"></div>
       <div class="budget" id="budget"></div>
@@ -1341,11 +1358,11 @@ function buildTurns(userMsg,isNew){
 }
 
 // ---------- send ----------
-const TAG=/^\[(TEACH|EXPLAIN-BACK[^\]]*|APPLY[^\]]*|CHALLENGE|STATUS|RETEST|START DAY|REAL)\]/;
+const TAG=/^\[(TEACH|EXPLAIN-BACK[^\]]*|APPLY[^\]]*|CHALLENGE|VIVA|TOPIC[^\]]*|STATUS|RETEST|START DAY|REAL)\]/;
 async function send(override){
   const text=(override??$("box").value).trim();
   if(!text||busy) return false;
-  const isButton=TAG.test(text), isNew=isButton&&/^\[(TEACH|START DAY|STATUS|CHALLENGE|RETEST)\]/.test(text);
+  const isButton=TAG.test(text), isNew=isButton&&/^\[(TEACH|START DAY|STATUS|CHALLENGE|VIVA|TOPIC|RETEST)\]/.test(text);
   if(state.awaiting_answers&&!conf&&!isButton){ setStatus("Pick how sure you are (1–5) before sending an answer."); $("conf").querySelector("button")?.focus(); return false; }
   if(!sample){ setStatus("Director engine initializing. Please wait..."); return false; }
   if(state.turns_date!==today()){ state.turns_date=today(); state.turns_today=0; }
@@ -4103,6 +4120,7 @@ $("off-close")&&($("off-close").onclick=()=>{ setOffline(false); setStatus(""); 
 $("box").addEventListener("paste",e=>{ if((e.clipboardData?.getData("text")||"").length>150){ pasted=true; setStatus("Pasted text is flagged. The Director will ask you to restate it in your own words."); } });
 $("box").addEventListener("keydown",e=>{ if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){ e.preventDefault(); send(); } });
 document.querySelectorAll("#quick button").forEach(b=>b.onclick=()=>prefill(b.dataset.q));
+document.querySelectorAll("#topic-bar button").forEach(b=>b.onclick=()=>send(`[TOPIC ${b.dataset.topic}]`));
 $("startbtn").onclick=()=>send(`[START DAY] Open Day ${state.day+1}. Begin with the TEACH step, per the session shape.`);
 $("shortbtn").onclick=()=>send(`[START DAY] [SHORT] Open Day ${state.day+1} as a short session for a packed work day: one concept taught with one worked example, one attempt, cold retests only if due, then close. Aim for about 12 messages. Set Practice drills as follow-up if useful.`);
 $("sheetbtn").onclick=openSheet; $("sh-close").onclick=closeSheet; $("sh-send").onclick=sendSheet;
