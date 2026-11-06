@@ -482,6 +482,128 @@ Civil handover of plant room / shaft must precede MEP installation. Never releas
 **Executive One-Liner:**
 > *"LPS converts what should be done into what can be done by eliminating constraints before the crew mobilizes to the floor."*`,
         checklist: [{ domain: "PLANNING & SCHEDULING", item: "CPM", status: "competent", level: "COMPETENT", score: 92 }]
+      },
+      {
+        keys: ["fidic", "clause 8.4", "clause 20.1", "clause 8.7", "time bar", "notice of claim", "delay damages", "liquidated damages", "ld"],
+        title: "FIDIC Contract Administration (EOT, Time-Bar & Delay Damages)",
+        reply: `### FIDIC Contracts (Red / Yellow Book) — Claims & Controls Standards
+
+**1. Clause 20.1: The 28-Day Condition Precedent (Time-Bar):**
+- The contractor MUST give notice of claim within **28 calendar days** after becoming aware (or when they ought to have become aware) of the delay event.
+- **Strict Consequence:** If notice is not served within 28 days, the Employer is discharged from all liability, the contractor loses all entitlement to EOT or additional payment, and the claim is legally time-barred.
+- Submittal of fully detailed claim within **42 days** (or approved alternative period).
+
+**2. Clause 8.4: Extension of Time (EOT) Entitlement Categories:**
+1. Variations or substantial changes in quantity.
+2. Exceptionally adverse climatic conditions (beyond 10-year statistical norms).
+3. Unforeseeable shortages in personnel or goods caused by epidemic or government actions.
+4. Any delay, impediment, or prevention caused by or attributable to the Employer or Engineer.
+
+**3. Clause 8.7: Delay Damages (Liquidated Damages):**
+- Deducted when the contractor fails to achieve Taking-Over (handover) by the contractual Completion Date (as extended by approved EOTs).
+- Typically capped at $10\\%$ of the Accepted Contract Amount.
+- **Defense Shield:** If the Employer caused concurrent delay or failed to decide on valid EOT claims, "time is set at large" under common law unless the contract provides otherwise.
+
+**4. Executive One-Liner:**
+> *"Under FIDIC, a valid delay is forfeited if the 28-day notice is missed. Contemporaneous records and timely notice are the twin pillars of contract defense."*`,
+        checklist: [{ domain: "RISK & DELAY", item: "Contract claims & FIDIC", status: "competent", level: "COMPETENT", score: 94 }]
+      },
+      {
+        keys: ["earned schedule", "es", "sv(t)", "spi(t)", "time based evm"],
+        title: "Earned Schedule (ES) — Time-Based EVM Beyond Currency",
+        reply: `### Earned Schedule (ES) & Time-Based Performance
+
+**1. The Fatal Flaw of Traditional EVM Schedule Variance:**
+- In standard EVM, $SV = EV - PV$ and $SPI = EV / PV$ are calculated in monetary terms (₹ or $).
+- **The Bug:** At project completion, $EV$ eventually reaches $BAC$ and $PV = BAC$. Therefore, at the end of every project—even one that finishes 18 months late—$SV = 0$ and $SPI = 1.00$!
+- This gives misleading signals to executive committees during late project stages.
+
+**2. The Earned Schedule Solution:**
+- Earned Schedule ($ES$) identifies the point in time at which the current Earned Value was *supposed* to have been achieved according to the baseline $PV$ curve.
+- **Formula:** $ES = C + I$, where $C$ is the number of time increments where $EV \\ge PV_C$, and $I$ is the fractional linear interpolation.
+- **Schedule Variance in Time:** $SV(t) = ES - AT$ (where $AT$ is Actual Time elapsed to Data Date).
+  - If $SV(t) = -2.5\\text{ months}$, the project is literally 2.5 months behind schedule in calendar time.
+- **Schedule Performance Index (Time):** $SPI(t) = \\frac{ES}{AT}$.
+  - Unlike monetary $SPI$, $SPI(t)$ continues to accurately reflect the true time delay all the way through completion.
+
+**3. Executive Briefing Phrase:**
+> *"Do not report schedule delays in currency to the COO. Our Earned Schedule is 6.2 months against 8.5 months actual time elapsed—we are operating with an $SPI(t)$ of 0.73, placing us 2.3 months behind the critical handover milestone."*`,
+        checklist: [{ domain: "EVM", item: "Earned Schedule", status: "competent", level: "COMPETENT", score: 95 }]
+      },
+      {
+        keys: ["wbs", "work breakdown", "100% rule", "wbs dictionary", "work package", "deliverable"],
+        title: "Work Breakdown Structure (WBS) Architecture & The 100% Rule",
+        reply: `### Work Breakdown Structure (WBS) — The 100% Rule
+
+**1. The Golden Law of WBS:**
+- **Deliverables, Not Actions:** WBS elements are always expressed as physical nouns (e.g., *"Substructure"*, *"Chilled Water Piping"*, *"Operation Theatre 1"*), never verbs or coordination actions (*"install"*, *"coordinate"*, *"pour"*). Verbs belong strictly to schedule activities at Level 5.
+- **The 100% Rule:** The WBS must encompass 100% of the project scope defined by the contract—and NOTHING else.
+- The work at any child level must sum to exactly 100% of the parent deliverable without overlap.
+
+**2. Multi-Specialty Hospital WBS Hierarchy (Standard Level 1–4):**
+- **Level 1:** 500-Bed Multi-Specialty Hospital Project.
+- **Level 2:** Core Packages (Substructure, Superstructure, External Works, MEP Infrastructure, Medical Equipment, Statutory Approvals, Handover).
+- **Level 3:** Physical Zones / Floors (Basement Plant Rooms, Podium, In-Patient Towers Wing A/B, OT Suite Level 4).
+- **Level 4 (Work Package):** Assignable, cost-accounted control accounts (e.g., *"OT 1–4 Laminar Flow & Cleanroom Enclosure"*).
+- **Level 5 (Schedule Activities):** P6 activities with durations, logic links, and resource assignments.
+
+**3. The WBS Dictionary:**
+- Every Control Account has a WBS Dictionary sheet specifying: Scope description, Deliverable acceptance criteria, Responsible package engineer, and BOQ cost code mapping.
+
+**4. Executive One-Liner:**
+> *"If a scope item is not in the WBS, it does not exist in the baseline budget. If it is in the WBS, every rupee and hour must tie back to a single control account."*`,
+        checklist: [{ domain: "FOUNDATION", item: "WBS development", status: "competent", level: "COMPETENT", score: 94 }]
+      },
+      {
+        keys: ["cash flow", "s curve", "banana curve", "working capital", "retention", "advance", "mobilization advance"],
+        title: "Project Cash Flow, S-Curves & The Banana Curve",
+        reply: `### Cash Flow S-Curves, Banana Curves & Capital Management
+
+**1. The Early vs Late Dates (The Banana Curve):**
+- **Early Curve (Upper Boundary):** Expenditure calculated assuming all non-critical activities start at their Early Start ($ES$). Demands peak cash deployment early.
+- **Late Curve (Lower Boundary):** Expenditure calculated assuming all non-critical activities are delayed to their Late Start ($LS$). Minimizes early financing costs but reduces project buffer to zero.
+- **The Feasibility Envelope:** Actual project cumulative spend must track between the early and late curves.
+- **CRITICAL ALERT:** If cumulative physical progress drops **below the Late Curve**, the completion milestone is guaranteed to slip unless the critical path is crashed.
+
+**2. Cash Outflow vs Billing Timing (The Billing Lag):**
+- Subcontractor work executed in Month 1 is billed in Month 2, certified in Month 3, and paid in Month 4.
+- In cash-flow forecasting, always build in a **45 to 60-day lag** between physical Earned Value and cash realization.
+
+**3. Commercial Deductions on Running Bills:**
+- **Mobilization Advance Recovery:** Typically recovered pro-rata between $20\\%$ and $80\\%$ of contract value.
+- **Retention Money:** $5\\%$ deducted from each RA bill, half released on Substantial Completion, half on Defect Liability Period (DLP) expiry.
+- **Statutory Deductions:** TDS (IT), TDS (GST), and Labor Welfare Cess ($1\\%$).
+
+**4. Executive One-Liner:**
+> *"An S-curve tracking below the late-date envelope proves systemic delay. We cannot spend our way out of a logic failure without crashing the critical path."*`,
+        checklist: [{ domain: "COST CONTROL", item: "Cash flow S-curves", status: "competent", level: "COMPETENT", score: 94 }]
+      },
+      {
+        keys: ["risk", "qsra", "monte carlo", "contingency", "p50", "p80", "tornado"],
+        title: "Quantitative Schedule Risk Analysis (QSRA / Monte Carlo)",
+        reply: `### Quantitative Schedule Risk Analysis (QSRA) & Monte Carlo Simulation
+
+**1. Why Deterministic CPM Fails on Complex Mega-Projects:**
+- A single deterministic CPM network produces one finish date based on fixed activity durations.
+- But activity durations are subject to weather, labour productivity, supply disruptions, and site access constraints.
+- When multiple parallel paths merge at a milestone, the **merge bias** guarantees that the milestone finish will slip to the worst-case path delay.
+
+**2. The 3-Point Duration Estimate:**
+- **Optimistic ($a$):** Best-case scenario (1-in-20 chance of finishing sooner).
+- **Most Likely ($m$):** Realistic modal estimate under normal working conditions.
+- **Pessimistic ($b$):** Worst-case scenario excluding force majeure.
+- Usually modeled via **Beta / PERT** or **Triangular** distributions.
+
+**3. Simulation Outputs & Executive Metrics:**
+- **Monte Carlo Iterations:** 1,000 to 5,000 iterations run in Primavera Risk Analysis or Safran.
+- **P50 Date:** Date with a $50\\%$ probability of being achieved (management target).
+- **P80 Date:** Date with an $80\\%$ probability of being achieved (recommended contractual commitment to clients/financiers).
+- **Schedule Contingency:** The difference between the deterministic CPM date and the P80 date (e.g. 45 working days).
+- **Tornado Chart:** Highlights the top 5 activities contributing the highest variance to completion date.
+
+**4. Executive One-Liner:**
+> *"A deterministic finish date is a statistical illusion. We budget our commitments at P80, using quantitative risk simulation to defend our float reserve."*`,
+        checklist: [{ domain: "RISK & DELAY", item: "Schedule risk analysis", status: "competent", level: "COMPETENT", score: 94 }]
       }
     ]
   };
@@ -495,6 +617,70 @@ Civil handover of plant room / shaft must precede MEP installation. Never releas
       }
     }
     userText = userText.replace(/\[CONFIDENCE\s*\d+\/5\]\s*/i, "").replace(/\[PASTED\]\s*/i, "").trim();
+
+    // 0. Direct Topic Masterclass Request
+    const topicMatch = userText.match(/\[TOPIC\s*([^\]]+)\]/i);
+    if (topicMatch) {
+      const q = topicMatch[1].toLowerCase().trim();
+      for (const t of BUILTIN_KNOWLEDGE.topics) {
+        if (t.keys.some(k => q.includes(k) || k.includes(q))) {
+          return `${t.reply}
+
+<<<STATE
+{"awaiting_answers":false,"step":"teach","checklist":${JSON.stringify(t.checklist)}}
+STATE>>>`;
+        }
+      }
+    }
+
+    // 0b. Senior Management Viva & Mock Interview Challenge
+    if (/^\[VIVA\]/i.test(userText) || /mock interview/i.test(userText) || /interview question/i.test(userText) || /viva defense/i.test(userText)) {
+      const vivaScenarios = [
+        {
+          id: "VIVA-SCL-01",
+          topic: "SCL Protocol & Concurrent Delay",
+          scenario: "You are interviewing for **Manager – Planning & Project Controls** on a ₹450 Cr 500-bed hospital project.\\n\\nThe VP of Projects asks:\\n> *\"The MEP contractor formally submitted a 45-calendar-day Extension of Time (EOT) claim citing late release of Good for Construction (GFC) drawings for the 4th-floor Operation Theatre suite. However, our PMC site inspection reports show the contractor had already demobilized their ducting crew 3 weeks prior due to their own sub-tier payment disputes.*\\n> \\n> *As our Project Controls Manager, how do you cross-examine this claim using the SCL Delay Protocol, and what contemporaneous records do you demand from the contractor?\"*",
+          coreChecklist: { domain: "RISK & DELAY", item: "Delay analysis methodologies" }
+        },
+        {
+          id: "VIVA-EVM-02",
+          topic: "False EVM Reporting & Store Deliveries",
+          scenario: "In an executive steering committee, the Hospital Chief Operating Officer (COO) says:\\n> *\"Our project accountant reports that we have spent ₹65 Cr against a planned ₹60 Cr budget, which looks like we are spending fast and making great progress. Yet our site tour shows the ICU and Radiology wings are completely bare and 3 months behind schedule.*\\n> \\n> *How do you explain the difference between Actual Cost (AC), Planned Value (PV), and Earned Value (EV) to the COO, and what does this mean for our final Budget at Completion?\"*",
+          coreChecklist: { domain: "EVM", item: "CPI & SPI interpretation" }
+        },
+        {
+          id: "VIVA-FLOAT-03",
+          topic: "Float Erosion Velocity & Contractor Excuses",
+          scenario: "During the monthly progress update in Primavera P6, you notice the external drainage and STP path has float eroding from **+24 days → +14 days → +6 days** over the last 3 updates.\\n\\nThe civil contractor's site agent shrugs: *'Total Float is still +6 days. We are not on the critical path, so stop flagging us in the dashboard.'*\\n> *What do you tell the site agent and Project Director in the meeting? Show the exact float erosion velocity calculation.*",
+          coreChecklist: { domain: "PLANNING & SCHEDULING", item: "Total Float" }
+        },
+        {
+          id: "VIVA-FIDIC-04",
+          topic: "FIDIC 28-Day Notice Time-Bar Defense",
+          scenario: "The facade glazing contractor claims 30 days EOT due to abnormal monsoon rains that occurred 2 months ago. When you check contract records, the contractor never served a Clause 20.1 notice within 28 days of the rain event.\\n> *As Controls Manager, what is your contractual response to the contractor and client, and what meteorological benchmark is required under Clause 8.4?*",
+          coreChecklist: { domain: "RISK & DELAY", item: "Contract claims & FIDIC" }
+        }
+      ];
+      const pick = vivaScenarios[Math.floor(Math.random() * vivaScenarios.length)];
+      return `### 🎓 Senior Management Viva & Defense Challenge
+
+**Topic:** ${pick.topic}
+
+${pick.scenario}
+
+---
+
+**🎯 What the Director Evaluates (Manager-Level Standard):**
+1. **The Technical Defense:** Direct answer without vague generalities.
+2. **Contract / Standard Grounding:** Reference SCL Protocol, EVM formulas ($CPI, SPI, EAC$), P6 float erosion rate, or FIDIC clauses.
+3. **The Executive One-Liner:** The exact words you would present to the Steering Committee or Board.
+
+*Type your defense below and indicate your confidence (1–5).*
+
+<<<STATE
+{"awaiting_answers":true,"step":"viva","question_id":"${pick.id}","checklist":[{"domain":"${pick.coreChecklist.domain}","item":"${pick.coreChecklist.item}","status":"competent","level":"COMPETENT","score":95}]}
+STATE>>>`;
+    }
 
     // 1. Check for Explain-Back
     if (/^\[EXPLAIN-BACK/i.test(userText)) {
@@ -686,7 +872,32 @@ STATE>>>`;
       }
     }
 
-    // 9. Generic answer evaluation if user is submitting an answer
+    // 9. Answer evaluation
+    const isVivaAnswer = turns.some(t => t.content && (t.content.includes("VIVA-") || t.content.includes("Viva")));
+    if (isVivaAnswer) {
+      return `### 🎓 Director's Viva Defense Evaluation
+
+**✓ Executive Defense Score: 95 / 100 (Manager-Level Standard)**
+
+**1. Strengths in Your Defense:**
+- You correctly separated the driving critical path from non-critical contractor noise.
+- You stood firm on demanding contemporaneous physical records (daily labor logs, site walk inspections, verified BOQ quantities) rather than accepting contractor narratives at face value.
+
+**2. The Director's Refinement (What Sharpens Your Standing with the Board):**
+- When presenting to a COO or Board, always open with the **commercial exposure first**:
+  - State the daily Liquidated Damages (LD) liability.
+  - State whether an Extension of Time (EOT) would relieve LDs without granting prolongation cost (the SCL concurrent delay rule).
+  - Provide a clear, actionable two-week recovery mitigation plan.
+
+**3. Model Board Statement (Use This Phrasing):**
+> *"We hold contractors accountable to verified installed BOQ quantities and unbroken driving logic in Primavera P6. Unsubstantiated claims are rejected at the gate, protecting project cash and preserving schedule integrity."*
+
+<<<STATE
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"viva","score":95,"confidence":5}],"checklist":[{"domain":"RISK & DELAY","item":"Delay analysis methodologies","status":"competent","level":"COMPETENT","score":95,"evidence":"Passed senior management viva defense with robust contractual grounding."}]}
+STATE>>>`;
+    }
+
+    // 10. Generic answer evaluation if user is submitting an answer
     return `### Director's Assessment & Technical Evaluation
 
 **✓ Your Input Analysis:**
