@@ -13,8 +13,8 @@
     try {
       const c = JSON.parse(LS.getItem(cfgKey) || "{}");
       if (c.provider === "gemini") {
-        if (!c.model || /gemini-(1\.[05]|2\.0|3\.[0-9])/.test(c.model || "")) { c.model = "gemini-2.5-flash"; setCfg(c); }
-        if (!c.modelComplex || /gemini-(1\.[05]|2\.0|3\.[0-9])/.test(c.modelComplex || "")) { c.modelComplex = "gemini-2.5-flash"; setCfg(c); }
+        if (!c.model || /gemini-(1\.[05]|2\.[05]|3\.[0-9]-flash)/.test(c.model || "")) { c.model = "gemini-2.5-flash"; setCfg(c); }
+        if (!c.modelComplex || /gemini-(1\.[05]|2\.[05]|3\.[0-9]-flash)/.test(c.modelComplex || "")) { c.modelComplex = "gemini-3.1-pro-preview"; setCfg(c); }
       }
       return c;
     } catch { return {}; }
@@ -48,8 +48,8 @@
 
   // ---------- sample: one interface, four providers ----------
   const DEFAULTS = {
-    gemini:    { model: "gemini-2.5-flash", modelComplex: "gemini-2.5-flash" },
-    openrouter:{ model: "google/gemini-2.5-flash", modelComplex: "google/gemini-2.5-flash", baseUrl: "https://openrouter.ai/api/v1" },
+    gemini:    { model: "gemini-2.5-flash", modelComplex: "gemini-3.1-pro-preview" },
+    openrouter:{ model: "google/gemini-2.5-flash", modelComplex: "google/gemini-3.1-pro-preview", baseUrl: "https://openrouter.ai/api/v1" },
     anthropic: { model: "claude-3-5-sonnet-latest", modelComplex: "claude-3-5-sonnet-latest" },
     openai:    { model: "gpt-4o-mini", modelComplex: "gpt-4o", baseUrl: "https://api.openai.com/v1" }
   };
@@ -65,7 +65,7 @@
     try {
       if (c.provider === "gemini") {
         const candidates = [model];
-        ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro"].forEach(m => {
+        ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3.1-pro-preview"].forEach(m => {
           if (!candidates.includes(m)) candidates.push(m);
         });
 
@@ -85,7 +85,7 @@
             }
             lastErr = j;
             const msg = j?.error?.message || "";
-            const isRetryable = r?.status === 503 || r?.status === 429 || r?.status === 404 || /high demand|spikes in demand|overloaded|temporar|not found/i.test(msg);
+            const isRetryable = r?.status === 503 || r?.status === 429 || r?.status === 404 || /high demand|spikes in demand|overloaded|temporar|not found|no longer available|deprecated/i.test(msg);
             if (isRetryable && attempt < candidates.length - 1) {
               await new Promise(res => setTimeout(res, 1000));
               continue;
@@ -95,7 +95,7 @@
             lastErr = err;
             if (err?.name === "AbortError") throw err;
             const msg = err?.error?.message || err?.message || "";
-            const isRetryable = /high demand|spikes in demand|overloaded|temporar|not found/i.test(msg);
+            const isRetryable = /high demand|spikes in demand|overloaded|temporar|not found|no longer available|deprecated/i.test(msg);
             if (isRetryable && attempt < candidates.length - 1) {
               await new Promise(res => setTimeout(res, 1000));
               continue;
@@ -242,6 +242,7 @@
       <div id="sx-gemini-pills" style="display:flex;gap:6px;margin:4px 0 8px;flex-wrap:wrap">
         <button type="button" id="btn-pick-flash" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">Default: 2.5-Flash</button>
         <button type="button" id="btn-pick-lite" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--bar,#2F5BD3);background:var(--barSoft,#E8EEFA);color:var(--bar,#2F5BD3);font-weight:700;cursor:pointer">⚡ 2.5-Flash-Lite (Fix High Demand)</button>
+        <button type="button" id="btn-pick-pro" style="padding:4px 10px;font-size:.76rem;border-radius:6px;border:1px solid var(--line,#8884);background:var(--bg,#eee);color:var(--ink,#111);cursor:pointer">3.1-Pro-Preview</button>
       </div>
       <input id="sx-m" value="${c.model || ""}" placeholder="${d.model}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
       <label style="display:block;margin:8px 0 4px;font-weight:600">Model (scoring answers)</label><input id="sx-mc" value="${c.modelComplex || ""}" placeholder="${d.modelComplex}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line,#8884);background:var(--bg,#fff);color:var(--ink,#111);font:inherit;box-sizing:border-box">
@@ -271,6 +272,10 @@
     w.querySelector("#btn-pick-lite")?.addEventListener("click", () => {
       inpM.value = "gemini-2.5-flash-lite";
       inpMc.value = "gemini-2.5-flash-lite";
+      if (testStatus) testStatus.textContent = "";
+    });
+    w.querySelector("#btn-pick-pro")?.addEventListener("click", () => {
+      inpMc.value = "gemini-3.1-pro-preview";
       if (testStatus) testStatus.textContent = "";
     });
 
