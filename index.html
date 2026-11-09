@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=36"></script>
+<script src="shim.js?v=37"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -14174,6 +14174,679 @@ const APPLY9 = {
 };
 Object.assign(APPLY, APPLY9);
 UNITS9.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS10 = [
+  {
+    "id": "U84",
+    "day": 84,
+    "title": "Day 84: Resource Loading in P6: Labor, Non-Labor, Material Resources & Unit Rates",
+    "mins": 25,
+    "card": {
+      "id": "c-resource-loading",
+      "title": "Resource Loading: Labor (Man-Hours), Non-Labor (Plant) & Material resources",
+      "rule": "Primavera P6 provides three distinct resource categories: Labor (human trades measured in man-hours), Non-Labor (equipment/plant measured in machine-hours), and Material (consumables measured in physical units: tons, m³, meters). Unit rates (Price/Unit) determine cost curves. Assigning driving resources to activities enables Resource-Dependent scheduling and generates direct daily site manpower histograms to audit contractor labor mobilization capacity against planned requirements.",
+      "example": "Loading rebar fitters onto foundation raft pours revealed a peak demand of 85 steel fixers on site, when the contractor's labor camp only had capacity for 40 men, exposing an unexecutable baseline.",
+      "trap": "Lumping all equipment and human trades into Labor, distorting equipment productivity rates and preventing separate tracking of fuel and operator costs."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** An EPC contractor submitted an un-resourced baseline schedule for an ₹800 Crore 600-bed hospital. The critical path showed 4 structural basement floor slabs being cast simultaneously across three interconnected blocks within a single 20-day window.\n\nWhen the client's Project Controls Director resource-loaded the activities with required trade crews in P6, the **Resource Usage Histogram** showed a massive red spike:\n\nThe project required **140 certified structural welders** and **220 rebar steel fixers** during that 20-day peak!\n\nWhen the PMC audited the contractor's site mobilization and labor camp registers, the contractor had only 45 rebar fixers and 12 welders on site, with local labor markets suffering a massive regional shortage due to an adjacent highway project.\n\nThe un-resourced schedule was an unexecutable fantasy. Without resource loading, CPM logic assumes an infinite supply of labor and machinery. Resource loading in P6 exposes impossible labor peaks before concrete work begins, forcing contractors to level the schedule to realistic site capacity."
+      },
+      {
+        "k": "read",
+        "t": "**The 3 P6 Resource Categories & Loading Mechanics:**\n\n1. **Labor Resources (Human Trades):**\n   - *Unit of Measure:* Time-based (typically **Man-Hours**).\n   - *Examples:* Rebar Fitters, Shuttering Carpenters, Certified Welders, Electricians, Duct Fabricators.\n   - *Attributes:* Assigned Max Units/Time (e.g. 20 men $\\times$ 8 hrs = $160\\text{ hrs/day}$); assigned Price/Unit (e.g. ₹150/hour); follows individual Resource Calendars.\n\n2. **Non-Labor Resources (Machinery & Equipment):**\n   - *Unit of Measure:* Time-based (**Machine-Hours**).\n   - *Examples:* Tower Cranes, Concrete Boom Pumps, 50-Tonne Mobile Cranes, Heavy Excavators, 500-kVA DG Sets.\n   - *Forensic Separation:* Never lump plant into Labor! Equipment costs do not scale with overtime labor laws; machines have capital standby vs operating fuel cost tiers.\n\n3. **Material Resources (Physical Consumables):**\n   - *Unit of Measure:* Physical quantities (**Tons, m³, Liters, Meters**).\n   - *Examples:* Ready-Mix Concrete ($m^3$), TMT Rebar (MT), Structural Steel (MT), Chilled Water Pipe (meters), Cable (meters).\n   - *Cost Calculation:* $\\text{Cost} = \\text{Budgeted Units} \\times \\text{Price/Unit}$. Tracking material consumption enables direct physical reconciliation against store delivery challans.\n\n4. **Work Contours (How Effort is Expended):**\n   - P6 allows resource usage to follow curves over an activity's duration: *Linear* (standard flat distribution), *Bell-Shaped* (slow ramp-up, peak, ramp-down), *Back-Loaded* (commissioning), or *Front-Loaded* (demolition)."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why is resource loading essential before finalizing an EPC construction schedule baseline in Primavera P6?",
+            "o": [
+              [
+                "Because un-resourced CPM schedules assume infinite labor and equipment availability, whereas resource loading reveals impossible manpower peaks and verifies whether site mobilization capacity can support the plan",
+                true,
+                "Without resource loading, P6 schedules tasks in parallel assuming unlimited workers. Loading trades reveals peak demands that exceed camp capacity or local trade availability."
+              ],
+              [
+                "Because P6 software will not calculate critical path without labor resources",
+                false,
+                "P6 calculates CPM purely on duration and logic; resource loading adds physical feasibility."
+              ],
+              [
+                "Because resource loading automatically writes payroll checks to workers' bank accounts",
+                false,
+                "P6 is a planning tool, not an operational banking payroll system."
+              ],
+              [
+                "Because local trade unions require all schedules to be printed on blue paper",
+                false,
+                "Fictional assertion; resource loading is an engineering scheduling best practice."
+              ]
+            ]
+          },
+          {
+            "q": "What is the primary difference between a 'Labor' resource and a 'Non-Labor' resource in Primavera P6?",
+            "o": [
+              [
+                "Labor resources represent human workforce trades governed by human labor calendars, while Non-Labor resources represent equipment, machinery, and plant tools",
+                true,
+                "Labor covers human manpower (man-hours); Non-Labor covers plant, cranes, and heavy equipment (machine-hours)."
+              ],
+              [
+                "Labor resources are always free, while Non-Labor resources cost money",
+                false,
+                "Both labor and non-labor carry cost rates (Price/Unit)."
+              ],
+              [
+                "Labor resources apply only to painting, while Non-Labor applies only to earthwork",
+                false,
+                "Both resource types are utilized across all engineering disciplines."
+              ],
+              [
+                "Non-Labor resources can only be used on projects funded by foreign governments",
+                false,
+                "Standard P6 resource classification used worldwide."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never approve a contractor's schedule that is not resource-loaded. Generate the daily manpower histogram for critical trades (carpenters, steel fixers, welders, electricians). If the peak demand exceeds the contractor's verified camp capacity, the schedule is a fiction waiting to collapse."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U85",
+    "day": 85,
+    "title": "Day 85: Cost Loading & BOQ Linkage: Hard-Linking BOQ Items & Direct Cost vs Billed Value",
+    "mins": 25,
+    "card": {
+      "id": "c-cost-loading",
+      "title": "Cost Loading: Hard-linking BOQ line items, direct costs vs billed value & expenses",
+      "rule": "Cost loading maps financial budgets directly onto schedule activities. Best practice requires hard-linking activity budgets to Bill of Quantities (BOQ) item codes using Cost Accounts. A project's Budget at Completion (BAC) in P6 must equal 100% of the contract value. Direct Costs (labor, plant, materials) are loaded via resource unit rates; indirect costs, mobilization advances, and permit fees are loaded as P6 Expenses. Never load contractor profit or unapproved contingencies into activity unit rates.",
+      "example": "Linking each P6 concrete activity to BOQ Item 4.2.1 (M35 Grade Concrete @ ₹7,200/m³) allowed automatic generation of the monthly bill valuation directly from the P6 physical update.",
+      "trap": "Loading arbitrary lump-sum costs onto activities without mapping to contract BOQ item numbers, preventing automated reconciliation against Running Account bills."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹600 Crore government hospital project in Delhi, the contractor maintained two completely separate tracking systems:\n1. A Primavera P6 schedule managed by a junior planner showing progress dates.\n2. A massive Microsoft Excel spreadsheet managed by the billing department with 1,800 BOQ line items.\n\nThe two systems never spoke to each other. Every month, the contractor submitted a Running Account (RA) Bill claiming ₹18 Crores, while the P6 schedule reported that physical progress was 3 weeks behind!\n\nThe client's CFO asked: *\"If the schedule is delayed, why is the contractor billing more money than planned? Which BOQ items correspond to the critical path activities?\"*\n\nNobody knew. The billing engineers could not link line items to P6 Activity IDs, and the planner could not translate P6 percent complete into certified bill rupees.\n\nTo solve this, the PMC mandated **Cost Loading & BOQ Linkage**: every activity in P6 was mapped directly to its contractual BOQ item number using **Cost Accounts**, forcing the billing curve to match the physical schedule with mathematical precision."
+      },
+      {
+        "k": "read",
+        "t": "**P6 Cost Loading Architecture & BOQ Integration:**\n\n1. **The Cost Account Framework:**\n   - In P6, create a hierarchical **Cost Account Structure** mirroring the contract BOQ (e.g. `BOQ -> Section 3: Concrete Works -> Item 3.4: RCC Columns M35`).\n   - Assign Cost Accounts directly to resource assignments on activities. This enables P6 to roll up costs by BOQ chapter, subcontractor package, or structural block.\n\n2. **The 3 Methods of Loading Cost in P6:**\n   - *Method 1: Resource-Driven Cost (The Preferred Method):* Cost is calculated from physical quantities and unit rates:\n     $\\text{Budgeted Cost} = \\text{Budgeted Units} \\times \\text{Price/Unit}$\n     (e.g. $450\\text{ m}^3$ concrete $\\times$ ₹$7,500/\\text{m}^3$ = ₹33,75,000). Updating physical units automatically updates earned value.\n   - *Method 2: Activity Expenses (One-Off & Indirect Costs):* Used for non-resourced costs, lump-sum deliverables, and statutory fees (e.g. *Mobilization Advance*, *Fire NOC Inspection Fees*, *Third-Party Testing Retainers*). Expenses can be assigned accrual types: *Start*, *End*, or *Uniform*.\n   - *Method 3: Direct Cost Loading (Fixed Cost):* Entering lump-sum currency values directly on activities (less transparent; prone to audit challenges).\n\n3. **Reconciling BAC (Budget at Completion):**\n   - The sum of all activity resource costs and expenses across the P6 schedule must equal **100% of the approved Contract Value (BAC)**. If BAC in P6 is ₹590 Cr on a ₹600 Cr contract, ₹10 Cr of scope is missing from the schedule!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "How does hard-linking P6 activities to contractual Bill of Quantities (BOQ) line items using Cost Accounts benefit project governance?",
+            "o": [
+              [
+                "It directly synchronizes physical schedule progress with financial bill certifications, enabling automated cash flow forecasting and eliminating discrepancies between site progress and billed revenue",
+                true,
+                "Mapping BOQ items to P6 activities via Cost Accounts creates a single source of truth: progress entered in the schedule automatically drives the monthly billing valuation."
+              ],
+              [
+                "It eliminates the requirement to pay taxes to the government",
+                false,
+                "Tax compliance is governed by statutory law, completely independent of P6 cost accounts."
+              ],
+              [
+                "It automatically changes the contract from an Item-Rate contract to a Cost-Plus contract",
+                false,
+                "Contract legal models are fixed by the signed legal agreement, not scheduling software."
+              ],
+              [
+                "It prevents the client from inspecting the construction site in person",
+                false,
+                "Clients retain full contractual rights to conduct physical inspections."
+              ]
+            ]
+          },
+          {
+            "q": "In Primavera P6, when is it appropriate to use an 'Activity Expense' rather than a resource assignment for cost loading?",
+            "o": [
+              [
+                "For non-resource costs, one-off commercial milestone payments, mobilization advances, insurance premiums, and statutory inspection fees",
+                true,
+                "Activity Expenses are designed for lump-sum or indirect costs (mobilization advance, permits, insurance, testing fees) that do not consume labor or plant hours."
+              ],
+              [
+                "For all civil concrete and rebar works to avoid counting cubic meters",
+                false,
+                "Civil works must be resource-loaded by physical units (m³, tons) to enable material reconciliation."
+              ],
+              [
+                "To hide contractor corporate entertainment expenses from tax auditors",
+                false,
+                "Project controls requires transparent, audited, contract-related cost structures."
+              ],
+              [
+                "Expenses can only be used on projects that have zero critical path activities",
+                false,
+                "Expenses can be assigned to any activity in the schedule."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Enforce the Cost Account rule: mirror your BOQ structure in P6 Cost Accounts. Verify that total Budget at Completion (BAC) in P6 matches the contract sum to the exact rupee. This bridges the dangerous gap between planning and billing."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U86",
+    "day": 86,
+    "title": "Day 86: Resource Leveling & Smoothing: Forward/Backward Leveling & Float Preservation",
+    "mins": 25,
+    "card": {
+      "id": "c-resource-leveling",
+      "title": "Resource Leveling: Peak smoothing, priority rules & total float preservation",
+      "rule": "Resource Leveling is the CPM algorithmic process that delays activities to eliminate resource over-allocations (where daily resource demand exceeds maximum available site capacity). Resource Smoothing adjusts activities strictly within their available Total Float, ensuring the project completion date is NEVER extended. When leveling in P6, always enable 'Level only within total float' to protect contractual completion milestones. Leveling priorities should prioritize Critical Path, Total Float, and Activity Priority.",
+      "example": "Leveling secondary drywall activities within their 25 days of free float reduced peak electrician demand from 60 to 35 men without slipping the hospital opening date.",
+      "trap": "Running unconstrained resource leveling without checking the 'Preserve scheduled finish date' box, allowing P6 to push the contract completion milestone into next year."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹750 Crore hospital project, the general contractor had 2 tower cranes on site. The baseline schedule required both cranes to service basement excavation, column shuttering, rebar hoisting, and precast staircase placement simultaneously.\n\nOn July 12th, the contractor ran **Resource Leveling** in P6 to resolve the crane over-allocation.\n\nThe planner selected all activities, accepted default leveling settings, and hit **Level Now**.\n\nWhen the schedule recalculated, the planner gasped in horror: the project completion milestone had **jumped from March 31st to August 28th—a 5-month delay created entirely by the software!**\n\nWhy? Because the planner had failed to check the box: *\"Level only within total float\"*! Without that constraint, P6 solved the tower crane shortage by taking critical path concrete pours and postponing them sequentially one after another, destroying the critical path!\n\nResource Leveling is a powerful mathematical optimization engine, but if unconstrained, it silently slips contractual completion dates and exposes the contractor to massive Liquidated Damages."
+      },
+      {
+        "k": "read",
+        "t": "**Resource Leveling Mechanics & Float Preservation in P6:**\n\n1. **Resource Leveling vs Resource Smoothing:**\n   - *Resource Leveling (Unconstrained):* Shifts activities whenever daily resource demand exceeds maximum resource limit. **Will extend project completion date** if over-allocated activities are on the critical path!\n   - *Resource Smoothing (Constrained Leveling):* Shifts non-critical activities **strictly within their available Total Float (TF)**. **Guarantees that project completion is NEVER delayed.** If resources still exceed limits after consuming float, the over-allocation remains flagged for management resolution (e.g. hire extra equipment or authorize overtime).\n\n2. **The 4 Leveling Priority Rules in P6:**\n   - When multiple activities compete for the same scarce resource, P6 decides which activity proceeds first based on:\n     1. *Total Float:* Activities with less float go first (critical activities get priority).\n     2. *Early Start Date:* Earlier scheduled tasks proceed first.\n     3. *Activity Priority:* User-assigned ranking (*Top, High, Normal, Low*).\n     4. *Activity ID / WBS Hierarchy*.\n\n3. **The Golden Rules for Leveling Audits:**\n   - *Rule 1:* Always check **\"Level only within total float\"** during baseline development to protect contract completion milestones.\n   - *Rule 2:* Always inspect the **Leveling Log** (`level.txt`). P6 lists every single activity shifted by the algorithm and highlights remaining unresolved resource deficits."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the critical distinction between 'Resource Leveling' and 'Resource Smoothing' in construction project scheduling?",
+            "o": [
+              [
+                "Resource Smoothing shifts activities strictly within available total float without extending the project completion date, whereas unconstrained Resource Leveling will delay the project finish milestone to resolve resource limits",
+                true,
+                "Smoothing prioritizes the completion deadline, shifting tasks only within available float. Unconstrained leveling prioritizes resource limits, pushing the finish date if necessary."
+              ],
+              [
+                "Resource Smoothing applies only to concrete, while Resource Leveling applies only to painting",
+                false,
+                "Leveling and smoothing are mathematical scheduling algorithms applicable across all trades."
+              ],
+              [
+                "Resource Leveling increases the budget by 50%, while Smoothing cuts the budget in half",
+                false,
+                "Leveling and smoothing manipulate dates and resource curves, not contract budget values."
+              ],
+              [
+                "Resource Smoothing can only be performed by the Chief Financial Officer",
+                false,
+                "Both are standard planning functions executed in P6 by project controls engineers."
+              ]
+            ]
+          },
+          {
+            "q": "Why must a planning engineer enable the 'Level only within total float' setting when running resource optimization on a baseline P6 schedule?",
+            "o": [
+              [
+                "To prevent the software algorithm from pushing activities beyond their late dates and artificially delaying contractual milestone completion dates",
+                true,
+                "Enabling this setting ensures that leveling respects the contractual completion date, optimizing resource distribution strictly within non-critical float paths."
+              ],
+              [
+                "To automatically double the wages of all crane operators on site",
+                false,
+                "Scheduling options do not modify commercial wage rates."
+              ],
+              [
+                "Because P6 software crashes if total float is negative during leveling",
+                false,
+                "P6 can level with negative float, but doing so without boundaries produces erratic schedule distortion."
+              ],
+              [
+                "To convert all tower cranes into stationary diesel generators",
+                false,
+                "Software algorithms do not alter physical machinery specifications."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Leveling is not a substitute for management decision-making. Always check 'Level only within total float'. If resource over-allocations remain, present the data to the Project Director to mobilize extra crews or hire additional cranes rather than letting software quietly delay the job."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U87",
+    "day": 87,
+    "title": "Day 87: Generating S-Curve Banana Envelopes: Early vs Late Curves & The Risk Corridor",
+    "mins": 25,
+    "card": {
+      "id": "c-banana-envelope",
+      "title": "S-Curve Banana Envelopes: Early vs Late curves & the project risk corridor",
+      "rule": "The S-Curve Banana Envelope is the bounded performance corridor defined by the Early Dates Planned Value Curve (PV_early, upper boundary) and Late Dates Planned Value Curve (PV_late, lower boundary). The gap between the curves represents total project schedule float. As long as Actual Earned Value (EV) tracks between the curves, completion is achievable; if EV drops below the Late Curve, total float has expired and project completion is mathematically guaranteed to be delayed.",
+      "example": "On a hospital project, earned value tracked midway between early and late curves for 6 months; in Month 7, EV pierced the lower late curve, instantly alerting the board that the hospital opening milestone was lost.",
+      "trap": "Presenting a single Planned Value curve based on early dates without the late curve, creating false panic whenever minor non-critical float is consumed."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** At the Month 8 board meeting of a ₹700 Crore quaternary hospital, the planning engineer presented a single S-curve. The planned line showed target progress at **52%**, while actual earned progress was **46%**.\n\nThe Chairman was alarmed: *\"We are 6% behind schedule! Are we going to miss the opening date? Should we cancel patient bookings?\"*\n\nThe planner had no clear answer. Because they had plotted only a single **Early Dates Curve**, they could not tell whether the 6% variance was on the critical path or merely consumed harmless non-critical float on ward painting!\n\nThe next month, an expert Project Controls Director took over and generated the full **S-Curve Banana Envelope**:\n- *Upper Boundary (Early Curve):* $52\\%$\n- *Lower Boundary (Late Curve):* $38\\%$\n- *Actual Earned Progress:* $46\\%$\n\nThe Director explained: *\"The project has an operational buffer of 14% between Early and Late curves. Our actual progress of 46% sits comfortably inside the Banana Envelope, 8% above the Late Curve. The critical path is 100% on track; the variance is purely non-critical float consumption.\"*\n\nThe boardroom relaxed. Understanding the Banana Envelope separates amateur panic from professional project controls."
+      },
+      {
+        "k": "read",
+        "t": "**S-Curve Banana Envelope Dynamics:**\n\n1. **The Anatomy of the Banana Envelope:**\n   - *Upper Curve (Early Dates Planned Value - $PV_{\\text{early}}$):* Cumulative progress if every single activity starts and finishes on its **Early Dates** (zero float consumed). Highly aggressive; virtually no complex project finishes on the early curve.\n   - *Lower Curve (Late Dates Planned Value - $PV_{\\text{late}}$):* Cumulative progress if every activity is delayed to its **Late Dates** (100% of available total float consumed; all activities become critical).\n   - *The Banana Corridor:* The physical space between the two curves represents the **total float envelope** of the project.\n\n2. **The 3 Performance Zones:**\n   - *Zone 1: Tracking along the Early Curve (Top 25%):* Highly aggressive, front-loaded cash flow demand. Excellent performance, but risks burning mobilization capital prematurely.\n   - *Zone 2: The Optimal Operating Corridor (Midway 40%–60%):* Work advances efficiently; critical path is protected while non-critical trades absorb minor site adjustments without crisis.\n   - *Zone 3: Piercing the Lower Late Curve (The Red Zone):* **Catastrophic alert.** Total float across the project has been fully exhausted. Activities are now failing beyond their late dates. Project completion is **guaranteed to be delayed** unless major acceleration is immediately deployed."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What does it mathematically indicate when a project's Actual Earned Value (EV) curve drops below the lower Late Dates Curve of an S-Curve Banana Envelope?",
+            "o": [
+              [
+                "All available total float on the project has been completely exhausted, and project completion is now mathematically guaranteed to be delayed unless immediate critical path acceleration is implemented",
+                true,
+                "The Late Curve represents the absolute latest work can finish without delaying completion. Dropping below the Late Curve means total float is negative and contract completion has slipped."
+              ],
+              [
+                "The project has saved 50% on labor costs and can finish early",
+                false,
+                "Dropping below the late curve indicates critical delay, not cost savings."
+              ],
+              [
+                "The contractor is legally required to demolish the entire building and rebuild from scratch",
+                false,
+                "Dropping below the late curve triggers recovery planning, not demolition."
+              ],
+              [
+                "P6 software has run out of mathematical memory and must be reinstalled",
+                false,
+                "This is a fundamental CPM performance metric, not a software bug."
+              ]
+            ]
+          },
+          {
+            "q": "Why is an S-Curve Banana Envelope (displaying both Early and Late Planned Value curves) superior to a single Planned Value curve for executive reporting?",
+            "o": [
+              [
+                "It provides an operational performance corridor that distinguishes between harmless non-critical float consumption and true critical path completion delays",
+                true,
+                "A single early curve causes false panic whenever minor non-critical work slips. The Banana Envelope shows whether progress is safely within allowable float boundaries."
+              ],
+              [
+                "Because banana-shaped charts are required under Indian Food Safety regulations",
+                false,
+                "Fictional wordplay; the curve is named for its visual shape."
+              ],
+              [
+                "Because plotting two curves doubles the contract value of the project",
+                false,
+                "Curves represent progress percentages, having no effect on contract sum."
+              ],
+              [
+                "Because banks only lend money to contractors who submit drawings in yellow ink",
+                false,
+                "Lenders evaluate credit and budget adequacy, not graphic color choices."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Always present the full Banana Envelope to executive leadership and lenders. Never show a single early curve. As long as earned value stays above the lower late curve, the project completion milestone is safe. The moment EV touches the late curve, initiate immediate critical path recovery."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U88",
+    "day": 88,
+    "title": "Day 88: Monthly Cash Flow & Fund Drawdown Models: Capex Curves, Retention & Advances",
+    "mins": 25,
+    "card": {
+      "id": "c-cash-flow-models",
+      "title": "Project Cash Flow: Gross billing, retention holdbacks & advance amortization",
+      "rule": "Project Cash Flow translates scheduled physical earned value into net financial liquidity. The Gross Billing S-Curve represents certified work value; the Net Cash Realization Waterfall deducts: 1) Mobilization Advance recovery amortization (typically 15%–20% of gross bill); 2) Statutory TDS (2%) and Labor Cess (1%); 3) Retention Money holdback (5%–10% capped at 5% of contract value). Net cash flow models determine contractor working capital survival and owner monthly capex equity/debt drawdown requirements.",
+      "example": "Contractor billed ₹10 Cr gross progress; after 15% mobilization recovery (₹1.5 Cr), 5% retention (₹50 Lakhs), and 3% statutory deductions (₹30 Lakhs), net bank credit was only ₹7.7 Cr.",
+      "trap": "Forecasting contractor cash flow based on gross P6 earned value, ignoring mobilization advance deductions and retention holdbacks that strip 20% to 25% of net monthly liquidity."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On an ₹800 Crore hospital project, the general contractor prepared an internal working capital plan based directly on P6 monthly cost curves. For Month 6, P6 showed planned earned value of **₹20 Crores**.\n\nThe contractor committed ₹18 Crores to steel mills and MEP equipment suppliers, expecting ₹20 Crores in client bank receipts.\n\nWhen the client's finance department processed RA Bill #6, the net bank transfer was only **₹15.4 Crores**!\n\nWhere did the ₹4.6 Crores go?\n1. **Mobilization Advance Amortization:** The contract mandated 15% recovery on gross billings ($-₹3.0\\text{ Cr}$).\n2. **Retention Money Holdback:** 5% contractual retention held in owner escrow ($-₹1.0\\text{ Cr}$).\n3. **Statutory Deductions:** 2% Income Tax TDS + 1% Building & Other Construction Workers (BOCW) Cess ($-₹60\\text{ Lakhs}$).\n\nThe contractor was left with an unexpected ₹2.6 Crore cash deficit, bounced cheques to rebar suppliers, and suffered a 3-week steel supply freeze on site.\n\nProject Controls Managers must understand the **Net Cash Flow Waterfall**: gross P6 earned value is a measurement of work done, but net cash flow determines whether the site can physically survive."
+      },
+      {
+        "k": "read",
+        "t": "**The Construction Cash Flow Waterfall:**\n\n```\n+-----------------------------------------------------------------------------------------+\n|                              GROSS CERTIFIED BILL VALUE (P6 EV)                         |\n|                                          ₹ 100.00 %                                     |\n+-----------------------------------------------------------------------------------------+\n|  LESS: Mobilization Advance Recovery (Amortization Rate: 15% to 20%)                    |\n|        (Amortized progressively until advance is fully recovered at 80% contract progress)|\n+-----------------------------------------------------------------------------------------+\n|  LESS: Contractual Retention Money Holdback (5% of Gross Bill)                          |\n|        (Held in escrow; 50% released at Taking-Over, 50% at Defect Liability Period end) |\n+-----------------------------------------------------------------------------------------+\n|  LESS: Statutory Tax & Cess Deductions:                                                 |\n|        - Income Tax TDS (Section 194C): 2.0%                                            |\n|        - BOCW Labor Welfare Cess: 1.0%                                                  |\n+-----------------------------------------------------------------------------------------+\n|                                 EQUALS: NET CONTRACTOR CASH RECEIPT                     |\n|                                       (Typically 74% to 77% of Gross EV)                |\n+-----------------------------------------------------------------------------------------+\n```\n\n**Owner Capex Drawdown Forecasting:**\n- For healthcare developers, the cash flow curve dictates when corporate equity and bank construction loan debt must be drawn down.\n- Drawing down debt too early incurs heavy **Interest During Construction (IDC)**; drawing down too late causes contractor payment defaults, triggering work suspension under FIDIC Sub-Clause 16.1."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "When converting a P6 monthly earned value forecast of ₹10 Crores into net contractor cash realization, what deductions must be modeled in the financial waterfall?",
+            "o": [
+              [
+                "Mobilization advance amortization (e.g. 15%), retention money holdback (5%), and statutory deductions including TDS (2%) and Labor Cess (1%), yielding net realization of approximately 74% to 77%",
+                true,
+                "Gross earned value is subject to contractual advance recovery, retention holdbacks, and statutory tax deductions, reducing actual cash realization to 74-77% of gross billing."
+              ],
+              [
+                "Zero deductions because all construction billing is tax-free in India",
+                false,
+                "Construction contracts are strictly subject to TDS, BOCW Cess, and GST."
+              ],
+              [
+                "A 50% deduction for client corporate luxury bonuses",
+                false,
+                "Client overheads are not deducted from contractor billings."
+              ],
+              [
+                "Deductions occur only if the contractor's head office is located in a foreign country",
+                false,
+                "Standard contractual and statutory waterfall applies to all Indian and international contracts."
+              ]
+            ]
+          },
+          {
+            "q": "Why is accurate monthly capex cash flow forecasting critical for hospital developers managing bank debt facilities?",
+            "o": [
+              [
+                "To optimize bank construction loan drawdowns, preventing premature debt drawing that incurs unnecessary Interest During Construction (IDC) while avoiding payment defaults that trigger contractor work suspension",
+                true,
+                "Accurate cash flow schedules ensure loan drawdowns match physical site requirements, minimizing heavy interest costs while guaranteeing timely contractor payments."
+              ],
+              [
+                "Because banks require developers to deposit all loan money in cash in the site cabin",
+                false,
+                "Loan funds are disbursed through formal escrow banking mechanisms, not physical cash storage."
+              ],
+              [
+                "To eliminate the requirement to hire doctors and nurses when the hospital opens",
+                false,
+                "Clinical staffing is an operational expenditure, separate from construction capex."
+              ],
+              [
+                "To convert the hospital building into a residential apartment tower automatically",
+                false,
+                "Building classification is determined by municipal sanction, not cash flow curves."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never confuse P6 earned value with site cash flow. Build the Net Realization Waterfall into your monthly reports: factor in mobilization advance recovery, retention holdbacks, and statutory taxes so contractor leadership and developer treasuries plan with financial truth."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U89",
+    "day": 89,
+    "title": "Day 89: Lenders' Independent Engineer (LIE) S-Curve Auditing: Funding Freeze Triggers",
+    "mins": 25,
+    "card": {
+      "id": "c-lie-scurve-audits",
+      "title": "LIE S-Curve Audits: Cost-to-Complete adequacy & bank funding freeze triggers",
+      "rule": "Consortium banks disburse construction loan debt tranches based on quarterly Lenders' Independent Engineer (LIE) audits. The LIE reconciles P6 S-curves against physical ground reality using verified Rules of Credit. The core test is the Cost-to-Complete (CTC) Budget Adequacy Ratio: Remaining Available Funds (Undrawn Debt + Unspent Equity) must >= Estimated Cost-to-Complete (CTC). If earned value pierces below the late curve and CTC exceeds remaining funds, lenders issue an immediate Funding Freeze until promoters inject extra equity.",
+      "example": "An LIE audit discovered that physical progress was 42% while P6 claimed 65%, exposing a ₹45 Crore Cost-to-Complete funding deficit that triggered a 60-day bank loan freeze.",
+      "trap": "Submitting inflated Duration % Complete progress to an LIE auditor, resulting in loss of institutional banking credibility and forensic loan audits."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹600 Crore super-specialty hospital funded with ₹400 Crores of bank consortium debt and ₹200 Crores of promoter equity, the developer applied for a **₹45 Crore quarterly loan disbursement** in Month 12.\n\nThe developer's monthly progress report stated: *\"Project is 62% physically complete; ₹370 Crores spent to date.\"*\n\nThe bank consortium dispatched the **Lenders' Independent Engineer (LIE)** for the quarterly site inspection.\n\nThe LIE didn't just look at the developer's PowerPoint slides. They walked the floors with the structural Pour Cards, hydrotest certificates, and electrical Megger logs.\n\nApplying strict **Rules of Credit**, the LIE calculated actual physical progress at only **44%**—not 62%! The developer had inflated progress by billing for uninstalled medical equipment sitting in warehouses and using Duration % Complete on delayed MEP packages.\n\nThe LIE ran the **Cost-to-Complete (CTC) Budget Adequacy Test**:\n- Estimated Cost to Complete remaining 56% scope: **₹330 Crores**\n- Remaining available loan funds: **₹230 Crores**\n- **Funding Deficit: ₹100 Crores!**\n\nThe bank consortium immediately froze all loan disbursements. The hospital stood paralyzed for 3 months until the promoters brought in ₹100 Crores of emergency equity."
+      },
+      {
+        "k": "read",
+        "t": "**The Mechanics of an LIE S-Curve & Funding Audit:**\n\n1. **The Role of the Lenders' Independent Engineer (LIE):**\n   - An independent third-party engineering firm appointed by lending banks to protect consortium capital.\n   - *Mandate:* Ensure that project funds are utilized strictly for approved construction scope, verify that physical progress matches claimed drawdowns, and ensure the project will reach completion within the approved budget and schedule.\n\n2. **The Cost-to-Complete (CTC) Budget Adequacy Test:**\n   - Formula for Bank Solvency:\n     $\\text{Undrawn Bank Debt} + \\text{Unfunded Promoter Equity} \\ge \\text{Estimated Cost-to-Complete (CTC)}$\n   - If $\\text{Available Funds} < \\text{CTC}$, the project is **under-funded**. Banks will NOT disburse another rupee because the loan will enter Non-Performing Asset (NPA) status before the hospital can open and generate cash flow.\n\n3. **Bank Funding Freeze Triggers:**\n   - *Trigger 1 (S-Curve Breach):* Earned Value breaches the lower Late Curve by $> 15\\%$ without an approved recovery plan.\n   - *Trigger 2 (Physical-Financial Disconnect):* Financial disbursement exceeds physical progress by $> 10\\%$ (over-certification of unearned funds).\n   - *Trigger 3 (Statutory Lapse):* Critical statutory clearances (Fire NOC in-principle approval, AERB layout clearance, Environmental CTE) lapse or fail inspection."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under what condition will a consortium of lending banks trigger an immediate construction loan funding freeze based on an LIE audit report?",
+            "o": [
+              [
+                "When physical progress divergence or cost overruns cause the estimated Cost-to-Complete (CTC) to exceed remaining available loan and equity funds, creating an unfunded deficit",
+                true,
+                "Banks lend on the condition of budget adequacy. If CTC exceeds remaining funds, the project cannot reach completion without additional promoter equity, triggering an immediate loan disbursement freeze."
+              ],
+              [
+                "Whenever the project manager wears safety boots that are not black",
+                false,
+                "Personal protective equipment colors have no connection to banking credit covenants."
+              ],
+              [
+                "If the contractor finishes a floor slab 3 days ahead of the P6 baseline",
+                false,
+                "Finishing early is positive performance that encourages loan disbursement."
+              ],
+              [
+                "Only if the Reserve Bank of India cancels all construction loans nationwide",
+                false,
+                "Funding freezes are project-specific commercial risk covenants enforced by lender consortiums."
+              ]
+            ]
+          },
+          {
+            "q": "How does a Lenders' Independent Engineer (LIE) independently verify claimed physical progress during a hospital site audit?",
+            "o": [
+              [
+                "By auditing ground reality against objective Rules of Credit milestone documentation: Pour Cards, NABL cube test reports, hydrotest logs, Megger certificates, and statutory NOC letters",
+                true,
+                "An LIE auditor ignores subjective claims and validates progress strictly through contemporary quality engineering records and verified Rule of Credit milestone gates."
+              ],
+              [
+                "By counting the number of coffee cups consumed in the site office",
+                false,
+                "Catering consumption is unrelated to physical asset verification."
+              ],
+              [
+                "By relying entirely on the contractor's oral verbal promise without looking at documents",
+                false,
+                "Lenders require rigorous physical and documentary verification to protect multi-crore capital."
+              ],
+              [
+                "By measuring the height of the contractor's company signboard at the site gate",
+                false,
+                "Signboards are marketing displays with zero engineering audit value."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Prepare for LIE bank audits with the same forensic rigor as an arbitration hearing. Never present unearned progress. Reconcile your P6 S-curve with physical Rule of Credit documentation and maintain an up-to-date Cost-to-Complete model to protect uninterrupted bank debt disbursements."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U90",
+    "day": 90,
+    "title": "Day 90: S-Curve Distortion Traps: Front-Loading Tricks, Low-Value Fast-Tracking & Progress Inflation",
+    "mins": 25,
+    "card": {
+      "id": "c-scurve-distortion",
+      "title": "S-Curve Distortion Traps: Front-loading, low-value fast-tracking & progress inflation",
+      "rule": "An S-Curve can be commercially manipulated by contractors through three classic distortion traps: 1) Front-Loading (assigning inflated monetary budgets to early civil/procurement items to generate artificial early earned value); 2) Low-Value Fast-Tracking (rushing non-critical activities like site grading, boundary walls, and painting while critical path clinical MEP is stalled); 3) Material Delivery Billing (claiming progress for uninstalled equipment). Forensic auditing requires decoupling Cost S-Curves from Physical Progress S-Curves.",
+      "example": "Contractor claimed overall project progress of 65% based on cost loading; a weighted physical progress audit revealed that critical path hospital MEP was only 22% complete, exposing severe project distortion.",
+      "trap": "Looking only at a single monetary S-curve without examining the physical progress of the driving critical path, mistaking high early cash expenditure for real project health."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On an ₹850 Crore tertiary healthcare facility, the monthly executive dashboard presented a glowing S-curve: Planned Value was ₹420 Crores (49%), and Earned Value was **₹445 Crores (52%)**.\n\nThe project was reported as *\"Ahead of schedule and under budget!\"*\n\nTwo months later, the project suffered a catastrophic collapse. The client discovered that the hospital could not open for another 14 months!\n\nHow could a project that was \"ahead of schedule\" suddenly collapse? The contractor had masterfully exploited **S-Curve Distortion Traps**:\n1. **Low-Value Fast-Tracking:** The contractor had deployed 200 workers to rapidly finish external perimeter boundary walls, surface parking pavers, landscaping, and basement painting—all non-critical activities with 120 days of float!\n2. **Front-Loaded Procurement Billing:** The contractor billed ₹65 Crores for medical gas chillers, modular OT panels, and transformers delivered to site and sitting in packing crates in the parking lot.\n\nMeanwhile, the true critical path—structural core casting, vertical MEP risers, and OT duct balancing—was **5 months behind schedule**!\n\nThe monetary S-curve looked green, but the physical hospital was dying. Forensic project controls requires auditing physical critical path progress, not superficial financial expenditure."
+      },
+      {
+        "k": "read",
+        "t": "**The 3 Classic S-Curve Manipulation Traps & Forensic Countermeasures:**\n\n1. **Trap 1: Low-Value Fast-Tracking (Float Burning):**\n   - *The Trick:* Contractor floods low-complexity, non-critical activities (landscaping, painting, site paving) with manpower to generate quick earned value, while abandoning complex, difficult critical path work (OT ceiling coordination, radiation bunker mass concrete).\n   - *The Countermeasure:* Never rely on a single project-level S-curve! Demand separate **Critical Path S-Curves** and departmental sub-curves (e.g. *Hot Floor S-Curve*, *Structural S-Curve*, *MEP S-Curve*).\n\n2. **Trap 2: Front-Loading Procurement & Material Deliveries:**\n   - *The Trick:* Claiming physical construction completion for equipment delivered to site but uninstalled, un-tested, and un-commissioned.\n   - *The Countermeasure:* Strictly enforce the **Rules of Credit**: Material delivery earns **zero physical construction progress**. Material advances must be handled commercially through secured advance clauses, not earned as physical progress in P6!\n\n3. **Trap 3: Duration-Driven Progress Inflation:**\n   - *The Trick:* Setting activities to Duration % Complete, allowing the calendar to generate artificial progress while crews are stalled.\n   - *The Countermeasure:* Mandate **Physical % Complete** backed by signed inspection test records (Pour Cards, Megger sheets, Hydrotest charts)."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "How can an EPC contractor manipulate a monetary S-curve to show that a project is 'ahead of schedule' while the critical path is actually suffering catastrophic delays?",
+            "o": [
+              [
+                "By fast-tracking non-critical, high-float activities (e.g. landscaping, painting) and billing for expensive equipment deliveries sitting uninstalled in crates, masking delays on difficult critical path clinical packages",
+                true,
+                "Flooding high-float non-critical tasks with labor and claiming equipment deliveries generates massive monetary earned value, hiding the fact that critical path structural or MEP works are paralyzed."
+              ],
+              [
+                "By erasing the project from the computer and running away to another country",
+                false,
+                "Contractor abandonment is a breach of contract, not an S-curve manipulation technique."
+              ],
+              [
+                "By building the hospital with 20 floors instead of 10 floors without asking anyone",
+                false,
+                "Unauthorized extra floors violate municipal building sanctions and structural drawings."
+              ],
+              [
+                "By painting all red Gantt bars green in Photoshop before board meetings",
+                false,
+                "While amateurish fraud occurs, true manipulation operates through scheduling logic and float burning."
+              ]
+            ]
+          },
+          {
+            "q": "What forensic reporting safeguard must a Project Controls Director enforce to prevent S-curve manipulation from deceiving executive leadership?",
+            "o": [
+              [
+                "Decoupling financial cost S-curves from physical progress, and demanding a dedicated Critical Path S-Curve alongside department-level sub-curves (e.g. Hot Floor OT/ICU Curve)",
+                true,
+                "Tracking physical progress independently from money and isolating critical path performance prevents non-critical float-burning and uninstalled material billing from disguising true project delays."
+              ],
+              [
+                "Prohibiting the use of computers on construction sites permanently",
+                false,
+                "Modern project controls requires advanced digital scheduling tools with rigorous auditing."
+              ],
+              [
+                "Cancelling all subcontractor contracts and hiring only government employees",
+                false,
+                "Subcontractor governance is resolved through contract controls and Rules of Credit."
+              ],
+              [
+                "Printing S-curves only on circular paper to eliminate early and late dates",
+                false,
+                "Circular paper is an absurdity; S-curves require linear time-series mathematics."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "A green S-curve can hide a dying project. Always demand two curves: the Financial Earned Value Curve and the Physical Critical Path Progress Curve. When you isolate the critical path from non-critical float burning, the true health of the hospital is revealed."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS10);
+const APPLY10 = {
+  "U84": {
+    "task": "Build a P6 Resource Breakdown Structure (RBS) and Activity Assignment Matrix for a critical hospital package: 1) Define Labor resources (carpenters, steel fixers, welders, electricians) with max daily units; 2) Define Non-Labor resources (tower cranes, concrete pumps) with operating vs standby rates; 3) Define Material resources (M35 concrete, rebar MT); 4) Assign resources to a 5-activity sequence; 5) Generate a daily manpower histogram and identify peak over-allocations.",
+    "good": [
+      "Distinguishes Labor (man-hours), Non-Labor (machine-hours), and Material resources",
+      "Defines realistic maximum daily resource limits based on site camp capacity",
+      "Assigns appropriate resource unit rates (Price/Unit) across all categories",
+      "Analyzes the Resource Usage Histogram to identify and resolve peak manpower bottlenecks"
+    ],
+    "tmpl": "P6 Resource Breakdown Structure (RBS) & Activity Assignment Specification:\n1. Labor Resource Dictionary (Trade Name, Max Units/Day, Price/Unit ₹, Calendar): \n2. Non-Labor Equipment Dictionary (Plant Type, Max Units, Operating Rate ₹/hr, Standby Rate): \n3. Material Resource Dictionary (Concrete m³, Rebar MT, Unit Rates ₹): \n4. Resource-Loaded Activity Sequence (Activity ID, Duration, Resource Assignments): \n5. Resource Usage Histogram Analysis & Peak Capacity Audit: "
+  },
+  "U85": {
+    "task": "Build a BOQ-to-P6 Cost Loading Matrix & Expense Schedule for a hospital package: 1) Mirror contractual BOQ line items into P6 Cost Accounts; 2) Load direct costs onto production tasks using physical quantities and BOQ unit rates; 3) Configure Activity Expenses for mobilization advance, insurance, and statutory permit fees; 4) Verify that total Budget at Completion (BAC) in P6 matches 100% of the contract value.",
+    "good": [
+      "Maps contractual BOQ items directly into P6 Cost Accounts",
+      "Differentiates resource-driven direct costs from one-off Activity Expenses",
+      "Configures expense accrual types (Start, End, Uniform) appropriately",
+      "Reconciles total P6 Budget at Completion (BAC) to equal 100% of the contract value"
+    ],
+    "tmpl": "BOQ-to-P6 Cost Loading & Budget Reconciliation Schedule:\n1. Cost Account Structure (Mirroring Contract BOQ Chapters & Item Codes): \n2. Direct Cost Loading Schedule (Activity ID, BOQ Ref, Budgeted Units, Unit Rate ₹, Total Budget): \n3. Activity Expense Schedule (Mobilization Advance, Permits, Testing Fees, Accrual Type): \n4. Budget at Completion (BAC) Reconciliation Summary (P6 Total ₹ vs Contract Sum ₹): \n5. Monthly Bill Valuation Automated Generation Protocol: "
+  },
+  "U86": {
+    "task": "Conduct a Resource Leveling Analysis and Peak Smoothing Strategy on an over-allocated schedule: 1) Identify over-allocated trades from the Resource Usage Profile; 2) Configure P6 leveling settings (enforcing 'Level only within total float'); 3) Establish leveling priority rules (Total Float, Early Start, Activity Priority); 4) Execute leveling and analyze the leveling log; 5) Formulate management actions for remaining unresolved peaks.",
+    "good": [
+      "Identifies specific resource over-allocations exceeding site camp/equipment limits",
+      "Enforces the 'Level only within total float' constraint to protect contract completion",
+      "Establishes a logical leveling priority hierarchy",
+      "Audits the P6 leveling log (level.txt) and recommends management capacity adjustments"
+    ],
+    "tmpl": "Resource Leveling Diagnostic & Optimization Report:\n1. Over-Allocated Resource Audit (Resource Name, Peak Daily Demand, Max Available Limit): \n2. P6 Leveling Settings Configuration (Level within Total Float, Priority Rules): \n3. Leveling Execution Results (Activities Shifted, Float Consumed, Finish Date Impact): \n4. Unresolved Resource Over-Allocation Analysis: \n5. Management Action Plan (Authorizing Overtime, Second Shifts, Additional Equipment Rental): "
+  },
+  "U87": {
+    "task": "Generate an S-Curve Banana Envelope and perform a Slippage Corridor Audit: 1) Export cumulative Early Dates Planned Value (PV_early) and Late Dates Planned Value (PV_late); 2) Plot the Banana Envelope and define the operational risk corridor; 3) Superimpose actual Earned Value (EV); 4) Evaluate current performance against the 3 zones; 5) Formulate early-warning thresholds before EV pierces the late curve.",
+    "good": [
+      "Constructs the S-Curve Banana Envelope with both Early and Late Planned Value curves",
+      "Quantifies the project total float corridor represented by the gap between curves",
+      "Evaluates actual Earned Value position relative to the early, mid, and late corridors",
+      "Establishes decisive early-warning triggers to prevent piercing the lower late curve"
+    ],
+    "tmpl": "S-Curve Banana Envelope & Performance Corridor Report:\n1. Baseline S-Curve Parameters (Contract Value BAC ₹, Duration Months, Data Date): \n2. Cumulative Planned Value Schedule (% Early PV vs % Late PV per Month): \n3. Banana Envelope Plot & Float Buffer Analysis (Early-Late Variance Gap %): \n4. Actual Earned Value (EV) Tracking & Zone Evaluation (Zone 1 / Zone 2 / Zone 3): \n5. Early-Warning Threshold Alerts & Critical Path Recovery Action Triggers: "
+  },
+  "U88": {
+    "task": "Build a Net Project Cash Flow & Advance Amortization Schedule for a construction project: 1) Project monthly gross certified earned value (P6 EV); 2) Model the Mobilization Advance recovery waterfall (15% amortization); 3) Deduct 5% retention money holdback; 4) Deduct 2% TDS and 1% BOCW Cess; 5) Compare gross billing against net cash receipts and audit contractor liquidity survival.",
+    "good": [
+      "Converts gross P6 earned value into net cash receipts through the financial waterfall",
+      "Models mobilization advance amortization up to contractual recovery limits",
+      "Incorporates contractual retention holdbacks and statutory tax deductions (TDS, Cess)",
+      "Evaluates contractor monthly working capital adequacy against net receipts"
+    ],
+    "tmpl": "Project Net Cash Flow & Financial Realization Model:\n1. Monthly Gross Billing Forecast (P6 Earned Value ₹ per Month): \n2. Mobilization Advance Amortization Schedule (15% Deduction ₹, Cumulative Recovery): \n3. Contractual Retention Holdback Schedule (5% Deduction ₹, Escrow Accumulation): \n4. Statutory Deductions Schedule (2% TDS + 1% BOCW Cess ₹): \n5. Net Monthly Contractor Cash Realization Waterfall (Net ₹ & Realization %): \n6. Owner Capex Debt/Equity Drawdown Schedule & IDC Optimization: "
+  },
+  "U89": {
+    "task": "Build an LIE Bank Audit Package & Cost-to-Complete Adequacy Certificate: 1) Reconcile P6 physical progress against verified Rules of Credit documentation; 2) Audit total funds disbursed against ground reality; 3) Formulate the Cost-to-Complete (CTC) calculation; 4) Execute the Budget Adequacy Ratio (Available Funds >= CTC); 5) Compile statutory clearance certificates to prevent loan funding freeze.",
+    "good": [
+      "Reconciles P6 progress claims with verified Rule of Credit inspection documents",
+      "Audits cumulative project disbursements against ground physical execution",
+      "Calculates the Cost-to-Complete (CTC) and performs the Bank Budget Adequacy Test",
+      "Identifies statutory compliance milestones required for uninterrupted loan disbursements"
+    ],
+    "tmpl": "Lenders' Independent Engineer (LIE) Quarterly Audit Package:\n1. Project Loan Profile (Total Capex ₹, Debt Facility ₹, Equity ₹, Disbursed to Date ₹): \n2. Physical Progress Reconciliation (P6 S-Curve Claim % vs Verified Ground Reality %): \n3. Cost-to-Complete (CTC) Estimation & Budget Adequacy Ratio (Available Funds / CTC): \n4. Funding Freeze Risk Assessment (S-Curve Divergence & Budget Deficit Analysis): \n5. Statutory Permitting Compliance Package (Fire, CEIG, PCB, Building Sanction Status): \n6. Formal Recommendation to Consortium Banks (Tranche Disbursement Clearance): "
+  },
+  "U90": {
+    "task": "Execute an S-Curve Forensic Audit and Front-Loading Detection Report: 1) Audit the baseline for front-loaded procurement or inflated early civil rates; 2) Check for low-value fast-tracking (burning float on non-critical tasks while critical path is stalled); 3) Decouple the monetary S-curve from the physical progress curve; 4) Generate an unmasked Critical Path S-Curve; 5) Formulate remediation measures for executive leadership.",
+    "good": [
+      "Detects front-loaded procurement and equipment delivery progress inflation",
+      "Exposes low-value fast-tracking on non-critical activities that mask critical path delays",
+      "Decouples financial expenditure curves from true physical construction progress",
+      "Generates an unmasked Critical Path Progress S-Curve for boardroom clarity"
+    ],
+    "tmpl": "S-Curve Forensic Integrity & Anti-Distortion Audit Report:\n1. S-Curve Anomaly Identification (Financial Earned Value vs Ground Physical Execution): \n2. Front-Loading & Material Delivery Audit (Uninstalled Equipment Billed in P6): \n3. Low-Value Fast-Tracking Detection (Non-Critical Float Burning vs Stalled Critical Path): \n4. Unmasked Physical Critical Path S-Curve Generation (True Progress vs Financial Fiction): \n5. Governance Recommendations for Executive Boardroom & Lender Transparency: "
+  }
+};
+Object.assign(APPLY, APPLY10);
+UNITS10.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
