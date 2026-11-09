@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=32"></script>
+<script src="shim.js?v=33"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -10427,6 +10427,1059 @@ const APPLY5 = {
 };
 Object.assign(APPLY, APPLY5);
 UNITS5.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS6 = [
+  {
+    "id": "U47",
+    "day": 47,
+    "title": "Day 47: Hospital Planning Hierarchy & Zoning: Hot Floor vs Inpatient Wards",
+    "mins": 25,
+    "card": {
+      "id": "c-hospital-zoning",
+      "title": "Hospital Spatial Zoning: Hot Floor MEP density vs Inpatient Wards",
+      "rule": "Hospital planning stratifies clinical spaces into Hot Floors (ER, Radiology, OT, ICU, Cath Lab) requiring 4.5m–4.8m slab-to-slab clear heights and 10–15 kN/m² slab capacity for deep ducts, laminar plenums, and heavy medical equipment, versus Inpatient Wards (IPD) requiring 3.6m–3.8m heights. Strict dual-corridor logistics must separate clean/sterile clinical supplies from soiled/bio-hazardous waste with zero cross-traffic.",
+      "example": "Allocating 25 days per floor uniformly across an 8-story hospital causes a 45-day delay when the critical path hits the Hot Floor, where MEP rough-in density is 3.5x higher than typical ward levels.",
+      "trap": "Treating Hot Floor service rough-ins with standard commercial building productivity rates, neglecting interstitial ceiling plenum clashes and pendant structural anchors."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A 500-bed multi-specialty hospital project in Hyderabad was scheduled with a uniform duration of 28 calendar days per floor for MEP first-fix and drywall partition works.\n\nOn the ward floors (Levels 4 through 7), the contractor completed work comfortably within 24 days per floor. But when the MEP crews reached Level 2—the **\"Hot Floor\"** housing 12 Modular Operation Theatres, a 30-bed Surgical ICU, and the Central Sterile Supply Department (CSSD)—progress ground to a halt.\n\nThe ceiling plenum was choked: massive $1400 \\times 600\\text{ mm}$ primary supply ducts from dedicated AHUs clashed directly with stainless steel medical gas manifolds, pneumatic tube transfer lines, and heavy structural unistrut frames for surgical pendants. The slab-to-slab height was only $4.2\\text{ m}$, leaving insufficient clearance for gravity drainage slopes.\n\nBy the time MEP coordination clashes were resolved on site without an approved Composite Coordination Drawing (CCD), Level 2 took **86 days** instead of 28—causing a 2-month critical path slip that triggered a ₹4.5 Crore developer claim against the PMC."
+      },
+      {
+        "k": "read",
+        "t": "**The Hospital Architectural & Clinical Hierarchy:**\n\n1. **The Hot Floor (Diagnostic & Interventional Engine):**\n   - *Departments:* Emergency Department (ER/Trauma), Diagnostic Radiology (CT, MRI, Fluoroscopy), Operating Theatres (OT), Intensive Care Units (ICU), and Cath Labs.\n   - *Clear Height Demand:* Requires **$4.5\\text{ m to } 4.8\\text{ m}$ slab-to-slab** clear height. Finished ceiling height must be $2.8\\text{ m to } 3.0\\text{ m}$, leaving a massive $1.5\\text{ m to } 1.8\\text{ m}$ ceiling interstitial space for laminar flow boxes, medical gas drops, HEPA ductwork, and structural pendant supports.\n   - *Structural Slab Load:* Requires design for **$10\\text{ to } 15\\text{ kN/m}^2$** live load in imaging rooms, plant areas, and UPS battery rooms (compared to $3\\text{ to } 4\\text{ kN/m}^2$ in standard ward rooms).\n\n2. **Inpatient Ward Floors (IPD):**\n   - *Departments:* Single rooms, twin-sharing wards, consultation cabins, nurse stations.\n   - *Height & Load:* Standard $3.6\\text{ m to } 3.8\\text{ m}$ slab-to-slab height; MEP density is moderate with standard fan-coil units or VAV boxes and single-zone medical gas runs.\n\n3. **Infection Control Circulation Logistics:**\n   - *Dual-Corridor Architecture:* Clean core circulation (surgeons, sterile supply carts) must be physically separated from perimeter soiled corridors (used instrument return, bio-hazardous soiled linen, clinical waste).\n   - *Vertical Shaft Segregation:* Dedicated **Sterile Elevators** communicating directly between CSSD and the surgical core; completely separate **Soiled/Service Elevators** discharging directly into basement decontamination handling areas."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why does a hospital Hot Floor (OT/ICU suite) require a structural slab-to-slab height of 4.5m to 4.8m compared to 3.6m for standard inpatient ward floors?",
+            "o": [
+              [
+                "To accommodate dense overhead MEP infrastructure including deep HVAC ducts, HEPA plenum boxes, laminar canopies, medical gas drops, surgical pendant structural unistrut frames, and drainage falls",
+                true,
+                "Hot floors require 1.5m to 1.8m of interstitial plenum space above the 3.0m finished ceiling to house deep supply/exhaust ducts, laminar plenums, surgical pendant structural grids, and multi-gas trunk lines."
+              ],
+              [
+                "Solely to provide higher aesthetic visual ceiling heights for patient comfort",
+                false,
+                "The finished clinical ceiling height is typically 2.8m-3.0m; the additional height is strictly consumed by overhead MEP infrastructure above the false ceiling."
+              ],
+              [
+                "To comply with Indian municipal guidelines meant for industrial warehouse ventilation",
+                false,
+                "Hospital zoning is governed by clinical healthcare engineering norms (AIA/FGI, NABH, NBC Part 4), not industrial warehouse guidelines."
+              ],
+              [
+                "To allow double-decker patient transport beds during emergency evacuation",
+                false,
+                "Hospitals use standard single patient stretchers and ICU beds; double-decker beds do not exist in clinical acute care."
+              ]
+            ]
+          },
+          {
+            "q": "In hospital infection control and architectural circulation planning, how must clean/sterile supplies and soiled/clinical waste be routed?",
+            "o": [
+              [
+                "Through a strict dual-corridor system or segregated clean vs soiled service elevator shafts with zero cross-traffic or backtracking",
+                true,
+                "Hospital infection control standards mandate physical separation between clean sterile supply paths and soiled bio-hazardous return paths to eliminate cross-contamination."
+              ],
+              [
+                "Clean and dirty materials share the same corridor as long as soiled items are placed in sealed plastic bags",
+                false,
+                "Shared single corridors for acute surgical suites violate NABH and international cleanroom containment principles."
+              ],
+              [
+                "Corridors are alternated hourly between clean movement and dirty movement",
+                false,
+                "Temporal scheduling of single corridors cannot guarantee aerosol or biological pathogen containment."
+              ],
+              [
+                "Soiled waste is dropped down exterior windows using temporary canvas chutes",
+                false,
+                "Uncontrolled exterior chutes violate environmental, biomedical waste, and fire life safety regulations."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Hospital planners must never apply uniform floor-cycle durations. The Hot Floor contains over 40% of the entire hospital MEP contract value and 3.5x higher service density per square meter than ward floors. Always demand a Composite Coordination Drawing (CCD) signed off by structural, HVAC, MGPS, and electrical contractors before casting ceiling drop anchors on the Hot Floor."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U48",
+    "day": 48,
+    "title": "Day 48: Modular Operation Theatre (MOT): Cleanroom ISO 7 / Class 10,000 Sequencing",
+    "mins": 25,
+    "card": {
+      "id": "c-mot-cleanroom",
+      "title": "Modular Operation Theatre: ISO 7 / Class 10,000 cleanroom sequencing",
+      "rule": "The Modular OT suite envelope must achieve ISO Class 7 (Class 10,000), while the sterile zone directly under the vertical Laminar Air Flow (LAF) ceiling plenum achieves ISO Class 5 (Class 100). Anti-microbial wall panels (SS 304 or HPL) with 50mm coved corners, hermetically sealed sliding doors, and 2mm conductive vinyl flooring grounded to hospital clean earth (< 1 Ohm) form the sterile boundary. Ceiling structural unistrut grids for pendants must be load-tested before cleanroom wall panels and vinyl flooring are installed.",
+      "example": "Drilling slab anchor bolts for surgical lights after installing conductive vinyl ruined the anti-static floor coating with concrete slurry, costing ₹8 Lakhs in floor replacement.",
+      "trap": "Unpacking and installing terminal ceiling HEPA filters while civil or drywall sanding works are still active outside the OT corridor."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** In a prestigious tertiary cancer hospital in Bangalore, the modular OT contractor rushed to install high-end antimicrobial wall panelling and self-levelling epoxy screeds across 8 surgical suites to claim milestone billing.\n\nTwo weeks later, the medical equipment vendor arrived to erect the heavy ceiling-mounted surgical pendants and LED scialytic lights (each weighing 180 kg with a 450 kg dynamic turning torque).\n\nBecause the structural anchor brackets had not been installed beforehand into the parent RCC slab, the technicians had to bring heavy scissor lifts and rotary hammer drills directly onto the freshly laid conductive vinyl floor. Concrete slurry and heavy metal scaffolding gouged the delicate copper earthing grid and punctured the antimicrobial wall panels.\n\nEven worse: fine concrete dust infiltrated the laminar flow ceiling plenums. When the HVAC team energized the AHUs, all 32 ultra-low penetration terminal HEPA filters were instantly blinded with cement silica. The entire batch of HEPA filters had to be discarded, delaying NABH OT clearance by 7 weeks."
+      },
+      {
+        "k": "read",
+        "t": "**Modular OT Engineering & Precedence Mechanics:**\n\n1. **Cleanroom Air Classification:**\n   - *Perimeter Room Envelope:* **ISO Class 7** (US FED STD 209E Class 10,000: max 352,000 particles $\\ge 0.5\\,\\mu\\text{m/m}^3$) under dynamic operating conditions.\n   - *Direct Surgical Table Field:* **ISO Class 5** (Class 100: max 3,520 particles $\\ge 0.5\\,\\mu\\text{m/m}^3$) created by the downward unidirectional **Laminar Air Flow (LAF)** ceiling plenum discharging sterile air at $0.25\\text{ to } 0.38\\text{ m/s}$ (50–75 FPM).\n\n2. **Wall & Floor System Specifications:**\n   - *Wall Panels:* Seamless $0.8\\text{--}1.0\\text{ mm}$ Stainless Steel 304 or $6\\text{ mm}$ High-Pressure Laminate (HPL) with antimicrobial coating; all internal corners fitted with $50\\text{ mm}$ radius continuous coving.\n   - *Conductive / Static-Dissipative Flooring:* $2.0\\text{ mm}$ thick conductive PVC/vinyl sheet with copper tape grounding grid connected to a dedicated hospital clean earth pit (electrical resistance **$< 1\\,\\Omega$**) to discharge electrostatic charges and prevent spark ignition in anesthesia environments.\n\n3. **The Inviolable 7-Step MOT Construction Precedence:**\n   1. RCC slab coring and overhead Unistrut heavy structural support grid installation.\n   2. Pull-testing structural pendant anchors to **$1.5\\times$ operating dynamic load (min 300–500 kg)**.\n   3. Overhead MEP rough-in: primary ductwork, medical gas drop manifolds, fire sprinkler lines.\n   4. Laminar flow ceiling plenum erection and duct drop connections.\n   5. Antimicrobial cleanroom wall panelling and hermetically sealed sliding doors.\n   6. Self-levelling screed, copper grounding grid, and conductive vinyl laying with hot-gas welded joints.\n   7. **Cleanroom Enclosure Lock:** Complete deep architectural cleaning and isolation; only then install terminal HEPA filters and commence HVAC validation."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What cleanroom air classifications must be maintained in the general Modular Operation Theatre (MOT) room versus the direct surgical zone under the laminar airflow canopy?",
+            "o": [
+              [
+                "ISO Class 7 (Class 10,000) for the general room envelope, and ISO Class 5 (Class 100) directly under the laminar airflow canopy",
+                true,
+                "Under NABH and ISO 14644-1, the surgical room envelope operates at ISO Class 7, while the critical sterile field over the operating table achieves ISO Class 5 under the HEPA laminar canopy."
+              ],
+              [
+                "ISO Class 8 throughout the entire suite with standard comfort air conditioning",
+                false,
+                "ISO Class 8 is acceptable only for non-critical recovery bays or dirty corridors, not surgical theaters."
+              ],
+              [
+                "ISO Class 3 throughout with vacuum-sealed airlock transfer chambers",
+                false,
+                "ISO Class 3 is an extreme semiconductor cleanroom standard that is impractical and unachievable in active surgical suites."
+              ],
+              [
+                "Class 100,000 in the surgical zone and unfiltered ambient air along the perimeter",
+                false,
+                "Class 100,000 permits excessive particulate contamination and violates surgical sterility standards."
+              ]
+            ]
+          },
+          {
+            "q": "In what sequence must ceiling pendant structural supports, cleanroom wall panelling, and conductive vinyl flooring be installed during MOT construction?",
+            "o": [
+              [
+                "Ceiling structural unistrut grid & pendant brackets load tested -> Wall panelling & hermetic doors -> Subfloor screed & conductive vinyl with copper earthing",
+                true,
+                "Heavy overhead drilling and dynamic pull-testing (300-500 kg) must precede delicate cleanroom wall panelling and conductive vinyl floor installations to prevent physical damage."
+              ],
+              [
+                "Conductive vinyl first -> Wall panels -> Drill slab for pendant anchor bolts",
+                false,
+                "Drilling slabs after vinyl laying ruins the floor with concrete debris and damages the copper earthing grid."
+              ],
+              [
+                "Wall panelling -> Conductive vinyl -> Cut holes in ceiling to hang pendants from rebar",
+                false,
+                "Cutting ceiling holes and anchoring to exposed rebar violates both structural and cleanroom contamination protocols."
+              ],
+              [
+                "Install vinyl flooring and final paint before starting any ceiling MEP works",
+                false,
+                "Overhead MEP rough-ins must always precede architectural finishes."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The 'Cleanroom Enclosure Lock' is an absolute gate in hospital planning. Never open terminal HEPA filter boxes until all wet trades, ceiling penetrations, and wall panelling works are 100% complete and the room has been vacuumed clean. A single hour of construction dust exposure will destroy a ₹25,000 HEPA filter and fail the ISO particle count test."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U49",
+    "day": 49,
+    "title": "Day 49: Medical Gas Pipeline System (MGPS - HTM 02-01 / NFPA 99): Purging & Pressure Tests",
+    "mins": 25,
+    "card": {
+      "id": "c-mgps-testing",
+      "title": "MGPS Standards: Nitrogen purging during brazing & 24h pressure tests",
+      "rule": "Medical Gas Pipeline Systems (HTM 02-01 / NFPA 99) require degreased, phosphorus-deoxidized copper tubes (EN 13348 / ASTM B819) joined via silver brazing under continuous inert gas (Nitrogen) purge to prevent internal black cupric oxide flaking. Before false ceiling closure, lines must pass a 24-hour pneumatic pressure hold test at 1.5x working pressure with temperature correction, followed by cross-connection anti-confusion testing at every terminal outlet.",
+      "example": "Failing to purge with nitrogen during brazing resulted in black oxide flakes that contaminated an anesthesia ventilator solenoid, failing HTM 02-01 gas purity validation.",
+      "trap": "Using water for hydrostatic testing on medical gas lines. Water leaves moisture that creates microbial bio-films and oxidizes downstream medical equipment; only dry medical-grade nitrogen or oil-free air is permitted."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** During pre-commissioning of a 400-bed government super-specialty hospital in Delhi, the medical gas contractor reported that all copper pipeline distribution networks for Oxygen ($O_2$), Nitrous Oxide ($N_2O$), and Medical Air were fully installed.\n\nThe project manager approved the immediate closure of all gypsum false ceilings across 6 patient floors so painters could finish before the Chief Minister's scheduled inauguration.\n\nTwo weeks later, the third-party statutory inspector arrived to perform the **HTM 02-01** gas purity and pressure test. When the system was pressurized to 6 bar, pressure dropped by 0.8 bar within 4 hours. Because the pipes were concealed behind locked gypsum ceilings without access traps, the contractor had to cut open over 180 ceiling panels to find three hairline cracks at brazed elbows.\n\nEven worse: internal borescope camera inspection revealed thick coats of black soot inside the copper joints. The plumbers had brazed the fittings with oxy-acetylene torches **without continuous nitrogen gas purging**, allowing atmospheric oxygen to oxidize the heated copper into toxic cupric oxide powder. The entire distribution ring had to be dismantled and flushed with chemical solvents, delaying commissioning by 3 months."
+      },
+      {
+        "k": "read",
+        "t": "**MGPS Engineering Standards (HTM 02-01 / NFPA 99):**\n\n1. **Gases & Working Pressures:**\n   - *Oxygen ($O_2$), Nitrous Oxide ($N_2O$), Medical Air (4 bar), $CO_2$:* Operating at **$4.0\\text{ bar}$** (400 kPa).\n   - *Surgical / Tool Air:* Operating at **$7.0\\text{ bar}$** (700 kPa) for driving pneumatic bone saws and orthopedic instruments.\n   - *Medical Vacuum:* Negative pressure maintained between **$-400\\text{ to } -600\\text{ mmHg}$** ($-53\\text{ to } -80\\text{ kPa}$).\n   - *AGSS (Anaesthetic Gas Scavenging System):* Low-pressure dedicated exhaust line venting exhaled halothane/isoflurane outside the building.\n\n2. **Copper Material & The Nitrogen Purge Rule:**\n   - Pipes must be seamless, phosphorus-deoxidized copper conforming to **EN 13348** or **ASTM B819**, delivered degreased, end-capped, and stamped *\"OXY/MED\"* (hydrocarbon oil residue in high-pressure pure oxygen causes spontaneous explosive combustion).\n   - *Silver Brazing under Nitrogen Purge:* During heating, the pipe bore must be continuously purged with oil-free dry Nitrogen ($N_2$). Displacing oxygen prevents the formation of **black cupric oxide scale**. Flaked oxide scale clogs patient ventilators, destroys delicate regulator diaphragms, and causes fatal pulmonary micro-embolisms.\n\n3. **Statutory 4-Stage Testing Precedence:**\n   1. *Continuous Nitrogen Purging Audit:* Verified visually at every brazed joint before wrapping.\n   2. *Pneumatic Pressure Hold Test:* Tested at **$1.5\\times$ design pressure** (6.0 bar for 4 bar lines; 10.5 bar for 7 bar lines) using dry nitrogen, held for **24 continuous hours**. Must show **zero pressure drop** after temperature correction ($P_1/T_1 = P_2/T_2$).\n   3. *Cross-Connection Anti-Confusion Test:* Testing every gas outlet point-by-point to ensure an $O_2$ terminal never discharges toxic or asphyxiating $N_2O$ or Air.\n   4. *Particulate & Gas Purity Test:* Filter membrane sampling to verify zero moisture, oil mist, or particulate residue before patient use."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why must medical-grade copper pipes (EN 13348) be continuously purged with dry Nitrogen during silver brazing?",
+            "o": [
+              [
+                "To displace oxygen and prevent internal black cupric oxide scale from forming, which would flake off and cause ventilator failure or fatal patient pulmonary complications",
+                true,
+                "Heating copper in the presence of atmospheric oxygen forms brittle black cupric oxide scale inside the pipe. Continuous dry nitrogen purging prevents internal oxidation."
+              ],
+              [
+                "To cool down the copper tube rapidly so technicians can handle it immediately without gloves",
+                false,
+                "Nitrogen purging is for oxidation prevention inside the pipe, not thermal cooling of the exterior."
+              ],
+              [
+                "To chemically melt the silver brazing alloy into the fitting without an open torch flame",
+                false,
+                "Nitrogen is an inert gas; melting the brazing rod requires open torch heating (oxy-acetylene/LPG)."
+              ],
+              [
+                "To check whether the pipe has acoustic leaks during joint heating",
+                false,
+                "Pressure integrity testing is conducted after brazing, not during the brazing process."
+              ]
+            ]
+          },
+          {
+            "q": "Under HTM 02-01 and NFPA 99, what is the mandatory duration and requirement for the pre-commissioning pressure hold test on MGPS distribution lines?",
+            "o": [
+              [
+                "24 hours at 1.5 times working pressure using dry nitrogen with temperature compensation, verifying zero leakage before closing false ceilings",
+                true,
+                "MGPS lines require a 24-hour pneumatic hold test at 1.5x design pressure using dry nitrogen. Water is strictly forbidden."
+              ],
+              [
+                "15 minutes at working pressure with soap bubble solution on exterior joints only",
+                false,
+                "A 15-minute test cannot detect micro-fissures or slow pressure drops over an extensive hospital network."
+              ],
+              [
+                "2 hours at half working pressure using ambient room air pumped by a construction compressor",
+                false,
+                "Ambient construction compressor air contains oil vapor and moisture, contaminating medical lines."
+              ],
+              [
+                "7 days under continuous hydrostatic water pressure followed by air drying",
+                false,
+                "Hydrostatic water testing on medical gas lines is strictly prohibited due to bacterial contamination risks."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never allow false ceiling grid closure or drywall sealing over medical gas distribution routes until the signed 24-hour pneumatic pressure test certificate (showing zero temperature-corrected pressure loss) and nitrogen purge certificates are verified by the PMC. Cutting open finished ceilings to repair a leaking medical gas brazed joint costs 10x more than doing it right."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U50",
+    "day": 50,
+    "title": "Day 50: Radiation Oncology Bunkers: High-Density Concrete ($3,200\\text{ kg/m}^3$) & AERB Clearance",
+    "mins": 25,
+    "card": {
+      "id": "c-radiation-bunker",
+      "title": "Radiation Bunkers: High-density concrete, serpentine penetrations & AERB",
+      "rule": "Radiation oncology bunkers housing Linear Accelerators (LINAC, 6–18 MV) require heavy high-density concrete (density >= 3,200 kg/m³ using Hematite or Barite aggregate) with primary barrier walls 1.8m–2.5m thick. Thermal hydration cracking must be prevented by keeping core-to-surface temperature differential below 20°C (ΔT <= 20°C). All MEP conduits and pipes must enter via serpentine (Z-shaped or dog-leg) lead-lined sleeves—zero direct line-of-sight is permitted. Atomic Energy Regulatory Board (AERB) site and layout clearance is a mandatory predecessor to casting.",
+      "example": "A straight 100mm chilled water pipe sleeve left in a LINAC primary barrier wall allowed radiation streaming, failing the AERB radiological survey and requiring ₹15 Lakhs in lead plate retrofitting.",
+      "trap": "Using standard crushed stone concrete (2,400 kg/m³) without adjusting wall thickness, or failing to monitor thermocouple temperatures during mass concrete curing."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A multi-specialty oncology center in Mumbai was constructing a subterranean bunker for a 15 MV Linear Accelerator (LINAC). The structural design specified high-density concrete with a wet density of at least **$3,200\\text{ kg/m}^3$** achieved by blending crushed Hematite (iron ore) aggregate.\n\nThe RMC supplier experienced an aggregate stockout on pour day and silently substituted standard basalt granite aggregate ($2,400\\text{ kg/m}^3$) for the final 60 cubic meters of the primary barrier ceiling slab.\n\nTwo months later, during the mandatory **Atomic Energy Regulatory Board (AERB)** core-density audit, core samples drilled from the slab yielded a density of only $2,420\\text{ kg/m}^3$. Under AERB physics guidelines, a $2,400\\text{ kg/m}^3$ ceiling required a thickness of $2.2\\text{ m}$, but the bunker was designed at only $1.6\\text{ m}$ on the assumption of high-density concrete!\n\nThe bunker was declared legally unsafe for radioactive beam commissioning. The hospital had to spend ₹42 Lakhs installing continuous $25\\text{ mm}$ thick lead plates bolted beneath the ceiling soffit. The project missed its clinical go-live date by 4 months, forfeiting ₹3 Crores in cancer therapy revenues."
+      },
+      {
+        "k": "read",
+        "t": "**Radiation Bunker Structural & AERB Regulatory Architecture:**\n\n1. **Radiation Shielding Physics & Concrete Density:**\n   - *Normal Concrete Density:* Standard basalt/granite concrete is $\\approx 2,400\\text{ kg/m}^3$.\n   - *High-Density Concrete:* Achieves **$\\ge 3,200\\text{ to } 3,600\\text{ kg/m}^3$** by incorporating dense heavy mineral aggregates: **Hematite / Magnetite** (iron oxides) or **Barite** (barium sulfate). High density reduces wall thickness by 35%, preserving valuable basement space while attenuating high-energy 6–18 MV photons and scattered neutrons.\n\n2. **Mass Concrete Pouring & Thermal Cracking Control:**\n   - Pouring a $2.0\\text{ m}$ thick monolithic concrete wall generates massive exothermic hydration heat ($> 65^\\circ\\text{C}$ core temperature).\n   - *Cracking Danger:* Micro-cracks create direct radiation streaming pathways, failing the AERB radiological survey.\n   - *Thermal Protocol:* Use low-heat Portland Pozzolana Cement (PPC) or 60% GGBS slag replacement, batch with chilled water/flake ice ($< 15^\\circ\\text{C}$ concrete placing temp), and monitor embedded calibrated thermocouples. The differential between core and surface temperature must **NOT exceed $20^\\circ\\text{C}$** ($\\Delta T \\le 20^\\circ\\text{C}$).\n\n3. **The \"Zero Direct Line-of-Sight\" Rule (Serpentine Penetrations):**\n   - Radiation travels in straight lines. **Straight through-wall penetrations are strictly prohibited.**\n   - All electrical conduits, chilled water supply pipes, and ductwork must enter through **serpentine (Z-shaped, double dog-leg) penetration sleeves** lined with lead shielding and grouted with heavy barium mortar.\n\n4. **AERB (India) 3-Stage Licensing Gateway:**\n   - *Stage 1:* Site and Layout Approval (e-LORA portal submission of architectural drawings and radiation safety calculations before excavation).\n   - *Stage 2:* Construction Approval & Bunker Verification (testing core density and labyrinth geometry).\n   - *Stage 3:* Commissioning License & Radioactive Source Loading Authorization."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why are MEP conduits, chilled water pipes, and ventilation ducts routed through multi-bend serpentine (Z-shaped) sleeves rather than straight penetrations in a LINAC radiation bunker wall?",
+            "o": [
+              [
+                "To eliminate direct line-of-sight and prevent primary and scattered radiation from streaming through unshielded wall voids into occupied hospital corridors",
+                true,
+                "Photons travel in straight lines. Straight penetrations create unshielded paths for radiation streaming. Multi-bend serpentine sleeves force photons to scatter repeatedly against heavy shielding, attenuating radiation to safe levels."
+              ],
+              [
+                "To reduce water hammer pressure in the chiller lines and avoid pipe vibration noise",
+                false,
+                "Serpentine routing in bunker walls is designed for radiation attenuation, not plumbing water hammer prevention."
+              ],
+              [
+                "To make cable pulling easier for electrical technicians working inside the bunker",
+                false,
+                "Serpentine bends actually make cable pulling more challenging; it is mandated strictly for radiation safety."
+              ],
+              [
+                "To provide natural convection cooling for electrical wiring without requiring exhaust fans",
+                false,
+                "Radiation bunkers require active mechanical ventilation with lead-lined labyrinth ducts."
+              ]
+            ]
+          },
+          {
+            "q": "During mass concrete pours for radiation bunker walls and slabs, what is the maximum allowable differential temperature (ΔT) between the concrete core and surface to prevent thermal cracking?",
+            "o": [
+              [
+                "Maximum 20°C (ΔT <= 20°C), with core temperature logged continuously via embedded thermocouples",
+                true,
+                "If the differential temperature exceeds 20°C, thermal tensile stresses exceed concrete tensile strength, causing micro-cracking and radiation leakage paths."
+              ],
+              [
+                "Core temperature can reach 95°C as long as the surface is cooled with garden hoses",
+                false,
+                "Spraying cold water on a 95°C surface spikes ΔT to 60°C+, causing immediate, severe surface thermal shock and structural cracking."
+              ],
+              [
+                "Differential temperatures are irrelevant when using hematite or barite heavy aggregate",
+                false,
+                "Heavy mineral aggregates conduct heat differently and mass concrete thermal control remains mandatory."
+              ],
+              [
+                "The concrete must be kept frozen at -5°C during the entire 28-day curing period",
+                false,
+                "Freezing fresh concrete disrupts cement hydration and permanently destroys compressive strength."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Radiation bunkers are on the early structural critical path. AERB layout approval is a hard prerequisite before excavation, and concrete core density (> 3,200 kg/m³) with zero thermal cracks is mandatory before the medical vendor will ship the multi-million-dollar LINAC. Verify every single penetration sleeve on the Composite Coordination Drawing before pouring formwork."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U51",
+    "day": 51,
+    "title": "Day 51: Diagnostic Imaging Suites: MRI RF Shielding Cage, Quench Pipe & 5-Gauss Safety",
+    "mins": 25,
+    "card": {
+      "id": "c-mri-installation",
+      "title": "MRI Suite Engineering: 100 dB Faraday Cage, Quench Pipe & 5-Gauss line",
+      "rule": "Diagnostic MRI suites (1.5T / 3.0T) require a 6-sided continuous copper/aluminum Radio Frequency (RF) Shielding Cage (Faraday Cage) attenuating external RF noise by >= 100 dB across 10–130 MHz. An emergency Cryogen Quench Pipe (min 200–250mm diameter stainless steel/aluminum) must run from the magnet cryostat directly to open air without horizontal low pockets to vent boiling liquid helium (-269°C) expanding 760-fold during magnet quench. The 5-Gauss magnetic fringe field must be contained within controlled access zones.",
+      "example": "A low pocket in a horizontal quench pipe run accumulated rainwater that froze during winter, creating an ice plug that threatened explosive cryostat bursting during magnet ramp-up.",
+      "trap": "Allowing standard metallic screws, steel conduit brackets, or unshielded data cables to penetrate the MRI Faraday cage without waveguide filters, destroying image signal-to-noise ratio."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A major private hospital in Kolkata purchased a state-of-the-art 3.0 Tesla MRI scanner. The MEP contractor installed the cryogenic helium exhaust **Quench Pipe** along a tortuous basement route, incorporating three 90-degree elbows and a 12-meter horizontal run that dipped slightly to clear a sewer pipe before rising through the external facade.\n\nDuring pre-delivery inspection, the German MRI manufacturer's site engineer immediately rejected the installation.\n\nThe dip in the quench pipe created a low pocket where condensation could collect and freeze solid into an **ice plug** under cryogenic helium discharge (liquid helium boils at **$-269^\\circ\\text{C}$**, expanding 760 times its liquid volume in seconds).\n\nIf the magnet suffered an emergency quench, the blocked pipe would cause explosive pressure buildup inside the scan room, blowing out the structural walls and asphyxiating technicians with nitrogen/oxygen displacement.\n\nThe hospital had to core drill through two levels of post-tensioned transfer slabs to create a direct vertical exhaust shaft, delaying the MRI delivery by 8 weeks at a cost of ₹28 Lakhs."
+      },
+      {
+        "k": "read",
+        "t": "**The Three Core Technical Pillars of MRI Suite Engineering:**\n\n1. **Radio Frequency (RF) Shielding (The Faraday Cage):**\n   - *Purpose:* MRI receiver coils detect tiny micro-volt RF signals emitted by atomic nuclei. External RF noise (mobile towers, radio stations, elevator motors) creates severe image artifacts.\n   - *Construction:* Continuous 6-sided enclosure covering walls, floor, and ceiling made of $0.35\\text{--}0.5\\text{ mm}$ copper sheets or $2\\text{ mm}$ aluminum panels with soldered or mechanically clamped seams.\n   - *Performance:* Must provide **$\\ge 100\\text{ dB}$ attenuation** from 10 MHz to 130 MHz.\n   - *Penetrations:* All pipes, vents, and fiber optics must pass through calibrated **RF waveguides** (honeycomb filters); power cables must pass through specialized **RF filter panels**. Windows use double brass wire mesh; doors have beryllium copper perimeter fingerstock gaskets.\n\n2. **The Cryogen Helium Quench Pipe:**\n   - Superconducting magnets are immersed in thousands of liters of liquid helium at $-269^\\circ\\text{C}$ (4 Kelvin).\n   - *Quench Event:* If superconducting coils warm up, liquid helium rapidly flashes into explosive gas.\n   - *Pipe Spec:* Minimum **$200\\text{ to } 250\\text{ mm}$** non-magnetic stainless steel or aluminum duct. Must follow the shortest, most direct route to the outside roof, with **zero horizontal low pockets** (where trapped moisture can freeze into an ice barrier), terminating in a downward flanged cowl with a bird screen at least $2.5\\text{ m}$ above pedestrian reach.\n\n3. **The 5-Gauss Magnetic Exclusion Perimeter:**\n   - The 5-Gauss ($0.5\\text{ mT}$) boundary is the threshold beyond which cardiac pacemakers, neurostimulators, and insulin pumps malfunction, and loose ferromagnetic tools become lethal flying missiles.\n   - *Design Rule:* The 5-Gauss line must be fully contained within the controlled MRI room. If it extends into corridors or rooms above/below, the structural slab and walls must be lined with heavy **silicon-steel passive magnetic shielding plates**.\n\n4. **Rigging Route & Floor Load Logistics:**\n   - A 3.0T MRI magnet weighs **$5\\text{ to } 8\\text{ tonnes}$**. Floor slabs along the delivery route must be verified for concentrated wheel loads. A permanent or temporary **knockout wall** must be scheduled to allow magnet rigging before final facade sealing."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the engineering purpose of an MRI Faraday Cage, and what is its standard electromagnetic attenuation requirement?",
+            "o": [
+              [
+                "To block external ambient radio frequency (RF) signals from entering the scan room and distorting imaging, requiring >= 100 dB attenuation across operating frequencies",
+                true,
+                "An MRI Faraday Cage is a continuous 6-sided copper or aluminum enclosure providing at least 100 dB attenuation from 10 to 130 MHz, preventing ambient RF signals from corrupting diagnostic images."
+              ],
+              [
+                "To prevent the heavy magnet from falling through the floor slab during earthquakes",
+                false,
+                "Structural floor load capacity and seismic anchor brackets handle physical weight, not the Faraday cage."
+              ],
+              [
+                "To stop radioactive gamma rays from escaping into adjacent diagnostic corridors",
+                false,
+                "MRIs use non-ionizing magnetic fields and radio waves; they emit zero radioactive gamma rays (unlike LINACs or CT scanners)."
+              ],
+              [
+                "To maintain the scan room at a continuous cryogenic temperature of -269°C",
+                false,
+                "The scan room is kept at normal human comfort (20-22°C); only the internal magnet core is cooled with liquid helium."
+              ]
+            ]
+          },
+          {
+            "q": "Why is the MRI helium quench pipe considered a life-critical installation that must have zero low pockets and direct discharge to open air?",
+            "o": [
+              [
+                "During a magnet quench, liquid helium boils and expands 760-fold into supercold gas (-269°C); trapped gas or low-point ice plugs cause pipe rupture or asphyxiation of occupants",
+                true,
+                "Liquid helium expands 760 times its volume when flashing into gas at -269°C. Low pockets collect moisture that freezes into ice plugs, causing explosive pipe bursting and lethal oxygen displacement."
+              ],
+              [
+                "Because helium is a flammable gas that will ignite if exposed to hospital air conditioning ductwork",
+                false,
+                "Helium is an inert, non-flammable noble gas; the hazard is extreme cryogenic temperature, pressure bursting, and asphyxiation."
+              ],
+              [
+                "Because quench pipes are used to pump drinking water into the magnet cooling system",
+                false,
+                "Quench pipes are dedicated emergency gas exhaust lines, completely separate from building plumbing."
+              ],
+              [
+                "To allow hospital staff to refill the magnet with liquid helium using standard buckets",
+                false,
+                "Liquid helium is transferred using specialized vacuum-jacketed transfer lines, never open buckets."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The RF Shielding Cage must pass a formal 100 dB Attenuation Test witnessed by the manufacturer BEFORE internal aesthetic wall finishes or false ceilings are installed. Furthermore, keep the equipment delivery rigging route and temporary knockout wall open on the master schedule until the magnet is successfully placed on its vibration-isolated foundation."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U52",
+    "day": 52,
+    "title": "Day 52: Infection Control & Isolation Rooms: Negative Pressure (−15 Pa) vs Positive Pressure (+15 Pa)",
+    "mins": 25,
+    "card": {
+      "id": "c-isolation-rooms",
+      "title": "Hospital Isolation Suites: Negative (-15 Pa) vs Positive (+15 Pa) pressure cascades",
+      "rule": "Airborne Infection Isolation (AII) rooms for contagious diseases (TB, COVID) maintain Negative Pressure (−15 Pa relative to corridor) with 100% dedicated exhaust through HEPA filters to contain pathogens. Protective Environment (PE) rooms for immunocompromised patients (BMT, Oncology) maintain Positive Pressure (+15 Pa) with HEPA supply to keep corridor microbes out. Both require minimum 12 Air Changes per Hour (ACPH), an anteroom airlock, hermetic self-closing doors, and airtight architectural monolithic ceilings.",
+      "example": "Installing standard lay-in acoustic ceiling tiles in an AII room allowed air leakage that collapsed the negative pressure from -15 Pa to -1 Pa, failing NABH licensing.",
+      "trap": "Balancing HVAC air volumes without verifying architectural room air-tightness (drop-down door sweeps, sealed conduit back-boxes, airtight ceiling hatches)."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** During the post-pandemic commissioning of a 60-bed isolation wing in Pune, the HVAC contractor reported that all Air Handling Units and dedicated exhaust fans were calibrated to design CFM.\n\nHowever, when the NABH accreditation auditor tested the Airborne Infection Isolation (AII) rooms using a digital micromanometer, the pressure differential between the isolation room and the anteroom measured only **$-1.5\\text{ Pa}$**—far below the mandatory **$-15\\text{ Pa}$** standard.\n\nWhen the auditor conducted a titanium tetrachloride smoke pencil test at the doorway undercut, smoke drifted *outward* into the public corridor whenever someone opened the door!\n\nThe root cause was not HVAC fan capacity: the civil contractor had installed standard lay-in acoustic grid ceiling tiles instead of a monolithic sealed drywall ceiling, and electrical switch back-boxes were left unsealed. The negative pressure was pulling air from the ceiling plenum rather than drawing air inward through the anteroom.\n\nThe entire wing had to be shut down. Gypsum false ceilings had to be re-boarded with taped epoxy-painted boards, automatic drop-down neoprene door sweeps installed, and electrical back-boxes silicone-caulked, delaying hospital commissioning by 5 weeks."
+      },
+      {
+        "k": "read",
+        "t": "**Differential Pressure Cascades & Room Aerodynamics:**\n\n1. **Airborne Infection Isolation (AII) Rooms (Negative Pressure):**\n   - *Clinical Target:* Tuberculosis (TB), Measles, Chickenpox, COVID-19, SARS, multidrug-resistant pathogens.\n   - *Objective:* Contain infectious droplet nuclei inside the room; prevent aerosol leakage into corridors.\n   - *Pressure Cascade:* Corridor ($0\\text{ Pa}$) $\\rightarrow$ Anteroom ($-5\\text{ to } -7.5\\text{ Pa}$) $\\rightarrow$ Patient Isolation Room (**$-15\\text{ Pa}$**, minimum allowable $-2.5\\text{ Pa}$).\n   - *Air Flow Dynamics:* Dedicated exhaust airflow exceeds supply airflow by $\\ge 15\\%$ (min 100 CFM difference).\n   - *Exhaust Requirement:* **100% dedicated exhaust** directly to open roof atmosphere discharged through terminal HEPA filters; zero recirculation back to central AHUs.\n   - *Air Changes:* Minimum **$12\\text{ Air Changes per Hour (ACPH)}$** for new construction.\n\n2. **Protective Environment (PE) Rooms (Positive Pressure):**\n   - *Clinical Target:* Bone Marrow Transplant (BMT), acute leukemia, severe burn patients, immunocompromised.\n   - *Objective:* Shield vulnerable patients from ambient environmental fungal spores (*Aspergillus*) and corridor bacteria.\n   - *Pressure Cascade:* Patient Room (**$+15\\text{ Pa}$**) $\\rightarrow$ Anteroom ($+7.5\\text{ Pa}$) $\\rightarrow$ Corridor ($0\\text{ Pa}$).\n   - *Air Flow Dynamics:* Supply airflow exceeds return airflow; air is delivered through ceiling-mounted **HEPA filters (99.97% at $0.3\\,\\mu\\text{m}$)**. Minimum **$12\\text{ ACPH}$**.\n\n3. **Architectural Air-Tightness Prerequisites (The Envelope Seal):**\n   - A $15\\text{ Pa}$ differential pressure is tiny (approx. $1.5\\text{ mm}$ of water gauge). Any leakage destroys the cascade.\n   - *Requirements:* Monolithic sealed drywall/calcium silicate ceiling with antimicrobial washable paint; self-closing hermetically sealing doors with perimeter rubber gaskets and automatic drop-down bottom sweeps; interlocked anteroom doors (preventing simultaneous opening); sealed electrical/pipe sleeves; and permanently installed wall-mounted digital differential pressure monitors with visual/audible alarms."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the primary difference in airflow direction and pressure cascade between an Airborne Infection Isolation (AII) room and a Protective Environment (PE) room?",
+            "o": [
+              [
+                "AII rooms maintain negative pressure (−15 Pa) with 100% dedicated exhaust to contain pathogens; PE rooms maintain positive pressure (+15 Pa) with HEPA supply to shield vulnerable patients",
+                true,
+                "AII rooms pull air inward (-15 Pa) to contain contagious airborne pathogens; PE rooms blow filtered air outward (+15 Pa) to protect immunocompromised patients from external infections."
+              ],
+              [
+                "AII rooms operate at positive pressure (+15 Pa) to blow viruses away, while PE rooms operate at neutral pressure",
+                false,
+                "Positive pressure in an infection room would blow dangerous viral particles directly into hospital corridors, infecting staff and visitors."
+              ],
+              [
+                "Both rooms operate at exactly 0 Pa with standard wall-mounted window air conditioners",
+                false,
+                "Window ACs provide zero pressure control, zero HEPA filtration, and violate all hospital infection control guidelines."
+              ],
+              [
+                "AII rooms recirculate 100% of room air through standard carbon filters back into the hospital lobby",
+                false,
+                "AII exhaust air must never be recirculated into public hospital areas; it must be exhausted 100% to the exterior."
+              ]
+            ]
+          },
+          {
+            "q": "Why are standard lay-in acoustic ceiling tiles and unsealed electrical junction boxes prohibited in hospital isolation suites?",
+            "o": [
+              [
+                "Because air leaks through tile joints and unsealed penetrations, destroying the delicate 15 Pa differential pressure cascade and allowing pathogen escape",
+                true,
+                "A 15 Pa pressure gradient requires an airtight envelope. Unsealed tiles or back-boxes act as open flues, equalizing pressure and collapsing directional airflow control."
+              ],
+              [
+                "Because acoustic tiles absorb too much sound, making it hard for nurses to hear patient calls",
+                false,
+                "Acoustic performance is desirable, but lay-in tiles fail because they cannot maintain an airtight pressure seal."
+              ],
+              [
+                "Because local fire codes require all hospital ceilings to be fabricated from solid 10mm steel plates",
+                false,
+                "Hospital ceilings use fire-rated gypsum, calcium silicate, or metal clip-in panels with gaskets, not heavy steel plates."
+              ],
+              [
+                "Because medical gas copper pipes cannot be hung under acoustic tiles",
+                false,
+                "Pipes are hung from the concrete slab above, not supported by the ceiling tiles."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Testing and Adjusting Balancing (TAB) technicians cannot balance room pressures if the civil envelope leaks. On your P6 schedule, create an explicit milestone: 'Architectural Room Envelope Smoke & Air-Tightness Audit' as a mandatory predecessor to HVAC Differential Pressure Balancing and NABH validation."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U53",
+    "day": 53,
+    "title": "Day 53: Handover Killer #1: 2-Hour Fire Compartmentation, Smoke Dampers & Fire NOC",
+    "mins": 25,
+    "card": {
+      "id": "c-fire-compartmentation",
+      "title": "Hospital Fire Safety: 2-Hour compartmentation, motorized dampers & Fire NOC",
+      "rule": "Under NBC 2016 Part 4, hospitals are Institutional Class C buildings requiring 'Defend-in-Place' horizontal evacuation via 2-hour fire-rated compartment walls dividing floor plates > 750 m². Motorized Fire & Smoke Dampers (UL 555S rated) must close automatically within 15 seconds upon Fire Alarm Panel (FAP) smoke detection, and all MEP penetrations must be sealed with certified firestop systems (ASTM E814). Obtaining the Final Fire NOC requires live witness testing of fire pumps (3.5 bar at highest hydrant), damper interlocks, and stairwell pressurization (50 Pa).",
+      "example": "Failing to cable the motorized fire dampers to the Fire Alarm Panel caused a complete failure during the Chief Fire Officer inspection, freezing the municipal Occupancy Certificate for 6 weeks.",
+      "trap": "Assuming Fire NOC is an administrative paperwork task rather than a full physical witness test requiring 100% operational pumps, pressurized risers, and tripping dampers."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A ₹450 Crore private hospital in NCR was 98% physically complete. The developer had invited prominent dignitaries for the grand opening ceremony on December 1st.\n\nOn November 20th, the Chief Fire Officer (CFO) and inspection team arrived on site for the mandatory statutory **Final Fire NOC Inspection**.\n\nThe CFO walked up to Level 3, ignited a smoke canister inside an air return duct, and observed the system.\n\nThe Fire Alarm Panel in the basement sounded the alarm, but the **Motorized Fire and Smoke Dampers (MFSD)** in the ductwork remained wide open! The electrical sub-contractor had pulled power cables to the damper actuators but had failed to terminate the control cables from the addressable FAP input/output modules.\n\nNext, the CFO went to the terrace, connected a test pressure gauge to the farthest landing valve, and opened it. The residual pressure read only $1.8\\text{ bar}$ instead of the statutory $3.5\\text{ bar}$—the main electric fire pump failed to start automatically because the pressure switch was miscalibrated, and the backup diesel engine failed to crank due to dead starter batteries.\n\nThe CFO refused to issue the Fire NOC. Without the Fire NOC, the local municipal authority rejected the **Occupancy Certificate (OC)**. The hospital opening had to be cancelled, causing massive public embarrassment, cancellation of patient admissions, and ₹12 Crores in delayed revenue."
+      },
+      {
+        "k": "read",
+        "t": "**Hospital Fire Safety Engineering (NBC 2016 Part 4 / NFPA 101):**\n\n1. **The 'Defend-in-Place' Horizontal Compartmentation Strategy:**\n   - In an acute hospital, bedridden patients, ventilated ICU patients, and surgical teams cannot evacuate down staircases.\n   - *Requirement:* Every floor plate exceeding $750\\text{ to } 1,000\\text{ m}^2$ must be divided into at least **two separate fire compartments** separated by a **2-Hour Fire-Rated Barrier Wall** and self-closing 2-hour fire doors with magnetic hold-opens linked to the Fire Alarm Panel.\n   - *Procedure:* In a fire, patients are wheeled horizontally through the fire doors into the adjacent safe compartment on the same level.\n\n2. **Motorized Fire & Smoke Dampers (UL 555 / UL 555S):**\n   - Where HVAC ducts penetrate 2-hour fire barrier walls, motorized fire/smoke dampers must be installed.\n   - *Actuation:* Driven by a 24V spring-return electric actuator interlocked with duct smoke detectors and the main FAP. Upon smoke detection, dampers must **snap shut within 15 seconds**, and thermal links ($72^\\circ\\text{C}$) provide mechanical fail-safe closure.\n\n3. **Penetration Firestopping Integrity (ASTM E814 / BS 476 Part 20):**\n   - Every cable tray, medical gas pipe, drainage line, and conduit penetrating a fire wall or slab must be sealed with certified firestop systems: intumescent sealants, firestop pillows, or high-density mineral wool with ablative mastic. Unsealed pipe penetrations are the #1 cause of smoke migration and Fire NOC rejection.\n\n4. **Statutory Fire NOC Inspection Witness Criteria:**\n   - *Pump Cascade:* Jockey pump maintains pressure $\\rightarrow$ Main electric pump starts on pressure drop $\\rightarrow$ Standby Diesel pump cranks automatically if power fails.\n   - *Hydrant Pressure:* Minimum **$3.5\\text{ bar}$ residual pressure** at the hydraulically most remote terrace hydrant running two active hoses.\n   - *Cause & Effect Interlocks:* FAP smoke trip must: (1) shut down AHUs, (2) close motorized smoke dampers, (3) activate stairwell/lift pressurization fans (**$50\\text{ Pa}$** positive pressure), (4) release magnetic door holders, and (5) ground all passenger elevators to ground level."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the primary life safety strategy under NBC 2016 Part 4 for hospital inpatient floors, and how is it achieved architecturally?",
+            "o": [
+              [
+                "'Defend-in-Place' via horizontal compartmentation, dividing floor plates into 2-hour fire-rated zones allowing patients to be moved laterally into adjacent safe zones",
+                true,
+                "Hospital fire safety relies on 'Defend-in-Place' horizontal compartmentation because bedridden and ICU patients cannot be evacuated down fire stairs. They are moved laterally across 2-hour fire barriers."
+              ],
+              [
+                "Rapid vertical evacuation down outdoor emergency ladders within 3 minutes of alarm",
+                false,
+                "Intensive care and postoperative patients cannot use vertical fire ladders or escape stairs."
+              ],
+              [
+                "Equipping every patient bed with emergency parachutes for window escape",
+                false,
+                "Fictional concept; building codes mandate compartmentation and defended horizontal refuges."
+              ],
+              [
+                "Pumping carbon dioxide gas through the central ventilation system to extinguish flames instantly",
+                false,
+                "Discharging CO2 into occupied hospital floors would cause mass asphyxiation and death."
+              ]
+            ]
+          },
+          {
+            "q": "During a statutory Fire NOC inspection by the municipal Fire Department, what sequence of actions must occur automatically when a duct smoke detector activates?",
+            "o": [
+              [
+                "The Fire Alarm Panel must trigger motorized smoke dampers to close within 15 seconds, shut down supply AHUs, start stairwell pressurization fans, and ground passenger lifts",
+                true,
+                "Standard cause-and-effect matrix requires closing motorized fire/smoke dampers within 15s to isolate smoke, stopping AHUs, pressurizing stairwells (50 Pa), and grounding lifts."
+              ],
+              [
+                "The main HVAC AHUs continue blowing at high speed to vent smoke through corridors",
+                false,
+                "Blowing AHUs feeds fresh oxygen to the fire and forces deadly smoke across occupied wards."
+              ],
+              [
+                "All hospital electrical power is immediately severed, disabling emergency lights and fire pumps",
+                false,
+                "Life safety pumps and emergency lighting operate on dedicated emergency circuits backed up by DGs."
+              ],
+              [
+                "Water sprinklers activate simultaneously across all floors and server rooms",
+                false,
+                "Sprinklers are heat-activated individual glass bulb heads, not mass-dump deluge systems across all floors."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The Fire NOC is the mother of all statutory clearances. Local municipal bodies cannot legally issue an Occupancy Certificate (OC) without a valid Fire NOC. On your P6 baseline schedule, schedule a full 'Integrated Fire & Smoke Damper Cause-and-Effect Dry Run' at least 30 days prior to inviting the Chief Fire Officer."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U54",
+    "day": 54,
+    "title": "Day 54: Handover Killer #2: HVAC Air Balancing (TABS), HEPA DOP Testing & ACPH",
+    "mins": 25,
+    "card": {
+      "id": "c-tabs-hepa",
+      "title": "Hospital HVAC Validation: TABS, in-situ HEPA DOP testing & ACPH",
+      "rule": "Testing, Adjusting, and Balancing (TAB / TABS per NEBB/AABC) for a hospital takes 3 to 5 weeks of continuous, undisturbed plant operation—not 3 days. Modular OTs require >= 20 Air Changes per Hour (ACPH) with >= 4 fresh air changes; ICUs require >= 12 ACPH. In-situ terminal HEPA filter integrity must be scanned using Polyalphaolefin (PAO/DOP) aerosol photometers; allowable penetration leakage must NOT exceed 0.01%. Non-viable airborne particle counts must verify ISO Class 7/Class 8 cleanroom status.",
+      "example": "Scheduling only 4 days for HVAC testing forced the contractor to rush air balancing, resulting in turbulent air eddies under the OT laminar canopy that failed NABH microbial settle plate audits.",
+      "trap": "Conducting HEPA DOP leak testing or particle counts while civil contractors are still sanding drywall or painting doors in adjacent corridors, destroying filters with construction dust."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a 350-bed hospital project in Chennai, the master schedule allocated exactly **5 calendar days** for *\"HVAC Commissioning & OT Testing\"* right before handover.\n\nWhen the testing agency mobilized, they found that the central chiller plant had only been energized 24 hours earlier. Chilled water temperature was fluctuating between $9^\\circ\\text{C}$ and $14^\\circ\\text{C}$ instead of maintaining a steady $6.5^\\circ\\text{C}$.\n\nWhen the technicians attempted to balance airflows across 10 Operation Theatres, they discovered that adjusting a balancing damper on OT 1 altered the duct static pressure and airflow in OTs 2 through 5. Balancing 10 surgical suites, each with dedicated supply AHUs, return fans, and differential pressure dampers, required an iterative process of repeated measurements and damper adjustments.\n\nNext came the **HEPA Filter Integrity Test (DOP / PAO Test)**. Because carpenters were still fixing door frames in the scrub corridor, construction dust was sucked into the return grilles. Two brand-new terminal HEPA filters showed aerosol penetration leaks of $0.08\\%$ (exceeding the $0.01\\%$ limit) due to frame gasket pinch tears caused by rushed installation.\n\nThe 5-day activity took **31 days** to achieve stable $20\\text{ ACPH}$, $21^\\circ\\text{C} \\pm 1^\\circ\\text{C}$, $55\\%\\text{ RH}$, and ISO Class 7 particle counts. The handover missed the contractual Longstop Date, triggering Liquidated Damages."
+      },
+      {
+        "k": "read",
+        "t": "**Hospital TAB & Cleanroom Validation Engineering:**\n\n1. **Air Change Rates per Hour (ACPH) & Environmental Criteria:**\n   - *Modular OTs:* Minimum **$20\\text{ ACPH}$** total air change (with min $4\\text{ ACPH}$ fresh outdoor air). Temperature: $18^\\circ\\text{C} \\text{ to } 21^\\circ\\text{C}$; Relative Humidity: $50\\% \\text{ to } 60\\%\\text{ RH}$ (preventing static sparks and bacterial proliferation).\n   - *ICUs & Isolation Rooms:* Minimum **$12\\text{ ACPH}$**.\n   - *General Wards:* Minimum **$6\\text{ ACPH}$**.\n\n2. **In-situ HEPA Filter Integrity Testing (PAO / DOP Aerosol Challenge Test):**\n   - Governed by **ISO 14644-3 / NEBB** procedural standards.\n   - *Method:* An aerosol generator introduces Polyalphaolefin (PAO) or DOP aerosol upstream of the terminal HEPA filters. An aerosol photometer probe scans the downstream filter face, pleats, and frame gaskets at a speed of $\\le 5\\text{ cm/s}$.\n   - *Pass/Fail Threshold:* Measured downstream aerosol penetration must **NOT exceed $0.01\\%$** ($0.0001$) of the upstream challenge concentration. Any leak $> 0.01\\%$ indicates filter media puncture or bypass gasket failure requiring immediate silicone repair or filter replacement.\n\n3. **Airborne Non-Viable Particle Counting (ISO 14644-1):**\n   - Using calibrated laser particle counters at designated grid coordinates.\n   - *ISO Class 7 (Class 10,000):* Maximum $352,000$ particles $\\ge 0.5\\,\\mu\\text{m/m}^3$ and $\\le 2,930$ particles $\\ge 5.0\\,\\mu\\text{m/m}^3$.\n   - *ISO Class 5 (Class 100 under LAF canopy):* Maximum $3,520$ particles $\\ge 0.5\\,\\mu\\text{m/m}^3$.\n\n4. **The Critical Prerequisites for TABS:**\n   - Continuous, stable chilled water supply ($6.5^\\circ\\text{C} \\pm 0.5^\\circ\\text{C}$).\n   - Stable 24/7 electrical power with UPS backup.\n   - Complete room architectural sealing (zero open penetrations).\n   - **Absolute dust lockdown:** Zero wet trades or sanding within 50 meters of the air handling zone."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why is scheduling only 3 to 5 days for HVAC TAB and cleanroom testing on a hospital project a critical schedule planning error?",
+            "o": [
+              [
+                "Balancing multi-zone air and hydronic flows, stabilizing temperature/humidity, completing in-situ HEPA DOP leak scans, and achieving ISO particle counts across dozens of suites takes 3 to 5 weeks of undisturbed operation",
+                true,
+                "HVAC balancing is an iterative, multi-variable engineering task. Stabilizing chilled water, balancing primary/secondary duct branches, tuning VAVs, and conducting DOP scans across multiple suites takes 3 to 5 weeks."
+              ],
+              [
+                "Because testing equipment cannot operate on weekends or outside normal working hours",
+                false,
+                "Commissioning agencies routinely work 24/7 during testing and balancing phases."
+              ],
+              [
+                "Because chillers require 3 weeks of continuous idling before water can circulate through cooling coils",
+                false,
+                "Chillers circulate water immediately upon commissioning; the time is consumed by network air and water balancing."
+              ],
+              [
+                "Because government testing inspectors only work one hour per day under statutory guidelines",
+                false,
+                "Inspection agencies work standard professional hours; the duration is driven by complex physics and balancing iterations."
+              ]
+            ]
+          },
+          {
+            "q": "Under ISO 14644-3 and NEBB standards, what is the maximum allowable aerosol penetration leakage during an in-situ PAO/DOP scan of a terminal HEPA filter?",
+            "o": [
+              [
+                "0.01% of upstream challenge concentration",
+                true,
+                "Standard in-situ HEPA filter integrity scans mandate that aerosol leakage across the filter media and perimeter frame gasket must not exceed 0.01% (0.0001)."
+              ],
+              [
+                "1.0% of upstream concentration",
+                false,
+                "1.0% leakage represents a major structural tear in the filter, allowing millions of microbes to bypass the sterile barrier."
+              ],
+              [
+                "5.0% for new filters and 10% for used filters",
+                false,
+                "5% to 10% penetration is completely unacceptable for cleanroom HEPA filters."
+              ],
+              [
+                "Any leakage is acceptable as long as fan motor speed is increased to compensate",
+                false,
+                "Increasing fan speed across a torn filter only blows more contaminants into the sterile field."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never compress the TABS and HEPA validation window to make up for civil delays. In a hospital, an unbalanced HVAC system or leaking HEPA filter directly causes surgical site infections and fails NABH licensing. Protect a mandatory 3-to-4 week testing envelope on your critical path."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U55",
+    "day": 55,
+    "title": "Day 55: Handover Killer #3: Structural Vibration Isolation & Acoustic Attenuation",
+    "mins": 25,
+    "card": {
+      "id": "c-vibration-acoustics",
+      "title": "Medical Vibration & Acoustics: VC curves, inertia bases & acoustic attenuation",
+      "rule": "High-precision medical diagnostic and surgical tools (3.0T MRI, IVF micromanipulators, surgical lasers) require stringent Vibration Criteria (VC-C to VC-D: 6 to 12.5 µm/s RMS velocity). Heavy rotating MEP equipment (rooftop chillers, primary pumps, DG sets) must be isolated using concrete inertia bases (1.5x–2.5x machine mass) on high-deflection open-spring isolators (>= 95% isolation efficiency) with flexible pipe/duct couplings. Clinical acoustics require STC >= 50 dB partitions and duct silencers to achieve Noise Criterion NC 30–35 in patient care areas.",
+      "example": "Rooftop chillers mounted on rigid neoprene pads transmitted 28 Hz structure-borne vibrations through columns into a 3.0T MRI scanner 3 floors below, distorting brain scans with ghosting artifacts.",
+      "trap": "Omitting flexible pipe bellows or allowing rigid electrical conduit connections to bypass spring-isolated chiller bases, creating structural vibration bridges."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A state-of-the-art super-specialty hospital in Ahmedabad installed three 400-TR water-cooled centrifugal chillers and heavy primary chilled water pumps in a fourth-floor MEP plantroom.\n\nDirectly below on the third floor were four high-end cardiac catheterization labs and an in-vitro fertilization (IVF) micromanipulation suite.\n\nWhen the central air conditioning was commissioned, the IVF embryologists discovered that their high-magnification micromanipulator needles—used for intracytoplasmic sperm injection under 400x magnification—were vibrating with an amplitude of 15 microns. In vitro fertilization procedures were impossible; embryo cells were being physically sheared by vibrating glass micropipettes!\n\nThe MEP contractor had bolted the heavy chillers directly to structural concrete curbs using only thin $10\\text{ mm}$ rubber pads, and chilled water pipes were anchored solidly to the slab soffit without spring hangers.\n\nThe hospital had to shut down the chiller plant, jack up each 12-tonne chiller to pour reinforced concrete **inertia bases** supported on **high-deflection open-spring vibration isolators (deflection $50\\text{ mm}$)**, and install braided stainless steel flexible pipe bellows. The rectification cost ₹35 Lakhs and delayed clinical operations by 6 weeks."
+      },
+      {
+        "k": "read",
+        "t": "**Structural Vibration & Acoustic Engineering Principles:**\n\n1. **Medical Equipment Vibration Criteria (VC Curves):**\n   - Governed by Bolt Beranek & Newman (BBN) and ASHRAE vibration standards:\n   - *VC-A ($50\\,\\mu\\text{m/s}$ RMS velocity):* General laboratory equipment, 400x optical microscopes.\n   - *VC-B ($25\\,\\mu\\text{m/s}$):* 1000x microscopes, high-precision microtomes.\n   - *VC-C ($12.5\\,\\mu\\text{m/s}$):* Micro-surgery, Eye surgery laser tables, IVF micromanipulators.\n   - *VC-D ($6.0\\,\\mu\\text{m/s}$):* High-resolution 3.0 Tesla MRI scanners, transmission electron microscopes (TEM).\n\n2. **Mechanical Vibration Isolation Systems:**\n   - *Inertia Bases:* Heavy rotating equipment (chillers, heavy pumps, large AHUs) must be mounted on reinforced concrete inertia blocks with a mass **$1.5\\text{ to } 2.5\\times$ the machine operating weight**. This lowers the center of gravity and stabilizes start/stop torque.\n   - *Spring Vibration Isolators:* Supported on calibrated open-spring isolators with static deflection of $25\\text{ to } 50\\text{ mm}$, providing **$\\ge 95\\%$ vibration isolation efficiency**.\n   - *Flexible Connectors:* Braided stainless steel bellows on water piping and flexible neoprene/canvas sleeves on ductwork to eliminate structural vibration bridges.\n\n3. **Hospital Acoustic Criteria (Noise Criterion - NC & STC):**\n   - *Noise Limits:* Inpatient bedrooms: **NC 30–35** ($35\\text{--}40\\text{ dBA}$); OTs: **NC 35–40**; Audiometry hearing testing suites: **NC 15–20**.\n   - *Acoustic Drywall Partitions:* Staggered metal stud walls with double-layer gypsum, acoustic rockwool infill (min $48\\text{ kg/m}^3$), resilient sound isolation channels, and perimeter acoustic sealant, achieving **STC $\\ge 50\\text{ to } 55\\text{ dB}$**.\n   - *Duct Silencers:* Double-pod acoustic attenuators installed in AHU supply and return trunks serving noise-sensitive clinical zones."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why must rooftop chillers, heavy water pumps, and diesel generators be mounted on concrete inertia bases with open-spring vibration isolators in a hospital?",
+            "o": [
+              [
+                "To isolate rotating mechanical vibrations from transmitting through structural columns and slabs into sensitive clinical tools like 3.0T MRIs, IVF micromanipulators, and surgical lasers",
+                true,
+                "Concrete inertia bases (1.5-2.5x machine mass) and spring isolators absorb dynamic machine forces, preventing low-frequency structure-borne vibrations from disrupting high-precision diagnostic and surgical tools."
+              ],
+              [
+                "To elevate equipment so maintenance technicians do not have to bend down during oil changes",
+                false,
+                "Inertia bases are dynamic mass dampeners for vibration isolation, not ergonomic maintenance platforms."
+              ],
+              [
+                "To make the machinery heavier so it cannot be stolen from the mechanical plantroom",
+                false,
+                "The mass is engineered for dynamic vibration frequency decoupling, not theft prevention."
+              ],
+              [
+                "To comply with Indian electrical earthing requirements for high-voltage motors",
+                false,
+                "Electrical earthing is handled via copper tape pits, completely separate from mechanical spring isolators."
+              ]
+            ]
+          },
+          {
+            "q": "What is the Vibration Criteria (VC) requirement for a 3.0 Tesla MRI suite or micro-surgery operating theater compared to general hospital wards?",
+            "o": [
+              [
+                "General hospital spaces allow VC-A (50 µm/s), whereas 3.0T MRI and micro-surgery suites require VC-C to VC-D (12.5 down to 6 µm/s RMS velocity)",
+                true,
+                "Advanced imaging (3.0T MRI) and micro-surgical suites require stringent vibration control (VC-C at 12.5 µm/s or VC-D at 6 µm/s) to avoid image artifacts and micro-movement errors."
+              ],
+              [
+                "All hospital rooms share the exact same vibration threshold of 500 µm/s",
+                false,
+                "Vibration criteria vary by orders of magnitude depending on clinical sensitivity."
+              ],
+              [
+                "High-precision suites require zero gravity with magnetic levitation floors",
+                false,
+                "Magnetic levitation is not used for hospital structural slabs; spring isolators and inertia bases provide the required attenuation."
+              ],
+              [
+                "Vibration criteria apply only to diesel generator yards, never inside clinical diagnostic suites",
+                false,
+                "Diagnostic suites are the primary victims of vibration; their performance depends on stringent VC limits."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Vibration isolation failures are virtually impossible to fix cheaply after a hospital opens. An un-isolated pump will vibrate through reinforced concrete across 4 floors. Audit inertia bases, spring deflection ratings, flexible pipe bellows, and acoustic duct silencers before pouring equipment pads."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U56",
+    "day": 56,
+    "title": "Day 56: Hospital Central Sterile Services Department (CSSD): Dirty to Clean to Sterile Flow",
+    "mins": 25,
+    "card": {
+      "id": "c-cssd-zoning",
+      "title": "CSSD Architecture: Unidirectional flow, pressure cascades & pass-through autoclaves",
+      "rule": "The Central Sterile Services Department (CSSD) requires a strict unidirectional workflow: Decontamination (Dirty, -15 Pa) -> Assembly & Packaging (Clean, +10 Pa) -> Sterile Storage (Sterile, +20 Pa) with zero backtracking. Physical segregation is enforced via electronically interlocked double-door pass-through washer-disinfectors and pass-through steam autoclaves (134°C at 2.2 bar). Heavy utilities (RO demineralized water loop, clean steam generation, 4 bar instrument air, recessed drainage pits with effluent quench tanks) must be roughed in during structural works.",
+      "example": "Constructing CSSD without recessed floor pits for pass-through autoclaves forced the contractor to build awkward ramps that violated NABH ergonomic and cleanroom cart transfer standards.",
+      "trap": "Allowing air from the dirty decontamination zone to communicate with clean packaging areas, violating the negative-to-positive pressure barrier."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** The Central Sterile Services Department (CSSD) is the biological beating heart of a surgical hospital. If CSSD processes fail, contaminated surgical instruments cause surgical site infections (SSI), leading to patient mortality and hospital shutdown.\n\nOn a 600-bed hospital project in Lucknow, the MEP contractor treated CSSD as a standard laundry/utility room. Standard sanitary drainage lines were laid without considering the effluent temperature from large steam sterilizers.\n\nDuring pre-commissioning, when the autoclaves dumped blow-down condensate at **$130^\\circ\\text{C}$**, the boiling water melted the standard UPVC drainage pipes, flooding the electrical sub-station below!\n\nFurthermore, the architect had placed only a single door between the dirty decontamination wash area and the clean packing room, allowing soiled aerosol droplets to settle on newly cleaned surgical trays. The state health inspection team refused to grant the clinical operating license, requiring a complete architectural redesign of the partition walls and utility drainage systems at a cost of ₹48 Lakhs."
+      },
+      {
+        "k": "read",
+        "t": "**CSSD Architecture, Zonal Segregation & Utility Requirements:**\n\n1. **The Inviolable Unidirectional Workflow Principle:**\n   - *Workflow:* **Decontamination (Dirty) $\\rightarrow$ Assembly & Inspection (Clean) $\\rightarrow$ Sterile Storage $\\rightarrow$ Distribution to OTs**.\n   - *Rule:* Strict unidirectional progress. Zero backtracking, zero cross-traffic between soiled personnel and sterile handling personnel.\n\n2. **Three Zonal Pressure Cascades:**\n   - *Zone 1: Decontamination / Soiled Area:* Soiled surgical trays received via dedicated dirty lifts. Wash sinks, ultrasonic cleaners, washer-disinfectors. Maintained at **Negative Pressure ($-10\\text{ to } -15\\text{ Pa}$)** with 100% dedicated exhaust to contain bio-aerosols. Min $10\\text{ ACPH}$.\n   - *Zone 2: Assembly & Packaging / Clean Area:* Instruments dried, inspected under magnifying lights, wrapped in pouches/linen. Maintained at **Positive Pressure ($+10\\text{ to } +15\\text{ Pa}$)**. Min $10\\text{ ACPH}$.\n   - *Zone 3: Sterile Storage & Issue Area:* Sterilized packs held in wire mesh racks pending dispatch to OTs via dedicated sterile dumbwaiters. Maintained at **Highest Positive Pressure ($+15\\text{ to } +20\\text{ Pa}$)** with ISO Class 8 cleanroom air quality.\n\n3. **Pass-Through Equipment as Architectural Air Barriers:**\n   - *Double-Door Washer-Disinfectors:* Dirty instruments loaded from decontamination side; thermal disinfection ($93^\\circ\\text{C}$ for 10 min); unloaded only from clean assembly side.\n   - *Double-Door Steam Autoclaves:* Packed sets loaded from clean side; steam sterilized ($134^\\circ\\text{C}$ at $2.2\\text{ bar}$); unloaded only into sterile storage room.\n   - *Electronic Interlocks:* Both doors can NEVER open simultaneously, preserving room pressure differential.\n\n4. **Critical Heavy Utility Rough-in Requirements:**\n   - *Clean Steam / RO Water Loop:* Reverse Osmosis demineralized water loop (prevents boiler mineral deposits on stainless instruments).\n   - *Medical Compressed Air (4 bar):* Oil-free air for blowing moisture out of surgical instrument lumens.\n   - *Recessed Floor Pits & Quench Tanks:* Autoclaves require recessed slab pits ($150\\text{--}300\\text{ mm}$) for flush cart roll-in, and stainless steel drainage quench tanks with cold water tempering to cool boiling condensate below $60^\\circ\\text{C}$ before municipal discharge."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "How are air pressure cascades and physical barriers architecturally arranged across the three zones of a hospital CSSD?",
+            "o": [
+              [
+                "Dirty decontamination maintains negative pressure (−15 Pa) to contain bio-aerosols, Clean assembly maintains positive pressure (+10 Pa), and Sterile storage maintains highest positive pressure (+20 Pa), separated by double-door pass-through sterilizers",
+                true,
+                "Air always flows from cleanest to dirtiest. Sterile storage is highest (+20 Pa), clean packaging intermediate (+10 Pa), and dirty decontamination negative (-15 Pa), separated by interlocked pass-through sterilizers."
+              ],
+              [
+                "Dirty area is positive (+20 Pa), Clean area is neutral (0 Pa), and Sterile storage is negative (−20 Pa)",
+                false,
+                "Positive pressure in the dirty area would blow aerosolized blood and pathogens directly into the clean packaging zone."
+              ],
+              [
+                "All three zones share one single open continuous room with standard ceiling exhaust fans",
+                false,
+                "Shared open spaces violate basic infection control and NABH decontamination containment principles."
+              ],
+              [
+                "Instruments are washed, packaged, and stored in the exact same sink to minimize plumbing runs",
+                false,
+                "Combining dirty washing with sterile packaging in the same space causes immediate cross-contamination."
+              ]
+            ]
+          },
+          {
+            "q": "Why must double-door pass-through autoclaves and washer-disinfectors in CSSD have electronic door interlocks?",
+            "o": [
+              [
+                "To ensure both doors can never open simultaneously, preventing airborne pathogens in the dirty zone from bypassing the barrier and contaminating clean or sterile rooms",
+                true,
+                "Double-door pass-through machines act as physical airlocks in the dividing wall. Electronic interlocks guarantee that the clean/sterile door cannot open while the dirty door is open or during a cycle."
+              ],
+              [
+                "To prevent technicians from opening the equipment while wearing protective rubber gloves",
+                false,
+                "Interlocks enforce spatial containment and process completion, not glove detection."
+              ],
+              [
+                "To automatically lock down the hospital wing when the work shift ends at 5:00 PM",
+                false,
+                "CSSD operates on 24/7 or continuous batch schedules; interlocks are for sterile process integrity."
+              ],
+              [
+                "To save electrical energy by running sterilization cycles only when both doors are slightly ajar",
+                false,
+                "Sterilization cycles require pressurized, hermetically sealed vessels; running with doors ajar is impossible."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Coordinate CSSD slab floor recesses and drainage quench pits during the early structural concrete phase. Trying to retrofit a 250mm autoclave pit or core 100mm high-temperature condensate drain lines after the basement slab is cast requires expensive structural carbon-fiber retrofits."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U57",
+    "day": 57,
+    "title": "Day 57: Statutory Licensing Precedence: AERB -> Fire NOC -> PCB -> Lift -> OC -> NABH",
+    "mins": 25,
+    "card": {
+      "id": "c-statutory-precedence",
+      "title": "Hospital Statutory Precedence: Hard Finish-to-Start legal dependencies",
+      "rule": "Hospital statutory clearances are hard Finish-to-Start (FS) logic predecessors on the master critical path, not parallel administrative tasks. Municipal Occupancy Certificate (OC) legally requires: Final Fire NOC + Electrical Inspectorate (CEIG) clearance + Lift Inspectorate license + Pollution Control Board (PCB) Consent to Operate for STP/ETP. Clinical registration requires OC and Bio-medical Waste authorization, followed by Blood Bank (CDSCO) and Pharmacy licenses, culminating in NABH accreditation.",
+      "example": "Treating Fire NOC as an administrative desk activity resulted in failure during the live pump witness test, delaying the Occupancy Certificate and pushing hospital inauguration back by 75 days.",
+      "trap": "Scheduling the hospital opening ceremony before the local municipal authority issues the physical Occupancy Certificate (OC), risking immediate municipal sealing and closure orders."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A major healthcare conglomerate invested ₹750 Crores in a 550-bed flagship quaternary hospital. The planning team presented an executive P6 schedule showing physical construction finishing on March 31st, with a 30-day bar labelled *\"Statutory Approvals & Licensing\"* running in parallel, targeting patient admissions on April 15th.\n\nThe board launched an aggressive ₹5 Crore national media advertising campaign announcing opening day on April 15th.\n\nOn April 2nd, the project liaison officer arrived at the municipal corporation office to collect the **Occupancy Certificate (OC)**. The Chief Town Planner laughed: *\"Where is your Final Fire NOC? Where is your CEIG electrical inspectorate substation energization certificate? Where is the State Pollution Control Board Consent to Operate for your Effluent Treatment Plant? And where is your Lift Inspectorate license? Without these four statutory clearances, I cannot legally touch your OC file!\"*\n\nNone of the four prerequisite clearances had been obtained because the MEP contractor had not finished testing the fire pumps, transformer earth pits, or lift safety drop tests.\n\nThe hospital could not legally admit a single patient. The national launch was aborted, the CEO was terminated by the board, and the hospital sat idle for **4 months** burning ₹3.5 Crores per month in fixed debt interest and doctor retainers."
+      },
+      {
+        "k": "read",
+        "t": "**The Indian Healthcare Statutory Precedence Chain (Hard Legal Logic):**\n\n```\n[Physical MEP Commissioning] \n       |\n       +--> [Substation / Earth Pit Test] -----> [CEIG Electrical Clearance] --+\n       |                                                                        |\n       +--> [Lift Safety Drop Test] -----------> [Lift Inspectorate License] ---+\n       |                                                                        +--> [Municipal Occupancy Certificate (OC)]\n       +--> [STP / ETP Wet Testing] -----------> [PCB Consent to Operate (CTO)]-+\n       |                                                                        |\n       +--> [Hydrant & Damper Witness Test] ---> [Final Fire NOC] --------------+\n                                                                                |\n                                                                                v\n[Clinical Establishments Act (CEA)] <-------------------------------------------+\n       |\n       +--> [Biomedical Waste (BMW) Tie-up]\n       +--> [AERB Diagnostic / LINAC License]\n       +--> [Blood Bank (CDSCO) & Pharmacy Licenses]\n       |\n       v\n[Hospital Clinical Trial Run & Inpatient Admissions] (Day 0)\n       |\n       +--> (3 to 6 Months Clinical Operations & Quality Documentation)\n       |\n       v\n[NABH Final Assessment & Accreditation Certificate]\n```\n\n1. **Prerequisites for Municipal Occupancy Certificate (OC):**\n   - Local urban development authorities (MCGM, DDA, BBMP, HMDA) cannot issue an OC without:\n     - **Final Fire NOC:** Signed by Chief Fire Officer after live hydraulic pump, damper, and riser witness tests.\n     - **CEIG Clearance:** Electrical Inspector approval for 11kV/33kV transformers, HT panels, and DG earthing pits ($< 1\\,\\Omega$).\n     - **Lift Inspectorate License:** Car drop tests, governor safety overspeed trips, ARD verification.\n     - **PCB Consent to Operate (CTO):** Operational verification of Sewage Treatment Plant (STP) and Effluent Treatment Plant (ETP).\n\n2. **Prerequisites for Hospital Clinical Operation:**\n   - Clinical Establishments Act (CEA) registration, Biomedical Waste (BMW) authorization, AERB radiation licensing, Pharmacy Form 20/21 license, and Blood Bank drug controller approval.\n\n3. **NABH Accreditation (The Climax):**\n   - Requires a fully operating hospital with 3 to 6 months of documented clinical indicator data, infection control audits, and continuous statutory compliance."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "In the Indian statutory permitting sequence for a new multi-specialty hospital, what documents are non-negotiable legal predecessors to obtaining the Municipal Occupancy Certificate (OC)?",
+            "o": [
+              [
+                "Final Fire NOC, Electrical Inspectorate (CEIG) clearance, Lift Inspectorate license, and Pollution Control Board (PCB) Consent to Operate for STP/ETP",
+                true,
+                "Municipal authorities cannot legally issue an Occupancy Certificate without verified proof of building life safety and infrastructure fitness: Fire NOC, CEIG electrical approval, Lift licenses, and PCB environmental clearance."
+              ],
+              [
+                "Only the architect's approved conceptual 3D rendering and landscape design plan",
+                false,
+                "Architectural renderings are aesthetic concepts; statutory authorities require physical commissioning certificates."
+              ],
+              [
+                "NABH final accreditation certificate and insurance empanelment contracts",
+                false,
+                "NABH accreditation requires 3 to 6 months of active hospital operations; it comes long after the Occupancy Certificate."
+              ],
+              [
+                "A self-declaration affidavit signed by the hospital marketing director",
+                false,
+                "Self-declarations cannot replace statutory engineering inspection certificates under municipal town planning laws."
+              ]
+            ]
+          },
+          {
+            "q": "Why is it a fatal scheduling error to model hospital statutory approvals as parallel background activities without Finish-to-Start ties to physical MEP commissioning?",
+            "o": [
+              [
+                "Because statutory regulatory officers require fully commissioned, operating systems (pressurized hydrants, functional dampers, energized substations, live lifts) to conduct mandatory physical witness tests before granting licenses",
+                true,
+                "Statutory inspectors do not inspect unpowered machinery or dry pipes. The Fire Chief tests live 3.5 bar water jets; the Lift Inspector drops the elevator; CEIG tests live transformer earthing. Physical commissioning must precede statutory inspections."
+              ],
+              [
+                "Because government liaison officers refuse to work on activities that are on the project critical path",
+                false,
+                "Liaison officers prioritize critical path items; the issue is that statutory bodies demand physical witness testing."
+              ],
+              [
+                "Because Primavera P6 software automatically crashes if statutory activities lack predecessor links",
+                false,
+                "Software will compute whatever logic is entered; the failure is in the project manager's real-world execution logic."
+              ],
+              [
+                "Because municipal permit fees double if applications are submitted before civil plastering is complete",
+                false,
+                "Statutory fees are fixed by official schedules; the delay is driven by failed physical witness tests."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Statutory approvals form the hardest legal Finish-to-Start logic chain in construction. On your P6 master schedule, link each statutory application directly to its physical witness-test predecessor (e.g., Hydrant Hydrotest -> Fire Pump Automation -> Fire NOC -> Occupancy Certificate). Never let management announce an opening date until the Occupancy Certificate is in hand."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS6);
+const APPLY6 = {
+  "U47": {
+    "task": "Audit a hospital floor plate layout or design drawings for Hot Floor vs Inpatient Ward zoning and service density: 1) Identify departmental adjacencies between ER, Imaging, OT, and ICU; 2) Review slab-to-slab heights and MEP plenum allowances (4.5m vs 3.6m); 3) Check clean vs soiled corridor separation; 4) Contrast CPM duration allowances between Hot Floor and typical ward floors.",
+    "good": [
+      "Distinguishes Hot Floor clinical core from standard inpatient ward levels",
+      "Verifies slab-to-slab clear heights (4.5m-4.8m) and interstitial ceiling space requirements",
+      "Audits dual-corridor infection control logistics (sterile supply vs soiled return)",
+      "Applies differentiated productivity rates and durations for Hot Floor MEP rough-ins"
+    ],
+    "tmpl": "Hospital Facility & Floor Plate Audited: \nHot Floor Identification (ER / Imaging / OT / ICU / CSSD): \nSlab-to-Slab Height & Interstitial Plenum Clearance Analysis: \nInfection Control Circulation Audit (Clean vs Soiled Paths & Lifts): \nCPM Duration & Productivity Differential (Hot Floor vs Ward Floors): "
+  },
+  "U48": {
+    "task": "Build an MOT Installation & Pre-requisite Gate Audit for an operating theatre suite: 1) Map the 7-step sequence from structural unistrut ceiling grid to terminal HEPA commissioning; 2) Specify technical criteria for the conductive vinyl earthing grid (< 1 Ohm); 3) Establish the 'Cleanroom Enclosure Lock' criteria before terminal HEPA filter exposure.",
+    "good": [
+      "Details the 7-step construction sequence preventing damage to delicate cleanroom finishes",
+      "Includes dynamic load pull-testing for surgical light and pendant ceiling brackets (300-500 kg)",
+      "Specifies conductive vinyl installation standards and electrical resistance (< 1 Ohm)",
+      "Enforces the Cleanroom Enclosure Lock gate before HEPA unpacking"
+    ],
+    "tmpl": "Modular OT Suite & Room Number: \nOverhead Unistrut Grid & Pendant Structural Anchor Pull-Test Protocol: \nCleanroom Wall Panelling & Hermetic Door Integration Details: \nConductive Vinyl Earthing Grid (< 1 Ohm) Testing Procedure: \nCleanroom Enclosure Lock Gate Criteria & HEPA Protection Protocol: "
+  },
+  "U49": {
+    "task": "Formulate an MGPS Commissioning & Quality Verification Protocol under HTM 02-01 / NFPA 99: 1) Detail the continuous dry nitrogen purging quality check during silver brazing; 2) Write the procedure for the 24-hour pneumatic pressure hold test with temperature compensation formula; 3) Outline the cross-connection anti-confusion testing procedure across all terminal bed head units.",
+    "good": [
+      "Specifies EN 13348/ASTM B819 degreased copper and continuous nitrogen purge checks",
+      "Details the 24-hour pneumatic hold test at 1.5x working pressure with temperature correction",
+      "Prohibits hydrostatic water testing on medical gas distribution pipelines",
+      "Establishes terminal unit gas-specific anti-confusion testing protocol"
+    ],
+    "tmpl": "MGPS Piping Network & System Scope (O2, N2O, Air, Vac, AGSS): \nNitrogen Purge Brazing Quality Control & Cupric Oxide Prevention: \n24-Hour Pneumatic Pressure Hold Test Protocol (P1/T1 = P2/T2): \nCross-Connection Anti-Confusion Testing Procedure: \nPre-requisite Sign-off Gate Before False Ceiling Closure: "
+  },
+  "U50": {
+    "task": "Develop an AERB Bunker Construction Quality & Shielding Audit Checklist for a LINAC radiation suite: 1) Verify high-density concrete mix design (>= 3,200 kg/m³) with Hematite/Barite aggregates; 2) Detail the mass concrete thermal thermocouple monitoring protocol (ΔT <= 20°C); 3) Inspect all MEP penetration sleeves for serpentine geometry, lead lining, and zero direct line-of-sight.",
+    "good": [
+      "Verifies heavy aggregate mix design and core density test criteria (>= 3,200 kg/m³)",
+      "Implements mass concrete thermal cracking controls with embedded thermocouples (ΔT <= 20°C)",
+      "Audits all MEP penetrations for serpentine Z-bend geometry and lead shielding",
+      "Maps the 3-stage AERB regulatory gateway (Site -> Construction -> License)"
+    ],
+    "tmpl": "Radiation Therapy Bunker & Equipment Spec (LINAC MV Rating): \nHigh-Density Concrete Mix Specification & Density Verification (kg/m³): \nMass Concrete Hydration Thermal Control Protocol (ΔT <= 20°C): \nSerpentine MEP Penetration Sleeve Audit (Lead Lining & Z-Bends): \nAERB Approval Gateway Tracking & Milestone Sign-offs: "
+  },
+  "U51": {
+    "task": "Create an MRI Suite Technical Integration & Pre-Installation Audit for a 1.5T/3.0T scanner: 1) Inspect the 6-sided RF Faraday Cage design and test protocol (>= 100 dB attenuation); 2) Trace the Helium Quench Pipe route from magnet to rooftop (verify pipe diameter, zero low pockets, non-magnetic material, and safe discharge perimeter); 3) Plot the 5-Gauss exclusion zone and audit the equipment rigging delivery path and knockout wall sequence.",
+    "good": [
+      "Defines Faraday Cage RF attenuation testing criteria (100 dB across 10-130 MHz)",
+      "Audits Quench Pipe installation to ensure zero horizontal low pockets and safe atmospheric discharge",
+      "Demarcates the 5-Gauss magnetic exclusion safety zone and passive magnetic shielding",
+      "Coordinates rigging access, concentrated floor slab loads, and knockout wall schedules"
+    ],
+    "tmpl": "Diagnostic Imaging Suite & MRI Magnet Spec (1.5T / 3.0T): \nRF Faraday Cage Construction & 100 dB Attenuation Testing Protocol: \nCryogen Quench Pipe Route Inspection (Zero Pockets, Safe Discharge): \n5-Gauss Safety Exclusion Line & Magnetic Shielding Assessment: \nHeavy Equipment Rigging Path & Knockout Wall Closure Schedule: "
+  },
+  "U52": {
+    "task": "Develop an Isolation Suite Pressure Cascade & Commissioning Audit Protocol: 1) Map the step-down pressure gradients for both AII (−15 Pa) and PE (+15 Pa) suites including anterooms; 2) Detail the architectural sealing checklist (monolithic ceiling, drop-down door seals, sealed electrical back-boxes); 3) Specify the testing procedure using digital differential micromanometers and smoke pencil visualization.",
+    "good": [
+      "Defines precise pressure cascades: AII (-15 Pa) and PE (+15 Pa) relative to corridors",
+      "Audits architectural air-tightness prerequisites (monolithic ceilings, drop seals, box caulking)",
+      "Enforces 100% dedicated external exhaust and minimum 12 ACPH for infection isolation",
+      "Details micromanometer measurement and directional smoke pencil validation"
+    ],
+    "tmpl": "Isolation Suite Wing & Room Allocation: \nAirborne Infection Isolation (AII) Pressure Cascade (Corridor -> Anteroom -> Room): \nProtective Environment (PE) Pressure Cascade (Room -> Anteroom -> Corridor): \nArchitectural Air-Tightness Verification Checklist: \nHVAC Differential Pressure Commissioning & Smoke Pencil Audit: "
+  },
+  "U53": {
+    "task": "Create a Comprehensive Fire Compartmentation & Fire NOC Statutory Readiness Plan: 1) Map 2-hour fire compartment boundaries and list all duct penetrations requiring UL 555S motorized smoke dampers; 2) Detail the MEP penetration firestopping audit protocol (cable trays, pipes, busducts); 3) Formulate the Fire Department live demonstration test sequence (pump cut-in, hydrant pressure, FAP interlock, damper closure, stairwell pressurization).",
+    "good": [
+      "Maps horizontal 'Defend-in-Place' 2-hour compartment boundaries per NBC 2016 Part 4",
+      "Inventories motorized fire/smoke dampers and addressable FAP control interfaces",
+      "Specifies certified penetration firestop systems (ASTM E814 / BS 476)",
+      "Outlines the Chief Fire Officer live witness test demonstration protocol"
+    ],
+    "tmpl": "Hospital Facility Fire Compartmentation Strategy (NBC Part 4): \nMotorized Fire & Smoke Damper (MFSD) Schedule & FAP Interlock Matrix: \nPenetration Firestopping Audit Protocol (Cable Trays, Pipes, Busducts): \nFire Pump Cascade & Residual Hydrant Pressure (3.5 bar) Verification: \nChief Fire Officer Statutory Inspection Readiness Plan: "
+  },
+  "U54": {
+    "task": "Build an HVAC TAB, Airflow Balancing & Cleanroom Validation Commissioning Schedule: 1) Formulate mandatory site prerequisites before TAB commences (power, chiller plant, architectural sealing, zero dust); 2) Detail the ACPH calculation formula and balance procedure; 3) Document the in-situ PAO/DOP HEPA filter scan protocol (<= 0.01% penetration) and ISO 14644-1 particle count sampling grid.",
+    "good": [
+      "Allocates a realistic 3-to-5 week commissioning duration for hospital HVAC balancing",
+      "Establishes strict environmental site prerequisites (stable chilled water, dust lockdown)",
+      "Specifies in-situ PAO/DOP HEPA filter scanning procedures and <= 0.01% pass criteria",
+      "Details non-viable airborne particle counting for ISO Class 7/Class 8 certification"
+    ],
+    "tmpl": "HVAC System Scope & Clinical Areas Covered (OTs, ICUs, Wards): \nPre-requisite Site Conditions Audit (Chilled Water, Power, Dust Lockdown): \nAirflow Balancing & ACPH Calculation Sheet: \nIn-situ Terminal HEPA Filter PAO/DOP Scan Protocol (<= 0.01% Threshold): \nISO 14644-1 Non-Viable Particle Count Sampling Plan: "
+  },
+  "U55": {
+    "task": "Formulate a Medical Vibration & Acoustic Mitigation Plan: 1) Inventory all critical vibration-sensitive clinical assets (MRI, CT, IVF, OTs) and their VC curve limits; 2) Audit mechanical vibration isolation details for chillers, pumps, and AHUs (inertia block mass, spring deflection, flexible connectors); 3) Design partition wall STC ratings (>= 50 dB) and duct acoustic attenuators for audiology and patient care areas.",
+    "good": [
+      "Inventories vibration-sensitive medical assets with applicable VC curves (VC-A to VC-D)",
+      "Details concrete inertia bases (1.5x-2.5x mass) and high-deflection spring isolators",
+      "Inspects flexible pipe bellows and canvas duct connectors to eliminate vibration bridging",
+      "Specifies acoustic partition construction (STC >= 50 dB) and duct sound attenuators"
+    ],
+    "tmpl": "Vibration-Sensitive Clinical Assets & VC Curve Thresholds: \nMechanical Equipment Vibration Isolation Schedule (Inertia Base Mass, Spring Deflection): \nAudit of Flexible Couplings & Prevention of Vibration Bridges: \nAcoustic Partition Construction Details (STC >= 50 dB): \nBaseline Pre-Commissioning Vibration & Acoustic Survey Protocol: "
+  },
+  "U56": {
+    "task": "Build a CSSD Technical Zoning, Utility Coordination & Commissioning Checklist: 1) Map the unidirectional flow diagram across Decontamination, Clean Assembly, and Sterile Storage; 2) Detail the differential pressure cascade (−15 Pa, +10 Pa, +20 Pa) and pass-through interlock verification; 3) Audit critical utility connections (clean steam, RO water loop, instrument air, and high-temp effluent quench drain pits).",
+    "good": [
+      "Enforces strict unidirectional flow (Dirty -> Clean -> Sterile) with zero backtracking",
+      "Specifies differential pressure gradients (-15 Pa, +10 Pa, +20 Pa) across CSSD zones",
+      "Verifies electronic door interlocks on double-door pass-through autoclaves/washers",
+      "Audits heavy utilities: RO demineralized water loop, clean steam, and autoclave drainage quench pits"
+    ],
+    "tmpl": "CSSD Facility Layout & Unidirectional Flow Diagram: \nZonal Pressure Cascade & Airflow Direction Verification (-15 Pa / +10 Pa / +20 Pa): \nDouble-Door Pass-Through Autoclave & Washer-Disinfector Interlock Test: \nCritical Utility Inspection (RO Water Loop, Clean Steam, 4 bar Air): \nAutoclave Slab Recess & High-Temperature Drainage Quench Pit Audit: "
+  },
+  "U57": {
+    "task": "Build a Hospital Master Statutory Permitting Precedence Network: 1) Identify all 9 statutory milestones from PCB CTE to NABH accreditation; 2) Map the hard Finish-to-Start logic predecessors between physical MEP/civil packages and statutory inspections (e.g. Substation Testing -> CEIG -> Lift Power -> Lift License -> Fire NOC -> OC); 3) Quantify realistic site testing, inspection, and processing durations for each milestone in the P6 baseline.",
+    "good": [
+      "Maps the complete statutory hierarchy leading up to the Municipal Occupancy Certificate (OC)",
+      "Establishes hard Finish-to-Start logic links between physical commissioning and statutory tests",
+      "Accounts for realistic witness testing and liaison processing durations in the baseline",
+      "Links post-handover operational requirements (Pharmacy, Blood Bank, CEA, NABH)"
+    ],
+    "tmpl": "Hospital Project & Municipal Permitting Jurisdiction: \nPrerequisite Physical Commissioning Gate Sign-offs: \nStatutory Precedence Logic Network (CEIG, Lifts, PCB CTO, Fire NOC -> Municipal OC): \nPost-Occupancy Clinical Licensing Track (AERB, Blood Bank, Pharmacy, CEA): \nP6 Schedule Integration & Realistic Duration Allowances: "
+  }
+};
+Object.assign(APPLY, APPLY6);
+UNITS6.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
