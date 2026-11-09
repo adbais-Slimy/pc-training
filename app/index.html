@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=21"></script>
+<script src="shim.js?v=23"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -913,8 +913,98 @@ const key=(d,i)=>(d+"::"+i).toLowerCase();
 const today=()=>{ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
 const addDays=n=>{ const d=new Date(); d.setDate(d.getDate()+n); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
 const esc=s=>{ const d=document.createElement("div"); d.textContent=String(s??""); return d.innerHTML; };
-const fresh=()=>({v:3, course:{}, day:0, phase:"Phase 1: Foundation, planning & scheduling", module:"Day 0: How you'll learn", objective:"Understand how the course works", awaiting_answers:false, step:"teach", question_id:"", attempts:0,
-  items:{}, domain_scores:{}, calib:[], reviews:{}, parking:[], gate:"Diagnostic in progress", note:"", bank:{}, selfdrill:{}, sr:{}, practice:[], patterns:{}, deliverables:{}, weekly:[], exam:false, closed:false, close_summary:"", turns_today:0, turns_date:today()});
+
+const FOUNDATION_CARDS = [
+  {
+    id: "c-cpm-fund",
+    title: "Critical Path Method (CPM): Forward & Backward Pass",
+    rule: "Forward pass: EF = ES + Duration; Merge ES = max(EF of predecessors). Backward pass: LS = LF − Duration; Burst LF = min(LS of successors). Critical Path: sequence of activities where Total Float = 0.",
+    example: "Excavation (3d, ES 0, EF 3) -> PCC (2d, ES 3, EF 5) -> Footing RCC (5d, ES 5, EF 10). Path length 10 days; all TF = 0.",
+    trap: "Adding candidate durations or taking averages at merges/bursts instead of max going forward and min going backward.",
+    day: 0,
+    src: "Foundation",
+    items: ["Planning & Scheduling"]
+  },
+  {
+    id: "c-float-fund",
+    title: "Float Rules: Total Float, Free Float & Float Erosion",
+    rule: "Total Float (TF) = LS − ES = LF − EF (slippage before project completion moves). Free Float (FF) = min(ES of successors) − EF (slippage before touching downstream trades). Always report the erosion rate, not just the level.",
+    example: "Chiller foundation has TF 14 days. If it slips 5 days in update 1 and 6 days in update 2, rate is 5.5 d/update. It will turn critical in one more update.",
+    trap: "Treating float as a license to delay work; ignoring float loss trends until an activity suddenly turns negative.",
+    day: 0,
+    src: "Foundation",
+    items: ["Planning & Scheduling"]
+  },
+  {
+    id: "c-is1200-plaster",
+    title: "IS 1200 Part 12: Plaster & Finish Deduction Rules",
+    rule: "Area ≤ 0.5 m²: No deduction. Area 0.5–3.0 m²: Deduct one face only (no addition for jambs/reveals). Area > 3.0 m²: Deduct both faces; measure jambs, sills and soffits separately.",
+    example: "Window 1.2 m × 1.5 m = 1.8 m² on 2-side plastered wall: deduct 1.8 m² total (one face). Door 2.0 m × 2.1 m = 4.2 m²: deduct 8.4 m² (both faces) and measure reveals.",
+    trap: "Deducting both faces for residential-size doors/windows under 3 m²; forgetting to verify the specific BOQ preamble.",
+    day: 0,
+    src: "Foundation",
+    items: ["Progress Measurement", "Cost Control"]
+  },
+  {
+    id: "c-rebar-steel",
+    title: "Reinforcement Steel: Unit Weight d²/162 & Joint MB",
+    rule: "Rebar weight = Total length × Unit weight (kg/m), where unit weight = d² ÷ 162 (d in mm). Measure from approved BBS and drawing dimensions before pour; never pay based on delivery weighbridge challans.",
+    example: "12 mm rebar: 12² / 162 = 0.889 kg/m. 50 bars of 6.0 m = 300 m → 300 × 0.889 = 266.7 kg (0.267 MT).",
+    trap: "Paying steel based on truck delivery challan weight instead of bar bending schedule; certifying reinforcement after concrete is poured.",
+    day: 0,
+    src: "Foundation",
+    items: ["Progress Measurement"]
+  },
+  {
+    id: "c-evm-indices",
+    title: "Earned Value Management (EVM): CPI, SPI, EAC & TCPI",
+    rule: "CV = EV − AC, SV = EV − PV. CPI = EV ÷ AC (cost efficiency), SPI = EV ÷ PV (schedule efficiency). EAC = BAC ÷ CPI. TCPI = (BAC − EV) ÷ (BAC − AC). Values > 1.0 are favorable.",
+    example: "BAC ₹1,000 L, PV ₹450 L, EV ₹400 L, AC ₹480 L. CPI = 0.83, SPI = 0.89. EAC = ₹1,205 L (₹205 L overrun). TCPI = 1.15 (unrealistic recovery needed).",
+    trap: "Using financial billing or store issues as EV instead of physically installed work; relying on SPI near project completion when it drifts back to 1.0.",
+    day: 0,
+    src: "Foundation",
+    items: ["EVM", "Cost Control"]
+  },
+  {
+    id: "c-proc-clocks",
+    title: "Two-Clock Procurement: Required-on-Site (ROS) Back-Calculation",
+    rule: "ROS date comes from installation late start. Back-calculate: Dispatch = ROS − Transit (calendar days); PO Date = Dispatch − Manufacture (calendar days); Indent Date = PO Date − Internal TAT (working days, skip Sundays).",
+    example: "DG Set ROS 15 Mar: Transit 7 cd, Mfg 60 cd, TAT 15 wd → PO by 2 Jan, Indent by 14 Dec. Procurement float = ROS − Forecast delivery.",
+    trap: "Tracking procurement only by PO issuance date; measuring factory manufacturing in site working days instead of calendar days.",
+    day: 0,
+    src: "Foundation",
+    items: ["Procurement Controls"]
+  },
+  {
+    id: "c-extra-recon",
+    title: "Rate Analysis (15% CP&OH) & Material Reconciliation",
+    rule: "Non-BOQ extra items: Prime Cost (Material + Labor + Plant) + 15% CP&OH. Existing BOQ items > 125%: excess re-rated at market rate. Material reconciliation: Permissible wastage (Cement 2%, Rebar 3%); recover excess at penal rate.",
+    example: "OT lead-lined drywall: Prime cost ₹3,670 + 15% CP&OH (₹551) = ₹4,221/m². Cement: 5,000 bags theoretical + 2% allowable = 5,100 bags. Consumed 5,200 bags → 100 bags penal recovery.",
+    trap: "Accepting contractor extra-item quotes without voucher breakdowns; forgetting material reconciliation at the final bill.",
+    day: 0,
+    src: "Foundation",
+    items: ["Cost Control"]
+  }
+];
+
+function seedInitialDeck(bank, sr){
+  if(!bank) return;
+  FOUNDATION_CARDS.forEach(c => {
+    if(!bank[c.id]){
+      bank[c.id] = { ...c, day: 0, items: c.items || [] };
+      if(sr && !sr[c.id]){
+        sr[c.id] = { interval: 1, ease: 2.5, reps: 0, lapses: 0, due: today(), added: today() };
+      }
+    }
+  });
+}
+
+const fresh=()=>{
+  const s = {v:3, course:{}, day:0, phase:"Phase 1: Foundation, planning & scheduling", module:"Day 0: How you'll learn", objective:"Understand how the course works", awaiting_answers:false, step:"teach", question_id:"", attempts:0,
+    items:{}, domain_scores:{}, calib:[], reviews:{}, parking:[], gate:"Diagnostic in progress", note:"", bank:{}, selfdrill:{}, sr:{}, practice:[], patterns:{}, deliverables:{}, weekly:[], exam:false, closed:false, close_summary:"", turns_today:0, turns_date:today()};
+  seedInitialDeck(s.bank, s.sr);
+  return s;
+};
 let state=fresh(), chat=[{role:"assistant",content:SEED,t:Date.now(),day:0}];
 let db=null, sample=null, uid=null, conf=null, pasted=false, busy=false;
 let libFilter="week", libSearchQuery="", bookFilter="", speedMode=false, drillTimerActive=false, drillTimerSec=0, drillTimerInterval=null;
@@ -1097,6 +1187,1022 @@ function renderBook(){
   $("bookwrap").querySelectorAll("[data-rt]").forEach(b=>b.onclick=()=>prefill(`[RETEST] Cold retest me on notebook card "${b.dataset.tt}" (${b.dataset.rt}). New scenario, no hints.`));
 }
 
+// ---------- hospital weekly deliverables studio & visual sandboxes ----------
+const DELIVERABLE_SPECS = [
+  {
+    week: 1,
+    title: "Project Controls Framework (hospital)",
+    domain: "Setup & Governance",
+    brief: "Establish the complete Project Controls Framework for the 500-bed Tertiary Care Hospital project (₹620 Cr BAC, 24-month duration). Define the Project Breakdown Structure (PBS) to WBS Level 4, Organization Breakdown Structure (OBS), RACI matrix, progress measurement rules-of-credit (milestone weights for RCC, MEP, Finishes), cutoff dates (25th of month), change threshold governance (PM ₹10L, PD ₹50L, Steering Committee >₹50L), and reporting cadences.",
+    rubric: [
+      "WBS hierarchy covers all hospital blocks (IPD, OPD, Diagnostic/Radiology, Services Building, Energy Center).",
+      "Explicit measurement rules-of-credit defined (no subjective % complete estimates).",
+      "Clear RACI matrix across Client, PMC, Main Contractor, and Specialist MEP vendors.",
+      "Defined governance thresholds for cost/schedule change controls and cutoff dates."
+    ],
+    starter: `# PROJECT CONTROLS FRAMEWORK — 500-BED TERTIARY HOSPITAL
+**Project:** Apex Medicity Hospital (₹620 Cr, 24 Months, 500 Beds)
+**Prepared By:** Project Controls Lead
+**Date:** Week 1 Baseline
+
+## 1. Project Governance & Work Breakdown Structure (WBS)
+- **Level 1:** Apex Medicity Tertiary Hospital Project
+- **Level 2:**
+  - 1.1 IPD Block (7 Floors, 350 Beds, OT & ICU suites)
+  - 1.2 OPD & Diagnostic Block (4 Floors, Radiology, OPD Clinics)
+  - 1.3 Central Energy Plant (Chillers, Substation, DG Sets, MGPS Plant)
+  - 1.4 External Services & Infrastructure (Drainage, STP, Ring Road)
+  - 1.5 Project Management & Statutory Clearances (AERB, Fire NOC)
+
+## 2. Rules of Credit (Progress Measurement Standard)
+- **Structural RCC Works:**
+  - BBS & Rebar Placement: 30%
+  - Formwork & Staging: 25%
+  - Concrete Pour & Curing (7d): 35%
+  - De-shuttering & Quality Signoff: 10%
+- **MEP Installations (HVAC, MGPS, Plumbing):**
+  - First Fix (Brackets & Sleeves): 25%
+  - Secondary Fix (Piping & Duct Run): 40%
+  - Pressure Testing & Hydro-test: 20%
+  - Final Trim & Commissioning: 15%
+
+## 3. Reporting Cycles & Governance Thresholds
+- **Monthly Cutoff:** 25th of each calendar month.
+- **Monthly Progress Report Submission:** 30th of month.
+- **Change Thresholds:**
+  - Project Manager: Up to ₹10 Lakhs (within contingency)
+  - Project Director: Up to ₹50 Lakhs
+  - Executive Steering Committee: > ₹50 Lakhs or Critical Path Impact > 7 days
+
+## 4. RACI Matrix Summary
+- **Schedule Updates:** PM (Accountable), Controls Lead (Responsible), Site In-charges (Consulted), Client (Informed).
+- **Cost & EVM Certifications:** Controls Lead (Responsible), Commercial Lead (Accountable), PD (Approved).`
+  },
+  {
+    week: 2,
+    title: "Planning basis + schedule logic (hospital block)",
+    domain: "Planning & Scheduling",
+    brief: "Author the Basis of Schedule (BOS) for the 7-storey IPD (In-Patient Department) Block. Define calendars (6-day site calendar with statutory dry days/holidays, 7-day cure calendars for concrete), key productivity norms (rebar tying MT/gang-day, concrete pour m³/hr, blockwork m²/mason-day), lead times for critical hospital items (chillers, AHUs, MGPS, lifts), hard/soft constraint policy, and finish-to-start network logic driving structural frame, envelope, and internal fit-out.",
+    rubric: [
+      "Clear productivity rates stated with gang sizes and equipment assumptions.",
+      "Concrete curing lag logic models continuous 7-day calendar without freezing work days.",
+      "Medical gas pipeline system (MGPS) and vertical transport (bed lifts) sequenced before ceiling closure.",
+      "Total Float and Critical Path integrity validated (no dangling logic or invalid open ends)."
+    ],
+    starter: `# PLANNING BASIS & SCHEDULE LOGIC — IPD BLOCK (7 STOREYS)
+**Facility:** 500-Bed Tertiary Hospital IPD Block
+**Target Duration:** 18 Months Sub-completion
+
+## 1. Calendars & Working Assumptions
+- **Standard Site Construction Calendar:** 6 Days/Week (Mon–Sat, 10 hrs/day), 26 working days/month. 12 Gazetted Holidays.
+- **Concrete Curing Calendar:** 7 Days/Week continuous (7 calendar days minimum lag on structural de-shuttering).
+- **Vendor Long-Lead Calendar:** 7 Days/Week calendar days for factory manufacturing and international shipping.
+
+## 2. Productivity Norms & Resource Gangs
+- **Rebar Fixing:** 1.8 MT / gang-day (Gang = 1 Fitter + 2 Helpers).
+- **Formwork (Aluform / Conventional Mivan):** 18 m² / gang-day.
+- **RMC Concrete Pouring:** 35 m³ / hour (Stationary concrete boom pump).
+- **AAC Blockwork Masonry:** 12 m² / mason-day.
+- **MGPS Copper Piping:** 45 running meters / plumber-day.
+
+## 3. Floor-to-Floor Sequence Logic
+1. RCC Slab Casting (Floor N) -> 7-day Curing Lag -> De-shuttering.
+2. AAC Block Masonry (Floor N-1) starts 10 days after Floor N slab de-shuttering.
+3. MEP Overhead First Fix (HVAC ducts, Fire fighting, MGPS trunking): Start-to-Start with Masonry with 5-day lag.
+4. Internal Plaster / Lead Shielding in Diagnostic zones.
+5. Floor Screed & Leveling.
+6. Ceiling Grid Closure & Vinyl Flooring (Strict FS predecessor: Hydro-testing & Air Duct Leakage Testing passed).
+
+## 4. Critical Path Drivers
+- Basement 2 Substation & Chiller Plant Room -> Vertical MEP Shafts -> Floor 3 OT & ICU Complex -> AHU Commissioning -> Final NABH Cleanroom Validation.`
+  },
+  {
+    week: 3,
+    title: "P6: build & update a sample schedule",
+    domain: "Planning & Scheduling / P6",
+    brief: "Build and update the Primavera P6 schedule baseline (BL1) through Month 3 progress cutoff. Detail Activity IDs, WBS codes, original durations, actual starts, percent complete types (Physical % Complete), remaining durations, logic updates, and out-of-sequence progress handling using Retained Logic mode.",
+    rubric: [
+      "Physical % Complete used rather than Duration % Complete.",
+      "Retained Logic enforced over Progress Override to prevent unrealistic float distortion.",
+      "Data Date moved cleanly to 25th with zero in-progress activities having blank actual starts.",
+      "Out-of-sequence activities identified and logic loops resolved."
+    ],
+    starter: `# PRIMAVERA P6 SCHEDULE BUILD & UPDATE REPORT — MONTH 3
+**Data Date:** 25-Mar-2026 | **Schedule Name:** HOSP-BL1-REV03
+**Calculation Mode:** Retained Logic | **Percent Complete Type:** Physical % Complete
+
+## 1. P6 Settings Configuration
+- **Scheduling Options:**
+  - Scheduling algorithm: Contiguous (retained logic).
+  - Relationship lags calculated from: Start of successor.
+  - Critical activities defined as: Total Float <= 0 days.
+  - Physical % Complete selected for all direct construction activities.
+
+## 2. Activity Progress Summary Table
+| Activity ID | Activity Description | OD | Phys % | Act Start | Rem Dur | Current EF | Float |
+|---|---|---|---|---|---|---|---|
+| C-1010 | Basement 2 Raft Concrete (Zone A) | 24 | 100% | 05-Jan-26 | 0 | 28-Jan-26 (A) | 0 d |
+| C-1020 | Retaining Wall RCC (Zone A) | 20 | 100% | 29-Jan-26 | 0 | 22-Feb-26 (A) | 0 d |
+| C-1030 | B1 Slab RCC Pour & Curing | 18 | 85% | 24-Feb-26 | 3 | 28-Mar-26 | -2 d |
+| M-2010 | Chiller Equipment Delivery (2 Nos) | 60 | 40% | 15-Feb-26 | 36 | 30-Apr-26 | +12 d |
+| E-3010 | HT Panel Transformer Foundations | 15 | 10% | 20-Mar-26 | 14 | 10-Apr-26 | +4 d |
+
+## 3. Out-of-Sequence Progress & Logic Corrections
+- Activity E-3010 started before B1 Slab waterproofing was fully signed off (Out of Sequence).
+- Under Retained Logic, remaining duration on E-3010 is scheduled after predecessor completes, preventing artificial float generation.
+- Added SS link with 5-day lag between Waterproofing and E-3010 foundation excavation to reflect field realities.`
+  },
+  {
+    week: 4,
+    title: "Baseline vs current analysis",
+    domain: "Schedule Variance Analysis",
+    brief: "Perform Month 4 schedule variance analysis comparing Current Schedule against Approved Baseline (BL1). Analyze critical path float erosion, variance on key milestones (Substructure Complete, Structure Topped Out, Substation Energization, Drywall Handover), DCMA 14-point schedule health assessment (dangling activities, negative float, long lags), and driving path slips.",
+    rubric: [
+      "Milestone variance table with Early Finish vs Baseline Finish and variance in calendar days.",
+      "Float erosion tracking distinguishing critical path slippage from near-critical degradation.",
+      "DCMA 14 check results (relationship ratio > 1.5, lags < 5%, hard constraints = 0).",
+      "Clear root-cause identification for top 3 delaying activities with corrective actions."
+    ],
+    starter: `# BASELINE VS CURRENT VARIANCE REPORT — MONTH 4
+**Baseline:** HOSP-BL1 (Approved 01-Jan-2026) | **Current Update:** HOSP-UP04 (Data Date: 25-Apr-2026)
+
+## 1. Key Project Milestone Variance Table
+| Milestone Code | Milestone Description | BL1 Date | Current Date | Variance (Days) | Status |
+|---|---|---|---|---|---|
+| MS-01 | Raft & Substructure Complete | 15-May-26 | 28-May-26 | -13 cd | Delayed |
+| MS-02 | IPD Structure Topped Out (L7) | 15-Oct-26 | 02-Nov-26 | -18 cd | Critical |
+| MS-03 | Substation Energization (66kV) | 30-Nov-26 | 15-Dec-26 | -15 cd | Delayed |
+| MS-04 | Medical Gas Piping Rough-in Passed | 15-Jan-27 | 25-Jan-27 | -10 cd | Watch |
+| MS-05 | Project Substantial Completion | 31-Jul-27 | 18-Aug-27 | -18 cd | Critical Breach |
+
+## 2. Float Erosion Analysis
+- **Critical Path 1 (IPD Structural Spine):** Total float dropped from 0 d to -18 d due to hard rock strata encountered in zone B excavation (+11 days) and shuttering timber delivery delay (+7 days).
+- **Near-Critical Path 2 (Central Energy Plant):** Total float eroded from +28 d to +8 d (rate: -6.7 d/month). Will become critical within 45 days unless chiller foundation drawings are frozen.
+
+## 3. DCMA 14-Point Health Audit
+- Logic missing (Dangling nodes): 0 activities (PASS)
+- Leads / negative lags: 0 (PASS)
+- Positive lags: 4 activities (2.8% of total, threshold < 5%) (PASS)
+- Hard constraints: 0 (PASS)
+- High float (> 44 working days): 6 activities (4.1%) (PASS)
+
+## 4. Recommended Recovery Actions
+1. Deploy second concrete boom pump for Level 1 to 4 slabs to reduce cycle time from 16 to 12 days/floor.
+2. Fast-track MEP vertical riser brackets concurrently with Level 3 structure instead of waiting for Level 7 topping out.`
+  },
+  {
+    week: 5,
+    title: "Cost-control model",
+    domain: "Cost Control",
+    brief: "Build the comprehensive Cost Breakdown Structure (CBS) and Cost Control Model for the hospital project. Integrate the ₹620 Cr budget across civil, MEP, medical equipment, preliminaries, contingencies (5%), and escalation buffers. Establish the commitment ledger, VOWD (Value of Work Done), certified billing ledger, and retention money accounting.",
+    rubric: [
+      "Full mapping between WBS packages and CBS cost codes.",
+      "Clear distinction between Committed Cost (PO issued), VOWD (work done on site), and Cash Invoiced.",
+      "Contingency drawdown rule and escalation formula indexed to RBI wholesale price indices.",
+      "Retention money deduction (5%) and mobilization advance recovery amortization schedule."
+    ],
+    starter: `# COST CONTROL MODEL & CBS ARCHITECTURE
+**Project:** Apex Medicity Hospital | **Total BAC:** ₹620.00 Cr
+
+## 1. Cost Breakdown Structure (CBS) vs Budget Allocation
+| CBS Code | Discipline / Package | BAC (₹ Cr) | Committed (₹ Cr) | VOWD (₹ Cr) | Invoiced (₹ Cr) |
+|---|---|---|---|---|---|
+| CBS-01 | Civil, Structural & Façade | ₹248.00 | ₹235.00 | ₹74.40 | ₹68.20 |
+| CBS-02 | MEPF Services (HVAC, MGPS, Fire) | ₹186.00 | ₹165.00 | ₹31.60 | ₹27.10 |
+| CBS-03 | Medical Equipment & OT Suites | ₹110.00 | ₹82.00 | ₹11.00 | ₹8.50 |
+| CBS-04 | Interior Finishes & Signage | ₹36.00 | ₹12.00 | ₹1.80 | ₹0.00 |
+| CBS-05 | Preliminaries & Site Infrastructure | ₹18.00 | ₹16.00 | ₹6.50 | ₹6.20 |
+| CBS-06 | Client Contingency Buffer (5%) | ₹22.00 | ₹0.00 | ₹0.00 | ₹0.00 |
+| **TOTAL** | **All Packages** | **₹620.00** | **₹510.00** | **₹125.30** | **₹110.00** |
+
+## 2. Commercial Cash Management Rules
+- **Value of Work Done (VOWD):** Measured strictly via Joint Measurement Books (JMB) for physical works in place.
+- **Retention Money:** 5% deducted on each interim payment certificate (IPC), released 50% at Substantial Completion and 50% at Defects Liability Period (DLP) expiration.
+- **Mobilization Advance Amortization:** 10% advance (₹24.8 Cr) amortized at 15% deduction from each running account (RA) bill starting from RA Bill 03 until fully liquidated at 80% billing.
+
+## 3. Contingency Governance
+- Strict separation: Contractor claims cannot draw from Client Contingency without formal Change Control Board approval.`
+  },
+  {
+    week: 6,
+    title: "EVM analysis",
+    domain: "Earned Value Management",
+    brief: "Produce the Month 6 executive EVM report. At Month 6, BAC is ₹620 Cr, Cumulative PV is ₹210 Cr, Cumulative EV is ₹182 Cr, and Cumulative AC is ₹205 Cr. Calculate CV, SV, CPI, SPI, EAC (using both CPI and CPI×SPI methods), VAC, and TCPI to complete within original BAC and within revised EAC. Provide executive interpretation of why SPI is lagging (radiology shielding redesign) and cost is overrunning (chiller raw material commodity hike).",
+    rubric: [
+      "Exact mathematical calculations for CV, SV, CPI, SPI, EAC, VAC, and TCPI.",
+      "Diagnostic explanation of cost overrun vs schedule slippage.",
+      "Feasibility evaluation of TCPI: can the site team achieve the required efficiency?",
+      "Defensible recovery recommendations to arrest CPI erosion."
+    ],
+    starter: `# EARNED VALUE MANAGEMENT (EVM) ANALYSIS — MONTH 6
+**BAC:** ₹620.00 Cr | **Reporting Date:** 30-Jun-2026
+
+## 1. Primary EVM Metrics & Indices
+- **Planned Value (PV):** ₹210.00 Cr
+- **Earned Value (EV):** ₹182.00 Cr
+- **Actual Cost (AC):** ₹205.00 Cr
+
+### Calculated Variances & Performance Ratios:
+- **Cost Variance (CV = EV − AC):** ₹182.00 − ₹205.00 = **-₹23.00 Cr** (Unfavorable / Cost Overrun)
+- **Schedule Variance (SV = EV − PV):** ₹182.00 − ₹210.00 = **-₹28.00 Cr** (Unfavorable / Behind Schedule)
+- **Cost Performance Index (CPI = EV ÷ AC):** 182.00 / 205.00 = **0.888 (0.89)**
+- **Schedule Performance Index (SPI = EV ÷ PV):** 182.00 / 210.00 = **0.867 (0.87)**
+
+## 2. Estimates at Completion (Forecasting)
+- **EAC (Cost Typical / CPI):** BAC ÷ CPI = 620.00 ÷ 0.8878 = **₹698.35 Cr** (₹78.35 Cr Overrun)
+- **EAC (Combined CPI × SPI):** AC + [(BAC − EV) ÷ (CPI × SPI)] = 205 + [438 ÷ (0.8878 × 0.8667)] = **₹774.22 Cr**
+- **Variance at Completion (VAC):** BAC − EAC = 620.00 − 698.35 = **-₹78.35 Cr**
+- **To-Complete Performance Index (TCPI to BAC):**
+  - TCPI = (BAC − EV) ÷ (BAC − AC) = (620 − 182) ÷ (620 − 205) = 438 ÷ 415 = **1.055 (1.06)**
+  - *Interpretation:* The project team must operate at a 1.06 cost efficiency for the remaining ₹438 Cr of work to stay within original budget. This is challenging but achievable with strict procurement controls.
+
+## 3. Executive Root Cause & Corrective Actions
+1. **Schedule Delay (SV -₹28 Cr):** Radiology bunker shielding wall thickness revision mandated by AERB delayed structural work by 22 days.
+2. **Cost Overrun (CV -₹23 Cr):** Commodity steel surge and expedited air freight for specialized German MGPS valves.
+3. **Corrective Plan:** Freeze re-rated BOQ variations; substitute non-structural components with local approved equivalents.`
+  },
+  {
+    week: 7,
+    title: "Procurement control dashboard",
+    domain: "Procurement Controls",
+    brief: "Formulate the Procurement Tracking Matrix (PTM) and Two-Clock back-calculation dashboard for 6 critical hospital packages: 1) Medical Gas Pipeline System (MGPS) manifold & plant, 2) 3T MRI & 128-slice CT Scanner, 3) 1500 kVA DG Sets & HT Panels, 4) Central Sterile Services Department (CSSD) autoclaves, 5) Modular Operating Theater (MOT) pre-fab walls & laminar flow, 6) Hospital Bed Lifts. Back-calculate Indent, RFQ, PO, Factory Manufacturing, FAT, Marine/Road Transit, and ROS dates.",
+    rubric: [
+      "Clear distinction between working days (internal approvals) and calendar days (factory/transit).",
+      "Required-on-Site (ROS) derived from Late Start of installation activity.",
+      "FAT (Factory Acceptance Test) milestone included prior to shipping release.",
+      "Procurement float calculated (ROS minus forecast delivery) with Red/Amber/Green alerts."
+    ],
+    starter: `# PROCUREMENT CONTROL DASHBOARD & TWO-CLOCK TRACKER
+**Project:** Apex Medicity Hospital | **Package Focus:** High-Impact Long-Lead Items
+
+## 1. Two-Clock Methodology Summary
+- **Clock 1 (Internal Working Days, Mon–Sat):** Indent -> Technical Evaluation -> Commercial Negotiation -> PO Issue.
+- **Clock 2 (External Calendar Days):** Factory Production -> Factory Acceptance Test (FAT) -> Transit & Port Customs -> Delivery on Site.
+- **Procurement Float Formula:** ROS Date (Installation Late Start) − Forecast Site Delivery Date.
+
+## 2. Procurement Milestone Tracking Matrix (PTM)
+| Item Description | ROS Date | Transit (cd) | Mfg Lead (cd) | Target PO Date | Internal TAT (wd) | Indent Date | Status |
+|---|---|---|---|---|---|---|---|
+| 1. Medical Gas (MGPS) Plant | 15-Nov-26 | 14 cd | 90 cd | 03-Aug-26 | 25 wd | 04-Jul-26 | 🟢 On Track |
+| 2. 3T MRI & CT Scanner | 10-Feb-27 | 30 cd (ocean) | 150 cd | 15-Jul-26 | 30 wd | 10-Jun-26 | 🔴 Critical |
+| 3. 1500 kVA DG Sets & HT | 15-Oct-26 | 7 cd | 75 cd | 20-Jul-26 | 20 wd | 26-Jun-26 | 🟡 Amber |
+| 4. CSSD Steam Autoclaves | 01-Dec-26 | 10 cd | 60 cd | 22-Sep-26 | 20 wd | 28-Aug-26 | 🟢 On Track |
+| 5. Modular OT Wall Panels | 05-Jan-27 | 15 cd | 70 cd | 12-Oct-26 | 20 wd | 18-Sep-26 | 🟢 On Track |
+| 6. Hospital Bed Lifts (4 Nos)| 10-Nov-26 | 10 cd | 120 cd | 23-Jun-26 | 25 wd | 24-May-26 | 🔴 Critical |
+
+## 3. High-Risk Action Items
+- **Bed Lifts:** Indent approval is 12 days overdue. Contract with Schindler/Otis must be executed immediately; shaft scaffolding cannot be released until lift rails arrive.
+- **MRI Bunker:** RFQ vendor negotiations require AERB site layout signoff before PO release.`
+  },
+  {
+    week: 8,
+    title: "Cash-flow forecast + risk register",
+    domain: "Commercial & Risk Management",
+    brief: "Develop the 24-month monthly cash-outflow forecast (S-curve expenditure projection) synchronized with the schedule baseline, and build the Quantitative Risk Register for the hospital project. Identify top 8 risks (AERB approval delay for Linac bunker, monsoon basement flooding, medical oxygen vendor long-lead, power sub-station ROW clearance, etc.) with Probability-Impact scoring, pre-mitigation exposure, mitigation owner, cost of mitigation, and post-mitigation exposure.",
+    rubric: [
+      "Monthly cash-outflow S-curve coordinates matching early vs late expenditure profiles.",
+      "8 authentic hospital risks quantified with pre- and post-mitigation P×I matrix.",
+      "Clear risk response strategies (Mitigate, Transfer, Avoid, Accept) with named role owners.",
+      "Contingency budget allocation aligned with total Expected Monetary Value (EMV)."
+    ],
+    starter: `# CASH FLOW FORECAST & QUANTITATIVE RISK REGISTER
+**Project:** Apex Medicity Hospital (₹620 Cr BAC)
+
+## 1. 24-Month Cash Flow S-Curve Profile (Snapshot)
+- Months 01–04 (Mobilization & Substructure): ₹42.5 Cr (Early) / ₹32.0 Cr (Late)
+- Months 05–10 (Superstructure Civil): ₹168.0 Cr (Early) / ₹135.0 Cr (Late)
+- Months 11–18 (MEP, Cladding & Medical Equipment): ₹285.0 Cr (Early) / ₹245.0 Cr (Late)
+- Months 19–24 (Finishes, Testing, Commissioning, Handover): ₹124.5 Cr (Early) / ₹108.0 Cr (Late)
+- **Peak Monthly Capital Demand:** Month 14 (₹38.5 Cr/month during simultaneous chiller delivery and façade installation).
+
+## 2. Hospital Risk Register (Top 8 Quantitative Risks)
+| ID | Risk Description | Prob (1-5) | Imp (1-5) | EMV Pre (₹L) | Mitigation Strategy | Owner | Post EMV (₹L) |
+|---|---|---|---|---|---|---|---|
+| R-01 | AERB clearance delay for Oncology Bunker | 4 | 5 | ₹280 L | Retain ex-AERB scientific advisor; pre-submit 3D shielding design | Lead Architect | ₹60 L |
+| R-02 | Monsoon flooding of Basement 2 Plant Room | 4 | 4 | ₹150 L | Install 3x automatic sump pumps & perimeter coffer bunding | Site In-charge | ₹25 L |
+| R-03 | Medical Gas imported regulator shipment delay | 3 | 4 | ₹120 L | Specify alternate European certified manufacturer in tender | MEP Manager | ₹30 L |
+| R-04 | 66kV substation Right-of-Way (ROW) dispute | 3 | 5 | ₹220 L | Joint liaison committee with state electricity transmission utility | Liaison Lead | ₹50 L |
+| R-05 | Chiller plant room acoustic/vibration failure | 2 | 4 | ₹80 L | Double-spring inertia base pads & floating floor design | Acoustic Eng. | ₹15 L |
+| R-06 | Subcontractor liquidity failure (Drywall) | 3 | 3 | ₹90 L | Direct payment to sub-tier material suppliers against BG | Commercial Mgr | ₹20 L |
+| R-07 | Fire NOC hydraulic pressure test failure | 2 | 5 | ₹160 L | Staged hydro-testing floor-by-floor with third-party auditor | QA/QC Head | ₹30 L |
+| R-08 | Steel & copper commodity price escalation | 4 | 3 | ₹180 L | Strategic hedging & early bulk procurement PO lock-in | Procurement Head| ₹45 L |
+
+## 3. Contingency Adequacy
+- **Total Pre-Mitigation Expected Monetary Value (EMV):** ₹12.80 Cr
+- **Post-Mitigation EMV:** ₹2.75 Cr
+- **Client Contingency Available:** ₹22.00 Cr (Adequate, covers 171% of worst-case unmitigated exposure).`
+  },
+  {
+    week: 9,
+    title: "Delay analysis + recovery programme",
+    domain: "Claims & Delay Analysis",
+    brief: "Perform a forensic delay analysis using the Time Impact Analysis (TIA) method in accordance with SCL Delay and Disruption Protocol 2nd Edition. The project suffered a 45-day delay when structural redesign was mandated following revised seismic codes and hospital radiology bunker layout revisions. Model the fragnets, insert into the unimpacted baseline schedule, calculate Employer Risk Event delay (compensable EOT), concurrent Contractor delay (20 days on procurement of steel), and draft the 45-day Recovery Programme with crashing and fast-tracking logic.",
+    rubric: [
+      "Proper application of SCL Protocol principles (Time Impact Analysis using contemporary records).",
+      "Clear isolation of Employer Risk Event vs Contractor concurrent delay.",
+      "Mitigation/Acceleration schedule (crashing structural shifts to 2-gang 24-hr operation, fast-tracking MEP second fix).",
+      "Formal notice compliance under FIDIC Red Book Clause 20.1 / 8.4 (28-day notice window)."
+    ],
+    starter: `# FORENSIC DELAY ANALYSIS (TIA) & RECOVERY PROGRAMME
+**Standard:** Society of Construction Law (SCL) Delay Protocol (2nd Edition)
+**Contract Form:** FIDIC Red Book (1999/2017) Clause 8.4 & Clause 20.1
+
+## 1. Delay Event Fragnet Description
+- **Fragnet FR-01:** Structural & Radiation Shielding Redesign (Employer Risk Event).
+  - Activity FR-10: Issue of revised structural GFC drawings: 18 cd (01-Mar to 18-Mar-2026)
+  - Activity FR-20: Re-bar dismantling & re-alignment in Bunker Zone: 12 cd
+  - Activity FR-30: Additional high-density barite concrete casting: 15 cd
+  - **Total Fragnet Critical Delay Impact:** 45 Calendar Days.
+
+## 2. Concurrency & SCL Protocol Apportionment
+- **Employer Delay Event:** Structural Bunker Redesign = 45 Calendar Days on critical path.
+- **Contractor Delay Event:** Delay in procuring chillers and pumps = 20 Calendar Days (non-critical, TF was +18 cd; net critical concurrency = 2 days).
+- **SCL Protocol Rule on Concurrency:** Where an Employer Risk Event and a Contractor Risk Event occur simultaneously, the Contractor is entitled to an Extension of Time (EOT) for the full net critical impact (45 days), but time-related preliminaries (prolongation costs) are excluded for the 2 days of concurrent contractor culpability.
+- **Entitlement:** 45 Calendar Days EOT with 43 Days compensable site overheads.
+
+## 3. 45-Day Schedule Recovery Programme (Crashing & Fast-Tracking)
+1. **Crashing Superstructure (Recover 22 Days):**
+   - Shift from 1-shift (10 hr) to 2-shift (20 hr continuous) rebar and formwork operations on Levels 4–7.
+   - Cost to crash: ₹18.5 Lakhs (shift allowances + tower crane floodlighting).
+2. **Fast-Tracking MEP vs Finishes (Recover 16 Days):**
+   - Change predecessor link between Wet Plaster and Drywall Framing from Finish-to-Start to Start-to-Start with 8-day lag, using moisture curing barriers.
+3. **Pre-fabricated Modular Toilet Pods (Recover 7 Days):**
+   - Direct factory installation off-the-shelf instead of wet casting on site.
+- **Total Recovery Potential:** 45 Calendar Days (Restores Project Completion to original 31-Jul-2027 contractual baseline).`
+  },
+  {
+    week: 10,
+    title: "Change register",
+    domain: "Contract Administration & Change Management",
+    brief: "Structure the Change Management Register and evaluate 4 hospital variation proposals: 1) Addition of 2 modular Operation Theaters (MOT), 2) Upgrade from standard HVAC to AIIR (Airborne Infection Isolation Rooms) with negative pressure and HEPA filters, 3) Revision of façade from curtain wall to double-glazed ceramic frit louvers, 4) Replacement of PVC flooring with conductive copper-grid anti-static vinyl in ICU/OT. Detail rate analysis (15% CP&OH), schedule impact, cost impact, and variation approval status.",
+    rubric: [
+      "Change Log structure tracking Change ID, Originator, Description, Date, Cost Impact, Time Impact, Status.",
+      "Rate analysis adhering to contractual formula: Prime Cost (Material + Labor + Machinery) + 15% CP&OH.",
+      "Impact on milestone completion and critical path float analyzed for each variation.",
+      "Clear audit trail showing engineer certification, employer approval, and updated budget."
+    ],
+    starter: `# PROJECT CHANGE REGISTER & VARIATION ASSESSMENT
+**Project:** Apex Medicity Hospital | **Cutoff:** Month 10 Change Audit
+
+## 1. Comprehensive Change Control Log
+| Change ID | Title & Description | Originator | Estimated Cost (₹L) | Schedule Impact | Status | Approval Level |
+|---|---|---|---|---|---|---|
+| CR-01 | Addition of 2 Modular OTs (Level 3) | Medical Director | +₹420.00 L | +14 days (non-crit) | Approved | Steering Committee |
+| CR-02 | AIIR Negative Pressure HVAC Upgrade | Infection Board | +₹185.00 L | +8 days (non-crit) | Approved | Project Director |
+| CR-03 | Double-Glazed Ceramic Frit Façade | Green Consultant | +₹95.00 L | 0 days | Under Review | Project Director |
+| CR-04 | Conductive Anti-static Vinyl Flooring | Bio-Medical Head | +₹38.50 L | 0 days | Approved | Project Manager |
+
+## 2. Rate Analysis Sample: CR-04 (Anti-Static Copper Grid Vinyl)
+- Contract Condition: Non-BOQ Extra Item under FIDIC Clause 12.3 / CPWD Clause 12.
+- **Prime Cost breakdown per m²:**
+  - Specialized 2mm ESD Vinyl Roll: ₹1,850.00 / m²
+  - Conductive Adhesive & Grounding Copper Strips: ₹240.00 / m²
+  - Skilled Application Labor & Joint Hot Welding: ₹320.00 / m²
+  - Self-leveling Screed Preparation: ₹210.00 / m²
+  - **Sub-total Prime Cost:** ₹2,620.00 / m²
+- **Contractor Profit & Overheads (15% CP&OH):** ₹393.00 / m²
+- **Derived Extra Item Unit Rate:** **₹3,013.00 / m²** (Certified by PMC Quantity Surveyor).
+
+## 3. Net Financial & Schedule Impact on Project
+- **Approved Cost Variations to Date:** +₹643.50 Lakhs (drawn from ₹22.00 Cr Client Contingency).
+- **Net Critical Path Schedule Impact:** 0 Days (All variations absorbed within existing room float through re-sequenced procurement).`
+  },
+  {
+    week: 11,
+    title: "Integrated controls dashboard",
+    domain: "Integrated Reporting & Business Intelligence",
+    brief: "Design the Executive Project Controls Dashboard wireframe and data architecture synthesizing Schedule (P6), Cost (SAP/ERP), Procurement (SAP MM / PTM), Safety (HSE), Quality (QA/QC), and Manpower. Create the single-screen KPI overview for the C-Suite / Project Steering Committee showing Milestone Trend Chart, Banana S-curve status, CPI/SPI speedometer, Manpower planned vs actual histogram, and Critical Constraints.",
+    rubric: [
+      "Multi-domain integration (Schedule, Cost, Procurement, Quality, Safety, Manpower).",
+      "Single-pane-of-glass executive visual architecture with clear hierarchy.",
+      "Key threshold indicators (RAG status rules) defined for each KPI.",
+      "Data pipeline defined: source systems, data cutoff, transformation rules, and publication SLA."
+    ],
+    starter: `# INTEGRATED CONTROLS DASHBOARD & DATA ARCHITECTURE
+**Audience:** C-Suite, Board of Directors, Executive Steering Committee
+**Reporting Cadence:** Monthly (Cutoff: 25th, Published: 28th)
+
+## 1. Executive Dashboard Architecture (Single-Pane KPI Layout)
+\`\`\`
++-----------------------------------------------------------------------------------+
+|  APEX MEDICITY HOSPITAL (₹620 Cr) — EXECUTIVE CONTROLS OVERVIEW — MONTH 11         |
++--------------------------+----------------------------+---------------------------+
+| SCHEDULE HEALTH          | FINANCIAL HEALTH           | SAFETY & QUALITY          |
+| • SPI: 0.94 (🟡 Amber)   | • CPI: 0.96 (🟢 Green)     | • Safe Man-hours: 1.84 M  |
+| • Planned: 54.2%         | • Budget (BAC): ₹620.0 Cr  | • LTIFR: 0.00 (Zero LTI)  |
+| • Actual: 51.0%          | • Value Done (EV): ₹316.2Cr| • Open NCRs: 4 (Minor)    |
+| • Variance: -14 Days     | • Cost Incurred: ₹329.4Cr  | • Concrete Cubes Pass: 99%|
++--------------------------+----------------------------+---------------------------+
+| S-CURVE BANANA STATUS                                 | CRITICAL BOTTLENECK RADAR |
+| • Actual progress inside envelope (Lower 1/3)         | 1. Medical gas valve FAT  |
+| • Float buffer on IPD finishes: +12 calendar days     | 2. Substation 66kV tariff |
+| • Projected Completion: 18-Aug-2027 (+18 days slip)   | 3. OT ceiling coordination|
++-------------------------------------------------------+---------------------------+
+| MANPOWER HISTOGRAM: Planned 850 | Actual 790 (Gap: 60 skilled rebar fitters)      |
++-----------------------------------------------------------------------------------+
+\`\`\`
+
+## 2. Integrated Data Pipeline & Reconciliation Engine
+- **Primary Source Systems:**
+  - Schedule & Float: Oracle Primavera P6 EPPM (XER export).
+  - Financials & Commitments: SAP S/4HANA (FICO & MM modules).
+  - Procurement Milestones: Web-based PTM Tracker & Vendor Expediting Portal.
+  - Quality & Safety: Site BIM 360 Field / Procore QA/QC inspection registers.
+- **Automated Data Quality & Harmonization Rules:**
+  - Cross-check: No activity can claim >0% Physical Complete in P6 unless an approved JMB exists in SAP.
+  - VOWD must match cumulative verified contractor invoices + unbilled certified work in progress.`
+  },
+  {
+    week: 12,
+    title: "Monthly report + executive presentation",
+    domain: "Executive Reporting & Board Governance",
+    brief: "Compile the comprehensive Month 12 Monthly Project Status Report and Executive Board Deck for the Hospital Board of Trustees. Summarize cumulative project progress (Planned: 58%, Actual: 51.5%), financial status (Expenditure to date: ₹285 Cr against budget of ₹310 Cr), EVM metrics, Top 5 critical issues requiring Board intervention (AERB Linac clearance, 66kV substation tariff approval, specialized medical gas import customs clearance), 90-day look-ahead milestones, and photolog/progress analytics.",
+    rubric: [
+      "Executive summary format suitable for non-technical Board members.",
+      "Clear articulation of Board-level decision asks (approvals, statutory escalations).",
+      "Balanced presentation of achievements, risks, delays, and recovery interventions.",
+      "Professional tone reflecting Senior Project Controls Manager competence."
+    ],
+    starter: `# MONTHLY PROJECT STATUS REPORT & BOARD EXECUTIVE DECK — MONTH 12
+**Project:** Apex Medicity 500-Bed Tertiary Hospital
+**Reporting Period:** 01-Jun-2026 to 30-Jun-2026 (Month 12 of 24)
+**Presented To:** Chairman & Board of Trustees
+
+---
+
+## 1. Executive Summary & Health Check
+- **Overall Project Physical Progress:** Planned **58.0%** | Actual **51.5%** | Variance **-6.5%**
+- **Financial Status:** Approved Budget **₹620.0 Cr** | Certified to Date **₹285.4 Cr** | Forecast at Completion (EAC) **₹634.8 Cr** (+2.4% variance within approved contingency)
+- **EVM Health Indices:** CPI = **0.95** | SPI = **0.89**
+- **Safety Record:** **2.10 Million safe man-hours** worked with zero Lost Time Injuries (LTI).
+
+## 2. Major Milestones Achieved in Month 12
+1. IPD Block 7th Floor Superstructure topped out ahead of monsoon rains.
+2. Central Energy Plant 3 Nos 1,200 TR centrifugal chillers rigged and placed on spring inertia foundations.
+3. Diagnostic Block Linac bunker high-density concrete pour (1,450 m³) successfully completed without cold joints.
+4. 100% of underground drainage and effluent treatment plant civil tanks tested and backfilled.
+
+## 3. Top 3 Matters Requiring Immediate Board Intervention
+1. **AERB License Approval for Radiation Oncology:** Formal representation required from the Medical Director to the AERB Secretariat to expedite the pending site layout certificate.
+2. **Dedicated 66kV Power Tariff Clearance:** Commercial deposit of ₹4.8 Cr pending State Electricity Board sanction.
+3. **Medical Gas Import Duty Exemption Certificate (Customs):** Requires signature from Principal Health Secretary to clear German gas manifolds through port without customs penalty.
+
+## 4. 90-Day Look-Ahead Focus (Months 13–15)
+- Close building envelope: complete external unitized glass façade on south and west elevations.
+- Commence cleanroom wall panel installation in 8 Operation Theatres.
+- Energize internal 11kV/415V dry-type transformers and run chiller low-load circulation tests.
+- Execute vendor trial assembly for 3T MRI magnetic shielding cage.`
+  }
+];
+
+function openDeliverableStudio(wk){
+  const spec = DELIVERABLE_SPECS.find(s => s.week === wk) || DELIVERABLE_SPECS[0];
+  const old = $("deliverable-modal");
+  if(old) old.remove();
+
+  const currentDlv = state.deliverables?.[wk] || {};
+  const currentDraft = currentDlv.draft || spec.starter;
+  const status = currentDlv.status || "not_started";
+
+  const m = document.createElement("div");
+  m.id = "deliverable-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:820px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(0,0,0,.35);overflow:hidden;box-sizing:border-box">
+    <!-- Header -->
+    <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:700;font-size:1.05rem;color:var(--bar,#2F5BD3)">W${wk} Deliverable: ${esc(spec.title)}</span>
+          <span class="status-badge" style="font-size:.72rem;padding:2px 8px;border-radius:10px;font-weight:700;text-transform:uppercase;background:${status==='accepted'?'var(--okSoft,#e6f4ea)':status==='in_progress'?'var(--barSoft,#E8EEFA)':'var(--line)'};color:${status==='accepted'?'var(--ok,#1F8A4C)':status==='in_progress'?'var(--bar,#2F5BD3)':'var(--muted)'}">${status.replace("_"," ")}</span>
+        </div>
+        <small style="color:var(--muted)">${esc(spec.domain)} · 500-Bed Tertiary Hospital Case</small>
+      </div>
+      <button id="dlv-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
+    </div>
+
+    <!-- Body (Scrollable) -->
+    <div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.88rem;line-height:1.5">
+      <!-- Scenario Brief -->
+      <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:14px">
+        <b style="color:var(--bar,#2F5BD3);display:block;margin-bottom:4px">📋 Executive Scenario Brief &amp; Context:</b>
+        <p style="margin:0 0 8px;font-size:.85rem">${esc(spec.brief)}</p>
+        <b style="color:var(--ink,#111);font-size:.82rem;display:block;margin-bottom:4px">Director's Grading Rubric:</b>
+        <ul style="margin:0;padding-left:18px;font-size:.82rem;color:var(--muted)">
+          ${spec.rubric.map(r => `<li>${esc(r)}</li>`).join("")}
+        </ul>
+      </div>
+
+      <!-- Editor Section -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <b style="font-size:.88rem">✍️ Your Deliverable Submission &amp; Draft:</b>
+        <div style="display:flex;gap:6px">
+          <button id="dlv-reset-starter" class="btn" style="font-size:.74rem;padding:3px 8px">↺ Reset Template</button>
+          <button id="dlv-copy-draft" class="btn" style="font-size:.74rem;padding:3px 8px">📋 Copy</button>
+        </div>
+      </div>
+      <textarea id="dlv-text" style="width:100%;height:320px;font-family:monospace;font-size:.84rem;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--surface,#fff);color:inherit;box-sizing:border-box;resize:vertical;line-height:1.45">${esc(currentDraft)}</textarea>
+    </div>
+
+    <!-- Footer Actions -->
+    <div style="padding:12px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <span id="dlv-status-msg" style="font-size:.8rem;color:var(--muted)"></span>
+      <div style="display:flex;gap:8px">
+        <button id="dlv-save" class="btn" style="padding:8px 14px;font-weight:600">💾 Save Draft</button>
+        <button id="dlv-submit" class="btn" style="padding:8px 16px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">🚀 Submit to Director for Review</button>
+      </div>
+    </div>
+  </div>`;
+
+  document.body.appendChild(m);
+
+  const ta = m.querySelector("#dlv-text");
+  const msgSpan = m.querySelector("#dlv-status-msg");
+
+  m.querySelector("#dlv-close").onclick = () => m.remove();
+  m.onclick = e => { if(e.target === m) m.remove(); };
+
+  m.querySelector("#dlv-reset-starter").onclick = () => {
+    if(confirm("Reset this submission back to the clean starter template? Your unsaved text will be replaced.")) {
+      ta.value = spec.starter;
+    }
+  };
+
+  m.querySelector("#dlv-copy-draft").onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(ta.value);
+      msgSpan.textContent = "Copied to clipboard!";
+      setTimeout(() => { msgSpan.textContent = ""; }, 3000);
+    } catch(e) {
+      ta.select();
+      document.execCommand("copy");
+      msgSpan.textContent = "Copied!";
+      setTimeout(() => { msgSpan.textContent = ""; }, 3000);
+    }
+  };
+
+  m.querySelector("#dlv-save").onclick = async () => {
+    state.deliverables[wk] = {
+      ...(state.deliverables[wk] || {}),
+      draft: ta.value,
+      status: state.deliverables[wk]?.status || "in_progress",
+      day: state.day
+    };
+    await save();
+    renderProg();
+    msgSpan.textContent = "Draft saved successfully!";
+    setTimeout(() => { msgSpan.textContent = ""; }, 3000);
+  };
+
+  m.querySelector("#dlv-submit").onclick = async () => {
+    const text = ta.value.trim();
+    if(!text){
+      alert("Please enter your deliverable content before submitting.");
+      return;
+    }
+    state.deliverables[wk] = {
+      ...(state.deliverables[wk] || {}),
+      draft: text,
+      status: "in_progress",
+      day: state.day
+    };
+    await save();
+    m.remove();
+
+    // Package deliverable message for the Director
+    const promptMsg = `[DELIVERABLE W${wk}] ${spec.title}\n\n${text}`;
+    tab("chat");
+    $("box").value = promptMsg;
+    send();
+  };
+}
+
+function openSCurveSandbox(){
+  const old = $("scurve-modal");
+  if(old) old.remove();
+
+  const m = document.createElement("div");
+  m.id = "scurve-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:840px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(0,0,0,.35);overflow:hidden;box-sizing:border-box">
+    <!-- Header -->
+    <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
+      <div>
+        <b style="font-size:1.05rem;color:var(--bar,#2F5BD3)">📈 S-Curve Banana Envelope Simulator</b>
+        <div style="font-size:.78rem;color:var(--muted)">Early Start vs Late Start Float Envelope &amp; Critical Slippage Detector</div>
+      </div>
+      <button id="sc-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
+    </div>
+
+    <!-- Body -->
+    <div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">
+      <!-- Controls Panel -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;background:var(--bg,#f8f9fa);padding:12px 14px;border-radius:8px;border:1px solid var(--line);margin-bottom:14px">
+        <div>
+          <label style="display:block;font-weight:600;font-size:.8rem;margin-bottom:4px">Project Duration: <b id="sc-val-dur">24</b> Mo</label>
+          <input type="range" id="sc-dur" min="12" max="36" step="6" value="24" style="width:100%">
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:.8rem;margin-bottom:4px">Float Spread: <b id="sc-val-spread">20</b>%</label>
+          <input type="range" id="sc-spread" min="10" max="35" step="5" value="20" style="width:100%">
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:.8rem;margin-bottom:4px">Data Date (Month): <b id="sc-val-mo">10</b></label>
+          <input type="range" id="sc-mo" min="1" max="24" step="1" value="10" style="width:100%">
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:.8rem;margin-bottom:4px">Actual Progress: <b id="sc-val-act">38</b>%</label>
+          <input type="range" id="sc-act" min="0" max="100" step="1" value="38" style="width:100%">
+        </div>
+      </div>
+
+      <!-- Quick Preset Buttons -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <button class="btn sc-preset" data-d="24" data-sp="20" data-m="6" data-a="19" style="font-size:.76rem;padding:4px 8px">Preset 1: Healthy Foundation (M6)</button>
+        <button class="btn sc-preset" data-d="24" data-sp="20" data-m="10" data-a="32" style="font-size:.76rem;padding:4px 8px">Preset 2: Float Erosion Warning (M10)</button>
+        <button class="btn sc-preset" data-d="24" data-sp="20" data-m="14" data-a="38" style="font-size:.76rem;padding:4px 8px;border-color:var(--crit)">Preset 3: Late Breach Slip (M14)</button>
+        <button class="btn sc-preset" data-d="24" data-sp="20" data-m="20" data-a="86" style="font-size:.76rem;padding:4px 8px">Preset 4: High Acceleration (M20)</button>
+      </div>
+
+      <!-- SVG Banana Envelope Canvas -->
+      <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:14px">
+        <svg id="sc-svg" viewBox="0 0 600 320" style="width:100%;height:auto;display:block"></svg>
+      </div>
+
+      <!-- Metrics & Diagnostics Dashboard -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px">
+        <div style="background:var(--bg,#f8f9fa);padding:10px 12px;border-radius:8px;border:1px solid var(--line)">
+          <div style="font-size:.76rem;color:var(--muted);text-transform:uppercase;font-weight:700">Envelope Status</div>
+          <div id="sc-status-pill" style="font-size:1.05rem;font-weight:800;margin:4px 0">Calculating...</div>
+          <div id="sc-status-sub" style="font-size:.8rem;color:var(--muted)">Checking float boundary...</div>
+        </div>
+        <div style="background:var(--bg,#f8f9fa);padding:10px 12px;border-radius:8px;border:1px solid var(--line);line-height:1.6">
+          <div style="display:flex;justify-content:space-between"><span>Early Planned (PV_early):</span> <b id="sc-pv-early" style="color:var(--ok)">--</b></div>
+          <div style="display:flex;justify-content:space-between"><span>Late Planned (PV_late):</span> <b id="sc-pv-late" style="color:var(--warn,#d97706)">--</b></div>
+          <div style="display:flex;justify-content:space-between"><span>Actual Earned (EV):</span> <b id="sc-ev-act" style="color:var(--bar)">--</b></div>
+        </div>
+        <div style="background:var(--bg,#f8f9fa);padding:10px 12px;border-radius:8px;border:1px solid var(--line);line-height:1.6">
+          <div style="display:flex;justify-content:space-between"><span>SPI (vs Early):</span> <b id="sc-spi-early">--</b></div>
+          <div style="display:flex;justify-content:space-between"><span>SPI (vs Late):</span> <b id="sc-spi-late">--</b></div>
+          <div style="display:flex;justify-content:space-between"><span>Forecast Slippage:</span> <b id="sc-slip-months" style="color:var(--crit)">--</b></div>
+        </div>
+      </div>
+
+      <!-- Field Controls Advice -->
+      <div id="sc-advice-box" style="padding:10px 14px;border-radius:8px;font-size:.84rem;line-height:1.45;background:var(--barSoft,#E8EEFA);color:var(--ink,#111);border:1px solid var(--barSoft)">
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:10px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:flex-end">
+      <button id="sc-done" class="btn" style="padding:8px 18px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">Done</button>
+    </div>
+  </div>`;
+
+  document.body.appendChild(m);
+
+  const durEl = m.querySelector("#sc-dur");
+  const spreadEl = m.querySelector("#sc-spread");
+  const moEl = m.querySelector("#sc-mo");
+  const actEl = m.querySelector("#sc-act");
+
+  m.querySelector("#sc-close").onclick = () => m.remove();
+  m.querySelector("#sc-done").onclick = () => m.remove();
+  m.onclick = e => { if(e.target === m) m.remove(); };
+
+  m.querySelectorAll(".sc-preset").forEach(btn => {
+    btn.onclick = () => {
+      durEl.value = btn.dataset.d;
+      spreadEl.value = btn.dataset.sp;
+      moEl.max = btn.dataset.d;
+      moEl.value = btn.dataset.m;
+      actEl.value = btn.dataset.a;
+      updateSimulation();
+    };
+  });
+
+  [durEl, spreadEl, moEl, actEl].forEach(input => {
+    input.oninput = () => {
+      if(input === durEl) moEl.max = durEl.value;
+      updateSimulation();
+    };
+  });
+
+  // Mathematical S-Curve Generator: Sigmoid / S-curve
+  function sVal(tNorm, shift){
+    const k = 5.2;
+    const mid = 0.5 + shift * 0.22;
+    const raw = 1 / (1 + Math.exp(-k * (tNorm - mid)));
+    const r0 = 1 / (1 + Math.exp(-k * (0 - mid)));
+    const r1 = 1 / (1 + Math.exp(-k * (1 - mid)));
+    return Math.max(0, Math.min(100, ((raw - r0) / (r1 - r0)) * 100));
+  }
+
+  function updateSimulation(){
+    const T = parseInt(durEl.value, 10);
+    const spreadPct = parseInt(spreadEl.value, 10) / 100;
+    const curM = Math.min(T, parseInt(moEl.value, 10));
+    const actPct = parseInt(actEl.value, 10);
+
+    m.querySelector("#sc-val-dur").textContent = T;
+    m.querySelector("#sc-val-spread").textContent = Math.round(spreadPct * 100);
+    m.querySelector("#sc-val-mo").textContent = curM;
+    m.querySelector("#sc-val-act").textContent = actPct;
+
+    const W = 600, H = 320;
+    const padL = 45, padR = 25, padT = 25, padB = 40;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    const earlyPts = [];
+    const latePts = [];
+    const steps = 40;
+
+    for(let i = 0; i <= steps; i++){
+      const tNorm = i / steps;
+      const month = tNorm * T;
+      const x = padL + tNorm * plotW;
+      const pctEarly = sVal(tNorm, -spreadPct);
+      const pctLate = sVal(tNorm, spreadPct);
+      const yEarly = padT + plotH - (pctEarly / 100) * plotH;
+      const yLate = padT + plotH - (pctLate / 100) * plotH;
+      earlyPts.push({ x, y: yEarly, pct: pctEarly, month });
+      latePts.push({ x, y: yLate, pct: pctLate, month });
+    }
+
+    const curNorm = curM / T;
+    const pvEarly = sVal(curNorm, -spreadPct);
+    const pvLate = sVal(curNorm, spreadPct);
+    const curX = padL + curNorm * plotW;
+    const actY = padT + plotH - (actPct / 100) * plotH;
+
+    const actCurvePts = [];
+    const actSteps = Math.max(2, Math.round(curNorm * steps));
+    for(let i = 0; i <= actSteps; i++){
+      const fr = i / actSteps;
+      const x = padL + (fr * curNorm) * plotW;
+      const baselineAtFr = sVal(fr * curNorm, 0);
+      const scaledAct = (baselineAtFr / (sVal(curNorm, 0) || 1)) * actPct;
+      const y = padT + plotH - (scaledAct / 100) * plotH;
+      actCurvePts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+    }
+
+    const bananaPolygon = earlyPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ") + " " +
+      latePts.slice().reverse().map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+
+    const earlyPolyline = earlyPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+    const latePolyline = latePts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+
+    let grid = "";
+    for(let pct = 0; pct <= 100; pct += 25){
+      const y = padT + plotH - (pct / 100) * plotH;
+      grid += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--line,#ddd)" stroke-dasharray="3,3" opacity="0.6"/>
+               <text x="${padL - 8}" y="${y + 4}" font-size="11" text-anchor="end" fill="var(--muted)">${pct}%</text>`;
+    }
+    for(let mIdx = 0; mIdx <= T; mIdx += (T <= 18 ? 3 : 6)){
+      const x = padL + (mIdx / T) * plotW;
+      grid += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT + plotH}" stroke="var(--line,#ddd)" stroke-dasharray="3,3" opacity="0.4"/>
+               <text x="${x}" y="${padT + plotH + 16}" font-size="11" text-anchor="middle" fill="var(--muted)">M${mIdx}</text>`;
+    }
+
+    let statusText = "", statusColor = "", adviceHtml = "";
+    const spiEarly = (actPct / (pvEarly || 1)).toFixed(2);
+    const spiLate = (actPct / (pvLate || 1)).toFixed(2);
+    const midEnvelope = (pvEarly + pvLate) / 2;
+
+    let slipMo = 0;
+    if(actPct < pvLate){
+      slipMo = ((pvLate - actPct) / (pvEarly - pvLate + 0.1) * (T * 0.15) + 1.2).toFixed(1);
+    }
+
+    if(actPct >= pvEarly - 1){
+      statusText = "🟢 AHEAD / MAXIMUM FLOAT PRESERVED";
+      statusColor = "var(--ok,#1F8A4C)";
+      adviceHtml = `<b>Executive Health:</b> Actual progress (<b>${actPct}%</b>) is tracking above or directly on the Early Start curve (<b>${pvEarly.toFixed(1)}%</b>). All project activities have maximum total float buffer intact. Near-critical paths have zero erosion risk. Recommend banking schedule float ahead of monsoon and long-lead MEP commissioning windows.`;
+    } else if(actPct >= midEnvelope){
+      statusText = "🟢 HEALTHY ENVELOPE (Upper Half)";
+      statusColor = "var(--ok,#1F8A4C)";
+      adviceHtml = `<b>Executive Health:</b> Actual progress is within the upper half of the Total Float envelope (Early: <b>${pvEarly.toFixed(1)}%</b>, Late: <b>${pvLate.toFixed(1)}%</b>). Minor non-critical float consumption observed on architectural packages, but the project completion milestone remains 100% on schedule.`;
+    } else if(actPct >= pvLate){
+      statusText = "🟡 WARNING: FLOAT EROSION (Lower Half)";
+      statusColor = "var(--warn,#d97706)";
+      adviceHtml = `<b>Float Erosion Alert:</b> Actual progress (<b>${actPct}%</b>) has fallen into the lower envelope, near the Late Start boundary (<b>${pvLate.toFixed(1)}%</b>). Activities on secondary paths (MEP first fix, ducting) are actively burning float. If progress slips further by <b>${(actPct - pvLate).toFixed(1)}%</b>, total float will reach zero and convert secondary paths into parallel critical paths.`;
+    } else {
+      statusText = "🔴 CRITICAL BREACH: COMPLETION DELAYED";
+      statusColor = "var(--crit,#D9383A)";
+      adviceHtml = `<b>Milestone Breach:</b> Actual progress (<b>${actPct}%</b>) has dropped below the Late Start S-curve (<b>${pvLate.toFixed(1)}%</b>)! <b>Total Float is NEGATIVE.</b> By mathematical CPM definition, the completion milestone has slipped by an estimated <b>+${slipMo} months</b>. Issue contractual delay notices under Clause 8.4/20.1 immediately, audit site bottlenecks, and issue a mandatory crashing recovery schedule.`;
+    }
+
+    const svgHtml = `
+      ${grid}
+      <polygon points="${bananaPolygon}" fill="var(--barSoft,#E8EEFA)" opacity="0.6"/>
+      <polyline points="${earlyPolyline}" fill="none" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
+      <polyline points="${latePolyline}" fill="none" stroke="var(--warn,#d97706)" stroke-width="2.5" stroke-dasharray="4,2"/>
+      <polyline points="${actCurvePts.join(" ")}" fill="none" stroke="var(--bar,#2F5BD3)" stroke-width="3.5"/>
+      <line x1="${curX}" y1="${padT}" x2="${curX}" y2="${padT + plotH}" stroke="var(--crit,#D9383A)" stroke-width="1.8" stroke-dasharray="4,4"/>
+      <text x="${curX}" y="${padT - 8}" font-size="11" font-weight="700" text-anchor="middle" fill="var(--crit,#D9383A)">Data Date (M${curM})</text>
+      <circle cx="${curX}" cy="${actY}" r="6" fill="${statusColor}" stroke="#fff" stroke-width="2"/>
+      <g transform="translate(${padL + 10}, ${padT + 15})">
+        <rect x="0" y="0" width="12" height="12" fill="var(--barSoft,#E8EEFA)" stroke="var(--line)"/>
+        <text x="18" y="10" font-size="11" fill="var(--ink,#111)">Total Float Envelope</text>
+        <line x1="140" y1="6" x2="160" y2="6" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
+        <text x="166" y="10" font-size="11" fill="var(--ink,#111)">Early Curve (ES)</text>
+        <line x1="270" y1="6" x2="290" y2="6" stroke="var(--warn,#d97706)" stroke-width="2.5" stroke-dasharray="4,2"/>
+        <text x="296" y="10" font-size="11" fill="var(--ink,#111)">Late Curve (LS)</text>
+        <line x1="390" y1="6" x2="410" y2="6" stroke="var(--bar,#2F5BD3)" stroke-width="3.5"/>
+        <text x="416" y="10" font-size="11" fill="var(--ink,#111)">Actual (EV)</text>
+      </g>
+    `;
+
+    m.querySelector("#sc-svg").innerHTML = svgHtml;
+    m.querySelector("#sc-status-pill").textContent = statusText;
+    m.querySelector("#sc-status-pill").style.color = statusColor;
+    m.querySelector("#sc-status-sub").textContent = actPct < pvLate ? `Breached Late boundary by ${(pvLate - actPct).toFixed(1)}%` : `Within envelope boundary`;
+    m.querySelector("#sc-pv-early").textContent = `${pvEarly.toFixed(1)}%`;
+    m.querySelector("#sc-pv-late").textContent = `${pvLate.toFixed(1)}%`;
+    m.querySelector("#sc-ev-act").textContent = `${actPct}%`;
+    m.querySelector("#sc-spi-early").textContent = spiEarly;
+    m.querySelector("#sc-spi-late").textContent = spiLate;
+    m.querySelector("#sc-slip-months").textContent = slipMo > 0 ? `+${slipMo} Mo Delay` : "0.0 Mo (On Target)";
+    m.querySelector("#sc-advice-box").innerHTML = adviceHtml;
+  }
+
+  updateSimulation();
+}
+
+function openLPSBoard(){
+  const old = $("lps-modal");
+  if(old) old.remove();
+
+  const m = document.createElement("div");
+  m.id = "lps-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  const PACKAGES = [
+    { id: 1, week: 1, name: "OT Block L3: AHU Ducting & HEPA Plenums", trade: "HVAC / Cleanroom", sub: "Sterling MEP", gates: [true, true, true, false, true] },
+    { id: 2, week: 1, name: "ICU Floor 2: MGPS Copper Brazing", trade: "Medical Gas", sub: "Beacon Medaes", gates: [true, true, false, true, true] },
+    { id: 3, week: 2, name: "Radiology: Lead-Lined Drywall & Shielding", trade: "Specialist Drywall", sub: "Knauf Gypsum", gates: [false, true, true, true, false] },
+    { id: 4, week: 2, name: "Emergency: Bedhead Trunking & Power", trade: "Electrical", sub: "L&T Electrical", gates: [true, false, true, true, true] },
+    { id: 5, week: 3, name: "CSSD: Heavy Autoclave Foundations", trade: "Civil / Equipment", sub: "Main Contractor", gates: [true, true, true, true, true] },
+    { id: 6, week: 3, name: "Energy Plant: Chiller Hydrostatic Testing", trade: "Piping", sub: "Voltas MEP", gates: [true, true, true, true, false] }
+  ];
+
+  const GATE_NAMES = [
+    { key: "dwg", name: "1. GFC Drawings & BIM Coordination" },
+    { key: "mat", name: "2. Materials & Test Certificates" },
+    { key: "man", name: "3. Manpower & Equipment Gangs" },
+    { key: "work", name: "4. Workface Access & PTW Permit" },
+    { key: "pred", name: "5. Predecessor Trade Signoff" }
+  ];
+
+  m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:860px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(0,0,0,.35);overflow:hidden;box-sizing:border-box">
+    <!-- Header -->
+    <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
+      <div>
+        <b style="font-size:1.05rem;color:var(--bar,#2F5BD3)">📋 3-Week Look-Ahead Constraint Board</b>
+        <div style="font-size:.78rem;color:var(--muted)">Last Planner® System (LPS) · 5-Gate Constraint Removal &amp; PPC Engine</div>
+      </div>
+      <button id="lps-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
+    </div>
+
+    <!-- Body -->
+    <div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">
+      <div style="background:var(--bg,#f8f9fa);padding:10px 14px;border-radius:8px;border:1px solid var(--line);margin-bottom:14px;line-height:1.45;font-size:.82rem">
+        <b style="color:var(--bar,#2F5BD3)">Rule of Lean Hospital Production:</b> Never commit an activity to the Weekly Work Plan (WWP) with open constraints. An activity is only <b>Sound</b> when all <b>5 Gates</b> (GFC Drawings, Materials, Manpower, Workface/PTW, Predecessors) are cleared.
+      </div>
+
+      <!-- KPI Scoreboard -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px">
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.74rem;color:var(--muted);text-transform:uppercase;font-weight:700">Sound Packages</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--ok,#1F8A4C);margin-top:2px"><span id="lps-sound-cnt">0</span> / 6</div>
+        </div>
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.74rem;color:var(--muted);text-transform:uppercase;font-weight:700">PPC Commitment Potential</div>
+          <div style="font-size:1.3rem;font-weight:800;margin-top:2px" id="lps-ppc-pct">0%</div>
+          <div style="font-size:.72rem;color:var(--muted)">Target: &gt;= 80% for site stability</div>
+        </div>
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.74rem;color:var(--muted);text-transform:uppercase;font-weight:700">Primary Site Bottleneck</div>
+          <div style="font-size:.9rem;font-weight:700;color:var(--crit,#D9383A);margin-top:4px" id="lps-top-constraint">None</div>
+        </div>
+      </div>
+
+      <!-- Quick Preset Controls -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <button class="btn lps-preset" data-p="default" style="font-size:.76rem;padding:4px 8px">Standard Baseline Status</button>
+        <button class="btn lps-preset" data-p="bim" style="font-size:.76rem;padding:4px 8px">Simulate BIM Drawing Delay</button>
+        <button class="btn lps-preset" data-p="stockout" style="font-size:.76rem;padding:4px 8px">Simulate Imported Material Stockout</button>
+        <button class="btn lps-preset" data-p="clear" style="font-size:.76rem;padding:4px 8px;border-color:var(--ok)">Simulate 100% Cleared Week</button>
+      </div>
+
+      <!-- Packages Board -->
+      <div id="lps-packages-list" style="display:flex;flex-direction:column;gap:10px">
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:10px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:flex-end">
+      <button id="lps-done" class="btn" style="padding:8px 18px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">Done</button>
+    </div>
+  </div>`;
+
+  document.body.appendChild(m);
+
+  let statePackages = JSON.parse(JSON.stringify(PACKAGES));
+
+  m.querySelector("#lps-close").onclick = () => m.remove();
+  m.querySelector("#lps-done").onclick = () => m.remove();
+  m.onclick = e => { if(e.target === m) m.remove(); };
+
+  m.querySelectorAll(".lps-preset").forEach(btn => {
+    btn.onclick = () => {
+      const mode = btn.dataset.p;
+      if(mode === "clear"){
+        statePackages.forEach(p => p.gates = [true, true, true, true, true]);
+      } else if(mode === "bim"){
+        statePackages.forEach((p, idx) => { p.gates[0] = idx % 2 === 0; });
+      } else if(mode === "stockout"){
+        statePackages.forEach((p, idx) => { p.gates[1] = idx > 2; });
+      } else {
+        statePackages = JSON.parse(JSON.stringify(PACKAGES));
+      }
+      renderBoard();
+    };
+  });
+
+  function renderBoard(){
+    const listEl = m.querySelector("#lps-packages-list");
+    let html = "";
+    let soundCount = 0;
+    const gateBlockCounts = [0, 0, 0, 0, 0];
+
+    statePackages.forEach((pkg, pIdx) => {
+      const cleared = pkg.gates.filter(Boolean).length;
+      const isSound = cleared === 5;
+      if(isSound) soundCount++;
+      pkg.gates.forEach((g, gIdx) => { if(!g) gateBlockCounts[gIdx]++; });
+
+      html += `<div style="background:var(--surface,#fff);border:1px solid ${isSound ? 'var(--ok,#1F8A4C)' : 'var(--line)'};border-radius:8px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-weight:700;font-size:.88rem;color:var(--bar,#2F5BD3)">Week ${pkg.week} · ${esc(pkg.name)}</span>
+            </div>
+            <div style="font-size:.76rem;color:var(--muted)">Trade: ${esc(pkg.trade)} · Subcontractor: ${esc(pkg.sub)}</div>
+          </div>
+          <span style="font-size:.74rem;font-weight:700;padding:2px 8px;border-radius:10px;background:${isSound?'var(--okSoft,#e6f4ea)':'var(--critSoft,#fce8e6)'};color:${isSound?'var(--ok,#1F8A4C)':'var(--crit,#D9383A)'}">
+            ${isSound ? '🟢 SOUND & READY' : '🔴 BLOCKED (' + cleared + '/5)'}
+          </span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:6px">
+          ${GATE_NAMES.map((gt, gIdx) => {
+            const ok = pkg.gates[gIdx];
+            return `<button type="button" class="btn lps-gate-btn" data-pkg="${pIdx}" data-gate="${gIdx}" style="padding:6px 8px;font-size:.74rem;text-align:left;display:flex;align-items:center;gap:6px;background:${ok?'var(--okSoft,#e6f4ea)':'var(--bg,#f8f9fa)'};border:1px solid ${ok?'var(--ok,#1F8A4C)':'var(--line)'};color:${ok?'var(--ok,#1F8A4C)':'var(--ink,#111)'}">
+              <span style="font-weight:800;font-size:12px">${ok ? '✓' : '✗'}</span>
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${gt.name.slice(3)}</span>
+            </button>`;
+          }).join("")}
+        </div>
+      </div>`;
+    });
+
+    listEl.innerHTML = html;
+
+    listEl.querySelectorAll(".lps-gate-btn").forEach(btn => {
+      btn.onclick = () => {
+        const pI = +btn.dataset.pkg;
+        const gI = +btn.dataset.gate;
+        statePackages[pI].gates[gI] = !statePackages[pI].gates[gI];
+        renderBoard();
+      };
+    });
+
+    m.querySelector("#lps-sound-cnt").textContent = soundCount;
+    const ppcPct = Math.round((soundCount / statePackages.length) * 100);
+    const ppcEl = m.querySelector("#lps-ppc-pct");
+    ppcEl.textContent = ppcPct + "%";
+    ppcEl.style.color = ppcPct >= 80 ? 'var(--ok,#1F8A4C)' : ppcPct >= 50 ? 'var(--warn,#d97706)' : 'var(--crit,#D9383A)';
+
+    let maxBlock = -1, maxGateIdx = 0;
+    gateBlockCounts.forEach((c, idx) => {
+      if(c > maxBlock){ maxBlock = c; maxGateIdx = idx; }
+    });
+    const topConstraintEl = m.querySelector("#lps-top-constraint");
+    if(maxBlock === 0){
+      topConstraintEl.textContent = "None (All Gates Cleared)";
+      topConstraintEl.style.color = "var(--ok,#1F8A4C)";
+    } else {
+      topConstraintEl.textContent = GATE_NAMES[maxGateIdx].name.slice(3) + " (" + maxBlock + " pkgs)";
+      topConstraintEl.style.color = "var(--crit,#D9383A)";
+    }
+  }
+
+  renderBoard();
+}
+
 // ---------- progress ----------
 function renderProg(){
   const r=readiness(), gap=calibration();
@@ -1137,8 +2243,8 @@ function renderProg(){
   const pats=Object.entries(state.patterns||{}).sort((a,b)=>b[1].count-a[1].count);
   if(pats.length){ h+=`<h2 class="sec">Your error patterns</h2>`+pats.map(([,x])=>`<div class="pat"><b>${esc(x.name)}</b> <small>seen ${x.count}×${x.last!=null?` · last on ${x.last>0?"Day "+x.last:"diagnostic"}`:""}</small><br>${esc(x.fix)}</div>`).join(""); }
   const DLV=["Project Controls Framework (hospital)","Planning basis + schedule logic (hospital block)","P6: build & update a sample schedule","Baseline vs current analysis","Cost-control model","EVM analysis","Procurement control dashboard","Cash-flow forecast + risk register","Delay analysis + recovery programme","Change register","Integrated controls dashboard","Monthly report + executive presentation"];
-  h+=`<h2 class="sec">Weekly deliverables</h2><div>`+DLV.map((n,i)=>{ const d=state.deliverables?.[i+1]; const s=d?.status||"not_started";
-    return `<div class="dl"><b>W${i+1}</b><span>${esc(n)}${d?.note?`<br><small style="color:var(--muted)">${esc(d.note)}</small>`:""}</span><em class="${s}">${s.replace("_"," ")}</em></div>`; }).join("")+`</div>`;
+  h+=`<h2 class="sec">Weekly deliverables</h2><p class="lead">Tap any deliverable to open its hospital case brief, fillable markdown template, and submit to the Director for review.</p><div>`+DLV.map((n,i)=>{ const d=state.deliverables?.[i+1]; const s=d?.status||"not_started";
+    return `<div class="dl" data-dlv="${i+1}" style="cursor:pointer;padding:10px 12px;margin-bottom:6px;border-radius:8px;border:1px solid var(--line);background:var(--surface);display:flex;justify-content:space-between;align-items:center;gap:8px"><div><b>W${i+1}</b> · <span style="font-weight:600">${esc(n)}</span><br><small style="color:var(--bar);font-weight:600">Open brief, template &amp; submit →</small>${d?.note?`<br><small style="color:var(--muted)">${esc(d.note)}</small>`:""}</div><em class="${s}">${s.replace("_"," ")}</em></div>`; }).join("")+`</div>`;
   if((state.weekly||[]).length){ h+=`<h2 class="sec">Weekly report cards</h2>`+state.weekly.slice().reverse().map(w=>`<details class="card"><summary><b>Week ${w.week}</b><small>closed Day ${w.day}</small></summary><div class="in md">${md(w.text)}</div></details>`).join(""); }
   const days=[...new Set(chat.map(m=>m.day).filter(d=>d!=null))].sort((a,b)=>a-b);
   if(days.length){ h+=`<h2 class="sec">Session history</h2><div class="filter">`+days.map(d=>`<button data-day="${d}">${d>0?"Day "+d:"Diagnostic"}</button>`).join("")+`</div><div id="dayview"></div>`; }
@@ -1161,6 +2267,7 @@ function renderProg(){
   h+=`<h2 class="sec">Parking lot</h2>`+(state.parking.length?state.parking.map(p=>`<div class="rt"><div>${esc(p)}</div></div>`).join(""):`<div class="empty">Empty.</div>`);
   h+=`<h2 class="sec">Backup</h2><div class="btnrow" style="margin-top:0"><button class="btn" id="exp">Download backup</button><button class="btn" id="pack">Handoff pack for another app</button><label class="btn" style="cursor:pointer">Restore backup<input id="restore" type="file" accept=".json,application/json" style="display:none"></label><button class="btn danger" id="rst">Reset programme</button></div>`;
   $("progwrap").innerHTML=h;
+  $("progwrap").querySelectorAll("[data-dlv]").forEach(b=>b.onclick=()=>openDeliverableStudio(+b.dataset.dlv));
   $("progwrap").querySelectorAll("[data-rt]").forEach(b=>b.onclick=()=>prefill(`[RETEST] Cold retest me on: ${state.bank[b.dataset.rt]?.title||b.dataset.rt}. New scenario, no hints.`));
   $("progwrap").querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{
     $("progwrap").querySelectorAll("[data-day]").forEach(x=>x.setAttribute("aria-pressed",x===b));
@@ -1283,6 +2390,8 @@ function migrate(s){
   const wasV2=s&&s.v>=2;
   const m={...fresh(),...s};
   if(!m.bank||typeof m.bank!=="object") m.bank={};
+  if(!m.sr||typeof m.sr!=="object") m.sr={};
+  seedInitialDeck(m.bank, m.sr);
   if((!m.patterns||!Object.keys(m.patterns).length) && (s.v||0)<3){ if(m.day>=1) m.patterns={
     "milestone-semantics":{name:"Milestone semantics",fix:"Before any date, say what it is the date OF: delivery, start, finish, handover.",count:3,last:3},
     "mechanism-omission":{name:"Mechanism omission (drops the why)",fix:"Every answer gets a 'because' clause. Two-part question = two answers.",count:4,last:3},
@@ -1734,6 +2843,17 @@ function renderPractice(){
       <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted)"><span>Earlier</span><span>Latest: ${recent[recent.length-1].score}%</span></div>
     </div>`;
   }
+  h += `<div class="card" style="padding:12px 14px;margin-bottom:14px;border:1px solid var(--barSoft,#E8EEFA);background:var(--bg,#f8f9fa)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <b style="font-size:.95rem;color:var(--bar,#2F5BD3)">📈 Interactive Visual Sandboxes</b>
+      <span style="font-size:.76rem;background:var(--barSoft);color:var(--bar);padding:2px 8px;border-radius:10px;font-weight:700">Executive Models</span>
+    </div>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px">Hands-on visual models for executive schedule control: analyze S-curve banana envelope slippage and clear 3-week look-ahead constraint gates.</p>
+    <div class="btnrow" style="margin:0;gap:8px">
+      <button class="btn" id="btn-open-scurve-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--line)">📈 S-Curve Banana Simulator</button>
+      <button class="btn" id="btn-open-lps-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--line)">📋 3-Wk Look-Ahead Board</button>
+    </div>
+  </div>`;
   const open=DRILLS.filter(d=>practiceUnlocked(d.week,d.id));
   const rec=open.map(d=>{ const xs=log.filter(x=>x.type===d.id).slice(-3); return {d, s:xs.length?xs.reduce((a,x)=>a+x.score,0)/xs.length:-1}; }).sort((a,b)=>a.s-b.s)[0];
   if(rec) h+=`<div class="rt due"><div><b>Do this next:</b> ${esc(rec.d.title)}<br><small>${rec.s<0?"Not tried yet":`Your last scores average ${Math.round(rec.s)}`}</small></div><button class="btn" data-d="${rec.d.id}">Start</button></div>`;
@@ -1746,6 +2866,8 @@ function renderPractice(){
   h+=`<p class="lead" style="margin-top:12px">Practice follows the Learn tab: each drill and reading opens once you've passed the day that teaches it, so you only practise what you've actually been taught.</p>`;
   w.innerHTML=h;
   $("gx-start")&&($("gx-start").onclick=()=>{ gx.i=0; pr={view:"explainer"}; renderPractice(); w.parentElement.scrollTop=0; });
+  $("btn-open-scurve-box")&&($("btn-open-scurve-box").onclick=()=>openSCurveSandbox());
+  $("btn-open-lps-box")&&($("btn-open-lps-box").onclick=()=>openLPSBoard());
   w.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>startGuided(+b.dataset.gl));
   w.querySelectorAll("[data-lf]").forEach(b=>b.onclick=()=>{ pr.lf=b.dataset.lf; renderPractice(); });
   w.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ pr={view:"lesson",lesson:b.dataset.l}; renderPractice(); w.parentElement.scrollTop=0; });
@@ -1779,6 +2901,8 @@ function openFormulaDrawer(){
       <button class="btn f-tab-btn" data-tab="tab-plaster" style="font-size:.78rem;padding:4px 8px">🧱 Plaster</button>
       <button class="btn f-tab-btn" data-tab="tab-evm" style="font-size:.78rem;padding:4px 8px">📊 EVM</button>
       <button class="btn f-tab-btn" data-tab="tab-recon" style="font-size:.78rem;padding:4px 8px">📋 Recon</button>
+      <button class="btn f-tab-btn" data-tab="tab-scurve" style="font-size:.78rem;padding:4px 8px">📈 S-Curve</button>
+      <button class="btn f-tab-btn" data-tab="tab-lps" style="font-size:.78rem;padding:4px 8px">📋 LPS</button>
     </div>
 
     <!-- TAB 1: FORMULAS SHEET -->
@@ -1938,6 +3062,24 @@ function openFormulaDrawer(){
       </div>
     </div>
 
+    <!-- TAB 6: S-CURVE SIMULATOR -->
+    <div id="tab-scurve" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 8px">📈 S-Curve Banana Envelope Simulator</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem;line-height:1.5">
+        <p style="margin:0 0 8px">Simulate early vs late start cumulative progress curves, visualize the total float envelope, and calculate critical completion slippage in real time.</p>
+        <button id="drawer-btn-scurve" class="btn" style="width:100%;padding:10px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none;cursor:pointer">Launch Interactive S-Curve Simulator →</button>
+      </div>
+    </div>
+
+    <!-- TAB 7: LPS 3-WEEK LOOK-AHEAD -->
+    <div id="tab-lps" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 8px">📋 3-Week Look-Ahead Constraint Board</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem;line-height:1.5">
+        <p style="margin:0 0 8px">Audit the 5 lean constraint gates (Drawings, Materials, Manpower, Workface/PTW, Predecessors) and forecast Percent Plan Complete (PPC) for hospital work packages.</p>
+        <button id="drawer-btn-lps" class="btn" style="width:100%;padding:10px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none;cursor:pointer">Launch 3-Week Look-Ahead Board →</button>
+      </div>
+    </div>
+
     <div style="margin-top:auto;padding-top:10px;border-top:1px solid var(--line)">
       <button id="form-dismiss" style="width:100%;padding:10px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Done</button>
     </div>
@@ -2060,6 +3202,9 @@ function openFormulaDrawer(){
   ["calc-rc-mat", "calc-rc-lab", "calc-rc-mach", "calc-rc-theo", "calc-rc-perm", "calc-rc-act", "calc-rc-penrate"].forEach(id => {
     m.querySelector("#" + id)?.addEventListener("input", updateRecon);
   });
+
+  m.querySelector("#drawer-btn-scurve") && (m.querySelector("#drawer-btn-scurve").onclick = () => { m.remove(); openSCurveSandbox(); });
+  m.querySelector("#drawer-btn-lps") && (m.querySelector("#drawer-btn-lps").onclick = () => { m.remove(); openLPSBoard(); });
 
   m.onclick = e => { if(e.target === m) m.remove(); };
   m.querySelector("#form-close").onclick = () => m.remove();

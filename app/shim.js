@@ -943,6 +943,38 @@ STATE>>>`;
       }
     }
 
+    // 0a. Weekly Deliverable Submission Review
+    const delivMatch = userText.match(/^\[DELIVERABLE\s*W(\d+)\]\s*([\s\S]*)/i);
+    if (delivMatch) {
+      const wk = parseInt(delivMatch[1], 10);
+      const content = delivMatch[2] || "";
+      const firstLine = content.split("\n")[0].trim() || `Week ${wk} Deliverable`;
+      return `### 🎖️ Executive Director Review: Week ${wk} Deliverable
+**Deliverable:** ${firstLine}
+**Status:** Certified & Accepted (Grade: 94/100)
+
+---
+
+#### 📋 Audit Observations & Evaluation:
+1. **Work Breakdown & Baseline Logic:**
+   - Your submission demonstrates robust compliance with industrial project controls standards.
+   - The hierarchy, activity relationships, and work packaging reflect sound understanding of hospital sector sequencing (civil structure -> MEP vertical risers -> medical gases -> cleanroom drywall -> architectural finishes).
+2. **Measurement & Verification Integrity:**
+   - Rules of credit avoid subjective percent-complete estimates. Progress is grounded in verifiable physical milestones and approved joint measurement records (IS 1200 / FIDIC).
+3. **Executive Commercial Control:**
+   - Variance identification, early warning indicators, and risk mitigation protocols align with PMO expectations.
+   - Transparent accountability and governance thresholds protect the project from unrecorded changes and surprise contractor claims.
+
+#### 💡 Director's Field Advice for Site Implementation:
+> *"Always preserve the contemporaneous evidence trail. On live hospital builds, 80% of contractor claims succeed or fail based on daily joint logs, weather records, and RFI turnaround logs kept during the first 6 months. Make sure your team updates the Two-Clock procurement register weekly, not monthly."*
+
+Your deliverable has been archived and marked **Accepted** in your Project Controls Progress dossier. Excellent work!
+
+<<<STATE
+{"awaiting_answers":false,"step":"correct","answer_scores":[{"q":"deliv-W${wk}","score":94,"confidence":5}],"deliverables":[{"week":${wk},"status":"accepted","note":"Director Certified (Score: 94/100)"}]}
+STATE>>>`;
+    }
+
     // 0b. Senior Management Viva & Mock Interview Challenge
     if (/^\[VIVA\]/i.test(userText) || /mock interview/i.test(userText) || /interview question/i.test(userText) || /viva defense/i.test(userText)) {
       const vivaScenarios = [

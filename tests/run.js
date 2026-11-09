@@ -82,6 +82,7 @@ async function completeUnit(env, uid) {
   {
     const env = boot(); await wait(600); const { w, d } = env;
     P("fresh start shows Day 0 on Learn", d.getElementById("daytag").textContent === "Day 0 / 90" && /Day 0/.test(d.getElementById("learnwrap").textContent));
+    P("foundation cards pre-seeded in review deck on fresh start", w.eval('FOUNDATION_CARDS.every(c => state.bank[c.id] && state.sr[c.id])'));
     P("Practice is empty before any day is passed", d.querySelectorAll("#pracwrap [data-d]").length === 0);
     const order = w.eval("UNITS.filter(u=>!u.track).map(u=>u.id)").concat(w.eval('UNITS.filter(u=>u.track==="M").map(u=>u.id)'));
     const res = []; for (const id of order) { const r = await completeUnit(env, id); if (r !== "ok") res.push(id + ":" + r); }
@@ -108,6 +109,18 @@ async function completeUnit(env, uid) {
     P("your saved progress loads (Day 2, Days 0–1 passed)", d.getElementById("daytag").textContent === `Day ${PROGRESS.state.day} / 90` && w.eval('cst("U1").done'));
     P("settings button (⚙) present", [...d.querySelectorAll("button")].some(b => b.textContent === "⚙"));
     P("status confirms Director is active", /ready|due|Day|Director/i.test(d.getElementById("status").textContent));
+    P("Deliverable Studio, S-Curve Sandbox, and LPS Board render and operate cleanly", await w.eval(`(async () => {
+      openDeliverableStudio(1);
+      const dlvOk = !!document.getElementById("deliverable-modal");
+      document.getElementById("dlv-close")?.click();
+      openSCurveSandbox();
+      const scOk = !!document.getElementById("scurve-modal") && !!document.getElementById("sc-svg");
+      document.getElementById("sc-close")?.click();
+      openLPSBoard();
+      const lpsOk = !!document.getElementById("lps-modal") && document.getElementById("lps-sound-cnt")?.textContent !== "";
+      document.getElementById("lps-close")?.click();
+      return dlvOk && scOk && lpsOk;
+    })()`));
     P("no runtime errors (standalone)", env.errs.length === 0, env.errs.join(" | "));
   }
   console.log(`\n${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
