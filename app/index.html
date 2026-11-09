@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=31"></script>
+<script src="shim.js?v=32"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -9455,6 +9455,978 @@ const APPLY4 = {
 };
 Object.assign(APPLY, APPLY4);
 UNITS4.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS5 = [
+  // ================= DAY 38: FIDIC vs CPWD Architecture =================
+  {
+    id: "U38", day: 38, title: "Day 38: Contract Architecture: FIDIC Red Book vs CPWD GCC", mins: 25,
+    card: {
+      id: "c-contract-architecture",
+      title: "Contract Architecture: FIDIC independent Engineer vs CPWD departmental hierarchy",
+      rule: "FIDIC Red Book relies on a tripartite structure (Employer, Contractor, Engineer), where the Engineer administers the contract neutrally under Sub-Clause 3.7 (Agreement or Determination). CPWD GCC is a bipartite departmental model (Employer-Contractor) where the Executive Engineer (EE) and Superintending Engineer (SE) represent the government directly. Never confuse Employer direct orders with the Engineer's contractual determinations.",
+      example: "Under FIDIC Red Book, if the Employer tells the contractor verbally to change hospital wall layouts, the contractor cannot bill for it until instructed in writing by the Engineer.",
+      trap: "Assuming the Engineer under FIDIC is purely an agent of the Employer with no independent duty to act fairly when determining claims."
+    },
+    screens: [
+      {
+        k: "read",
+        t: "**Why it matters.** A healthcare developer hires an international PMC and a tier-1 Indian construction firm under the **FIDIC Red Book (1999)** for a ₹600 Cr hospital.\n\nDuring basement excavation, the Client Managing Director walks the site, tells the contractor to expand the radiation oncology bunker by 4 meters, and promises: *\"We will adjust the money in the final bill.\"*\n\nThe contractor completes the excavation and bills ₹1.2 Crores. The PMC Engineer rejects the bill: *\"I issued no written variation under Clause 13. The Managing Director has no administrative authority under the FIDIC contract to instruct changes directly.\"*\n\nKnowing the precise legal roles of the **Employer**, the **Engineer**, and the **Contractor** prevents multimillion-rupee payment disasters."
+      },
+      {
+        k: "read",
+        t: "**FIDIC Red Book vs CPWD GCC Architecture**\n\n1. **FIDIC Red Book (Tripartite Structure)**:\n   - **Employer**: Finances the project, provides site access, pays certified IPCs.\n   - **Contractor**: Executes works in accordance with approved drawings and specifications.\n   - **The Engineer (PMC)**: Appointed by Employer to administer the contract:\n     - Issues instructions, inspects quality, certifies payments.\n     - Under Sub-Clause 3.5 (1999) / Sub-Clause 3.7 (2017), the Engineer is legally bound to **act neutrally and fairly** when making determinations on claims—not as an employer puppet!\n\n2. **CPWD GCC (Bipartite Departmental Structure)**:\n   - No independent 'Engineer'.\n   - Administration is departmental:\n     - **Assistant Engineer (AE)**: Daily site supervision and MB measurements.\n     - **Executive Engineer (EE)**: Issues formal variation orders and signs contractual notices.\n     - **Superintending Engineer (SE)**: Decides disputes, extension of time (EOT), and rate approvals.\n     - **Chief Engineer (CE)**: High-value contractual approvals.\n\n3. **FIDIC Silver Book (EPC / Turnkey)**:\n   - No Engineer (Employer's Representative acts for Employer).\n   - Complete design, ground condition, and permitting risk transferred to Contractor. 'Fit for purpose' obligation."
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under FIDIC Red Book (2017) Sub-Clause 3.7, how is the Engineer legally required to act when making a determination on a contractor's claim?",
+            o: [
+              ["Neutrally and fairly between the Employer and the Contractor, and not as an agent for the Employer", true, "FIDIC explicitly mandates that the Engineer must exercise professional neutrality and fairness in claim determinations."],
+              ["Strictly in the financial interest of the Employer to minimize costs", false, "Acting as an employer puppet breaches the Engineer's contractual duty under Sub-Clause 3.7."],
+              ["Always in favor of the contractor to prevent labor strikes", false, "Determinations must be grounded in contract terms and contemporary facts, not contractor bias."],
+              ["By referring all technical questions to the local municipal council", false, "The Engineer is the designated technical authority under the contract."]
+            ]
+          },
+          {
+            q: "How does the contract administrative structure of CPWD GCC differ fundamentally from FIDIC Red Book?",
+            o: [
+              ["CPWD uses a bipartite hierarchy where government engineers (EE/SE) represent the Employer directly, without an independent neutral Engineer", true, "CPWD is an internal departmental model where the Executive Engineer and Superintending Engineer act for the government."],
+              ["CPWD requires all contracts to be written in Sanskrit", false, "CPWD contracts are standardized in English and Hindi."],
+              ["CPWD contracts do not allow contractors to use heavy machinery", false, "CPWD projects routinely use modern heavy construction equipment."],
+              ["CPWD contracts are governed by French civil law", false, "CPWD contracts are governed strictly by the Indian Contract Act, 1872."]
+            ]
+          },
+          {
+            q: "On a FIDIC Red Book project, the client's Managing Director visits the site and verbally orders the contractor to add a new pharmacy wing. What must the contractor do to secure payment?",
+            o: [
+              ["Request a formal written instruction from the Engineer under Sub-Clause 13.1, or confirm the verbal request in writing to the Engineer within 7 days", true, "Under FIDIC, only the Engineer has authority to instruct variations; contractor confirmation binds the instruction."],
+              ["Immediately mobilize 100 laborers without any paperwork", false, "Executing unconfirmed verbal instructions leads to non-certification."],
+              ["File a police complaint against the Managing Director", false, "Scope changes are contractual matters, not criminal offenses."],
+              ["Deduct 10% from the client's bank account", false, "Contractors have no direct access to client bank accounts."]
+            ]
+          },
+          {
+            q: "In an EPC / Turnkey contract (FIDIC Silver Book), which party bears the financial and schedule risk of unforeseen adverse ground conditions (e.g. hard rock or high water table)?",
+            o: [
+              ["The Contractor, who assumes total responsibility for site data verification and ground conditions", true, "FIDIC Silver Book shifts underground ground condition risk almost entirely to the EPC contractor."],
+              ["The Employer, under standard adverse physical conditions clauses", false, "Employer bears ground risk in Red Book (Sub-Clause 4.12), but NOT in Silver Book."],
+              ["The local geological survey department", false, "Geological surveys provide public research, not commercial risk underwriting."],
+              ["The bank that issued the performance guarantee", false, "Banks provide financial guarantees, not engineering risk insurance."]
+            ]
+          },
+          {
+            q: "Under CPWD GCC Clause 5, which authority has the contractual power to grant an Extension of Time (EOT) without Liquidated Damages?",
+            o: [
+              ["The Superintending Engineer (SE)", true, "Under CPWD administrative rules, the Superintending Engineer is the designated authority for deciding EOT applications."],
+              ["The site junior billing engineer", false, "Junior engineers measure quantities; they have no statutory authority to grant contract time extensions."],
+              ["The contractor's project manager", false, "Contractors apply for time; they cannot grant it to themselves."],
+              ["The trade union representative", false, "Trade unions have no contract administration powers."]
+            ]
+          },
+          {
+            q: "What is the contractor's primary obligation under a 'Fit for Purpose' warranty in an EPC hospital contract?",
+            o: [
+              ["The completed hospital must be capable of fulfilling its intended clinical and operational use, regardless of drawing omissions", true, "Fit for purpose guarantees operational functionality, not merely adherence to minimal specifications."],
+              ["The building must look aesthetically pleasing from the street", false, "Fit for purpose is a functional performance standard, not visual aesthetics."],
+              ["The contractor must pay for all medicines inside the hospital", false, "Medical consumables are operational hospital expenses, not EPC scope."],
+              ["The building must never require cleaning or maintenance", false, "Standard ongoing maintenance is expected in all buildings."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the difference between the Engineer's role under FIDIC Red Book and the Executive Engineer's role under CPWD GCC when determining a contractor's claim."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 39: EOT Grounds & Critical Path Test =================
+  {
+    id: "U39", day: 39, title: "Day 39: EOT Grounds & The Critical Path Test (FIDIC 8.4 / CPWD 5)", mins: 25,
+    card: {
+      id: "c-eot-grounds",
+      title: "EOT Entitlement: Qualifying contractual grounds & the Critical Path Test",
+      rule: "A delay event only qualifies for an Extension of Time (EOT) if it satisfies TWO tests: 1) It falls under an enumerated qualifying ground in the contract (FIDIC Sub-Clause 8.4 / CPWD Clause 5 - variations, exceptionally adverse weather, employer impediments, unforeseeable shortages); 2) The Critical Path Test: It actually delays completion beyond the Time for Completion. Delay on an activity with positive float gives zero EOT.",
+      example: "Monsoon rainfall was 15% above normal (non-exceptional), and occurred on boundary wall paving with 40 days float. Claim for 10 days EOT rejected on both grounds (not exceptional, and not on critical path).",
+      trap: "Assuming that proving an employer delay event occurred automatically guarantees an EOT without proving it drove the critical path."
+    },
+    screens: [
+      {
+        k: "read",
+        t: "**Why it matters.** A civil contractor submits a claim for a **45-Day Extension of Time (EOT)** citing three events:\n1. *Event A*: Cement delivery trucks blocked for 10 days by regional interstate transport strike.\n2. *Event B*: Client took 15 days to approve floor tile color samples for outpatient department (OPD).\n3. *Event C*: Unprecedented cloudburst flooded the basement pump room for 20 days.\n\nThe PMC investigates and discovers:\n- Event A was absorbed by 3 weeks of buffer stock on site.\n- Event B occurred on OPD tiling, which had **42 days of Total Float**.\n- Event C was indeed a 1-in-50-year cloudburst on the critical path.\n\nOnly Event C passes the **Critical Path Test** under FIDIC Sub-Clause 8.4."
+      },
+      {
+        k: "read",
+        t: "**The Two-Step EOT Qualification Test**\n\n```\nStep 1: Does event fall under Qualifying Contract Grounds (FIDIC 8.4 / CPWD 5)?\n        |-- No  --> REJECT (Contractor absorbs risk)\n        |-- Yes --> Proceed to Step 2\n\nStep 2: The Critical Path Test\n        Does the event drive the longest driving path past the completion date?\n        |-- No  --> REJECT EOT (Delay absorbed by available float)\n        |-- Yes --> GRANT EOT (Time extended for net critical path delay)\n```\n\n1. **Test 1: Qualifying Contract Grounds (FIDIC 8.4)**:\n   - *Sub-Clause 8.4(a)*: Variation or substantial change in quantity.\n   - *Sub-Clause 8.4(b)*: Exceptionally adverse climatic conditions (beyond 10-year meteorological records).\n   - *Sub-Clause 8.4(c)*: Unforeseeable shortages of personnel or goods caused by epidemics or governmental actions.\n   - *Sub-Clause 8.4(d)*: Any delay, impediment, or prevention caused by Employer or Employer's Personnel.\n\n2. **Test 2: The Critical Path Test**:\n   - Even if the ground is 100% valid (e.g. late client drawing approval), if the delayed activity has **+30 days of Total Float**, project completion is NOT delayed.\n   - **Contractual Rule**: An EOT is awarded ONLY for the number of days by which project completion is driven past the contractual milestone!"
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under FIDIC Red Book Sub-Clause 8.4, what two tests must an event satisfy for the contractor to be entitled to an Extension of Time (EOT)?",
+            o: [
+              ["It must fall under an enumerated qualifying contract ground AND it must delay project completion beyond the contractual Time for Completion", true, "A valid contractual cause plus proven critical path impact are the two indispensable prerequisites for an EOT."],
+              ["The contractor must have suffered financial loss AND the CEO must approve it", false, "EOT is an entitlement of time, governed by schedule logic, not executive sympathy."],
+              ["It must be an act of war AND occur on a public holiday", false, "Standard grounds include variations and adverse weather, not just war."],
+              ["It must be certified by the local police AND notarized", false, "Engineering claims are determined by the Engineer, not police authorities."]
+            ]
+          },
+          {
+            q: "A contractor experiences 12 days of rain during the normal monsoon season. Historical meteorological data shows that this rainfall was completely typical for that month. Can the contractor claim EOT under Sub-Clause 8.4(b)?",
+            o: [
+              ["No, standard seasonal weather is a foreseeable contractor risk; only 'exceptionally adverse' weather exceeding historical norms qualifies", true, "Contractors must allow for normal seasonal climatic conditions in their baseline schedule."],
+              ["Yes, every day of rain gives an automatic day of EOT", false, "Standard weather is not a qualifying ground under FIDIC or CPWD."],
+              ["Yes, if the contractor took photos of the rain", false, "Photos do not prove that weather was exceptionally abnormal."],
+              ["Contractor gets double EOT for rain", false, "There is no double extension under standard contracts."]
+            ]
+          },
+          {
+            q: "The client takes 25 days to approve medical gas copper pipe samples. At the time of this approval delay, medical gas installation had 35 days of Total Float. How many days of EOT is the contractor entitled to?",
+            o: [
+              ["Zero days EOT, because the delay was completely absorbed by the 35 days of available float", true, "Under the Critical Path Test, an event that does not extend the project completion date yields no EOT."],
+              ["25 days EOT because the client caused the delay", false, "Client delay on non-critical paths consumes float, but does not grant an EOT."],
+              ["35 days EOT", false, "Float is not an entitlement addition."],
+              ["10 days EOT (35 − 25)", false, "Remaining float is 10 days; project completion date is not delayed."]
+            ]
+          },
+          {
+            q: "Under CPWD GCC Clause 5, which of the following is an explicit ground for seeking an Extension of Time?",
+            o: [
+              ["Abnormally bad weather, serious loss or damage by fire, civil commotion, or delay on the part of other contractors engaged by the department", true, "CPWD Clause 5 specifically enumerates these external and departmental impediments."],
+              ["Contractor's failure to pay labor wages on time", false, "Contractor financial default is never an excusable ground."],
+              ["Contractor's desire to take a vacation", false, "Personal contractor preferences are irrelevant to contracts."],
+              ["Increase in local cement market retail price", false, "Price changes are addressed under escalation clauses (10CA/10CC), not EOT."]
+            ]
+          },
+          {
+            q: "A contractor claims an EOT because local steel suppliers ran out of stock. Under FIDIC Sub-Clause 8.4(c), when does a material shortage qualify as an EOT ground?",
+            o: [
+              ["Only if the shortage is unforeseeable and caused by epidemic or governmental actions (e.g. national export embargo or pandemic shutdown)", true, "Routine commercial market shortages are contractor procurement risks."],
+              ["Whenever the contractor forgot to place the purchase order early", false, "Contractor's procurement negligence is a Contractor Risk Event."],
+              ["If the price of steel doubled in the market", false, "Market price volatility is commercial risk, not physical shortage under 8.4(c)."],
+              ["Anytime a vendor is late by more than 3 days", false, "Vendor management is strictly contractor risk."]
+            ]
+          },
+          {
+            q: "What is the primary function of establishing 'milestones' (Sectional Completion) within a hospital contract under FIDIC Clause 8.2?",
+            o: [
+              ["To allow the Employer to take over and commission critical functional sections (e.g. OPD or Diagnostic Center) before the entire hospital is finished", true, "Sectional completion creates enforceable intermediate completion dates with distinct Liquidated Damages."],
+              ["To increase the contractor's billing paperwork", false, "Milestones structure project delivery, not bureaucracy."],
+              ["To eliminate the need for an Engineer", false, "The Engineer administers sectional completion exactly like full completion."],
+              ["To ensure only government contractors can bid", false, "Milestones apply equally to all qualified tenderers."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain why an Employer delay of 20 days on a non-critical activity with 30 days of Total Float does NOT entitle the contractor to an Extension of Time."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 40: 28-Day Notice of Claim =================
+  {
+    id: "U40", day: 40, title: "Day 40: The 28-Day Notice Rule & Time-Bar Traps (FIDIC 20.1/20.2)", mins: 25,
+    card: {
+      id: "c-claim-notice-timebar",
+      title: "The 28-Day Claim Notice: Strict condition precedent & time-bar traps",
+      rule: "Under FIDIC 1999 Sub-Clause 20.1 and FIDIC 2017 Sub-Clause 20.2: Notice of Claim MUST be submitted within 28 days of when the contractor became aware, or should have become aware, of the delay event. Failure to give notice within 28 days is a condition precedent: the Employer is discharged from all liability, and the claim is legally barred. Always issue a brief notice first; quantify detailed particulars later within 42 days.",
+      example: "Day 10: Client delays handing over ICU floor. Contractor issues a 1-page Notice of Claim on Day 22 (within 28d). Detailed TIA fragnet submitted on Day 52 (within 42d). Result: Claim is valid and contractually admissible.",
+      trap: "Waiting to quantify the entire financial cost before sending a claim notice, causing the submission to blow past the 28-day time-bar cutoff."
+    },
+    screens: [
+      {
+        k: "read",
+        t: "**Why it matters.** On Day 30 of a ₹450 Cr hospital build, the contractor encounters massive unmapped underground high-voltage electrical cables.\n\nThe contractor spends ₹85 Lakhs rerouting cables and suffers 40 days of critical delay. However, the contractor's project manager waits until Month 8 to submit a comprehensive 200-page claim during final billing.\n\nThe Employer’s legal team immediately rejects the claim without even opening the technical report: *\"Rejected under FIDIC Sub-Clause 20.1. The event occurred in Month 1; notice was submitted 7 months late. The claim is contractually time-barred and extinguished.\"*\n\nThe contractor loses ₹85 Lakhs and 40 days of EOT because of a single missing letter."
+      },
+      {
+        k: "read",
+        t: "**The Anatomy of the FIDIC 28-Day Time-Bar**\n\n```\nDelay Event Occurs / Aware\n        |\n        |<--- Max 28 Days --->|\n        |                      |\n[Day 0: Event]       [Day 28: NOTICE DEADLINE]\n                               |\n                               |--- Max 42 Days ---> [Day 70: FULL PARTICULARS]\n```\n\n1. **Step 1: The 28-Day Notice (Condition Precedent)**:\n   - Does NOT require detailed cost or CPM models.\n   - Requires only a simple 1-page formal letter:\n     *\"We hereby give notice under Sub-Clause 20.1 of an Employer Risk Event: Unmapped electrical cables encountered at Grid B4 on 12-Oct. We anticipate critical path delay and cost impact. Full particulars will follow.\"*\n   - **The Strict Legal Consequence**:\n     *“If the Contractor fails to give notice of a claim within such period of 28 days, the Time for Completion shall not be extended, the Contractor shall not be entitled to additional payment, and the Employer shall be discharged from all liability in connection with the claim.”*\n\n2. **Step 2: The 42-Day Detailed Claim**:\n   - Within 42 days after becoming aware, submit full contemporary records, TIA fragnet, and auditable cost vouchers.\n\n3. **Indian Legal Context (Section 28 Contract Act)**:\n   - While Section 28 prohibits contracts that extinguish rights before statutory limitation periods (3 years), the Indian Supreme Court has recognized that **procedural notice requirements** acting as conditions precedent are valid where they ensure contemporary record verification."
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under FIDIC Red Book Sub-Clause 20.1 (1999) / 20.2 (2017), what is the mandatory time limit for submitting a Notice of Claim after becoming aware of an event?",
+            o: [
+              ["Within 28 days after the contractor became aware, or should have become aware, of the event", true, "The 28-day notice rule is an explicit condition precedent across modern FIDIC contracts."],
+              ["Within 12 months after project completion during final billing", false, "Waiting until project completion breaches the 28-day notice clause and extinguishes the claim."],
+              ["Within 24 hours via telephone call to the client", false, "Formal contractual notices must be in writing and delivered through official contract channels."],
+              ["At the end of the calendar year for corporate tax audits", false, "Tax years are irrelevant to contractual claim notification windows."]
+            ]
+          },
+          {
+            q: "What is the legal consequence under FIDIC Sub-Clause 20.1 if a contractor fails to submit a written Notice of Claim within the 28-day window?",
+            o: [
+              ["The Time for Completion shall not be extended, the contractor is barred from additional payment, and the Employer is discharged from all liability", true, "The contract explicitly extinguishes the claim as a condition precedent."],
+              ["The Engineer automatically awards 50% of the claim as a compromise", false, "The Engineer has no contractual power to waive a mandatory time-bar."],
+              ["The contractor is fined ₹10 Lakhs by the municipal corporation", false, "Contractual claim default is a civil forfeiture of rights, not a municipal fine."],
+              ["The client must pay the contractor's legal fees", false, "The client is discharged from liability, not penalized."]
+            ]
+          },
+          {
+            q: "A junior project manager delays sending a claim notice because 'the delay is still ongoing and we don't know the final cost yet'. What is the correct professional advice?",
+            o: [
+              ["Issue the simple 1-page Notice of Claim immediately within 28 days; quantify the detailed costs and schedule impact later within 42 days", true, "The notice only announces the event; detailed quantification follows in the 42-day submission."],
+              ["Wait until the project finishes so all numbers are 100% precise", false, "Waiting will result in the claim being rejected as time-barred."],
+              ["Call the client on the phone and avoid putting anything in writing", false, "Verbal conversations have zero legal standing under FIDIC Clause 1.3."],
+              ["Conceal the delay by forging P6 schedule dates", false, "Falsifying progress data is unethical and legally actionable."]
+            ]
+          },
+          {
+            q: "What must the contractor submit within 42 days of becoming aware of a claim event under FIDIC Sub-Clause 20.1?",
+            o: [
+              ["A fully detailed claim with comprehensive contemporary records, schedule impact analysis (TIA), and substantiating cost vouchers", true, "The 42-day submission provides the technical and financial substantiation for the Engineer's determination."],
+              ["A single-page invoice requesting immediate payment", false, "Claims require detailed causal and commercial substantiation."],
+              ["A copy of the contractor's corporate articles of association", false, "Corporate governance documents do not substantiate site delay claims."],
+              ["An application for a new bank guarantee", false, "Bank guarantees are security instruments, not claim particulars."]
+            ]
+          },
+          {
+            q: "Why do international contracts enforce strict 28-day notice provisions as a 'condition precedent'?",
+            o: [
+              ["To ensure that claims are investigated contemporaneously while witnesses, physical conditions, and records are fresh and verifiable", true, "Early notice allows the Employer to mitigate, re-sequence, or inspect physical conditions before evidence is lost."],
+              ["To help lawyers bill more hourly fees", false, "Notice clauses exist to facilitate early resolution, not litigation."],
+              ["To reduce the contractor's profit margin to zero", false, "Contractor profits are governed by bid pricing, not notice windows."],
+              ["Because digital emails expire after 28 days", false, "Digital records are permanent; the clause enforces commercial diligence."]
+            ]
+          },
+          {
+            q: "Under FIDIC 2017 Red Book Sub-Clause 20.2.2, what must the Engineer do within 14 days if the Engineer considers that the contractor's claim notice is out of time?",
+            o: [
+              ["Issue a formal Notice of Late Claim stating that the claim is time-barred, otherwise the notice is deemed valid", true, "FIDIC 2017 introduced an automatic deeming provision requiring the Engineer to challenge late notices within 14 days."],
+              ["Delete the contractor's P6 schedule from the server", false, "The Engineer cannot delete project archives."],
+              ["Order the contractor to vacate the site immediately", false, "A late claim notice does not terminate the construction contract."],
+              ["Pay the claim in full", false, "Late claims are challenged, not paid."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the 'Condition Precedent' doctrine in FIDIC Sub-Clause 20.1, and why a project manager must never wait to quantify costs before submitting a claim notice."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 41: Variations & Engineer's Determination =================
+  {
+    id: "U41", day: 41, title: "Day 41: Variations, Determinations & Scope Creep (FIDIC 13 / CPWD 12)", mins: 25,
+    card: {
+      id: "c-variations-protocol",
+      title: "Variations Protocol: Written instructions, 7-day confirmations & 3-tier valuation",
+      rule: "Under FIDIC Clause 13 / CPWD Clause 12: 1) Variations MUST be instructed in writing by the Engineer; verbal requests have zero contractual validity; 2) If instructed verbally, Contractor must confirm in writing within 7 days (FIDIC 3.3); if not denied within 7 days, it becomes a valid instruction; 3) Valuation hierarchy: Contract BOQ rates -> Derived rates with adjustments -> First-principles rate analysis (Material + Labor + Plant + 15% CP&OH).",
+      example: "Hospital architect verbally instructs relocating 24 patient bathroom sanitary lines. Contractor sends written confirmation within 4 days. Engineer does not reject within 7 days. Variation is valid and payable.",
+      trap: "Executing verbal scope changes on site without written confirmation, leading to unrecoverable expenditure at final account."
+    },
+    screens: [
+      {
+        k: "read",
+        t: "**Why it matters.** During interior fit-out of the 4th Floor Inpatient Ward, the hospital clinical director requests moving 60 bed-head panel positions by 500 mm to accommodate new bedside telemetry monitors.\n\nThe site engineer accommodates the request over 3 weeks of work. At month-end, the contractor bills ₹38 Lakhs for re-chipping walls, moving conduits, and re-plastering.\n\nThe Client Chief Financial Officer denies payment: *\"The clinical director is a doctor, not an authorized contract signatory. No formal Variation Order was issued by the PMC Engineer under Clause 13. We will not pay a single rupee.\"*\n\nScope creep on verbal instructions is the #1 cash bleed on hospital sites."
+      },
+      {
+        k: "read",
+        t: "**The Formal Variation Administration Protocol**\n\n1. **The Writing Rule (FIDIC 13.1 / CPWD 12.1)**:\n   - Only the designated **Engineer** (or Executive Engineer in CPWD) has contractual authority to issue variations.\n   - Clinical directors, architects, and client executives have **NO contractual authority** to alter scope directly!\n\n2. **The 7-Day Verbal Confirmation Defense (FIDIC Sub-Clause 3.3)**:\n   - If an engineer or client representative gives a verbal directive at the workface:\n     - The contractor must NOT proceed silently.\n     - The contractor must send a formal written notice within **7 days**:\n       *\"Reference verbal directive on 14-Oct regarding shifting 60 bed-head panels, we confirm this as a variation instruction under Sub-Clause 3.3 and are proceeding accordingly.\"*\n     - If the Engineer does not contradict or revoke in writing within **7 days**, the confirmation becomes a legally binding written instruction!\n\n3. **Valuation Hierarchy (FIDIC Sub-Clause 12.3 / CPWD Clause 12)**:\n   - *Tier 1*: Applicable rates in the contract BOQ for identical scope.\n   - *Tier 2*: Derived rates using contract prices as a basis for similar work.\n   - *Tier 3*: First-principles market rate analysis = Basic Cost $+ 15.0\\%$ Contractor's Profit and Overheads $+ \\text{GST}$."
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under FIDIC Red Book Sub-Clause 13.1, who has the exclusive contractual authority to issue a Variation Instruction to the contractor?",
+            o: [
+              ["The Engineer designated in the contract", true, "Only the Engineer has the legal authority to bind the Employer by issuing formal variation instructions."],
+              ["The hospital clinical medical director", false, "Medical staff specify clinical requirements; they do not administer construction contracts."],
+              ["Any junior site supervisor who visits the workface", false, "Delegated authority must be formal and written under Sub-Clause 3.2."],
+              ["The local municipal corporator", false, "Municipal politicians have no contractual standing in civil agreements."]
+            ]
+          },
+          {
+            q: "A contractor receives a verbal instruction from the Engineer on site to alter radiation bunker conduit routes. What must the contractor do under FIDIC Sub-Clause 3.3 to make this instruction legally enforceable?",
+            o: [
+              ["Confirm the instruction in writing to the Engineer within 7 days, which becomes binding if not contradicted within 7 days", true, "The 7-day confirmation protocol protects the contractor from unverified verbal directives."],
+              ["Record the conversation on a hidden microphone and send it to the police", false, "Contract administration operates on written technical correspondence, not secret audio."],
+              ["Refuse to work for the next 6 months", false, "Contractors cannot abandon the works over routine design changes."],
+              ["Wait until final arbitration after 3 years to mention the conversation", false, "Unconfirmed verbal directives are rejected in arbitration for lack of contemporary proof."]
+            ]
+          },
+          {
+            q: "Under FIDIC Sub-Clause 12.3 and CPWD Clause 12, what is the first step in pricing a newly instructed variation?",
+            o: [
+              ["Check if appropriate rates or prices for the item exist in the contract Bill of Quantities (BOQ)", true, "Contractual BOQ rates take highest precedence before turning to derived or market rates."],
+              ["Demand that the Employer pay whatever quotation the contractor submits", false, "Unilateral contractor quotations violate contractual valuation hierarchies."],
+              ["Calculate 50% profit markup on the work", false, "Standard contracts strictly cap profit at 15% or reasonable cost plus margin."],
+              ["Deduct the cost of the entire hospital wing from the contract", false, "Variations adjust specific work lines, they do not delete the project."]
+            ]
+          },
+          {
+            q: "What is 'Scope Creep' on a hospital construction project?",
+            o: [
+              ["The gradual accumulation of unapproved, unmeasured design changes and additions that swell cost and schedule without formal variation orders", true, "Scope creep erodes contractor cash flow and leads to massive retrospective commercial disputes."],
+              ["Concrete creeping under sustained dead load over 20 years", false, "That is structural creep in concrete mechanics, not commercial scope creep."],
+              ["Laborers walking slowly across the construction site", false, "That is labor productivity loss, not scope expansion."],
+              ["The physical movement of boundary fences by squatters", false, "That is land encroachment, not contractual scope creep."]
+            ]
+          },
+          {
+            q: "Under CPWD GCC Clause 12, can an Executive Engineer compel a contractor to execute an extra item beyond the contractual deviation limit without agreed rates?",
+            o: [
+              ["Beyond the deviation limit (typically ±25% for building works), rates must be mutually agreed or analyzed from market rates", true, "Work beyond the deviation limit is not bound by original contract rates and requires market rate determination."],
+              ["Yes, the contractor must execute unlimited work at original tender rates forever", false, "Deviation caps protect contractors from performing massive unforeseen scope at obsolete bid prices."],
+              ["The contractor is arrested if they refuse", false, "Commercial contractual boundaries are civil matters, not criminal law."],
+              ["The contract is automatically dissolved by the President of India", false, "Standard variation protocols handle deviation adjustments."]
+            ]
+          },
+          {
+            q: "What is an 'Omission' variation under FIDIC Sub-Clause 13.1?",
+            o: [
+              ["An instruction to delete work from the contract, provided the omitted work is not handed to another contractor to execute", true, "Employers cannot omit work simply to give it to a cheaper contractor; that constitutes breach of contract."],
+              ["Deleting the entire defect liability period", false, "DLP is a core warranty condition, not an omissible work item."],
+              ["Forgetting to bill an item on the monthly RA bill", false, "Billing mistakes are omissions in invoicing, not contract variation omissions."],
+              ["Refusing to pay the contractor's monthly invoice", false, "Non-payment is an employer default, not a scope omission."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the procedure a contractor must follow under FIDIC Sub-Clause 3.3 when an urgent verbal change is instructed on site by the client's team."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 42: Liquidated Damages vs Penalties =================
+  {
+    id: "U42", day: 42, title: "Day 42: Liquidated Damages (LDs) vs Penalties (Sec 74)", mins: 25,
+    card: {
+      id: "c-liquidated-damages",
+      title: "Liquidated Damages (LDs): Genuine pre-estimate vs penalty (Sec 74)",
+      rule: "Under Section 74 of the Indian Contract Act, 1872 and landmark Supreme Court rulings (Kailash Nath Associates v. DDA): Liquidated Damages (LDs) must represent a genuine pre-estimate of loss, NOT an in terrorem penalty. The Employer must demonstrate actual loss suffered unless proof of damage is impossible. LDs are capped (typically 10% of contract value). Reaching the LD cap gives the Employer grounds for termination.",
+      example: "Hospital delayed by 4 weeks. Contract specifies LDs at 0.5%/week (₹40 Lakhs). Employer proves ₹45 Lakhs in delayed equipment lease charges and staff overheads. ₹40 Lakhs LD deduction is legally sound.",
+      trap: "Assuming Indian employers can deduct LDs as an automatic penalty without demonstrating any actual loss or commercial delay impact."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** A 300-bed hospital project is delayed by 60 days due to contractor labor shortages. The contract stipulates Liquidated Damages (LDs) of **0.5% per week up to a cap of 10% (₹15 Crores)**.
+
+The Employer deducts the entire ₹15 Crores from the contractor’s penultimate bill.
+
+The contractor files an emergency arbitration petition under the **Indian Contract Act, Section 74**: *"The Employer suffered zero financial damage! The hospital couldn't open anyway because the government fire department delayed issuing the Fire NOC by 4 months! The ₹15 Crore deduction is an illegal penalty."*
+
+Does the Employer have to refund the ₹15 Crores? Welcome to the law of Liquidated Damages in India.`
+      },
+      {
+        k: "read",
+        t: `**The Legal Anatomy of Liquidated Damages in India**
+
+1. **Section 74 of the Indian Contract Act, 1872**:
+   - Deals with *Compensation for breach of contract where penalty is stipulated for*.
+   - Unlike English common law, Indian law does not strictly divide liquidated damages from penalties; Section 74 governs both.
+   - **The Golden Rule**: The named sum is the **UPPER CEILING** of compensation, not an automatic entitlement!
+
+2. **The Kailash Nath Associates v. DDA (2015 Supreme Court Landmark)**:
+   - The Supreme Court established three governing principles:
+     1. Where actual damage or loss can be proved, the claimant **must prove the actual loss** to recover damages.
+     2. Only where damage is impossible or difficult to quantify can the liquidated sum be awarded as a "reasonable compensation" based on a genuine pre-estimate.
+     3. **No loss = No damages!** If the employer suffered zero financial injury, deducting the full liquidated sum is an unenforceable penalty!
+
+3. **Standard Commercial Safeguards**:
+   - Capped typically at **5% to 10%** of Contract Value.
+   - Deduction rate typically **0.5% per week** of critical delay.
+   - Once the LD cap is reached, the Employer secures the contractual right to **terminate** under FIDIC Clause 15 / CPWD Clause 3.`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under Section 74 of the Indian Contract Act, 1872, what is the legal status of a Liquidated Damages clause specifying 10% of contract sum for delay?",
+            o: [
+              ["It represents the maximum upper ceiling of compensation; the claimant is entitled only to reasonable compensation not exceeding that amount", true, "Section 74 establishes that the named sum is a cap, not an automatic mandatory award irrespective of actual loss."],
+              ["It is an automatic fine that the Employer can deduct without proving any delay or loss", false, "Automatic punitive deductions without proof of loss violate Indian Contract Act Section 74."],
+              ["It is completely illegal and void under all circumstances in India", false, "Liquidated damages are valid if they represent reasonable compensation or genuine pre-estimate."],
+              ["It must be shared equally between the contractor and the municipal council", false, "Liquidated damages are purely between the contractual parties."]
+            ]
+          },
+          {
+            q: "In the landmark judgment Kailash Nath Associates v. DDA (2015), what did the Supreme Court of India hold regarding proof of loss for Liquidated Damages?",
+            o: [
+              ["Where it is possible to prove actual damage or loss, such proof is not dispensed with; no compensation can be awarded where no loss occurred", true, "The Supreme Court reaffirmed that compensation under Section 74 is compensatory, not punitive; zero loss equals zero damages."],
+              ["Proof of loss is never required in construction disputes", false, "Kailash Nath explicitly rejected the idea that proof of loss is dispensed with."],
+              ["Damages must be calculated by the local police station", false, "Civil commercial contracts are adjudicated by courts and arbitral tribunals."],
+              ["Contractors must pay 100% of their annual turnover as damages", false, "Damages are strictly bounded by contract value caps and actual losses."]
+            ]
+          },
+          {
+            q: "A contractor finishes a hospital building 30 days late, but during those 30 days the hospital could not have operated because municipal water connections were absent due to government delay. What is the contractor's defense against full LD deduction?",
+            o: [
+              ["The Employer suffered no actual commercial loss caused by the contractor's delay, making full LD deduction an unenforceable penalty under Section 74", true, "Demonstrating that the facility could not have operated anyway defeats claims of actual operational revenue loss."],
+              ["Contractors are immune from damages if the weather is warm", false, "Weather temperatures have no legal bearing on contractual liability."],
+              ["The contractor can demand that the client donate the building to charity", false, "Charitable donations are irrelevant to contractual remedies."],
+              ["Contractors are entitled to automatic 10-year extensions for utility delays", false, "Extensions are evaluated on specific schedule evidence."]
+            ]
+          },
+          {
+            q: "What is the standard commercial cap on Liquidated Damages in Indian infrastructure and hospital construction contracts?",
+            o: [
+              ["Typically 5% to 10% of the total contract value", true, "Standard CPWD, FIDIC, and NHAI contracts cap cumulative delay damages at 10%."],
+              ["100% of the contract value", false, "A 100% cap would be commercially uninsurable and unbankable."],
+              ["Zero cap; unlimited liability forever", false, "Unlimited delay liability prevents contractors from obtaining bank guarantees."],
+              ["50% of the contractor's corporate assets", false, "Liability is tied to contract price, not total corporate assets."]
+            ]
+          },
+          {
+            q: "What contractual right does the Employer typically gain when a contractor's delay exhausts the maximum 10% Liquidated Damages cap?",
+            o: [
+              ["The contractual right to terminate the contract for fundamental default under FIDIC Clause 15 / CPWD Clause 3", true, "Reaching the LD cap represents total failure of timely performance, entitling the employer to terminate."],
+              ["The right to seize the contractor's corporate headquarters", false, "Remedies are bounded by contract terms and civil law, not arbitrary seizure."],
+              ["The obligation to pay the contractor an early completion bonus", false, "Delayed contractors do not receive completion bonuses."],
+              ["The contractor automatically becomes the owner of the hospital", false, "Ownership remains strictly with the Employer."]
+            ]
+          },
+          {
+            q: "Why are Liquidated Damages preferred over Unliquidated Damages in construction contracts?",
+            o: [
+              ["They establish upfront clarity, eliminate the complex litigation requirement of proving every rupee of loss, and cap the contractor's financial exposure", true, "Pre-agreed liquidated rates provide commercial certainty for both lenders and builders."],
+              ["Because liquidated damages are tax-free under international treaties", false, "Taxation applies to damages in accordance with prevailing statutory laws."],
+              ["Because unliquidated damages can only be calculated in foreign currency", false, "Damages are denominated in the contract currency."],
+              ["Because liquidated damages eliminate the need for project schedulers", false, "Schedulers are still essential to determine whether delay was on the critical path."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the doctrine established in Kailash Nath Associates v. DDA regarding proof of loss when an employer seeks to deduct Liquidated Damages under Indian law."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 43: Suspension & Force Majeure =================
+  {
+    id: "U43", day: 43, title: "Day 43: Suspension, Force Majeure & Exceptional Events", mins: 25,
+    card: {
+      id: "c-suspension-force-majeure",
+      title: "Suspension & Exceptional Events: Employer suspension (time+cost) vs Force Majeure (time only)",
+      rule: "1) Suspension by Employer (FIDIC 8.8 / CPWD 15): If Employer suspends work for reasons not attributable to contractor, contractor is entitled to EOT + proven direct holding costs (plant/security); suspension >84 days allows contractor to omit suspended scope or terminate; 2) Exceptional Events / Force Majeure (FIDIC Clause 18): Beyond control, unforeseeable, unpreventable. Entitlement: Time relief (EOT); Cost relief granted ONLY for war/terrorism/hostilities, NOT for natural disasters or environmental bans.",
+      example: "National Green Tribunal (NGT) air pollution ban halts Delhi hospital construction for 21 days. Contractor receives 21 days EOT (time relief), but zero equipment idle cost compensation.",
+      trap: "Assuming that a Force Majeure event like a flood or pandemic lockdown entitles the contractor to daily idle equipment rental compensation."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** During construction of a tertiary healthcare tower in the Delhi National Capital Region (NCR), the Commission for Air Quality Management (CAQM) and National Green Tribunal (NGT) impose a mandatory **21-day ban on all construction activities** under GRAP Stage IV due to hazardous smog.
+
+The contractor shuts the site for 21 days, demobilizes 600 laborers, and submits a claim:
+- **Claim 1**: 21 days Extension of Time (EOT).
+- **Claim 2**: ₹68 Lakhs in idle equipment hire charges, generator stand-by, and site security costs.
+
+The Employer agrees to the time extension, but flatly rejects the ₹68 Lakhs in holding costs. Is the contractor entitled to both time and money for statutory environmental shutdowns?`
+      },
+      {
+        k: "read",
+        t: `**Suspension vs Exceptional Events (Force Majeure)**
+
+1. **Employer Suspension (FIDIC Sub-Clause 8.8 / CPWD Clause 15)**:
+   - When the Engineer instructs suspension of all or part of the works for Employer convenience (e.g. funding delays or design overhaul).
+   - **Contractor Entitlement**:
+     - **Time Relief**: Full EOT for critical path delay.
+     - **Cost Relief**: Compensation for **proven Cost** incurred during suspension (equipment standing charges, site security, protecting works).
+   - **The 84-Day Prolonged Suspension Rule (Sub-Clause 8.11)**:
+     - If suspension lasts more than **84 days**, the contractor may give notice requiring permission to proceed.
+     - If permission is not granted within 28 days, contractor may treat the affected scope as an **omission**, or terminate the entire contract!
+
+2. **Exceptional Events / Force Majeure (FIDIC 2017 Clause 18 / 1999 Clause 19)**:
+   - Criteria: Beyond party's control; could not have reasonably provided against; could not be avoided; not attributable to other party.
+   - **The Cost Rule**:
+     - Natural disasters, floods, epidemics, statutory environmental bans: **TIME ONLY (EOT)**. No financial compensation!
+     - Man-made political events (war, armed conflict, civil rebellion within the Employer's country): **TIME + COST**.`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under FIDIC Red Book Sub-Clause 8.8, what is the contractor's entitlement if the Engineer suspends work for 30 days due to Employer design redesign?",
+            o: [
+              ["Extension of Time (EOT) for the delay PLUS payment of proven Cost incurred in protecting and storing the works", true, "Suspension instructed for employer convenience or default entitles the contractor to both time relief and direct holding costs."],
+              ["Extension of Time only, with zero cost compensation", false, "Cost compensation is excluded for Force Majeure, but fully included for Employer suspension."],
+              ["Zero days EOT because design changes are routine", false, "Suspension halts the works and qualifies for full time relief."],
+              ["Automatic double payment for all remaining BOQ items", false, "Compensation covers actual holding costs incurred, not arbitrary profit bonuses."]
+            ]
+          },
+          {
+            q: "Under FIDIC Sub-Clause 8.11, what action can a contractor take if an Employer-instructed suspension lasts for more than 84 continuous days?",
+            o: [
+              ["Give notice requesting permission to proceed; if not granted within 28 days, treat the affected scope as an omission or terminate the contract", true, "Contractors cannot be held hostage indefinitely on suspended sites without recourse to omission or termination."],
+              ["Must wait in silence for up to 10 years", false, "Commercial construction contracts establish strict time limits on prolonged suspension."],
+              ["Demolish the existing hospital foundations immediately", false, "Damaging completed work is civil destruction and breach of contract."],
+              ["Sell the construction site to a third-party developer", false, "Contractors do not own the real estate land."]
+            ]
+          },
+          {
+            q: "A severe earthquake halts construction of a hospital for 25 days. Under FIDIC Clause 18 (Exceptional Events / Force Majeure), what is the contractor's contractual entitlement?",
+            o: [
+              ["Extension of Time (EOT) for the critical delay, but zero financial compensation for idle equipment or prolongation costs", true, "Natural disasters are Neutral Risk Events where each party bears their own financial loss while time is extended."],
+              ["Full EOT plus ₹50 Lakhs in equipment idle hire charges", false, "Employers do not insure contractors against acts of God unless specifically written."],
+              ["The contractor must pay Liquidated Damages for the 25 days", false, "Penalizing a contractor for an unforeseeable natural earthquake violates basic contract law."],
+              ["The contract is void and the contractor forfeits all previous payments", false, "Completed work remains payable; future time is extended."]
+            ]
+          },
+          {
+            q: "Under what specific Exceptional Event does FIDIC Sub-Clause 18.4 grant BOTH Extension of Time AND financial Cost compensation?",
+            o: [
+              ["Man-made sovereign events such as war, invasion, civil war, terrorism, or strikes by persons other than contractor personnel", true, "Sovereign and political risks in the Employer's country are Employer-borne risks entitling the contractor to cost recovery."],
+              ["Heavy seasonal summer heatwaves", false, "Climatic conditions do not grant cost relief."],
+              ["Contractor's tower crane breaking down", false, "Internal equipment failures are Contractor Risk Events."],
+              ["A 5% increase in local municipal trade licensing fees", false, "Local licensing fees are general commercial costs, not exceptional war events."]
+            ]
+          },
+          {
+            q: "Under CPWD GCC Clause 15 (Suspension of Work), what is the contractor required to do during the period of suspension?",
+            o: [
+              ["Properly protect and secure the work to the satisfaction of the Engineer, to prevent damage from weather or deterioration", true, "The contractor has an ongoing duty of care to protect executed works from degradation during suspension."],
+              ["Abandon the site completely and leave gates unlocked", false, "Abandonment results in vandalism and material degradation."],
+              ["Continue pouring concrete in secret at night", false, "Violating suspension orders results in non-certification and safety hazards."],
+              ["Sell the site scaffolding to pay labor bonuses", false, "Disposing of equipment during suspension breaches site operational covenants."]
+            ]
+          },
+          {
+            q: "What is the legal doctrine of 'Frustration' under Section 56 of the Indian Contract Act, 1872?",
+            o: [
+              ["A contract becomes void when an unforeseen supervening event renders the performance of the contract physically or legally impossible", true, "Frustration dissolves the contract automatically when performance becomes fundamentally impossible or unlawful."],
+              ["When a project controls engineer feels tired on Friday evening", false, "Frustration is an objective legal impossibility doctrine, not psychological emotion."],
+              ["When a contractor fails to achieve their budgeted profit margin", false, "Commercial hardship or reduced profitability does not constitute legal frustration."],
+              ["When a software program takes more than 10 seconds to calculate float", false, "Software speed has no bearing on contract validity."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the difference in financial compensation between an Employer-instructed suspension under Clause 8.8 and a Force Majeure event under Clause 18."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 44: Bank Guarantee Governance =================
+  {
+    id: "U44", day: 44, title: "Day 44: Bank Guarantee (BG) Governance, Advances & Injunctions", mins: 25,
+    card: {
+      id: "c-bank-guarantee",
+      title: "Bank Guarantees: Independent contracts, unconditional encashment & Section 9 injunctions",
+      rule: "A Bank Guarantee (BG) is an independent tripartite contract between Bank, Beneficiary (Employer), and Applicant (Contractor). Under Indian law (Vinitec Electronics v. HCL / Standard Chartered), banks MUST pay immediately upon unconditional demand without investigating disputes. Courts grant injunctions against encashment ONLY in two rare exceptions: 1) Established egregious fraud; 2) Irretrievable injustice/harm. Always track BG expiry with 60-day advance alerts.",
+      example: "Contractor defaults on hospital MEP. Employer invokes ₹12 Cr Performance BG. Contractor seeks court injunction alleging the client caused delay. High Court refuses injunction; bank must encash within 24 hours.",
+      trap: "Allowing a contractor's Performance Bank Guarantee or Mobilization Advance BG to expire before project handover, losing all commercial leverage."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** A major dispute erupts over MEP commissioning on a ₹500 Cr hospital. The Employer issues a notice terminating the contract and submits a formal letter to the bank invoking the contractor’s **₹25 Crore Performance Bank Guarantee (PBG)**.
+
+The contractor’s lawyers sprint to the High Court under **Section 9 of the Arbitration and Conciliation Act** seeking an emergency stay order: *"Your Honor, the Employer is acting maliciously! They delayed our drawings! Stop the bank from paying!"*
+
+Will the High Court halt the bank encashment?
+
+In 98% of cases, Indian courts refuse to interfere with unconditional bank guarantees. Knowing how BGs work is the ultimate commercial shield for Project Controls Managers.`
+      },
+      {
+        k: "read",
+        t: `**The Three Core Bank Guarantees & Judicial Principles**
+
+1. **The Three Construction Bank Guarantees**:
+   - **Mobilization Advance BG**: Secures the 10%–15% interest-bearing advance paid to contractor for site setup. Must be systematically reduced as the advance is amortized against monthly RA bills.
+   - **Performance Bank Guarantee (PBG)**: Typically 5%–10% of total contract value. Secures faithful completion through Taking-Over and Defect Liability Period (DLP).
+   - **Retention Money BG (RMBG)**: Replaces cash retention to free up contractor working capital while securing warranty rectifications.
+
+2. **The Principle of Independent Contract**:
+   - The BG is a separate, autonomous contract between the **Bank** and the **Beneficiary**.
+   - The bank is **legally barred** from inquiring into whether the contractor breached the construction contract or who caused delay.
+   - Upon receipt of a demand matching the guarantee terms, the bank **MUST PAY**.
+
+3. **The Only Two Exceptions to Injunction (Indian Supreme Court)**:
+   - *Exception 1: Established Egregious Fraud*: Fraud in the creation or procurement of the guarantee that taints the underlying transaction.
+   - *Exception 2: Irretrievable Injustice / Harm*: Irreversible loss of such exceptional nature that it would be impossible for the contractor to recover money later through arbitration (e.g. money transferred to an insolvent entity in an uncooperative foreign state).`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "What is the legal status of an Unconditional Performance Bank Guarantee (PBG) under Indian banking and commercial contract law?",
+            o: [
+              ["It is an autonomous and independent contract between the Bank and Beneficiary, payable on demand without reference to underlying disputes", true, "Banks are legally required to honour unconditional demands without assessing construction dispute merits."],
+              ["It is merely a letter of recommendation that the bank may refuse to pay at will", false, "A bank guarantee is a binding financial security instrument, not an informal recommendation."],
+              ["It is valid only if signed in the presence of an arbitration tribunal", false, "Guarantees are issued by scheduled commercial banks upon contract execution."],
+              ["It can only be encashed after a 10-year court trial is completed", false, "Unconditional BGs provide immediate liquidity precisely to avoid waiting for trial outcomes."]
+            ]
+          },
+          {
+            q: "Under established Supreme Court of India jurisprudence (e.g. Vinitec Electronics / Svenska Handelsbanken), on what two narrow grounds can a court grant an injunction restraining BG encashment?",
+            o: [
+              ["Established egregious fraud known to the bank, and irretrievable injustice / special equities of exceptional nature", true, "These are the only two recognized exceptions to the strict non-interference rule for unconditional BGs."],
+              ["Contractor suffered a cash flow loss and wishes to level labor", false, "Ordinary commercial hardship is never a ground for injuncting a bank guarantee."],
+              ["The project controls engineer made a calculation error in Primavera P6", false, "Scheduling calculations have no bearing on banking injunction jurisprudence."],
+              ["The client is a private hospital chain rather than the government", false, "Banking law principles apply uniformly across private and public beneficiaries."]
+            ]
+          },
+          {
+            q: "What is the primary risk if a Project Controls Manager fails to track the validity expiry dates of a contractor's Performance Bank Guarantee?",
+            o: [
+              ["The BG will lapse and expire, leaving the Employer with zero financial leverage or security if the contractor defaults or abandons the site", true, "An expired bank guarantee is worthless paper; banks will reject encashment once the validity date passes."],
+              ["The contractor automatically receives an award of 50 days EOT", false, "BG expiry does not grant schedule extensions."],
+              ["The building foundation will physically settle by 50 mm", false, "Financial securities do not alter structural soil mechanics."],
+              ["The bank will automatically purchase company shares in the project", false, "Banks do not acquire equity from lapsed guarantees."]
+            ]
+          },
+          {
+            q: "How should a Mobilization Advance Bank Guarantee be administered as the project progresses?",
+            o: [
+              ["Its value should be progressively reduced in step with the actual amortization recoveries deducted from monthly RA bills", true, "As the employer recovers the advance from bill deductions, the contractor is entitled to reduce the guarantee value."],
+              ["It should be doubled every 3 months", false, "Advances are recovered, not inflated."],
+              ["It must remain at 100% value forever until building demolition", false, "Once the mobilization advance is fully recovered, the advance BG must be released."],
+              ["It should be converted into supermarket discount coupons", false, "Financial securities are managed through banking channels."]
+            ]
+          },
+          {
+            q: "A contractor's PBG expires on 31-December. The project is running 4 months late. On 1-December, the contractor refuses to extend the BG validity. What is the standard contractual remedy for the Employer?",
+            o: [
+              ["Issue an immediate conditional demand on the bank to extend the guarantee or encash the full amount before the expiry date (Extend or Pay)", true, "An 'extend or pay' demand forces the bank to either obtain renewal from the contractor or wire the full funds to the client."],
+              ["Wait until 15-January to see if the contractor changes their mind", false, "Waiting past 31-December allows the BG to lapse, forfeiting all money."],
+              ["Forgive the contractor because renewal fees are expensive", false, "Waiving security without authority breaches fiduciary responsibility."],
+              ["Delete the completion milestone from Primavera P6", false, "Manipulating schedule milestones has no effect on banking security."]
+            ]
+          },
+          {
+            q: "Under Section 9 of the Arbitration and Conciliation Act, 1996, what type of relief do contractors typically seek from High Courts regarding bank guarantees?",
+            o: [
+              ["Interim measures of protection seeking an ex-parte stay order to restrain the Employer from encashing the bank guarantee", true, "Section 9 provides urgent pre-arbitral interim relief, though stays on BGs are rarely granted."],
+              ["Permanent dissolution of the commercial bank", false, "Arbitration courts do not dissolve commercial banks."],
+              ["Grant of an automatic degree in civil engineering", false, "Courts adjudicate legal disputes, not academic degrees."],
+              ["Direct appointment of laborers to the construction site", false, "Courts do not manage labor recruitment."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the 'Independent Contract' doctrine of bank guarantees under Indian law, and why courts almost never grant injunctions against unconditional PBG encashment."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 45: Lenders' Independent Engineer (LIE) Bank Audits =================
+  {
+    id: "U45", day: 45, title: "Day 45: Lenders' Independent Engineer (LIE) Audits & Escrow", mins: 25,
+    card: {
+      id: "c-lie-bank-audit",
+      title: "LIE Audits & Escrow Waterfalls: Bank drawdown certification & budget adequacy",
+      rule: "Lenders' Independent Engineers (LIEs) represent funding consortiums (banks/NBFCs) to protect debt exposure: 1) Verify Physical Progress vs Financial Drawdown (reconciling P6 earned value with loan releases); 2) Cost-to-Complete (CTC) & Budget Adequacy (ensuring remaining uncalled equity + undrawn debt covers remaining scope); 3) Statutory & Permit Compliance (Fire NOC, AERB, environmental clearances); 4) Escrow Waterfall (RERA priority: taxes -> site works -> debt service -> dividends).",
+      example: "Hospital project 55% physically complete. Developer claims 70% to draw bank tranche. LIE physical audit detects discrepancy and freezes ₹45 Cr loan disbursement until equity infusion.",
+      trap: "Reporting unearned progress on S-curves; LIE site verification will discover the gap, freeze loan drawdowns, and trigger a catastrophic site liquidity crisis."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** A private healthcare group is constructing a ₹400 Cr multi-specialty hospital, funded with **₹120 Cr promoter equity** and **₹280 Cr bank consortium debt**.
+
+At Month 14, the developer submits a drawdown request for a **₹40 Crore loan tranche**, reporting *“Project Progress: 62%”*.
+
+The banks dispatch the **Lenders’ Independent Engineer (LIE)** for site inspection. The LIE walks the site with a levelling staff and P6 schedule, discovering that while civil structure is done, MEP rough-in is only 25% complete, medical gas is unstarted, and actual weighted progress is **only 44%**!
+
+The banks freeze the ₹40 Crore loan drawdown immediately. Laborers strike, vendors halt deliveries, and the project enters a liquidity coma.`
+      },
+      {
+        k: "read",
+        t: `**The LIE Audit Framework & Escrow Waterfalls**
+
+1. **What Does the Lenders' Independent Engineer (LIE) Audit?**:
+   - **Physical vs Financial Progress Reconciliation**:
+     - Compares the developer's claimed physical % with actual ground execution using verified Rules of Credit.
+   - **Cost-to-Complete (CTC) & Budget Adequacy Audit**:
+     - Will the remaining unspent project budget cover the remaining work?
+     - If cost overruns exist (e.g. steel price rise or scope additions), the LIE calculates the **Funding Deficit**. Banks mandate that **promoters must infuse 100% of the cost overrun equity upfront** before another rupee of bank debt is disbursed!
+   - **Statutory Approvals & Hold Points**:
+     - Verifies environmental clearances, building sanction plan validity, fire department provisional NOC, AERB radiation approvals, and statutory labor cess payments.
+
+2. **The Escrow Account Waterfall Mechanism**:
+   - All loan funds, promoter equity, and customer advances flow into a dedicated **Project Escrow Account** (mandated under RERA and RBI banking consortium covenants).
+   - **Strict Disbursement Priority (Waterfall)**:
+     1. Statutory Government Taxes (TDS, GST, Labor Cess).
+     2. Certified Contractor Civil & MEP Work Payments (direct site expenditure).
+     3. Insurance premiums and site security.
+     4. Bank Debt Service (interest and principal repayments).
+     5. Promoter profit distributions (strictly LAST, only after project achieves full commissioning!).`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "What is the primary fiduciary role of a Lenders' Independent Engineer (LIE) on a bank-financed hospital project?",
+            o: [
+              ["To independently inspect physical site progress, verify budget adequacy, and ensure loan drawdowns match actual ground reality to protect the bank's debt exposure", true, "The LIE acts as the technical eyes and ears of the funding consortium to prevent over-lending and fund diversion."],
+              ["To design the hospital's electrical wiring systems", false, "Design is the MEP design consultant's job, not the auditor's."],
+              ["To hire and fire the contractor's site laborers", false, "Labor management is strictly contractor operational scope."],
+              ["To sell medical equipment to hospital doctors", false, "Commercial sales have no place in engineering audit functions."]
+            ]
+          },
+          {
+            q: "What is a 'Cost-to-Complete' (CTC) / Budget Adequacy audit conducted by an LIE?",
+            o: [
+              ["An assessment verifying whether remaining uncalled equity plus undrawn debt is sufficient to finish the project without funding deficit", true, "If remaining funds are less than cost to complete, the bank faces an incomplete, unviable asset."],
+              ["Counting how many pages are left in the physical Measurement Book", false, "CTC evaluates monetary project completion budget, not stationery pages."],
+              ["Calculating the cost of buying coffee for the site staff", false, "Site amenities are minor operational overheads, not capital budget adequacy."],
+              ["Verifying if the contractor has completed their annual income tax filing", false, "Corporate taxes do not evaluate project-specific capital budget sufficiency."]
+            ]
+          },
+          {
+            q: "What happens if an LIE discovers that physical progress on site is 42%, while the developer claimed 58% on paper to draw a bank loan tranche?",
+            o: [
+              ["The bank freezes loan disbursements, restricts drawdown to verified progress, and may demand promoter equity infusion to cover the gap", true, "Lenders freeze funding when claimed progress does not match physical inspection."],
+              ["The bank automatically forgives the loan and gifts the money to the developer", false, "Banks enforce debt covenants, they do not gift money to defaulting borrowers."],
+              ["The bank fires the municipal commissioner", false, "Banks have no authority over municipal officers."],
+              ["The LIE is required to build the remaining hospital floors themselves", false, "The LIE is an auditor, not a building contractor."]
+            ]
+          },
+          {
+            q: "In an infrastructure or hospital project Escrow Account Waterfall, which payment takes the HIGHEST priority before any other funds are disbursed?",
+            o: [
+              ["Statutory government taxes, labor welfare cess, and statutory withholdings", true, "Statutory compliance takes top legal priority in standard escrow waterfalls to avoid legal shutdowns."],
+              ["Promoter executive luxury bonuses", false, "Promoter profits are strictly last in the escrow waterfall."],
+              ["Donations to foreign sports clubs", false, "Project funds cannot be diverted to unrelated external entities."],
+              ["Subcontractor early completion gifts", false, "Disbursements follow contractual milestone verification."]
+            ]
+          },
+          {
+            q: "Why do banks mandate that all project revenues, promoter equity, and loan drawdowns pass through a single Project Escrow Account?",
+            o: [
+              ["To ring-fence project funds, prevent financial diversion to other projects, and ensure money is spent strictly on this hospital's construction", true, "Escrow ring-fencing ensures debt is used exclusively for the mortgaged asset's completion."],
+              ["Because banks have no space in their computers for multiple accounts", false, "Escrow is a legal ring-fencing mechanism, not computer storage."],
+              ["To allow the contractor to withdraw unlimited cash from ATMs", false, "Escrow withdrawals require formal tripartite engineer certification."],
+              ["Because the Indian Constitution requires all hospitals to use cash only", false, "Modern healthcare construction operates through digital banking."]
+            ]
+          },
+          {
+            q: "Why must the Project Controls Manager provide the LIE with verified P6 CPM schedules and S-Curve progress envelopes?",
+            o: [
+              ["Because the LIE uses the baseline vs actual S-curves to independently validate progress velocity and forecast commercial completion dates", true, "Contemporary CPM schedules provide the technical foundation for the LIE's monthly lender reports."],
+              ["To teach the bank manager how to use scheduling software", false, "Bank executives review summary audit reports, not software tutorials."],
+              ["Because P6 schedules automatically convert bank loans into foreign currency", false, "P6 manages project time and resource data, not currency trading."],
+              ["To hide contractor delays from the government", false, "Audits require transparent, defensible technical records."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the role of the Lenders' Independent Engineer (LIE) on a project-financed hospital, and why an inaccurate progress S-curve can freeze bank loan drawdowns."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 46: DAAB & Arbitration =================
+  {
+    id: "U46", day: 46, title: "Day 46: DAAB & Arbitration (Indian Arbitration Act)", mins: 25,
+    card: {
+      id: "c-daab-arbitration",
+      title: "Dispute Escalation: DAAB standing boards & Arbitration Act 12-month limit",
+      rule: "FIDIC 2017 Clause 21 mandates a 4-tier dispute resolution ladder: 1) Engineer's Determination (42d); 2) DAAB (Dispute Avoidance & Adjudication Board) binding decision within 84d; 3) Amicable Settlement (28d cooling-off window); 4) International/Domestic Arbitration. Under the Indian Arbitration and Conciliation Act (amended 2015/2019): Section 29A mandates award within 12 months (extendable by 6m); Section 34 strictly limits setting aside awards to patent illegality or public policy violation.",
+      example: "₹18 Cr dispute over hospital cleanroom scope: Engineer rejects claim. Contractor refers to 3-member DAAB. DAAB awards ₹8.5 Cr within 84 days. Parties accept, avoiding a 4-year court battle.",
+      trap: "Ignoring the mandatory contractual escalation ladder (e.g. rushing directly to court/arbitration without first referring to the Engineer or DAAB)."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** On a ₹750 Cr hospital expansion project, 18 disputed claims accumulate between the client and main contractor totaling **₹54 Crores**.
+
+The contractor’s hot-headed claims director files an immediate petition in the High Court demanding arbitration.
+
+The High Court dismisses the petition on Day 1: *"Under Clause 21 of your FIDIC contract, dispute resolution is a multi-tiered ladder. You bypassed the Engineer’s Determination and failed to refer the dispute to the Dispute Avoidance/Adjudication Board (DAAB). Return to the contractual process."*
+
+Rushing past contractual dispute ladders wastes years in litigation and burns corporate credibility.`
+      },
+      {
+        k: "read",
+        t: "**The Multi-Tier Dispute Resolution Hierarchy**\n\n```\nTier 1: Engineer's Determination (FIDIC Sub-Clause 3.7 - 42 Days)\n        |\n        |-- Dissatisfied? Issue NOD within 28 Days\n        v\nTier 2: DAAB Adjudication (FIDIC Clause 21 - Binding Decision in 84 Days)\n        |\n        |-- Dissatisfied? Issue NOD within 28 Days\n        v\nTier 3: Amicable Settlement (Mandatory 28-Day Cooling-Off Window)\n        |\n        |-- Unresolved after 28 Days?\n        v\nTier 4: Final Binding Arbitration (Indian Arbitration & Conciliation Act)\n```\n\n1. **The FIDIC 2017 DAAB (Dispute Avoidance & Adjudication Board)**:\n   - Panel of 1 or 3 experienced, impartial construction legal and engineering experts.\n   - Standing DAAB visits the site regularly (every 3–4 months) to resolve disputes *before* they turn into legal warfare!\n   - Must issue a **binding decision within 84 days**. The parties must comply with the decision immediately, even if a Notice of Dissatisfaction (NOD) is filed!\n\n2. **The Indian Arbitration & Conciliation Act, 1996 (Amended 2015 & 2019)**:\n   - **Section 29A (Statutory Time Limit)**: The arbitral tribunal **MUST render its award within 12 months** from completion of pleadings (extendable by 6 months by mutual consent of parties; further extensions require High Court approval).\n   - **Section 34 (Setting Aside Awards)**: Indian courts will **NOT re-assess evidence** or act as an appellate court. An award can be set aside ONLY on very narrow grounds: patent illegality appearing on the face of the award, violation of public policy, or breach of natural justice."
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under FIDIC 2017 Clause 21, what is the mandatory sequence of the multi-tier dispute escalation ladder?",
+            o: [
+              ["Engineer's Determination -> DAAB Decision -> Amicable Settlement (28d) -> Final Arbitration", true, "This 4-tier ladder ensures disputes are filtered and resolved at the lowest possible technical level before formal arbitration."],
+              ["Direct lawsuit in the local civil court on Day 1", false, "Standard construction contracts mandate arbitration, barring direct civil court suits."],
+              ["Police investigation -> Criminal trial -> High Court appeal", false, "Construction claims are commercial civil disputes, not criminal investigations."],
+              ["Public protest -> Media press conference -> Arbitration", false, "Disputes follow contractual technical procedures, not media campaigns."]
+            ]
+          },
+          {
+            q: "What is the legal effect of a Dispute Avoidance / Adjudication Board (DAAB) decision under FIDIC Sub-Clause 21.4?",
+            o: [
+              ["It is immediately binding on both parties, who must promptly give effect to it, even if a Notice of Dissatisfaction (NOD) is issued", true, "DAAB decisions have immediate binding effect to prevent cash flow blockages while formal arbitration is pending."],
+              ["It is purely advisory and neither party has to pay or comply", false, "Under FIDIC, DAAB decisions are binding and enforceable unless overturned in arbitration."],
+              ["It automatically dissolves the contractor's company", false, "Dispute boards resolve claims, they do not dissolve corporate entities."],
+              ["It cancels the project's building sanction plan", false, "Building permits are governed by municipal bylaws, not dispute boards."]
+            ]
+          },
+          {
+            q: "Under Section 29A of the Indian Arbitration and Conciliation Act (as amended), what is the statutory time limit for an arbitral tribunal to pass an award?",
+            o: [
+              ["Within 12 months from the date of completion of pleadings, extendable by up to 6 months with consent of both parties", true, "Section 29A was introduced to eliminate prolonged multi-year arbitrations and enforce time-bound awards."],
+              ["Within 25 years from the start of the dispute", false, "The 2015/2019 amendments specifically ended decades-long arbitrations."],
+              ["Within 24 hours of filing the claim", false, "Pleadings, evidence, and hearings require a realistic structured timetable."],
+              ["Arbitration has no time limits under Indian law", false, "Section 29A imposes strict statutory time limits."]
+            ]
+          },
+          {
+            q: "Under Section 34 of the Indian Arbitration and Conciliation Act, on what grounds can an Indian court set aside an arbitral award?",
+            o: [
+              ["Strictly on narrow grounds such as patent illegality on the face of the award, bias/breach of natural justice, or conflict with public policy", true, "Courts will not re-evaluate evidence or act as an appellate court on technical engineering findings."],
+              ["Whenever the losing party feels the award is too expensive", false, "Subjective dissatisfaction is not a legal ground to overturn an award."],
+              ["Because the arbitrator was not an Indian citizen", false, "International arbitrators are routinely appointed and recognized under Indian law."],
+              ["If the contractor changes their corporate logo", false, "Corporate branding has zero relation to Section 34 challenges."]
+            ]
+          },
+          {
+            q: "What is the mandatory 'Amicable Settlement' cooling-off period under FIDIC Sub-Clause 21.5 before arbitration can be formally commenced?",
+            o: [
+              ["At least 28 days, during which the parties are expected to attempt settlement discussions", true, "The 28-day cooling-off window provides senior corporate leaders an opportunity to negotiate before expensive arbitration starts."],
+              ["12 months of mandatory meditation in the Himalayas", false, "Amicable settlement is a short 28-day window, not a multi-year retreat."],
+              ["Zero days; arbitration can start within 5 minutes of a dispute", false, "Bypassing the amicable settlement window violates the condition precedent."],
+              ["5 years", false, "28 days is the explicit contractual window."]
+            ]
+          },
+          {
+            q: "Why are Standing Dispute Avoidance and Adjudication Boards (DAABs) favored over ad-hoc arbitration in mega hospital projects?",
+            o: [
+              ["Standing DAABs visit the site periodically during construction, understand the physical engineering context, and prevent disputes from escalating", true, "Proactive dispute avoidance while work is underway preserves commercial relationships and keeps projects moving."],
+              ["Standing DAABs cost zero money", false, "Board members receive monthly retainers and daily inspection fees."],
+              ["Standing DAABs replace the municipal building inspector", false, "Statutory municipal approvals are completely separate from contractual dispute boards."],
+              ["Standing DAABs guarantee that no contractor will ever ask for money", false, "Contractors can still submit claims, which are adjudicated quickly."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the multi-tiered dispute resolution ladder under FIDIC 2017 Clause 21, and the role of Section 29A of the Indian Arbitration Act in enforcing time-bound awards."
+      },
+      { k: "done" }
+    ]
+  }
+];
+UNITS.push(...UNITS5);
+const APPLY5 = {
+  U38: {
+    task: "Compare the contractual governance on your project with FIDIC Red Book and CPWD GCC: 1) Identify the contract model used (FIDIC, CPWD, modified EPC, or bespoke item-rate); 2) Map the roles of Employer, Engineer/PMC, and Contractor; 3) Clarify who has the authority to issue technical instructions and determine claims; 4) Document one risk of blurring employer directives with the engineer's role.",
+    good: [
+      "Identifies the specific contract framework used on the live project",
+      "Maps contractual lines of authority for instructions and certifications",
+      "Evaluates the neutrality/role of the Engineer or departmental officers (EE/SE)",
+      "Highlights practical risks of informal client directives"
+    ],
+    tmpl: "Project & Contract Form: \nContractual Hierarchy (Employer, Engineer/PMC, Contractor): \nInstruction & Determination Authority: \nAnalysis of Engineer Neutrality vs Employer Directives: \nSite Governance Safeguards Implemented: "
+  },
+
+  U39: {
+    task: "Audit an Extension of Time (EOT) claim submitted on your project against the Two-Step Qualification Test: 1) Evaluate whether the stated cause falls under an enumerated qualifying ground (FIDIC 8.4 / CPWD 5); 2) Apply the Critical Path Test to verify whether completion was actually delayed; 3) Document the float status of the affected activities; 4) State the quantified EOT entitlement.",
+    good: [
+      "Identifies the specific delay event and cited contract clause",
+      "Evaluates qualifying grounds (variations, exceptional weather, employer impediments)",
+      "Applies the Critical Path Test using schedule float analysis",
+      "Concludes with a defensible numerical EOT determination"
+    ],
+    tmpl: "Contractor Claim & Cited Grounds: \nContract Clause Reference (FIDIC 8.4 / CPWD 5): \nTest 1 - Qualifying Ground Evaluation: \nTest 2 - Critical Path & Float Impact Analysis: \nRecommended EOT Determination (Days): "
+  },
+
+  U40: {
+    task: "Draft a compliant Notice of Claim under FIDIC Sub-Clause 20.1 / CPWD Clause 5 for an emerging delay event on your project: 1) State the date the event occurred and the date awareness arose; 2) Cite the relevant contract clause; 3) Describe the factual cause and anticipated schedule/cost effect; 4) Confirm that contemporary records are being maintained and detailed particulars will follow within 42 days.",
+    good: [
+      "Complies with the 28-day notice timeline from date of awareness",
+      "Cites specific contract clauses (e.g. FIDIC 20.1 / CPWD Clause 5)",
+      "Avoids premature speculation while firmly reserving rights to time and cost",
+      "Commits to contemporary record-keeping and 42-day particulars"
+    ],
+    tmpl: "Formal Notice of Claim:\nTo (Engineer / Employer): \nContract Reference: \nDate of Delay Event & Date of Awareness: \nContractual Basis (FIDIC 20.1 / 8.4 / CPWD 5): \nFactual Event Description & Anticipated Impact: \nCommitment on Contemporary Records & 42-Day Submission: "
+  },
+
+  U41: {
+    task: "Audit a scope change or variation request on your site: 1) Verify whether a written variation instruction exists from the authorized Engineer; 2) If the directive was verbal, draft a formal 7-Day Confirmation Letter under FIDIC Sub-Clause 3.3; 3) Establish the valuation methodology using the 3-tier hierarchy (BOQ rates, derived rates, or first principles).",
+    good: [
+      "Examines the written authority behind the scope change",
+      "Drafts an assertive 7-day confirmation letter if instruction was verbal",
+      "Applies the contractual valuation hierarchy (BOQ -> Derived -> First Principles)",
+      "Cites 15% CP&OH cap under standard rate analysis rules"
+    ],
+    tmpl: "Scope Change Description: \nContractual Instruction Status (Written vs Verbal): \n7-Day Verbal Confirmation Letter (if applicable): \nValuation Hierarchy Applied (Tier 1 / Tier 2 / Tier 3): \nRate Analysis Breakdown & Determination: "
+  },
+
+  U42: {
+    task: "Evaluate a Liquidated Damages (LD) scenario on your project under Section 74 of the Indian Contract Act and the Kailash Nath doctrine: 1) Calculate the maximum LD exposure based on contract rate and cap (e.g. 0.5%/week up to 10%); 2) Assess whether the Employer suffered actual commercial injury or loss; 3) Determine whether concurrent employer events or utility delays bar full deduction.",
+    good: [
+      "Calculates the contractual LD calculation formula and maximum cap",
+      "Applies the Kailash Nath legal test requiring proof of actual commercial loss",
+      "Considers independent commissioning delays (e.g. Fire NOC/power connection)",
+      "Formulates a legally robust recommendation on LD deduction"
+    ],
+    tmpl: "Project Milestone & Delay Period: \nContractual LD Formula & Maximum Cap (₹ / %): \nAssessment of Actual Employer Commercial Loss: \nEvaluation of Intervening Delays / No-Loss Defenses: \nRecommended Final LD Determination: "
+  },
+
+  U43: {
+    task: "Develop a protocol for managing an unexpected suspension or statutory halt (e.g. NGT environmental ban or governmental stop-work order): 1) Classify the event under Employer Suspension (FIDIC 8.8) or Exceptional Events / Force Majeure (Clause 18); 2) Outline the contractor's duty of care to protect and secure executed works; 3) Delineate time relief (EOT) from cost relief (demobilization/holding costs).",
+    good: [
+      "Classifies the suspension into the correct contract risk bucket",
+      "Details specific site protection and preservation measures required",
+      "Delineates between time extension and financial compensability",
+      "Monitors the 84-day prolonged suspension milestone"
+    ],
+    tmpl: "Suspension Event & Statutory Order Reference: \nContract Classification (Clause 8.8 vs Clause 18 / CPWD 15): \nSite Protection, Security & Maintenance Protocol: \nEntitlement Analysis (Time Relief vs Direct Holding Costs): \nMonitoring of 84-Day Prolonged Suspension Milestone: "
+  },
+
+  U44: {
+    task: "Build a Bank Guarantee (BG) Governance Register and Action Plan for your project: 1) Inventory all active BGs (Performance BGs, Mobilization Advance BGs, Retention BGs); 2) Record bank names, guarantee amounts, expiry dates, and claim notice periods; 3) Implement a 60-day advance expiry warning alert; 4) Draft the standard 'Extend or Pay' notice for guarantees nearing expiration.",
+    good: [
+      "Inventories all 3 core types of construction bank guarantees with amounts",
+      "Documents expiry dates and establishes a 60-day tracking buffer",
+      "Reconciles mobilization advance reduction against RA bill amortizations",
+      "Drafts a formal 'Extend or Pay' demand letter to the issuing bank"
+    ],
+    tmpl: "Bank Guarantee Inventory (Type, Bank, Amount ₹, Expiry Date):\n1. PBG: \n2. Advance BG: \n3. Retention BG: \n60-Day Expiry Tracking Protocol: \nMobilization Advance Reduction Reconciliation: \nDraft 'Extend or Pay' Notice to Issuing Bank: "
+  },
+
+  U45: {
+    task: "Prepare an audit package for a Lenders' Independent Engineer (LIE) bank inspection: 1) Reconcile claimed physical progress with ground reality using verified Rules of Credit; 2) Compare project drawdowns against the Escrow Account waterfall; 3) Update the Cost-to-Complete (CTC) and budget adequacy assessment; 4) Collate statutory clearances (Fire, AERB, building sanction).",
+    good: [
+      "Presents an honest physical progress percentage backed by measurable quantities",
+      "Audits funding drawdowns against the RERA/lender escrow waterfall",
+      "Assesses Cost-to-Complete budget adequacy and flags potential funding deficits",
+      "Includes contemporary statutory approval certificates"
+    ],
+    tmpl: "Project Finance Overview (Equity ₹ / Debt ₹ / Disbursed ₹): \nPhysical Progress Reconciliation (P6 Schedule vs Ground Reality): \nCost-to-Complete (CTC) & Budget Adequacy Assessment: \nEscrow Waterfall Compliance Check: \nStatutory Approval Package for Bank Consortium: "
+  },
+
+  U46: {
+    task: "Map the multi-tier dispute escalation pathway for a high-value dispute on your project: 1) Document the step-by-step progress through Engineer's Determination, DAAB adjudication, Amicable Settlement, and Arbitration; 2) Detail the mandatory timeframes for each step (42d, 84d, 28d); 3) Note the 12-month statutory time limit under Section 29A of the Indian Arbitration Act; 4) Outline the strategy for dispute avoidance.",
+    good: [
+      "Maps the complete 4-tier contractual dispute ladder",
+      "Identifies exact contractual notice deadlines and cooling-off windows",
+      "Applies Section 29A statutory time limits and Section 34 challenge grounds",
+      "Emphasizes proactive dispute avoidance through contemporary technical records"
+    ],
+    tmpl: "Dispute Summary & Financial Exposure: \nTier 1 - Engineer's Determination (Clause 3.7 - 42d): \nTier 2 - DAAB Referral & Binding Decision (Clause 21 - 84d): \nTier 3 - Amicable Settlement Cooling-Off (28d): \nTier 4 - Arbitration Strategy (Section 29A 12-Month Rule & Sec 34): \nProactive Dispute Avoidance Recommendations: "
+  }
+};
+Object.assign(APPLY, APPLY5);
+UNITS5.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
