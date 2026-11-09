@@ -2203,36 +2203,71 @@ function openLPSBoard(){
   renderBoard();
 }
 
-function openScaleVisualizer(){
+function openScaleVisualizer(initialTab = "tab-2d"){
   const old = $("scale-modal");
   if(old) old.remove();
 
+  let activeTab = initialTab; // "tab-2d" | "tab-3d" | "tab-body"
+
   const m = document.createElement("div");
   m.id = "scale-modal";
-  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
 
-  m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:860px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(0,0,0,.35);overflow:hidden;box-sizing:border-box">
-    <!-- Header -->
-    <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
-      <div>
-        <b style="font-size:1.05rem;color:var(--bar,#2F5BD3)">👁️ Visual Measurement &amp; Room Scale Visualizer</b>
-        <div style="font-size:.78rem;color:var(--muted)">Connect feet, meters, and square meters to human body anchors and real hospital rooms</div>
+  function renderModal(){
+    m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:920px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.4);overflow:hidden;box-sizing:border-box">
+      <!-- Header -->
+      <div style="padding:12px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
+        <div>
+          <b style="font-size:1.05rem;color:var(--bar,#2F5BD3)">👁️ Visual Scale &amp; Site Measurement Simulator</b>
+          <div style="font-size:.76rem;color:var(--muted)">Connect feet, meters, brass, and cubic meters to physical human anchors, transit mixers, and hospital rooms</div>
+        </div>
+        <button id="scv-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
       </div>
-      <button id="scv-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
-    </div>
 
-    <!-- Body -->
-    <div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">
-      <!-- Everyday Body Anchors Banner -->
+      <!-- Tab Bar -->
+      <div style="display:flex;gap:4px;border-bottom:1px solid var(--line);padding:8px 18px 0;background:var(--bg,#f8f9fa);overflow-x:auto">
+        <button class="btn scv-tab-btn" data-tab="tab-2d" style="font-size:.78rem;padding:6px 12px;font-weight:700;border-bottom:2px solid ${activeTab==='tab-2d'?'var(--bar,#2F5BD3)':'transparent'};color:${activeTab==='tab-2d'?'var(--bar,#2F5BD3)':'inherit'}">📐 2D Room &amp; Opening Area</button>
+        <button class="btn scv-tab-btn" data-tab="tab-3d" style="font-size:.78rem;padding:6px 12px;font-weight:700;border-bottom:2px solid ${activeTab==='tab-3d'?'var(--bar,#2F5BD3)':'transparent'};color:${activeTab==='tab-3d'?'var(--bar,#2F5BD3)':'inherit'}">📦 3D Volumes, Brass &amp; Concrete Trucks</button>
+        <button class="btn scv-tab-btn" data-tab="tab-body" style="font-size:.78rem;padding:6px 12px;font-weight:700;border-bottom:2px solid ${activeTab==='tab-body'?'var(--bar,#2F5BD3)':'transparent'};color:${activeTab==='tab-body'?'var(--bar,#2F5BD3)':'inherit'}">🖐️ Human Body Field Anchors</button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div id="scv-body" style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem"></div>
+
+      <!-- Footer -->
+      <div style="padding:10px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.76rem;color:var(--muted)">Standards: IS 1200 Part 12, IS 2502 &amp; CPWD Specifications</span>
+        <button id="scv-done" class="btn" style="padding:7px 18px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">Done</button>
+      </div>
+    </div>`;
+
+    m.querySelector("#scv-close").onclick = () => m.remove();
+    m.querySelector("#scv-done").onclick = () => m.remove();
+    m.onclick = e => { if(e.target === m) m.remove(); };
+
+    m.querySelectorAll(".scv-tab-btn").forEach(b => {
+      b.onclick = () => { activeTab = b.dataset.tab; renderModal(); };
+    });
+
+    const bodyEl = m.querySelector("#scv-body");
+    if(activeTab === "tab-2d") mount2DTab(bodyEl);
+    else if(activeTab === "tab-3d") mount3DTab(bodyEl);
+    else mountBodyTab(bodyEl);
+  }
+
+  // ---------- TAB 1: 2D ROOM & OPENING AREA (IS 1200) ----------
+  function mount2DTab(bodyEl){
+    bodyEl.innerHTML = `
+      <!-- Physical Anchors Banner -->
       <div style="background:var(--barSoft,#E8EEFA);border:1px solid var(--barSoft);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;line-height:1.5">
-        <b style="color:var(--bar,#2F5BD3)">🖐️ Physical Body Anchors (Carry These on Site):</b><br>
-        • <b>1 Foot (12 inches / 30.5 cm):</b> Exactly the length of an adult foot with a construction safety boot, or a standard 30 cm ruler.<br>
-        • <b>1 Meter (3.28 feet / 100 cm):</b> Distance from the floor to your belt buckle / hip bone, or the width of a standard room door.<br>
-        • <b>1 Square Foot (1 sq ft):</b> Exactly one standard 12" × 12" ceramic floor tile.<br>
-        • <b>12 Square Meters (12 sqm / 130 sq ft):</b> A standard hospital patient room (3m × 4m / 10ft × 13ft) holding a bed, patient locker, attendant couch, and clearance.
+        <b style="color:var(--bar,#2F5BD3)">🖐️ Physical Floor &amp; Wall Anchors:</b><br>
+        • <b>1 Foot (30.5 cm):</b> Length of adult safety boot, or 1 ruler.<br>
+        • <b>1 Meter (3.28 ft):</b> Floor to belt buckle / hip bone, or 1 standard door width.<br>
+        • <b>1 Square Foot (1 sq ft):</b> Exactly one standard 12" × 12" (300 × 300 mm) floor tile.<br>
+        • <b>12 Square Meters (12 sqm / 130 sq ft):</b> Standard hospital patient room (3m × 4m / 10ft × 13ft) holding a bed, patient locker, attendant couch, and clearance.
       </div>
 
-      <!-- Quick Preset Selector -->
+      <!-- Preset Selector -->
       <div style="margin-bottom:12px">
         <label style="display:block;font-weight:700;font-size:.82rem;margin-bottom:6px">Select a Dimension to Visualize:</label>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -2241,7 +2276,7 @@ function openScaleVisualizer(){
           <button class="btn scv-preset" data-w="1.2" data-l="1.5" data-name="1.8 m² Bedroom Window" style="font-size:.74rem;padding:4px 8px">1.8 m² Window</button>
           <button class="btn scv-preset" data-w="1.8" data-l="1.7" data-name="3.0 m² IS 1200 Limit / King Bed" style="font-size:.74rem;padding:4px 8px">3.0 m² King Bed (IS 1200 Limit)</button>
           <button class="btn scv-preset" data-w="2.0" data-l="2.1" data-name="4.2 m² Hospital Double Door" style="font-size:.74rem;padding:4px 8px">4.2 m² Hospital Double Door</button>
-          <button class="btn scv-preset" data-w="3.0" data-l="4.0" data-name="12 m² Hospital Patient Room" style="font-size:.74rem;padding:4px 8px;font-weight:700;border-color:var(--bar)">12 m² Patient Room</button>
+          <button class="btn scv-preset" data-w="3.0" data-l="4.0" data-name="12 m² Hospital Patient Room" style="font-size:.74rem;padding:4px 8px;font-weight:700;border-color:var(--bar,#2F5BD3)">12 m² Patient Room</button>
           <button class="btn scv-preset" data-w="5.0" data-l="5.0" data-name="25 m² ICU Multi-Bed Bay" style="font-size:.74rem;padding:4px 8px">25 m² ICU Bay</button>
           <button class="btn scv-preset" data-w="7.0" data-l="7.2" data-name="50 m² Modular Operation Theatre" style="font-size:.74rem;padding:4px 8px">50 m² Operation Theatre (MOT)</button>
         </div>
@@ -2284,155 +2319,544 @@ function openScaleVisualizer(){
       </div>
 
       <!-- Sensory Real-World Mental Picture -->
-      <div id="scv-mental-anchor" style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.5;font-size:.84rem">
+      <div id="scv-mental-anchor" style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.5;font-size:.84rem"></div>`;
+
+    const wSlider = bodyEl.querySelector("#scv-w-slider");
+    const lSlider = bodyEl.querySelector("#scv-l-slider");
+
+    bodyEl.querySelectorAll(".scv-preset").forEach(btn => {
+      btn.onclick = () => {
+        wSlider.value = btn.dataset.w;
+        lSlider.value = btn.dataset.l;
+        updateVisualizer(btn.dataset.name);
+      };
+    });
+
+    [wSlider, lSlider].forEach(input => {
+      input.oninput = () => updateVisualizer();
+    });
+
+    function updateVisualizer(customPresetName = null){
+      const w = parseFloat(wSlider.value) || 1.0;
+      const l = parseFloat(lSlider.value) || 1.0;
+      const wFt = (w * 3.28084).toFixed(1);
+      const lFt = (l * 3.28084).toFixed(1);
+      const areaM = +(w * l).toFixed(2);
+      const areaFt = +(areaM * 10.7639).toFixed(1);
+      const brass = (areaFt / 100).toFixed(2);
+
+      bodyEl.querySelector("#scv-w-val").textContent = w.toFixed(1);
+      bodyEl.querySelector("#scv-w-ft").textContent = wFt;
+      bodyEl.querySelector("#scv-l-val").textContent = l.toFixed(1);
+      bodyEl.querySelector("#scv-l-ft").textContent = lFt;
+
+      bodyEl.querySelector("#scv-area-m").textContent = areaM.toFixed(2) + " m²";
+      bodyEl.querySelector("#scv-area-ft").textContent = areaFt + " sq ft · " + brass + " Brass";
+
+      const vol = +(areaM * 0.15).toFixed(2);
+      const concWt = +(vol * 2.4).toFixed(1);
+      bodyEl.querySelector("#scv-slab-vol").textContent = vol + " m³ RCC (150mm slab)";
+      bodyEl.querySelector("#scv-slab-wt").textContent = "Weight: " + concWt + " MT (" + Math.round(concWt * 1000).toLocaleString("en-IN") + " kg)";
+
+      const isTag = bodyEl.querySelector("#scv-is1200-tag");
+      const isSub = bodyEl.querySelector("#scv-is1200-sub");
+      if(areaM <= 0.5){
+        isTag.textContent = "≤ 0.5 m²: ZERO DEDUCTION";
+        isTag.style.color = "var(--ok,#1F8A4C)";
+        isSub.textContent = "Mason spends more time on jamb edges than plaster saved. Pay full wall.";
+      } else if(areaM <= 3.0){
+        isTag.textContent = "0.5–3.0 m²: DEDUCT 1 FACE ONLY";
+        isTag.style.color = "var(--warn,#d97706)";
+        isSub.textContent = "Deduct 1 face (" + areaM + " m²). Do not add for jambs, sills, or soffits.";
+      } else {
+        isTag.textContent = "> 3.0 m²: DEDUCT BOTH FACES";
+        isTag.style.color = "var(--crit,#D9383A)";
+        isSub.textContent = "Deduct both sides (" + (areaM * 2).toFixed(2) + " m²). Measure jamb reveals separately.";
+      }
+
+      let mentalHtml = "";
+      if(areaM <= 0.6){
+        mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>toilet ventilator window</b>, a computer monitor, or a microwave oven. If you stand in front of it, you can cover it with your two outstretched hands. IS 1200 says: do not deduct this small opening from plaster billing because cutting and edging around it requires extra craftsmanship.";
+      } else if(areaM <= 2.2){
+        mentalHtml = "<b>Physical Reality:</b> This is roughly the size of a <b>standard bedroom window</b> (" + w.toFixed(1) + "m × " + l.toFixed(1) + "m) or a single-person sleeping mattress. It is large enough to let sunlight through, but under the 3.0 m² threshold, so you only deduct ONE wall face.";
+      } else if(areaM <= 3.5){
+        mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>King Size Bed</b> (1.8m × 2.0m = 3.6 m²) or the absolute maximum boundary for 1-face plaster deduction. Anything larger requires measuring opening perimeter jambs separately!";
+      } else if(areaM <= 5.0){
+        mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>Hospital Double Stretcher Door</b> (2.0m × 2.1m = 4.2 m²) allowing crash carts and beds to pass smoothly. At this size, both front and back faces are fully deducted from wall masonry and plastering.";
+      } else if(areaM <= 16.0){
+        mentalHtml = "<b>Physical Reality of 12 m² (" + areaM + " m²):</b> This is an authentic <b>Private Patient Hospital Room</b> (3m × 4m / 10ft × 13ft). Stand in the center: you have room for 1 patient bed, 1 bedside locker, an attendant sofa-cum-bed against the side wall, an overhead medical gas trunking panel, and a doorway leading to an attached bathroom. It takes about 4 normal walking paces across!";
+      } else if(areaM <= 35.0){
+        mentalHtml = "<b>Physical Reality:</b> This is a <b>4-Bed ICU Step-Down Bay or Central Nurse Station</b>. You can fit 4 patient beds with ventilator carts and central monitoring console with nurses' counter.";
+      } else {
+        mentalHtml = "<b>Physical Reality of 50 m² (" + areaM + " m²):</b> This is a state-of-the-art <b>Modular Operation Theatre (MOT)</b> or an entire compact 1BHK apartment! It holds the central surgical table, dual ceiling pendant arms, anesthesia machine, C-arm fluoroscopy space, and 6 surgical personnel moving freely without touching sterile boundaries.";
+      }
+      bodyEl.querySelector("#scv-mental-anchor").innerHTML = mentalHtml;
+
+      const svg = bodyEl.querySelector("#scv-svg");
+      const svgW = 600, svgH = 300;
+      const maxDim = Math.max(w, l, 2.0);
+      const scale = Math.min(220 / maxDim, 70);
+      const rectW = Math.max(30, w * scale);
+      const rectH = Math.max(30, l * scale);
+      const rx = (svgW - rectW) / 2;
+      const ry = (svgH - rectH) / 2;
+
+      let furniture = "";
+      if(areaM >= 7.0){
+        const bedW = Math.min(rectW * 0.45, 2.0 * scale);
+        const bedH = Math.min(rectH * 0.45, 1.0 * scale);
+        furniture += `<rect x="${rx + 15}" y="${ry + 15}" width="${bedW}" height="${bedH}" rx="4" fill="var(--barSoft,#E8EEFA)" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+                      <text x="${rx + 15 + bedW/2}" y="${ry + 15 + bedH/2 + 4}" font-size="10" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="middle">Hospital Bed (2×1m)</text>`;
+        furniture += `<path d="M ${rx + rectW} ${ry + rectH - 30} A 30 30 0 0 1 ${rx + rectW - 30} ${ry + rectH}" fill="none" stroke="var(--muted)" stroke-dasharray="2,2"/>
+                      <line x1="${rx + rectW}" y1="${ry + rectH - 30}" x2="${rx + rectW}" y2="${ry + rectH}" stroke="var(--ink,#111)" stroke-width="2"/>`;
+      }
+
+      const hx = rx + rectW / 2;
+      const hy = ry + rectH / 2;
+      const human = `
+        <g transform="translate(${hx}, ${hy})">
+          <circle cx="0" cy="-14" r="5" fill="var(--ok,#1F8A4C)"/>
+          <line x1="0" y1="-9" x2="0" y2="6" stroke="var(--ok,#1F8A4C)" stroke-width="3"/>
+          <line x1="-8" y1="-4" x2="8" y2="-4" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
+          <line x1="0" y1="6" x2="-5" y2="18" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
+          <line x1="0" y1="6" x2="5" y2="18" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
+          <text x="0" y="30" font-size="10" font-weight="700" fill="var(--ok,#1F8A4C)" text-anchor="middle">You (1.75m)</text>
+        </g>
+      `;
+
+      const dimX = `
+        <line x1="${rx}" y1="${ry - 12}" x2="${rx + rectW}" y2="${ry - 12}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <line x1="${rx}" y1="${ry - 16}" x2="${rx}" y2="${ry - 8}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <line x1="${rx + rectW}" y1="${ry - 16}" x2="${rx + rectW}" y2="${ry - 8}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <text x="${rx + rectW/2}" y="${ry - 18}" font-size="12" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="middle">${w.toFixed(1)} m (${wFt} ft)</text>
+      `;
+
+      const dimY = `
+        <line x1="${rx - 12}" y1="${ry}" x2="${rx - 12}" y2="${ry + rectH}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <line x1="${rx - 16}" y1="${ry}" x2="${rx - 8}" y2="${ry}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <line x1="${rx - 16}" y1="${ry + rectH}" x2="${rx - 8}" y2="${ry + rectH}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <text x="${rx - 20}" y="${ry + rectH/2 + 4}" font-size="12" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="end">${l.toFixed(1)} m (${lFt} ft)</text>
+      `;
+
+      svg.innerHTML = `
+        <pattern id="grid-pat" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--line,#e2e8f0)" stroke-width="0.8"/>
+        </pattern>
+        <rect width="${svgW}" height="${svgH}" fill="url(#grid-pat)"/>
+        <rect x="${rx}" y="${ry}" width="${rectW}" height="${rectH}" rx="6" fill="var(--bg,#f8f9fa)" stroke="var(--ink,#111)" stroke-width="3"/>
+        ${furniture}
+        ${human}
+        ${dimX}
+        ${dimY}
+        <rect x="${rx + rectW/2 - 45}" y="${ry + rectH/2 - 35}" width="90" height="20" rx="4" fill="var(--surface,#fff)" stroke="var(--line)" opacity="0.9"/>
+        <text x="${rx + rectW/2}" y="${ry + rectH/2 - 21}" font-size="11" font-weight="800" fill="var(--ink,#111)" text-anchor="middle">${areaM} m² / ${areaFt} sq ft</text>
+      `;
+    }
+
+    updateVisualizer();
+  }
+
+  // ---------- TAB 2: 3D VOLUMES, BRASS & CONCRETE TRANSIT MIXERS ----------
+  function mount3DTab(bodyEl){
+    bodyEl.innerHTML = `
+      <!-- Visual Banner -->
+      <div style="background:var(--barSoft,#E8EEFA);border:1px solid var(--barSoft);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;line-height:1.5">
+        <b style="color:var(--bar,#2F5BD3)">🚛 The 3 Big Volume Anchors in Indian Construction:</b><br>
+        • <b>1 Cubic Meter (1 m³ / 35.3 cft):</b> A 1m × 1m × 1m cube. Holds 1,000 Liters of water (standard water tank). Weighs <b>2,400 kg (2.4 Tonnes)</b> of concrete!<br>
+        • <b>1 Brass (100 cft / 2.83 m³):</b> Indian site standard for sand, aggregate &amp; excavation tipper trucks. 1 Brass = 10ft × 10ft × 1ft bed.<br>
+        • <b>6 m³ Transit Mixer (RMC Truck):</b> Standard rotating drum concrete truck carrying 6 cubic meters (~14.4 Tonnes of concrete). Pours a 40 m² floor slab (150mm thick).
       </div>
-    </div>
 
-    <!-- Footer -->
-    <div style="padding:10px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:flex-end">
-      <button id="scv-done" class="btn" style="padding:8px 18px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">Done</button>
-    </div>
-  </div>`;
+      <!-- Presets -->
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-weight:700;font-size:.82rem;margin-bottom:6px">Select Site Volume Scenario:</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn scv-3d-preset" data-l="3.05" data-w="3.05" data-d="0.305" data-name="1 Brass Sand Truck" style="font-size:.74rem;padding:4px 8px">1 Brass Sand (100 cft)</button>
+          <button class="btn scv-3d-preset" data-l="1.0" data-w="1.0" data-d="1.0" data-name="1.0 m³ Concrete Cube" style="font-size:.74rem;padding:4px 8px">1.0 m³ Cube (2.4 MT)</button>
+          <button class="btn scv-3d-preset" data-l="6.3" data-w="6.3" data-d="0.15" data-name="6 m³ RMC Transit Mixer Load" style="font-size:.74rem;padding:4px 8px;font-weight:700;border-color:var(--bar,#2F5BD3)">6 m³ RMC Truck Pour</button>
+          <button class="btn scv-3d-preset" data-l="4.0" data-w="3.0" data-d="0.15" data-name="12 m² Room Slab" style="font-size:.74rem;padding:4px 8px">12 m² Room Slab (1.8 m³)</button>
+          <button class="btn scv-3d-preset" data-l="10.0" data-w="10.0" data-d="0.15" data-name="100 m² Ward Slab" style="font-size:.74rem;padding:4px 8px">100 m² Ward (15 m³ / 2.5 Trucks)</button>
+          <button class="btn scv-3d-preset" data-l="10.0" data-w="10.0" data-d="1.2" data-name="Basement Raft Footing" style="font-size:.74rem;padding:4px 8px">Basement Raft (120 m³ / 20 Trucks)</button>
+        </div>
+      </div>
 
-  document.body.appendChild(m);
+      <!-- Controls: L, W, Depth -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;background:var(--bg,#f8f9fa);padding:10px 14px;border-radius:8px;border:1px solid var(--line);margin-bottom:14px">
+        <div>
+          <label style="display:block;font-weight:600;font-size:.78rem;margin-bottom:4px">Length: <b id="scv3-l-val">6.3</b> m</label>
+          <input type="range" id="scv3-l-slider" min="0.5" max="15.0" step="0.1" value="6.3" style="width:100%">
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:.78rem;margin-bottom:4px">Width: <b id="scv3-w-val">6.3</b> m</label>
+          <input type="range" id="scv3-w-slider" min="0.5" max="15.0" step="0.1" value="6.3" style="width:100%">
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:.78rem;margin-bottom:4px">Depth/Thk: <b id="scv3-d-val">0.15</b> m</label>
+          <input type="range" id="scv3-d-slider" min="0.05" max="3.0" step="0.05" value="0.15" style="width:100%">
+        </div>
+      </div>
 
-  const wSlider = m.querySelector("#scv-w-slider");
-  const lSlider = m.querySelector("#scv-l-slider");
+      <!-- Quick Depth Toggles -->
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;font-size:.76rem">
+        <span style="color:var(--muted);font-weight:700">Quick Thickness:</span>
+        <button class="btn scv-d-quick" data-d="0.10" style="padding:2px 6px">100mm Screed</button>
+        <button class="btn scv-d-quick" data-d="0.15" style="padding:2px 6px">150mm Slab</button>
+        <button class="btn scv-d-quick" data-d="0.45" style="padding:2px 6px">450mm Beam</button>
+        <button class="btn scv-d-quick" data-d="1.20" style="padding:2px 6px">1.2m Raft</button>
+        <button class="btn scv-d-quick" data-d="2.50" style="padding:2px 6px">2.5m Basement Cut</button>
+      </div>
 
-  m.querySelector("#scv-close").onclick = () => m.remove();
-  m.querySelector("#scv-done").onclick = () => m.remove();
-  m.onclick = e => { if(e.target === m) m.remove(); };
+      <!-- 3D Isometric Canvas -->
+      <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:14px">
+        <svg id="scv3-svg" viewBox="0 0 650 320" style="width:100%;height:auto;display:block"></svg>
+      </div>
 
-  m.querySelectorAll(".scv-preset").forEach(btn => {
-    btn.onclick = () => {
-      wSlider.value = btn.dataset.w;
-      lSlider.value = btn.dataset.l;
-      updateVisualizer(btn.dataset.name);
-    };
-  });
+      <!-- Computed Volumes KPI Matrix -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px">
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:8px 10px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Volume (m³ / Cum)</div>
+          <div style="font-size:1.2rem;font-weight:800;color:var(--bar,#2F5BD3)" id="scv3-kpi-cum">6.0 m³</div>
+          <div style="font-size:.74rem;color:var(--muted)" id="scv3-kpi-cft">211.9 cft</div>
+        </div>
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:8px 10px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Site Brass</div>
+          <div style="font-size:1.2rem;font-weight:800;color:var(--ok,#1F8A4C)" id="scv3-kpi-brass">2.12 Brass</div>
+          <div style="font-size:.74rem;color:var(--muted)">1 Brass = 100 cft</div>
+        </div>
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:8px 10px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Concrete Mass</div>
+          <div style="font-size:1.2rem;font-weight:800;color:var(--ink,#111)" id="scv3-kpi-mt">14.4 MT</div>
+          <div style="font-size:.74rem;color:var(--muted)">@ 2,400 kg/m³</div>
+        </div>
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:8px 10px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Transit Mixers (RMC)</div>
+          <div style="font-size:1.2rem;font-weight:800;color:var(--crit,#D9383A)" id="scv3-kpi-trucks">1.0 Truck</div>
+          <div style="font-size:.74rem;color:var(--muted)">6 m³ drum capacity</div>
+        </div>
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:8px 10px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Cement Bags (M25)</div>
+          <div style="font-size:1.2rem;font-weight:800;color:var(--bar,#2F5BD3)" id="scv3-kpi-bags">48 Bags</div>
+          <div style="font-size:.74rem;color:var(--muted)">8 bags / m³</div>
+        </div>
+      </div>
 
-  [wSlider, lSlider].forEach(input => {
-    input.oninput = () => updateVisualizer();
-  });
+      <!-- Logistics & Site Advice -->
+      <div id="scv3-narrative" style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.5;font-size:.84rem"></div>`;
 
-  function updateVisualizer(customPresetName = null){
-    const w = parseFloat(wSlider.value) || 1.0;
-    const l = parseFloat(lSlider.value) || 1.0;
-    const wFt = (w * 3.28084).toFixed(1);
-    const lFt = (l * 3.28084).toFixed(1);
-    const areaM = +(w * l).toFixed(2);
-    const areaFt = +(areaM * 10.7639).toFixed(1);
-    const brass = (areaFt / 100).toFixed(2);
+    const lInput = bodyEl.querySelector("#scv3-l-slider");
+    const wInput = bodyEl.querySelector("#scv3-w-slider");
+    const dInput = bodyEl.querySelector("#scv3-d-slider");
 
-    m.querySelector("#scv-w-val").textContent = w.toFixed(1);
-    m.querySelector("#scv-w-ft").textContent = wFt;
-    m.querySelector("#scv-l-val").textContent = l.toFixed(1);
-    m.querySelector("#scv-l-ft").textContent = lFt;
+    bodyEl.querySelectorAll(".scv-3d-preset").forEach(b => {
+      b.onclick = () => {
+        lInput.value = b.dataset.l;
+        wInput.value = b.dataset.w;
+        dInput.value = b.dataset.d;
+        update3D();
+      };
+    });
 
-    m.querySelector("#scv-area-m").textContent = areaM.toFixed(2) + " m²";
-    m.querySelector("#scv-area-ft").textContent = areaFt + " sq ft · " + brass + " Brass";
+    bodyEl.querySelectorAll(".scv-d-quick").forEach(b => {
+      b.onclick = () => {
+        dInput.value = b.dataset.d;
+        update3D();
+      };
+    });
 
-    const vol = +(areaM * 0.15).toFixed(2);
-    const concWt = +(vol * 2.4).toFixed(1);
-    m.querySelector("#scv-slab-vol").textContent = vol + " m³ RCC (150mm slab)";
-    m.querySelector("#scv-slab-wt").textContent = "Weight: " + concWt + " MT (" + Math.round(concWt * 1000).toLocaleString("en-IN") + " kg)";
+    [lInput, wInput, dInput].forEach(inp => inp.oninput = () => update3D());
 
-    const isTag = m.querySelector("#scv-is1200-tag");
-    const isSub = m.querySelector("#scv-is1200-sub");
-    if(areaM <= 0.5){
-      isTag.textContent = "≤ 0.5 m²: ZERO DEDUCTION";
-      isTag.style.color = "var(--ok,#1F8A4C)";
-      isSub.textContent = "Mason spends more time on jamb edges than plaster saved. Pay full wall.";
-    } else if(areaM <= 3.0){
-      isTag.textContent = "0.5–3.0 m²: DEDUCT 1 FACE ONLY";
-      isTag.style.color = "var(--warn,#d97706)";
-      isSub.textContent = "Deduct 1 face (" + areaM + " m²). Do not add for jambs, sills, or soffits.";
-    } else {
-      isTag.textContent = "> 3.0 m²: DEDUCT BOTH FACES";
-      isTag.style.color = "var(--crit,#D9383A)";
-      isSub.textContent = "Deduct both sides (" + (areaM * 2).toFixed(2) + " m²). Measure jamb reveals separately.";
+    function update3D(){
+      const l = parseFloat(lInput.value) || 1.0;
+      const w = parseFloat(wInput.value) || 1.0;
+      const d = parseFloat(dInput.value) || 0.15;
+
+      bodyEl.querySelector("#scv3-l-val").textContent = l.toFixed(1);
+      bodyEl.querySelector("#scv3-w-val").textContent = w.toFixed(1);
+      bodyEl.querySelector("#scv3-d-val").textContent = d.toFixed(2);
+
+      const cum = +(l * w * d).toFixed(2);
+      const cft = +(cum * 35.3147).toFixed(1);
+      const brass = +(cft / 100).toFixed(2);
+      const mt = +(cum * 2.4).toFixed(1);
+      const trucks = +(cum / 6.0).toFixed(1);
+      const bags = Math.round(cum * 8.0);
+
+      bodyEl.querySelector("#scv3-kpi-cum").textContent = cum + " m³";
+      bodyEl.querySelector("#scv3-kpi-cft").textContent = cft + " cft";
+      bodyEl.querySelector("#scv3-kpi-brass").textContent = brass + " Brass";
+      bodyEl.querySelector("#scv3-kpi-mt").textContent = mt + " MT";
+      bodyEl.querySelector("#scv3-kpi-trucks").textContent = trucks + (trucks == 1 ? " Truck" : " Trucks");
+      bodyEl.querySelector("#scv3-kpi-bags").textContent = bags + " Bags";
+
+      let logNarrative = "";
+      if(cum <= 1.5){
+        logNarrative = "<b>Small Batch Pour:</b> This volume (" + cum + " m³) is typically mixed on site using a 1-bag hopper concrete mixer (10/7 capacity) or delivered as residual concrete. 1-2 masons and 4 helpers can place and vibrate this within 45 minutes.";
+      } else if(cum <= 6.5){
+        logNarrative = "<b>Single Transit Mixer Pour:</b> This volume (" + cum + " m³) fits in <b>exactly ONE 6m³ RMC transit mixer truck</b>. Once discharged into the concrete pump or tower crane bucket, the initial setting time window is 90 minutes. Ensure shuttering inspection and cover blocks are certified <i>before</i> the truck leaves the batching plant!";
+      } else if(cum <= 30){
+        logNarrative = "<b>Continuous Floor Slab Pour (" + trucks + " Trucks):</b> Requires an uninterrupted convoy of " + trucks + " transit mixers spaced at 25-minute intervals from the batching plant. A concrete pump (45 m³/hr capacity) placed at ground level will pump this in 1.5 hours. Watch out for cold joints if truck turnaround gets delayed in traffic!";
+      } else {
+        logNarrative = "<b>Major Foundation / Raft Pour (" + trucks + " Trucks):</b> Massive structural pour of " + cum + " m³ (" + mt + " Tonnes). Requires 2 standby transit mixers at site, ice flake chilling at the batching plant to control hydration heat (core temp &lt; 70°C), and 2 concrete pump lines (1 working, 1 standby) to prevent catastrophic cold joints!";
+      }
+      bodyEl.querySelector("#scv3-narrative").innerHTML = logNarrative;
+
+      // 3D Isometric SVG drawing
+      const svg = bodyEl.querySelector("#scv3-svg");
+      const svgW = 650, svgH = 320;
+
+      // Isometric projection math
+      // X_iso = (x - y) * cos(30 deg), Y_iso = (x + y) * sin(30 deg) - z
+      const cos30 = 0.866;
+      const sin30 = 0.5;
+
+      const maxDim = Math.max(l, w, d * 4, 3.0);
+      const scale = Math.min(180 / maxDim, 25);
+
+      const dx = Math.max(20, l * scale);
+      const dy = Math.max(20, w * scale);
+      const dz = Math.max(12, d * scale * 2.5); // exaggerated depth for visibility
+
+      const ox = 260; // origin x
+      const oy = 210; // origin y
+
+      // 8 vertices of cuboid
+      // Base: (0,0,0), (dx,0,0), (dx,dy,0), (0,dy,0)
+      // Top: (0,0,dz), (dx,0,dz), (dx,dy,dz), (0,dy,dz)
+      function iso(x, y, z){
+        return {
+          x: ox + (x - y) * cos30,
+          y: oy + (x + y) * sin30 - z
+        };
+      }
+
+      const p0 = iso(0, 0, 0);
+      const p1 = iso(dx, 0, 0);
+      const p2 = iso(dx, dy, 0);
+      const p3 = iso(0, dy, 0);
+
+      const t0 = iso(0, 0, dz);
+      const t1 = iso(dx, 0, dz);
+      const t2 = iso(dx, dy, dz);
+      const t3 = iso(0, dy, dz);
+
+      // Top face
+      const topPts = `${t0.x},${t0.y} ${t1.x},${t1.y} ${t2.x},${t2.y} ${t3.x},${t3.y}`;
+      // Right face (from (dx,0) to (dx,dy))
+      const rightPts = `${t1.x},${t1.y} ${p1.x},${p1.y} ${p2.x},${p2.y} ${t2.x},${t2.y}`;
+      // Left/Front face (from (0,dy) to (dx,dy))
+      const frontPts = `${t3.x},${t3.y} ${p3.x},${p3.y} ${p2.x},${p2.y} ${t2.x},${t2.y}`;
+
+      // Transit Mixer Truck Silhouette (standing on right side)
+      const truckSvg = `
+        <g transform="translate(470, 160)">
+          <!-- Ground shadow -->
+          <ellipse cx="65" cy="85" rx="70" ry="10" fill="rgba(0,0,0,0.08)"/>
+          <!-- Wheels -->
+          <circle cx="25" cy="80" r="14" fill="#222" stroke="#666" stroke-width="3"/>
+          <circle cx="50" cy="80" r="14" fill="#222" stroke="#666" stroke-width="3"/>
+          <circle cx="110" cy="80" r="14" fill="#222" stroke="#666" stroke-width="3"/>
+          <!-- Chassis -->
+          <rect x="10" y="66" width="125" height="10" fill="#333" rx="2"/>
+          <!-- Cab -->
+          <path d="M 100 66 L 100 30 L 120 30 L 135 50 L 135 66 Z" fill="#e53e3e" stroke="#9b2c2c" stroke-width="1.5"/>
+          <polygon points="105,35 118,35 128,48 105,48" fill="#bee3f8"/>
+          <!-- Rotating Drum -->
+          <ellipse cx="55" cy="45" rx="38" ry="24" fill="#2b6cb0" stroke="#1a365d" stroke-width="2" transform="rotate(-15, 55, 45)"/>
+          <path d="M 20 40 Q 55 25 90 40 Q 55 55 20 40" fill="none" stroke="#63b3ed" stroke-width="2" transform="rotate(-15, 55, 45)"/>
+          <!-- Chute -->
+          <path d="M 12 55 L 2 72 L 8 74 L 18 57 Z" fill="#4a5568"/>
+          <!-- Text -->
+          <text x="65" y="105" font-size="10" font-weight="700" fill="var(--ink,#111)" text-anchor="middle">RMC Transit Mixer</text>
+          <text x="65" y="117" font-size="9" fill="var(--muted)" text-anchor="middle">(6 m³ / 14.4 Tonnes)</text>
+        </g>
+      `;
+
+      // Construction Engineer Silhouette (standing at origin)
+      const engineerSvg = `
+        <g transform="translate(${ox - 45}, ${oy - 10})">
+          <!-- Hardhat -->
+          <path d="M -7 -45 Q 0 -55 7 -45 Z" fill="#ecc94b" stroke="#b7791f" stroke-width="1.5"/>
+          <circle cx="0" cy="-40" r="5" fill="#e2e8f0"/>
+          <!-- Torso with high-vis vest -->
+          <rect x="-6" y="-35" width="12" height="18" rx="2" fill="#dd6b20"/>
+          <line x1="-6" y1="-28" x2="6" y2="-28" stroke="#f6e05e" stroke-width="2"/>
+          <line x1="-6" y1="-22" x2="6" y2="-22" stroke="#f6e05e" stroke-width="2"/>
+          <!-- Legs -->
+          <line x1="-3" y1="-17" x2="-3" y2="0" stroke="#2d3748" stroke-width="3"/>
+          <line x1="3" y1="-17" x2="3" y2="0" stroke="#2d3748" stroke-width="3"/>
+          <!-- Boots -->
+          <rect x="-6" y="-2" width="6" height="3" fill="#744210"/>
+          <rect x="2" y="-2" width="6" height="3" fill="#744210"/>
+          <text x="0" y="14" font-size="9" font-weight="700" fill="var(--ok,#1F8A4C)" text-anchor="middle">1.75m</text>
+        </g>
+      `;
+
+      svg.innerHTML = `
+        <!-- Grid ground -->
+        <pattern id="grid-3d" width="30" height="30" patternUnits="userSpaceOnUse">
+          <path d="M 30 0 L 0 0 0 30" fill="none" stroke="var(--line,#e2e8f0)" stroke-width="0.8"/>
+        </pattern>
+        <rect width="${svgW}" height="${svgH}" fill="url(#grid-3d)"/>
+
+        <!-- 3D Cuboid faces -->
+        <!-- Front/Left Face -->
+        <polygon points="${frontPts}" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" opacity="0.9"/>
+        <!-- Right Face -->
+        <polygon points="${rightPts}" fill="#1d4ed8" stroke="#1e40af" stroke-width="1.5" opacity="0.95"/>
+        <!-- Top Face -->
+        <polygon points="${topPts}" fill="#93c5fd" stroke="#2563eb" stroke-width="1.5"/>
+
+        <!-- Dimension lines -->
+        <!-- Length on Front Bottom -->
+        <line x1="${p3.x}" y1="${p3.y + 12}" x2="${p2.x}" y2="${p2.y + 12}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <text x="${(p3.x + p2.x)/2}" y="${(p3.y + p2.y)/2 + 24}" font-size="11" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="middle">${l.toFixed(1)}m L</text>
+
+        <!-- Width on Right Bottom -->
+        <line x1="${p2.x + 10}" y1="${p2.y + 6}" x2="${p1.x + 10}" y2="${p1.y + 6}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <text x="${(p2.x + p1.x)/2 + 20}" y="${(p2.y + p1.y)/2 + 18}" font-size="11" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="start">${w.toFixed(1)}m W</text>
+
+        <!-- Depth on Front Left Edge -->
+        <line x1="${p3.x - 12}" y1="${p3.y}" x2="${t3.x - 12}" y2="${t3.y}" stroke="var(--crit,#D9383A)" stroke-width="1.5"/>
+        <text x="${p3.x - 18}" y="${(p3.y + t3.y)/2 + 4}" font-size="11" font-weight="700" fill="var(--crit,#D9383A)" text-anchor="end">${d.toFixed(2)}m Thk</text>
+
+        <!-- Cuboid Volume Badge -->
+        <rect x="${t2.x - 50}" y="${t2.y - 30}" width="100" height="22" rx="4" fill="var(--surface,#fff)" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+        <text x="${t2.x}" y="${t2.y - 15}" font-size="11" font-weight="800" fill="var(--bar,#2F5BD3)" text-anchor="middle">${cum} m³ (${brass} Brass)</text>
+
+        ${engineerSvg}
+        ${truckSvg}
+      `;
     }
 
-    let mentalHtml = "";
-    if(areaM <= 0.6){
-      mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>toilet ventilator window</b>, a computer monitor, or a microwave oven. If you stand in front of it, you can cover it with your two outstretched hands. IS 1200 says: do not deduct this small opening from plaster billing because cutting and edging around it requires extra craftsmanship.";
-    } else if(areaM <= 2.2){
-      mentalHtml = "<b>Physical Reality:</b> This is roughly the size of a <b>standard bedroom window</b> (" + w.toFixed(1) + "m × " + l.toFixed(1) + "m) or a single-person sleeping mattress. It is large enough to let sunlight through, but under the 3.0 m² threshold, so you only deduct ONE wall face.";
-    } else if(areaM <= 3.5){
-      mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>King Size Bed</b> (1.8m × 2.0m = 3.6 m²) or the absolute maximum boundary for 1-face plaster deduction. Anything larger requires measuring opening perimeter jambs separately!";
-    } else if(areaM <= 5.0){
-      mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>Hospital Double Stretcher Door</b> (2.0m × 2.1m = 4.2 m²) allowing crash carts and beds to pass smoothly. At this size, both front and back faces are fully deducted from wall masonry and plastering.";
-    } else if(areaM <= 16.0){
-      mentalHtml = "<b>Physical Reality of 12 m² (" + areaM + " m²):</b> This is an authentic <b>Private Patient Hospital Room</b> (3m × 4m / 10ft × 13ft). Stand in the center: you have room for 1 patient bed, 1 bedside locker, an attendant sofa-cum-bed against the side wall, an overhead medical gas trunking panel, and a doorway leading to an attached bathroom. It takes about 4 normal walking paces across!";
-    } else if(areaM <= 35.0){
-      mentalHtml = "<b>Physical Reality:</b> This is a <b>4-Bed ICU Step-Down Bay or Central Nurse Station</b>. You can fit 4 patient beds with ventilator carts and central monitoring console with nurses' counter.";
-    } else {
-      mentalHtml = "<b>Physical Reality of 50 m² (" + areaM + " m²):</b> This is a state-of-the-art <b>Modular Operation Theatre (MOT)</b> or an entire compact 1BHK apartment! It holds the central surgical table, dual ceiling pendant arms, anesthesia machine, C-arm fluoroscopy space, and 6 surgical personnel moving freely without touching sterile boundaries.";
-    }
-    m.querySelector("#scv-mental-anchor").innerHTML = mentalHtml;
+    update3D();
+  }
 
-    const svg = m.querySelector("#scv-svg");
-    const svgW = 600, svgH = 300;
-    const maxDim = Math.max(w, l, 2.0);
-    const scale = Math.min(220 / maxDim, 70);
-    const rectW = Math.max(30, w * scale);
-    const rectH = Math.max(30, l * scale);
-    const rx = (svgW - rectW) / 2;
-    const ry = (svgH - rectH) / 2;
+  // ---------- TAB 3: HUMAN BODY FIELD ANCHORS ----------
+  function mountBodyTab(bodyEl){
+    bodyEl.innerHTML = `
+      <div style="background:var(--barSoft,#E8EEFA);border:1px solid var(--barSoft);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.84rem;line-height:1.5">
+        <b style="color:var(--bar,#2F5BD3)">🖐️ Never Carry a Tape Measure Again for Rough Checks:</b><br>
+        On a construction site, you need immediate spatial intuition. Use these calibrated human anatomy anchors to verify dimensions before the contractor bills you!
+      </div>
 
-    let furniture = "";
-    if(areaM >= 7.0){
-      const bedW = Math.min(rectW * 0.45, 2.0 * scale);
-      const bedH = Math.min(rectH * 0.45, 1.0 * scale);
-      furniture += `<rect x="${rx + 15}" y="${ry + 15}" width="${bedW}" height="${bedH}" rx="4" fill="var(--barSoft,#E8EEFA)" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
-                    <text x="${rx + 15 + bedW/2}" y="${ry + 15 + bedH/2 + 4}" font-size="10" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="middle">Hospital Bed (2×1m)</text>`;
-      furniture += `<path d="M ${rx + rectW} ${ry + rectH - 30} A 30 30 0 0 1 ${rx + rectW - 30} ${ry + rectH}" fill="none" stroke="var(--muted)" stroke-dasharray="2,2"/>
-                    <line x1="${rx + rectW}" y1="${ry + rectH - 30}" x2="${rx + rectW}" y2="${ry + rectH}" stroke="var(--ink,#111)" stroke-width="2"/>`;
-    }
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+        <!-- 1 Foot -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:1.5rem">🥾</span>
+            <div>
+              <b style="font-size:.92rem;color:var(--bar,#2F5BD3)">1 Foot (12" / 30.5 cm)</b>
+              <div style="font-size:.74rem;color:var(--muted)">Safety Boot Heel-to-Toe</div>
+            </div>
+          </div>
+          <p style="font-size:.8rem;color:var(--ink,#111);line-height:1.4;margin:0">
+            A standard adult construction safety boot (size 8–10) measures exactly 30 cm (1 foot). Step heel-to-toe along any corridor or room wall: 10 steps = exactly 10 feet (~3 meters).
+          </p>
+        </div>
 
-    const hx = rx + rectW / 2;
-    const hy = ry + rectH / 2;
-    const human = `
-      <g transform="translate(${hx}, ${hy})">
-        <circle cx="0" cy="-14" r="5" fill="var(--ok,#1F8A4C)"/>
-        <line x1="0" y1="-9" x2="0" y2="6" stroke="var(--ok,#1F8A4C)" stroke-width="3"/>
-        <line x1="-8" y1="-4" x2="8" y2="-4" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
-        <line x1="0" y1="6" x2="-5" y2="18" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
-        <line x1="0" y1="6" x2="5" y2="18" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
-        <text x="0" y="30" font-size="10" font-weight="700" fill="var(--ok,#1F8A4C)" text-anchor="middle">You (1.75m)</text>
-      </g>
-    `;
+        <!-- 1 Meter -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:1.5rem">👖</span>
+            <div>
+              <b style="font-size:.92rem;color:var(--ok,#1F8A4C)">1 Meter (3.28 ft / 100 cm)</b>
+              <div style="font-size:.74rem;color:var(--muted)">Floor to Belt Buckle / Hip</div>
+            </div>
+          </div>
+          <p style="font-size:.8rem;color:var(--ink,#111);line-height:1.4;margin:0">
+            From the finished floor to your belt buckle / hip joint is approximately 1.0 meter. A standard room doorway width is also 1.0 meter. A hospital corridor handrail is mounted at 900mm (just below hip).
+          </p>
+        </div>
 
-    const dimX = `
-      <line x1="${rx}" y1="${ry - 12}" x2="${rx + rectW}" y2="${ry - 12}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
-      <line x1="${rx}" y1="${ry - 16}" x2="${rx}" y2="${ry - 8}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
-      <line x1="${rx + rectW}" y1="${ry - 16}" x2="${rx + rectW}" y2="${ry - 8}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
-      <text x="${rx + rectW/2}" y="${ry - 18}" font-size="12" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="middle">${w.toFixed(1)} m (${wFt} ft)</text>
-    `;
+        <!-- 1.5 Meters (Pace) -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:1.5rem">🚶</span>
+            <div>
+              <b style="font-size:.92rem;color:var(--bar,#2F5BD3)">1.5 Meters (5 Feet / 1 Pace)</b>
+              <div style="font-size:.74rem;color:var(--muted)">Two Normal Walking Strides</div>
+            </div>
+          </div>
+          <p style="font-size:.8rem;color:var(--ink,#111);line-height:1.4;margin:0">
+            One standard pace (right heel to next right heel) is 1.5 meters (5 feet). If you walk down a hospital ward corridor and count 20 paces, the corridor is 30 meters long!
+          </p>
+        </div>
 
-    const dimY = `
-      <line x1="${rx - 12}" y1="${ry}" x2="${rx - 12}" y2="${ry + rectH}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
-      <line x1="${rx - 16}" y1="${ry}" x2="${rx - 8}" y2="${ry}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
-      <line x1="${rx - 16}" y1="${ry + rectH}" x2="${rx - 8}" y2="${ry + rectH}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
-      <text x="${rx - 20}" y="${ry + rectH/2 + 4}" font-size="12" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="end">${l.toFixed(1)} m (${lFt} ft)</text>
-    `;
+        <!-- Handspan (9 Inches) -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:1.5rem">🖐️</span>
+            <div>
+              <b style="font-size:.92rem;color:var(--warn,#d97706)">9 Inches (22.5 cm / 0.23m)</b>
+              <div style="font-size:.74rem;color:var(--muted)">Thumb to Pinky Handspan</div>
+            </div>
+          </div>
+          <p style="font-size:.8rem;color:var(--ink,#111);line-height:1.4;margin:0">
+            Stretch your hand as wide as possible: tip of thumb to tip of pinky is 22 to 23 cm (9 inches). This is <i>identical</i> to the thickness of a standard traditional 9-inch brick load-bearing wall!
+          </p>
+        </div>
 
-    svg.innerHTML = `
-      <pattern id="grid-pat" width="20" height="20" patternUnits="userSpaceOnUse">
-        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--line,#e2e8f0)" stroke-width="0.8"/>
-      </pattern>
-      <rect width="${svgW}" height="${svgH}" fill="url(#grid-pat)"/>
-      <rect x="${rx}" y="${ry}" width="${rectW}" height="${rectH}" rx="6" fill="var(--bg,#f8f9fa)" stroke="var(--ink,#111)" stroke-width="3"/>
-      ${furniture}
-      ${human}
-      ${dimX}
-      ${dimY}
-      <rect x="${rx + rectW/2 - 45}" y="${ry + rectH/2 - 35}" width="90" height="20" rx="4" fill="var(--surface,#fff)" stroke="var(--line)" opacity="0.9"/>
-      <text x="${rx + rectW/2}" y="${ry + rectH/2 - 21}" font-size="11" font-weight="800" fill="var(--ink,#111)" text-anchor="middle">${areaM} m² / ${areaFt} sq ft</text>
+        <!-- 1 Inch (Thumb Knuckle) -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:1.5rem">👍</span>
+            <div>
+              <b style="font-size:.92rem;color:var(--ink,#111)">1 Inch (25.4 mm)</b>
+              <div style="font-size:.74rem;color:var(--muted)">Thumb Knuckle Width</div>
+            </div>
+          </div>
+          <p style="font-size:.8rem;color:var(--ink,#111);line-height:1.4;margin:0">
+            The width of an adult thumb across the middle knuckle is exactly 25 mm (1 inch). A standard 25mm heavy foundation dowel re-bar is exactly the thickness of your thumb!
+          </p>
+        </div>
+
+        <!-- 1 Square Foot -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:1.5rem">🔳</span>
+            <div>
+              <b style="font-size:.92rem;color:var(--bar,#2F5BD3)">1 Sq Ft (0.093 m²)</b>
+              <div style="font-size:.74rem;color:var(--muted)">Standard 300 × 300 mm Tile</div>
+            </div>
+          </div>
+          <p style="font-size:.8rem;color:var(--ink,#111);line-height:1.4;margin:0">
+            One standard square floor tile is 1 ft × 1 ft (300 × 300 mm). Count the tiles across the floor: 10 tiles along width × 13 tiles along length = 130 sq ft = 12 m²!
+          </p>
+        </div>
+
+        <!-- 12 m² Hospital Patient Room -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:1.5rem">🏥</span>
+            <div>
+              <b style="font-size:.92rem;color:var(--ok,#1F8A4C)">12 m² (130 sq ft)</b>
+              <div style="font-size:.74rem;color:var(--muted)">Hospital Single Patient Room</div>
+            </div>
+          </div>
+          <p style="font-size:.8rem;color:var(--ink,#111);line-height:1.4;margin:0">
+            Dimensions: 3.0m × 4.0m (10ft × 13ft). Perfectly accommodates 1 motorised hospital bed (2m × 1m), 1 attendant sofa-bed, 1 bedside locker, medical gas headwall, and walking clearance to the en-suite toilet.
+          </p>
+        </div>
+
+        <!-- 50 m² Operation Theatre -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:1.5rem">🩺</span>
+            <div>
+              <b style="font-size:.92rem;color:var(--crit,#D9383A)">50 m² (538 sq ft)</b>
+              <div style="font-size:.74rem;color:var(--muted)">Modular Operation Theatre (MOT)</div>
+            </div>
+          </div>
+          <p style="font-size:.8rem;color:var(--ink,#111);line-height:1.4;margin:0">
+            Dimensions: 7.0m × 7.2m (23ft × 24ft). The gold standard for Class 10,000 / ISO 7 Cleanroom surgical suites. Houses central OT table, dual surgical light pendants, anesthesia trolley, and laminar airflow ceiling plenum.
+          </p>
+        </div>
+      </div>
     `;
   }
 
-  updateVisualizer();
+  document.body.appendChild(m);
+  renderModal();
 }
 
 function openMBAuditSandbox(scenarioIdx = 0){
@@ -3124,6 +3548,644 @@ function openHotSeatSimulator(scenarioIdx = 0){
 }
 
 
+
+// =========================================================================
+// TAB 11: THE SCHEDULE DOCTOR - DCMA 14 LOGIC AUDIT SANDBOX
+// =========================================================================
+function openScheduleDoctor(){
+  const old = $("schedule-doctor-modal");
+  if(old) old.remove();
+
+  // 10 authentic hospital activities with 4 DCMA 14 logic traps
+  const defaultActivities = [
+    { id: "RCC-100", name: "Structural RCC Slab Level 2", dur: 14, pred: "None (Start)", defect: null, isDefect: false },
+    { id: "BLK-110", name: "AAC Block Masonry L2", dur: 12, pred: "RCC-100 FS -15d (Lead)", defect: "lead", isDefect: true,
+      cureText: "Replace Negative Lag (-15d lead) with Start-to-Start (SS) + 4d lag",
+      rule: "DCMA Metric 2 (0% Lead Threshold): Negative lag implies blockwork finishes before RCC slab casting begins! Disallowed under SCL Protocol and DCMA 14." },
+    { id: "MEP-120", name: "MGPS Medical Gas Vertical Riser", dur: 18, pred: "RCC-100 FS", defect: "open_end", isDefect: true,
+      cureText: "Close Open End: Tie Successor FS to MEP-150 (MGPS Terminals & Pendants)",
+      rule: "DCMA Metric 1 (0% Missing Logic Threshold): Dangling activity with no successor. 18 days of life-safety piping floats off the critical path, concealing delay." },
+    { id: "HVAC-130", name: "AHU & Low-Side Ducting L2", dur: 20, pred: "BLK-110 FS", defect: null, isDefect: false },
+    { id: "OT-140", name: "Modular OT Antibacterial Wall Panels", dur: 15, pred: "HVAC-130 FS +30d (Lag)", defect: "high_lag", isDefect: true,
+      cureText: "Decompose Lag: Split 30d lag into 'Cleanroom Panel Import & FAT' (25d) + FS link (2d)",
+      rule: "DCMA Metric 3 (&lt;5% High Lag Threshold): Lags &gt; 5 days hide contractor float buffers. Unmodeled procurement delays distort critical path." },
+    { id: "LAF-145", name: "Laminar Airflow (LAF) Plenum Grid", dur: 10, pred: "OT-140 FS", defect: null, isDefect: false },
+    { id: "MEP-150", name: "MGPS Terminal Units & Pendants", dur: 8, pred: "LAF-145 SS +3d", defect: null, isDefect: false },
+    { id: "TEST-160", name: "Duct Air Balancing & Pressure Hold", dur: 7, pred: "MEP-150 FS", defect: null, isDefect: false },
+    { id: "VAL-170", name: "HEPA Integrity & DOP Particle Validation", dur: 6, pred: "TEST-160 FS", defect: null, isDefect: false },
+    { id: "MS-180", name: "NABH Hospital Handover Milestone", dur: 0, pred: "VAL-170 FS (Hard Constraint)", defect: "hard_constraint", isDefect: true,
+      cureText: "Remove 'Must Finish On Day 85' Hard Constraint; restore dynamic Early Finish",
+      rule: "DCMA Metric 10 (0% Hard Constraint Threshold): Hard constraint forcibly overrides CPM logic to report fake Day 85 on-time completion while true work slips to Day 112!" }
+  ];
+
+  let cured = { lead: false, open_end: false, high_lag: false, hard_constraint: false };
+
+  const m = document.createElement("div");
+  m.id = "schedule-doctor-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  function calcCPM(){
+    const map = {};
+    defaultActivities.forEach(a => {
+      map[a.id] = { ...a, es: 0, ef: 0, ls: 0, lf: 0, tf: 0, isCrit: false };
+    });
+
+    // RCC-100
+    map["RCC-100"].es = 0;
+    map["RCC-100"].ef = 14;
+
+    // BLK-110:
+    if(!cured.lead){
+      map["BLK-110"].es = 0; // distorted by negative lag
+      map["BLK-110"].ef = 12;
+    } else {
+      map["BLK-110"].es = 4; // SS + 4d after RCC
+      map["BLK-110"].ef = 16;
+    }
+
+    // MEP-120:
+    map["MEP-120"].es = map["RCC-100"].ef; // 14
+    map["MEP-120"].ef = map["MEP-120"].es + map["MEP-120"].dur; // 32
+
+    // HVAC-130: FS after BLK-110
+    map["HVAC-130"].es = map["BLK-110"].ef; // 12 or 16
+    map["HVAC-130"].ef = map["HVAC-130"].es + map["HVAC-130"].dur; // 32 or 36
+
+    // OT-140:
+    if(!cured.high_lag){
+      map["OT-140"].es = map["HVAC-130"].ef + 30; // 62 or 66
+    } else {
+      map["OT-140"].es = map["HVAC-130"].ef + 27; // 25d procurement + 2d link
+    }
+    map["OT-140"].ef = map["OT-140"].es + map["OT-140"].dur; // + 15 = 77 or 78
+
+    // LAF-145: FS after OT-140
+    map["LAF-145"].es = map["OT-140"].ef; // 77 or 78
+    map["LAF-145"].ef = map["LAF-145"].es + map["LAF-145"].dur; // 87 or 88
+
+    // MEP-150:
+    const fromLAF = map["LAF-145"].es + 3;
+    const fromRiser = cured.open_end ? map["MEP-120"].ef : 0;
+    map["MEP-150"].es = Math.max(fromLAF, fromRiser);
+    map["MEP-150"].ef = map["MEP-150"].es + map["MEP-150"].dur; // + 8 = 95 or 96
+
+    // TEST-160: FS after MEP-150
+    map["TEST-160"].es = map["MEP-150"].ef;
+    map["TEST-160"].ef = map["TEST-160"].es + map["TEST-160"].dur; // + 7 = 102 or 103
+
+    // VAL-170: FS after TEST-160
+    map["VAL-170"].es = map["TEST-160"].ef;
+    map["VAL-170"].ef = map["VAL-170"].es + map["VAL-170"].dur; // + 6 = 108 or 112
+
+    const trueCompletion = map["VAL-170"].ef; // Day 112 when cured
+
+    // MS-180 Milestone
+    if(!cured.hard_constraint){
+      map["MS-180"].es = 85;
+      map["MS-180"].ef = 85;
+    } else {
+      map["MS-180"].es = trueCompletion;
+      map["MS-180"].ef = trueCompletion;
+    }
+
+    const curedCount = Object.values(cured).filter(Boolean).length;
+    const dcmaScore = Math.round(38 + (curedCount / 4) * 62);
+
+    return { map, curedCount, dcmaScore, trueCompletion, contractorClaim: 85 };
+  }
+
+  function renderModal(){
+    const data = calcCPM();
+
+    m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:940px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.4);overflow:hidden;box-sizing:border-box">
+      <!-- Header -->
+      <div style="padding:12px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
+        <div>
+          <b style="font-size:1.05rem;color:var(--bar,#2F5BD3)">🩺 The Schedule Doctor: DCMA 14 Logic Audit Sandbox</b>
+          <div style="font-size:.76rem;color:var(--muted)">Audit 200-Bed Tertiary Hospital P6 Baseline · Uncover Concealed Delays &amp; Artificial Float Manipulation</div>
+        </div>
+        <button id="scdoc-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
+      </div>
+
+      <!-- KPI Status Bar -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:12px 18px;background:var(--bg,#f8f9fa);border-bottom:1px solid var(--line)">
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:8px 12px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">DCMA 14 Health Score</div>
+          <div id="scdoc-score" style="font-size:1.3rem;font-weight:800;color:${data.dcmaScore>=90?'var(--ok,#1F8A4C)':'var(--crit,#D9383A)'}">${data.dcmaScore} / 100 ${data.dcmaScore>=90?'(PASS)':'(FAIL)'}</div>
+          <div style="font-size:.72rem;color:var(--muted)">${data.curedCount}/4 Logic Traps Cured</div>
+        </div>
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:8px 12px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Contractor Paper Forecast</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--warn,#d97706)">Day ${data.contractorClaim} (Fake On-Time)</div>
+          <div style="font-size:.72rem;color:var(--muted)">Suppressed by Hard Constraint</div>
+        </div>
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:8px 12px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">True Dynamic CPM Finish</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--crit,#D9383A)">Day ${data.trueCompletion} (${data.trueCompletion - data.contractorClaim}d Concealed Slip!)</div>
+          <div style="font-size:.72rem;color:var(--muted)">Contractor Liquidated Damages Risk</div>
+        </div>
+      </div>
+
+      <!-- Main Body -->
+      <div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">
+        <!-- Alert Box -->
+        <div style="background:${data.curedCount===4?'var(--barSoft,#E8EEFA)':'#FEF2F2'};border:1px solid ${data.curedCount===4?'var(--ok,#1F8A4C)':'var(--crit,#D9383A)'};padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;line-height:1.5">
+          ${data.curedCount===4
+            ? '<b style="color:var(--ok,#1F8A4C)">🏆 EXCELLENT AUDIT: All 4 DCMA Logic Traps Cured!</b><br>You exposed a <b>27-calendar-day concealed contractor slip</b>. The contractor can no longer disguise this behind negative leads or a Must-Finish-On constraint. Issue an immediate Clause 46 Notice of Delay under FIDIC / CPWD!'
+            : '<b style="color:var(--crit,#D9383A)">⚠️ ACTIVE LOGIC TRAPS DETECTED IN CONTRACTOR SCHEDULE:</b><br>The contractor has submitted a distorted P6 network that artificially shows Day 85 handover. Click <b>Cure Logic Defect</b> below on each defect to recalculate the real critical path and protect the Client from false claims!'}
+        </div>
+
+        <!-- SVG Gantt Chart -->
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:16px">
+          <div style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between">
+            <span>CPM GANTT TIMELINE (DAYS 0 TO 120)</span>
+            <span>🔴 Critical Path &nbsp; 🔵 Driving Logic &nbsp; 🟡 Active Defect Link</span>
+          </div>
+          <svg viewBox="0 0 650 250" style="width:100%;height:auto;display:block">
+            <!-- Timeline header -->
+            ${[0, 20, 40, 60, 80, 100, 120].map(d => {
+              const x = 150 + (d / 120) * 480;
+              return `<line x1="${x}" y1="0" x2="${x}" y2="240" stroke="var(--line,#e2e8f0)" stroke-width="0.8"/>
+                      <text x="${x}" y="12" font-size="9" fill="var(--muted)" text-anchor="middle">D${d}</text>`;
+            }).join("")}
+
+            <!-- 10 Activity Bars -->
+            ${defaultActivities.map((act, i) => {
+              const y = 24 + i * 21;
+              const calc = data.map[act.id];
+              const bx = 150 + (calc.es / 120) * 480;
+              const bw = Math.max(6, (calc.dur / 120) * 480);
+              const isDef = act.isDefect && !cured[act.defect];
+              const barFill = isDef ? "var(--warn,#d97706)" : (i >= 3 ? "var(--crit,#D9383A)" : "var(--bar,#2F5BD3)");
+
+              return `
+                <!-- Activity Label -->
+                <text x="142" y="${y + 11}" font-size="9.5" font-weight="${isDef?800:600}" fill="${isDef?'var(--crit,#D9383A)':'var(--ink,#111)'}" text-anchor="end">${act.id}: ${act.name.slice(0, 22)}</text>
+                <!-- Bar -->
+                <rect x="${bx}" y="${y}" width="${bw}" height="14" rx="3" fill="${barFill}" opacity="0.85" ${isDef?'stroke="var(--crit,#D9383A)" stroke-width="1.5" stroke-dasharray="2,2"':''}/>
+                <!-- Duration text -->
+                <text x="${bx + bw + 4}" y="${y + 10}" font-size="9" fill="var(--muted)">${calc.dur}d (D${calc.es}-D${calc.ef})</text>
+              `;
+            }).join("")}
+          </svg>
+        </div>
+
+        <!-- 4 DCMA Logic Traps Audit Table -->
+        <h3 style="font-size:.9rem;font-weight:700;margin-bottom:8px">DCMA 14 Logic Defects to Cure</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${defaultActivities.filter(a => a.isDefect).map(act => {
+            const isCured = cured[act.defect];
+            return `
+              <div style="background:var(--bg,#f8f9fa);border:1px solid ${isCured?'var(--ok,#1F8A4C)':'var(--crit,#D9383A)'};border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                    <span style="font-size:1.1rem">${isCured?'✅':'🚨'}</span>
+                    <b style="font-size:.88rem;color:${isCured?'var(--ok,#1F8A4C)':'var(--crit,#D9383A)'}">${act.id}: ${act.name}</b>
+                    <span style="font-size:.72rem;background:${isCured?'var(--barSoft)':'#FEE2E2'};color:${isCured?'var(--bar)':'var(--crit)'};padding:2px 6px;border-radius:4px;font-weight:700">${act.defect.toUpperCase()}</span>
+                  </div>
+                  <div style="font-size:.78rem;color:var(--ink,#111);line-height:1.4">${act.rule}</div>
+                  <div style="font-size:.76rem;color:var(--muted);margin-top:4px"><b>Cure Action:</b> ${act.cureText}</div>
+                </div>
+                <div>
+                  <button class="btn scdoc-cure-btn" data-defect="${act.defect}" style="font-size:.78rem;padding:6px 14px;font-weight:700;background:${isCured?'var(--bg)':'var(--bar,#2F5BD3)'};color:${isCured?'var(--muted)':'#fff'};border:1px solid ${isCured?'var(--line)':'var(--bar)'}">
+                    ${isCured ? 'Re-open Defect' : 'Cure Defect'}
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="padding:10px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:space-between;align-items:center">
+        <button id="scdoc-notice-btn" class="btn" style="font-size:.78rem;padding:6px 12px;font-weight:700;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3)">📋 Copy PMC Clause 46 Delay Notice</button>
+        <button id="scdoc-done" class="btn" style="padding:7px 18px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">Done</button>
+      </div>
+    </div>`;
+
+    m.querySelector("#scdoc-close").onclick = () => m.remove();
+    m.querySelector("#scdoc-done").onclick = () => m.remove();
+
+    m.querySelectorAll(".scdoc-cure-btn").forEach(b => {
+      b.onclick = () => {
+        const def = b.dataset.defect;
+        cured[def] = !cured[def];
+        renderModal();
+      };
+    });
+
+    m.querySelector("#scdoc-notice-btn").onclick = () => {
+      const noticeText = `FORMAL NOTICE OF SCHEDULE DEFECTS & DELAY EXPOSURE
+Project: 200-Bed Tertiary Hospital Super-Structure & Modular OT Handover
+Contract Clause: FIDIC Red Book Clause 8.4 / CPWD GCC Clause 2 & 5
+
+To: Principal Contractor Lead Planner
+From: PMC Lead Planning Manager & Project Controls
+
+Subject: DCMA 14 Audit Rejection of Baseline Update & Notice of 27-Day Concealed Slip
+
+1. Technical Audit Findings:
+Under standard DCMA 14 schedule assessment protocols, your current P6 update is REJECTED due to four critical logic distortions:
+- Metric 2 Violation: Activity BLK-110 AAC Blockwork carries an invalid -15d negative lead into RCC slab, violating physical buildability.
+- Metric 1 Violation: Activity MEP-120 MGPS Vertical Riser has no successor logic, allowing life-safety installation to drift unmonitored.
+- Metric 3 Violation: Activity OT-140 Modular OT Panels carries an unmodeled +30d positive lag used as an artificial float cushion.
+- Metric 10 Violation: Activity MS-180 Handover is constrained by a 'Must Finish On Day 85' hard constraint, deliberately suppressing 27 calendar days of upstream slippage.
+
+2. Dynamic CPM Recalculation:
+Upon curing these 4 schedule defects to restore dynamic network logic, the TRUE early finish of the project is Day 112 (slippage of 27 calendar days).
+
+3. Immediate Instruction:
+You are hereby instructed to submit a fully compliant Revision R1 Recovery Schedule within seven (7) calendar days decomposing the 30-day procurement cushion into discrete activities and removing all hard constraints. Failure to do so will result in formal certification of contractor-caused delay and Liquidated Damages liability.`;
+
+      navigator.clipboard?.writeText(noticeText);
+      alert("📋 PMC Clause 46 Delay Notice copied to clipboard!");
+    };
+  }
+
+  document.body.appendChild(m);
+  renderModal();
+}
+
+
+// =========================================================================
+// TAB 12: HOSPITAL TECHNICAL PACKAGE & PRECEDENCE SEQUENCE PLAYBOOK
+// =========================================================================
+function openHospitalSequencePlaybook(){
+  const old = $("hospital-playbook-modal");
+  if(old) old.remove();
+
+  let activePkg = "mot"; // "mot" | "mgps" | "linac"
+
+  const packages = {
+    mot: {
+      title: "Modular Operation Theatre (MOT - Class 10,000 / ISO 7 Cleanroom)",
+      standard: "NABH Hospital Infrastructure Standards & ISO 14644-1",
+      steps: [
+        { id: "S1", title: "Structural Ceiling Unistrut Grid & Drop Rods", rightPos: 0, reason: "Must support heavy laminar flow plenum and surgical lights before false ceiling closes." },
+        { id: "S2", title: "AHU Low-Side Ducting & Laminar Airflow (LAF) Plenum Box", rightPos: 1, reason: "Heavy overhead ducting & terminal box must be positioned before wall panels go up." },
+        { id: "S3", title: "Medical Gas (MGPS) Drops & Electrical Cleanroom Conduits", rightPos: 2, reason: "All rough-ins must drop from ceiling before antimicrobial wall paneling seals the room." },
+        { id: "S4", title: "Anti-Microbial Wall Paneling (PUF/Stainless Steel Core)", rightPos: 3, reason: "Seals cleanroom boundaries. Wall panels must enclose perimeter before floor vinyl coving." },
+        { id: "S5", title: "Conductive Anti-Static Vinyl Flooring with 100mm Wall Coving", rightPos: 4, reason: "Delicate vinyl floor with copper grounding tape must only be laid after all heavy overhead work ends." },
+        { id: "S6", title: "Hermetically Sealing Sliding Doors & Lead Shielded Vision Panels", rightPos: 5, reason: "Airtight seal required to allow differential room pressure (+15 Pa) to be established." },
+        { id: "S7", title: "Terminal HEPA Filter Installation (H14 Grade, 99.997%)", rightPos: 6, reason: "NEVER install HEPA before duct air balancing; construction dust blinds HEPA filters in 15 mins!" },
+        { id: "S8", title: "DOP/PAO Smoke Integrity & Particle Count Validation Certification", rightPos: 7, reason: "Final statutory accreditation sign-off under live HVAC pressure hold before clinical occupancy." }
+      ],
+      traps: [
+        { check: (arr) => arr.indexOf("S5") < arr.indexOf("S1") || arr.indexOf("S5") < arr.indexOf("S2"),
+          msg: "🚨 CRITICAL SEQUENCE TRAP: Conducting flooring laid before overhead ducting/unistrut! Falling scaffolding and heavy tools will puncture delicate vinyl and snap copper grounding tape (₹4,500/m² replacement cost)!" },
+        { check: (arr) => arr.indexOf("S7") < arr.indexOf("S2"),
+          msg: "🚨 FILTER BLINDING DISASTER: HEPA filters installed before duct pre-flushing! Construction dust from ducts sucked directly into H14 filters, permanently clogging ₹25,000/filter boxes!" },
+        { check: (arr) => arr.indexOf("S4") < arr.indexOf("S3"),
+          msg: "🚨 REWORK NIGHTMARE: Anti-microbial wall panels erected before MGPS pipe drops! Panels must be smashed open to feed medical gas lines." }
+      ]
+    },
+    mgps: {
+      title: "Medical Gas Pipeline System (MGPS - HTM 02-01 / NFPA 99)",
+      standard: "HTM 02-01 Part 1 & Indian Medical Gas Code",
+      steps: [
+        { id: "M1", title: "Medical-Grade Degreased Copper Pipe Deburring & Trapeze Racks", rightPos: 0, reason: "EN 13348 stamped degreased pipes routed in clean racks free from oils." },
+        { id: "M2", title: "Continuous Inert Nitrogen Gas (N2) Purge during Silver Brazing", rightPos: 1, reason: "Prevents toxic black copper oxide scale from forming inside pipe lumen during brazing." },
+        { id: "M3", title: "Structural High-Pressure Pneumatic Test (10 bar with dry N2)", rightPos: 2, reason: "1.5x working pressure hold test to verify joint integrity before concealing." },
+        { id: "M4", title: "False Ceiling & Wall Shaft Closure", rightPos: 3, reason: "Shafts can only be closed once pipeline is verified leak-free under pressure." },
+        { id: "M5", title: "Terminal Gas Outlet Units (NIST / Schrader Gas-Specific Probes)", rightPos: 4, reason: "Color-coded gas outlets fitted into bedhead panels and ceiling pendants." },
+        { id: "M6", title: "24-Hour Standing Pressure Decay Test & Cross-Connection Spectrometry", rightPos: 5, reason: "Zero pressure drop over 24 hrs and spectrometry check to ensure oxygen line has zero nitrous oxide." }
+      ],
+      traps: [
+        { check: (arr) => arr.indexOf("M2") > arr.indexOf("M3"),
+          msg: "🚨 FATAL MEDICAL MALPRACTICE HAZARD: Brazing without continuous nitrogen purging! Black copper oxide soot will form inside the pipe and get pumped into neonatal ICU patient lungs!" },
+        { check: (arr) => arr.indexOf("M4") < arr.indexOf("M3"),
+          msg: "🚨 BLIND CONCEALMENT TRAP: False ceiling closed before pneumatic pressure test! A leaking joint will force demolition of ₹40 Lakhs of finished gypsum ceiling!" }
+      ]
+    },
+    linac: {
+      title: "Radiation Oncology Bunker (LINAC / MRI - AERB Safety Code)",
+      standard: "AERB Safety Code for Medical Diagnostic & Radiation Therapy",
+      steps: [
+        { id: "L1", title: "High-Density Heavy Barytes Concrete Casting (Density &gt; 3.2 g/cc)", rightPos: 0, reason: "Massive 1.5m thick high-density concrete walls poured with temperature sensors to stop radiation." },
+        { id: "L2", title: "RF Copper Cage Mesh Shielding & Lead Door Interlocks", rightPos: 1, reason: "Continuous Faraday cage and primary lead lining to block electromagnetic interference." },
+        { id: "L3", title: "Equipment Delivery via Reserved Break-In Wall Hatch", rightPos: 2, reason: "7-ton LINAC gantry or 8-ton MRI magnet rigged into bunker before hatch closure." },
+        { id: "L4", title: "Chilled Water Primary Piping & Helium Quench Vent Duct", rightPos: 3, reason: "Emergency cryogenic helium quench pipe routed directly to hospital roof." },
+        { id: "L5", title: "Bunker Break-In Wall Close-Up & Radiation Baffle Maze", rightPos: 4, reason: "Structural hatch sealed and double-baffle maze wall completed after equipment rigging." },
+        { id: "L6", title: "Mandatory AERB Radiation Leakage Survey & Clinical Sign-Off", rightPos: 5, reason: "Statutory medical physicist survey with ion chamber detector before beam commissioning." }
+      ],
+      traps: [
+        { check: (arr) => arr.indexOf("L5") < arr.indexOf("L3"),
+          msg: "🚨 CRANE LOCKOUT DISASTER: Bunker wall sealed before heavy equipment rigging! A 7-ton Linear Accelerator cannot pass through a standard door. Wall must be demolished at ₹18 Lakhs cost!" },
+        { check: (arr) => arr.indexOf("L6") < arr.indexOf("L5"),
+          msg: "🚨 AERB STATUTORY VIOLATION: Clinical radiation beam fired before bunker baffle wall is closed! Lethal gamma radiation leak outside the bunker!" }
+      ]
+    }
+  };
+
+  // State of current order for each package
+  let currentOrder = {
+    mot: ["S5", "S1", "S4", "S2", "S3", "S7", "S6", "S8"], // intentionally jumbled to start
+    mgps: ["M1", "M4", "M2", "M3", "M5", "M6"],
+    linac: ["L1", "L5", "L2", "L3", "L4", "L6"]
+  };
+
+  const m = document.createElement("div");
+  m.id = "hospital-playbook-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  function renderModal(){
+    const pkg = packages[activePkg];
+    const order = currentOrder[activePkg];
+
+    // Check traps
+    const activeTraps = pkg.traps.filter(t => t.check(order));
+    const isPerfect = activeTraps.length === 0 && order.every((id, idx) => {
+      const step = pkg.steps.find(s => s.id === id);
+      return step.rightPos === idx;
+    });
+
+    m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:920px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.4);overflow:hidden;box-sizing:border-box">
+      <!-- Header -->
+      <div style="padding:12px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
+        <div>
+          <b style="font-size:1.05rem;color:var(--bar,#2F5BD3)" id="hosp-pkg-title">🏥 Hospital Technical Package &amp; Precedence Playbook</b>
+          <div style="font-size:.76rem;color:var(--muted)">Master Critical MEP, Cleanroom &amp; Radiation Shielding Precedence Logic</div>
+        </div>
+        <button id="hosp-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
+      </div>
+
+      <!-- Package Tabs -->
+      <div style="display:flex;gap:4px;border-bottom:1px solid var(--line);padding:8px 18px 0;background:var(--bg,#f8f9fa)">
+        <button class="btn hosp-tab-btn" data-pkg="mot" style="font-size:.78rem;padding:6px 12px;font-weight:700;border-bottom:2px solid ${activePkg==='mot'?'var(--bar,#2F5BD3)':'transparent'};color:${activePkg==='mot'?'var(--bar,#2F5BD3)':'inherit'}">🩺 Modular OT (Class 10,000)</button>
+        <button class="btn hosp-tab-btn" data-pkg="mgps" style="font-size:.78rem;padding:6px 12px;font-weight:700;border-bottom:2px solid ${activePkg==='mgps'?'var(--bar,#2F5BD3)':'transparent'};color:${activePkg==='mgps'?'var(--bar,#2F5BD3)':'inherit'}">💨 Medical Gas (HTM 02-01)</button>
+        <button class="btn hosp-tab-btn" data-pkg="linac" style="font-size:.78rem;padding:6px 12px;font-weight:700;border-bottom:2px solid ${activePkg==='linac'?'var(--bar,#2F5BD3)':'transparent'};color:${activePkg==='linac'?'var(--bar,#2F5BD3)':'inherit'}">☢️ LINAC/MRI Bunker (AERB)</button>
+      </div>
+
+      <!-- Main Body -->
+      <div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">
+        <!-- Package Info Banner -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);padding:10px 14px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <b style="font-size:.9rem">${pkg.title}</b>
+            <div style="font-size:.74rem;color:var(--muted)">Governing Code: ${pkg.standard}</div>
+          </div>
+          <button id="hosp-auto-fix" class="btn" style="font-size:.74rem;padding:4px 10px;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3)">⚡ Auto-Sort to Master Sequence</button>
+        </div>
+
+        <!-- Trap Warning or Success Box -->
+        ${activeTraps.length > 0 ? `
+          <div style="background:#FEF2F2;border:1px solid var(--crit,#D9383A);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;line-height:1.4">
+            ${activeTraps.map(t => `<div style="color:var(--crit,#D9383A);margin-bottom:4px">${t.msg}</div>`).join("")}
+          </div>
+        ` : (isPerfect ? `
+          <div style="background:#F0FDF4;border:1px solid var(--ok,#1F8A4C);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;line-height:1.4;color:var(--ok,#1F8A4C)">
+            <b>🏆 SEQUENCE 100% VERIFIED: Zero Physics &amp; Contamination Traps!</b><br>
+            All prerequisites match NABH and hospital engineering standards. You are ready to export the Primavera P6 precedence logic.
+          </div>
+        ` : `
+          <div style="background:var(--barSoft,#E8EEFA);border:1px solid var(--barSoft);padding:8px 12px;border-radius:8px;margin-bottom:14px;font-size:.8rem;color:var(--bar,#2F5BD3)">
+            ℹ️ No immediate disaster traps, but steps are not yet in optimal construction sequence. Use ▲ and ▼ to order them logically.
+          </div>
+        `)}
+
+        <!-- Step Cards -->
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${order.map((stepId, idx) => {
+            const step = pkg.steps.find(s => s.id === stepId);
+            const isCorrectPos = step.rightPos === idx;
+            return `
+              <div style="background:var(--surface,#fff);border:1px solid ${isCorrectPos?'var(--ok,#1F8A4C)':'var(--line)'};border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span style="font-size:1.1rem;font-weight:800;color:${isCorrectPos?'var(--ok,#1F8A4C)':'var(--muted)'};width:24px">#${idx + 1}</span>
+                  <div>
+                    <b style="font-size:.86rem;color:var(--ink,#111)">${step.title}</b>
+                    <div style="font-size:.76rem;color:var(--muted);margin-top:2px">${step.reason}</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:4px">
+                  <button class="btn hosp-move-btn" data-idx="${idx}" data-dir="-1" ${idx===0?'disabled':''} style="padding:4px 8px;font-size:.76rem">▲</button>
+                  <button class="btn hosp-move-btn" data-idx="${idx}" data-dir="1" ${idx===order.length-1?'disabled':''} style="padding:4px 8px;font-size:.76rem">▼</button>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="padding:10px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:space-between;align-items:center">
+        <button id="hosp-export-p6" class="btn" style="font-size:.78rem;padding:6px 12px;font-weight:700;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3)">📋 Export Primavera P6 WBS Matrix</button>
+        <button id="hosp-done" class="btn" style="padding:7px 18px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">Done</button>
+      </div>
+    </div>`;
+
+    m.querySelector("#hosp-close").onclick = () => m.remove();
+    m.querySelector("#hosp-done").onclick = () => m.remove();
+
+    m.querySelectorAll(".hosp-tab-btn").forEach(b => {
+      b.onclick = () => { activePkg = b.dataset.pkg; renderModal(); };
+    });
+
+    m.querySelectorAll(".hosp-move-btn").forEach(b => {
+      b.onclick = () => {
+        const idx = +b.dataset.idx;
+        const dir = +b.dataset.dir;
+        const newIdx = idx + dir;
+        if(newIdx >= 0 && newIdx < order.length){
+          const temp = order[idx];
+          order[idx] = order[newIdx];
+          order[newIdx] = temp;
+          renderModal();
+        }
+      };
+    });
+
+    m.querySelector("#hosp-auto-fix").onclick = () => {
+      currentOrder[activePkg] = pkg.steps.slice().sort((a,b)=>a.rightPos-b.rightPos).map(s=>s.id);
+      renderModal();
+    };
+
+    m.querySelector("#hosp-export-p6").onclick = () => {
+      let p6Text = `PRIMAVERA P6 ACTIVITY PRECEDENCE MATRIX
+Package: ${pkg.title}
+Governing Standard: ${pkg.standard}
+
+Activity ID | Activity Name | Duration | Predecessor | Type | Lag | Quality Gate
+----------------------------------------------------------------------------------------`;
+
+      const sortedSteps = pkg.steps.slice().sort((a,b)=>a.rightPos-b.rightPos);
+      sortedSteps.forEach((s, i) => {
+        const pred = i === 0 ? "START" : sortedSteps[i-1].id;
+        const type = i === 0 ? "--" : "FS";
+        const lag = "0d";
+        const dur = (i === sortedSteps.length - 1) ? "5d" : "10d";
+        p6Text += `\n${s.id.padEnd(11)} | ${s.title.slice(0, 32).padEnd(32)} | ${dur.padEnd(8)} | ${pred.padEnd(11)} | ${type.padEnd(4)} | ${lag.padEnd(3)} | QA/QC Hold Point`;
+      });
+
+      navigator.clipboard?.writeText(p6Text);
+      alert("📋 Primavera P6 WBS Precedence Matrix copied to clipboard!");
+    };
+  }
+
+  document.body.appendChild(m);
+  renderModal();
+}
+
+
+// =========================================================================
+// TAB 13: SCL DELAY PROTOCOL TIME-IMPACT ANALYSIS (TIA) FORENSICS
+// =========================================================================
+function openTIASandbox(){
+  const old = $("tia-modal");
+  if(old) old.remove();
+
+  let employerDelay = 20; // days
+  let contractorDelay = 15; // days concurrent
+
+  const m = document.createElement("div");
+  m.id = "tia-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  function renderModal(){
+    const baselineFinish = 180; // Days
+    const grossSlip = employerDelay;
+    const concurrentPeriod = Math.min(employerDelay, contractorDelay);
+    const pureEmployerPeriod = Math.max(0, employerDelay - contractorDelay);
+    const awardedEOT = grossSlip; // SCL Core Principle 10: Full time relief
+    const compensableDays = pureEmployerPeriod; // Money only for non-concurrent period
+    const ratePerDay = 2.1; // Lakhs / day site overheads
+    const claimedCost = +(employerDelay * ratePerDay).toFixed(1);
+    const awardedCost = +(compensableDays * ratePerDay).toFixed(1);
+    const clientSaved = +(claimedCost - awardedCost).toFixed(1);
+
+    m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:920px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.4);overflow:hidden;box-sizing:border-box">
+      <!-- Header -->
+      <div style="padding:12px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
+        <div>
+          <b style="font-size:1.05rem;color:var(--bar,#2F5BD3)">⏱️ SCL Delay Protocol Time-Impact Analysis (TIA) Forensics</b>
+          <div style="font-size:.76rem;color:var(--muted)">Society of Construction Law (2nd Edition) Core Principle 10: Concurrent Delay Apportionment</div>
+        </div>
+        <button id="tia-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
+      </div>
+
+      <!-- Dispute Brief -->
+      <div style="padding:10px 18px;background:var(--barSoft,#E8EEFA);border-bottom:1px solid var(--line);font-size:.82rem;line-height:1.5">
+        <b>Hospital Dispute Scenario:</b> On Day 45, the Employer issued structural GFC Revision R2 for ICU Column strengthening (<b>+${employerDelay}d impact</b>). Contractor claims <b>${employerDelay} days EOT + ₹${claimedCost} Lakhs</b> prolongation costs. However, PMC audit reveals the Contractor concurrently failed to mobilize Modular OT AHUs by <b>${contractorDelay} days</b>!
+      </div>
+
+      <!-- KPI Dashboard -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:12px 18px;background:var(--bg,#f8f9fa);border-bottom:1px solid var(--line)">
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:8px 12px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Time Relief (EOT Granted)</div>
+          <div id="tia-eot-days" style="font-size:1.3rem;font-weight:800;color:var(--ok,#1F8A4C)">+${awardedEOT} Calendar Days</div>
+          <div style="font-size:.72rem;color:var(--muted)">Full shield from Liquidated Damages</div>
+        </div>
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:8px 12px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Compensable Days (Money)</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--bar,#2F5BD3)">${compensableDays} Days (₹${awardedCost} Lakhs)</div>
+          <div style="font-size:.72rem;color:var(--muted)">Excludes ${concurrentPeriod}d contractor concurrency</div>
+        </div>
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:8px 12px">
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Client Money Saved</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--crit,#D9383A)">₹${clientSaved} Lakhs Saved!</div>
+          <div style="font-size:.72rem;color:var(--muted)">Claimed: ₹${claimedCost}L · Awarded: ₹${awardedCost}L</div>
+        </div>
+      </div>
+
+      <!-- Main Body -->
+      <div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">
+        <!-- Interactive Controls -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;background:var(--bg,#f8f9fa);padding:12px 14px;border-radius:8px;border:1px solid var(--line);margin-bottom:14px">
+          <div>
+            <label style="display:block;font-weight:700;font-size:.8rem;margin-bottom:4px">Employer Delay Event: <b>${employerDelay} Days</b></label>
+            <input type="range" id="tia-emp-slider" min="10" max="30" value="${employerDelay}" style="width:100%">
+            <div style="font-size:.72rem;color:var(--muted)">Fragnet FRAG-01: ICU Structural Column GFC Revision</div>
+          </div>
+          <div>
+            <label style="display:block;font-weight:700;font-size:.8rem;margin-bottom:4px">Contractor Concurrency: <b>${contractorDelay} Days</b></label>
+            <input type="range" id="tia-con-slider" min="0" max="25" value="${contractorDelay}" style="width:100%">
+            <div style="font-size:.72rem;color:var(--muted)">Modular OT AHU Procurement Delay</div>
+          </div>
+        </div>
+
+        <!-- SCL Delay Protocol Apportionment Visual Bar -->
+        <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:14px">
+          <div style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px">SCL CONCURRENT DELAY TIMELINE WINDOW (DAYS 45 TO ${45 + employerDelay})</div>
+          <svg viewBox="0 0 600 120" style="width:100%;height:auto;display:block">
+            <!-- Timeline background -->
+            <rect x="50" y="20" width="500" height="30" rx="4" fill="var(--bg,#f8f9fa)" stroke="var(--line)"/>
+            
+            <!-- Concurrent block (Time but No Money) -->
+            ${(() => {
+              const conW = (concurrentPeriod / employerDelay) * 500;
+              const pureW = 500 - conW;
+              return `
+                <rect x="50" y="20" width="${conW}" height="30" fill="var(--warn,#d97706)" opacity="0.85"/>
+                <text x="${50 + conW/2}" y="38" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Concurrent (${concurrentPeriod}d): Time Relief ONLY (No Money)</text>
+                ${pureW > 0 ? `
+                  <rect x="${50 + conW}" y="20" width="${pureW}" height="30" fill="var(--ok,#1F8A4C)" opacity="0.85"/>
+                  <text x="${50 + conW + pureW/2}" y="38" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Pure Employer (${pureEmployerPeriod}d): Time + Cost</text>
+                ` : ''}
+              `;
+            })()}
+
+            <!-- Bottom Legend -->
+            <text x="50" y="70" font-size="9" fill="var(--muted)">Day 45 (Delay Onset)</text>
+            <text x="550" y="70" font-size="9" fill="var(--muted)" text-anchor="end">Day ${45 + employerDelay} (Impacted Completion)</text>
+            <line x1="50" y1="56" x2="550" y2="56" stroke="var(--line)" stroke-dasharray="2,2"/>
+          </svg>
+        </div>
+
+        <!-- SCL Law Doctrine Explanation -->
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:.82rem;line-height:1.5">
+          <b style="color:var(--bar,#2F5BD3)">⚖️ SCL Delay Protocol Core Principle 10 Law Doctrine:</b><br>
+          • <b>Extension of Time (EOT):</b> Where Employer delay and Contractor delay are concurrent, the Contractor is entitled to an Extension of Time for the entire duration (${awardedEOT} days). Why? Because the Employer prevented the Contractor from completing by the contract completion date (Prevention Principle).<br>
+          • <b>Prolongation Costs:</b> The Contractor is <i>NOT</i> entitled to prolongation costs for the ${concurrentPeriod}-day overlapping concurrent period. Why? Because the Contractor would have incurred those exact site overheads anyway due to their own AHU mobilization failure! Only the pure non-concurrent period of ${compensableDays} days is compensable.
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="padding:10px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:space-between;align-items:center">
+        <button id="tia-letter-btn" class="btn" style="font-size:.78rem;padding:6px 12px;font-weight:700;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3)">📋 Copy SCL Determination Notice</button>
+        <button id="tia-done" class="btn" style="padding:7px 18px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">Done</button>
+      </div>
+    </div>`;
+
+    m.querySelector("#tia-close").onclick = () => m.remove();
+    m.querySelector("#tia-done").onclick = () => m.remove();
+
+    const empSlider = m.querySelector("#tia-emp-slider");
+    const conSlider = m.querySelector("#tia-con-slider");
+
+    empSlider.oninput = () => { employerDelay = +empSlider.value; renderModal(); };
+    conSlider.oninput = () => { contractorDelay = +conSlider.value; renderModal(); };
+
+    m.querySelector("#tia-letter-btn").onclick = () => {
+      const letter = `FORMAL PMC ENGINEER'S DETERMINATION - EXTENSION OF TIME & COSTS
+Governing Protocol: Society of Construction Law (SCL) Delay & Disruption Protocol (2nd Edition) Core Principle 10
+Project: 500-Bed Tertiary Care Hospital Complex
+
+1. Contractor Claim Reference:
+Contractor Claimed: ${employerDelay} Calendar Days EOT and ₹${claimedCost} Lakhs Prolongation Site Overheads resulting from ICU Structural Column Revision R2.
+
+2. Forensic Time-Impact Analysis (TIA) Findings:
+A contemporaneous CPM schedule analysis was performed using Update Window Day 40 and inserting Fragnet FRAG-01 (ICU Structural Redesign, ${employerDelay}d).
+The analysis confirms:
+- Employer Delay Event gross driving impact: ${employerDelay} calendar days.
+- Concurrently, Contractor suffered an un-excused ${contractorDelay}-day delay in mobilizing Modular OT Air Handling Units (AHUs), consuming critical path float between Day 45 and Day ${45 + concurrentPeriod}.
+
+3. SCL Core Principle 10 Determination:
+- Extension of Time (EOT): AWARDED ${awardedEOT} CALENDAR DAYS. The project completion date is extended to relieve the Contractor of Liquidated Damages liability under the Prevention Principle.
+- Prolongation Costs: AWARDED ₹${awardedCost} LAKHS (for ${compensableDays} net non-concurrent days only). Prolongation costs for the ${concurrentPeriod} concurrent days are strictly REJECTED as the Contractor was simultaneously in breach.
+
+Net Client Protection Achieved: ₹${clientSaved} Lakhs saved against claimed amount.`;
+
+      navigator.clipboard?.writeText(letter);
+      alert("📋 SCL Determination Notice copied to clipboard!");
+    };
+  }
+
+  document.body.appendChild(m);
+  renderModal();
+}
+
+
 // ---------- progress ----------
 function renderProg(){
   const r=readiness(), gap=calibration();
@@ -3781,6 +4843,13 @@ function renderPractice(){
     <div class="btnrow" style="margin:0;gap:8px">
       <button class="btn" id="btn-open-hotseat-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A)">🎙️ The Director's Hot Seat (60s Defense)</button>
     </div>
+    <div class="btnrow" style="margin:0 0 6px;gap:8px">
+      <button class="btn" id="btn-open-doctor-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A)">🩺 Schedule Doctor (DCMA 14)</button>
+      <button class="btn" id="btn-open-hosp-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3)">🏥 Hospital Package Playbook</button>
+    </div>
+    <div class="btnrow" style="margin:0;gap:8px">
+      <button class="btn" id="btn-open-tia-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--ok,#1F8A4C);color:var(--ok,#1F8A4C)">⏱️ SCL Delay Protocol TIA Forensics</button>
+    </div>
   </div>`;
   const open=DRILLS.filter(d=>practiceUnlocked(d.week,d.id));
   const rec=open.map(d=>{ const xs=log.filter(x=>x.type===d.id).slice(-3); return {d, s:xs.length?xs.reduce((a,x)=>a+x.score,0)/xs.length:-1}; }).sort((a,b)=>a.s-b.s)[0];
@@ -3807,6 +4876,9 @@ function renderPractice(){
   $("btn-open-scale-box")&&($("btn-open-scale-box").onclick=()=>openScaleVisualizer());
   $("btn-open-mb-box")&&($("btn-open-mb-box").onclick=()=>openMBAuditSandbox());
   $("btn-open-hotseat-box")&&($("btn-open-hotseat-box").onclick=()=>openHotSeatSimulator());
+  $("btn-open-doctor-box")&&($("btn-open-doctor-box").onclick=()=>openScheduleDoctor());
+  $("btn-open-hosp-box")&&($("btn-open-hosp-box").onclick=()=>openHospitalSequencePlaybook());
+  $("btn-open-tia-box")&&($("btn-open-tia-box").onclick=()=>openTIASandbox());
   w.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>startGuided(+b.dataset.gl));
   w.querySelectorAll("[data-lf]").forEach(b=>b.onclick=()=>{ pr.lf=b.dataset.lf; renderPractice(); });
   w.querySelectorAll("[data-df]").forEach(b=>b.onclick=()=>{ pr.df=b.dataset.df; renderPractice(); });
@@ -5628,9 +6700,12 @@ function renderLearn(){
       <div style="font-size:.8rem;color:var(--muted);background:var(--bg,#f8f9fa);padding:8px 12px;border-radius:6px;margin-bottom:8px">🔒 Complete <b>Day 1</b> in the main track to unlock M1: Measurement Books &amp; Joint Measurement.</div>
     `}
     <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <button class="btn" id="mcard-btn-scale" style="font-size:.76rem;padding:3px 8px">👁️ Visual Scale &amp; Room Spaces</button>
-      <button class="btn" id="mcard-btn-mbaudit" style="font-size:.76rem;padding:3px 8px">📑 Drawing &amp; MB Audit</button>
-      <button class="btn" id="mcard-btn-formulas" style="font-size:.76rem;padding:3px 8px">📐 Field Formulas Sheet</button>
+      <button class="btn" id="mcard-btn-scale" style="font-size:.76rem;padding:3px 8px">👁️ Scale &amp; 3D Volume</button>
+      <button class="btn" id="mcard-btn-mbaudit" style="font-size:.76rem;padding:3px 8px">📑 Drawing &amp; MB</button>
+      <button class="btn" id="mcard-btn-doctor" style="font-size:.76rem;padding:3px 8px;color:var(--crit,#D9383A);font-weight:700">🩺 Schedule Doctor</button>
+      <button class="btn" id="mcard-btn-hosp" style="font-size:.76rem;padding:3px 8px;color:var(--bar,#2F5BD3);font-weight:700">🏥 Hospital Playbook</button>
+      <button class="btn" id="mcard-btn-tia" style="font-size:.76rem;padding:3px 8px;color:var(--ok,#1F8A4C);font-weight:700">⏱️ SCL TIA</button>
+      <button class="btn" id="mcard-btn-formulas" style="font-size:.76rem;padding:3px 8px">📐 Formulas</button>
     </div>
   </div>`;
 
@@ -5661,6 +6736,9 @@ function renderLearn(){
   w.querySelectorAll("[data-ltf]").forEach(b=>b.onclick=()=>{ learnTrackFilter=b.dataset.ltf; renderLearn(); });
   $("mcard-btn-scale")&&($("mcard-btn-scale").onclick=()=>openScaleVisualizer());
   $("mcard-btn-mbaudit")&&($("mcard-btn-mbaudit").onclick=()=>openMBAuditSandbox());
+  $("mcard-btn-doctor")&&($("mcard-btn-doctor").onclick=()=>openScheduleDoctor());
+  $("mcard-btn-hosp")&&($("mcard-btn-hosp").onclick=()=>openHospitalSequencePlaybook());
+  $("mcard-btn-tia")&&($("mcard-btn-tia").onclick=()=>openTIASandbox());
   $("mcard-btn-formulas")&&($("mcard-btn-formulas").onclick=()=>openFormulaDrawer());
   $("btn-learn-hotseat")&&($("btn-learn-hotseat").onclick=()=>openHotSeatSimulator());
   $("mx-start")&&($("mx-start").onclick=startMixed);

@@ -130,7 +130,7 @@ async function completeUnit(env, uid) {
     P("your saved progress loads (Day 2, Days 0–1 passed)", d.getElementById("daytag").textContent === `Day ${PROGRESS.state.day} / 90` && w.eval('cst("U1").done'));
     P("settings button (⚙) present", [...d.querySelectorAll("button")].some(b => b.textContent === "⚙"));
     P("status confirms Director is active", /ready|due|Day|Director/i.test(d.getElementById("status").textContent));
-    P("Deliverable Studio, S-Curve Sandbox, LPS Board, MB Audit, and Hot Seat render and operate cleanly", await w.eval(`(async () => {
+    P("All 9 interactive visual sandboxes (Deliverables, S-Curve, LPS, Scale/Volume, MB Audit, Hot Seat, Schedule Doctor, Hospital Playbook, SCL TIA) render and operate cleanly", await w.eval(`(async () => {
       openDeliverableStudio(1);
       const dlvOk = !!document.getElementById("deliverable-modal");
       document.getElementById("dlv-close")?.click();
@@ -149,7 +149,16 @@ async function completeUnit(env, uid) {
       openHotSeatSimulator();
       const hsOk = !!document.getElementById("hotseat-modal") && !!document.getElementById("hotseat-timer");
       document.getElementById("hotseat-close")?.click();
-      return dlvOk && scOk && lpsOk && scvOk && mbOk && hsOk;
+      openScheduleDoctor();
+      const docOk = !!document.getElementById("schedule-doctor-modal") && document.getElementById("scdoc-score")?.textContent !== "";
+      document.getElementById("scdoc-close")?.click();
+      openHospitalSequencePlaybook();
+      const hospOk = !!document.getElementById("hospital-playbook-modal") && document.getElementById("hosp-pkg-title")?.textContent !== "";
+      document.getElementById("hosp-close")?.click();
+      openTIASandbox();
+      const tiaOk = !!document.getElementById("tia-modal") && document.getElementById("tia-eot-days")?.textContent !== "";
+      document.getElementById("tia-close")?.click();
+      return dlvOk && scOk && lpsOk && scvOk && mbOk && hsOk && docOk && hospOk && tiaOk;
     })()`));
     P("no runtime errors (standalone)", env.errs.length === 0, env.errs.join(" | "));
   }
