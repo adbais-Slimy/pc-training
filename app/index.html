@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Project Controls — 90-Day Programme</title>
+<title>Project Controls — 120-Day Mastery Programme</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=26"></script>
+<script src="shim.js?v=30"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -637,7 +637,7 @@ PHASE 1 (Days 1–30) Foundation + Planning + P6.
 PHASE 2 (Days 31–60) Week 5 cost control; Week 6 EVM; Week 7 procurement controls + schedule integration; Week 8 cash flow + risk. Deliverables: cost-control model, EVM analysis, procurement control dashboard, cash-flow forecast, risk register. GATE 80%: must explain what happened → why → financial impact → schedule impact → forecast → corrective action.
 PHASE 3 (Days 61–90) Week 9 delay analysis + recovery; Week 10 change + commercial; Week 11 integrated controls; Week 12 management reporting + leadership + digital. Deliverables: delay analysis, recovery programme, change register, integrated dashboard, monthly report, executive presentation, digital automation concept.
 
-12. FINAL EXAM (Day 90): fictional hospital project with budget, baseline, current schedule, progress, procurement, cost, cash flow, risks, changes, delays, vendor issues. No conclusions given. I produce: executive status, schedule analysis, CP analysis, progress, cost, EVM, procurement impact, cash-flow forecast, risk, delay, recovery strategy, management actions, executive dashboard, management presentation. Then a viva. No help during the exam.
+12. FINAL EXAM (Day 120): fictional hospital project with budget, baseline, current schedule, progress, procurement, cost, cash flow, risks, changes, delays, vendor issues. No conclusions given. I produce: executive status, schedule analysis, CP analysis, progress, cost, EVM, procurement impact, cash-flow forecast, risk, delay, recovery strategy, management actions, executive dashboard, management presentation. Then a viva. No help during the exam.
 
 13. FINAL RATING weights: Planning & Scheduling 20, Primavera P6 15, Progress Measurement 10, Cost Control 10, EVM 10, Procurement Controls 10, Risk & Delay 10, Reporting 5, Integrated Controls 5, Management 5. <60 Not ready; 60–69 Foundation; 70–79 Working level; 80–89 Project Controls professional; 90+ Strong PCM capability. Do not inflate.
 
@@ -1092,7 +1092,7 @@ function dueList(){ const t=today(); return Object.entries(state.reviews).filter
 
 // ---------- header ----------
 function renderHeader(){
-  $("daytag").textContent = `Day ${state.day} / 90`;
+  $("daytag").textContent = `Day ${state.day} / 120`;
   $("title").textContent = state.module || "Project Controls, 90 days";
   const idx=STEPS.findIndex(s=>s[0]===state.step);
   $("steps").innerHTML = STEPS.map(([k,l],i)=>`<div class="${state.closed?'done':i<idx?'done':i===idx?'now':''}"><i></i>${l}</div>`).join("");
@@ -6721,7 +6721,7 @@ function renderLearn(){
 
   let h=`<div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <b style="font-stretch:80%">Day ${state.day} / 90</b>
+      <b style="font-stretch:80%">Day ${state.day} / 120</b>
       ${streak>0?`<span style="font-size:.82rem;font-weight:700;color:var(--warn)">🔥 ${streak}-day streak</span>`:""}
     </div>
     <div style="height:6px;background:var(--barSoft);border-radius:3px;overflow:hidden;margin-bottom:12px">
@@ -6780,7 +6780,7 @@ function renderLearn(){
       How quantities are measured on site and how bills are checked: MB and joint measurement, civil, finishes, MEP and external works, RA bills, rate analysis &amp; reconciliation. <b>Do one whenever you have a spare 25 minutes; it doesn't hold up the main days.</b>
     </p>
     <div style="background:var(--barSoft,#E8EEFA);border-left:3px solid var(--bar,#2F5BD3);padding:6px 10px;border-radius:6px;font-size:.78rem;color:var(--ink);margin-bottom:10px">
-      <b>⚡ Parallel Track Note:</b> Runs alongside your 90-day schedule. Completing M units builds site measurement competence without moving the main Day clock (your schedule days advance when you complete Day units).
+      <b>⚡ Parallel Track Note:</b> Runs alongside your 120-day schedule. Completing M units builds site measurement competence without moving the main Day clock (your schedule days advance when you complete Day units).
     </div>
     ${mOpen && nextM ? `
       <div style="background:var(--bg,#f8f9fa);padding:8px 12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
@@ -6977,7 +6977,7 @@ function renderUnitDone(body,u,s,gate){
   const nx=u.track?UNITS.filter(x=>x.track===u.track)[UNITS.filter(x=>x.track===u.track).indexOf(u)+1]:UNITS.filter(x=>!x.track)[UNITS.filter(x=>!x.track).indexOf(u)+1];
 
   const totalDone = UNITS.filter(x=>cst(x.id).done).length;
-  const isGate = (u.title||"").toLowerCase().includes("gate") || u.id === "U20";
+  const isGate = (u.title||"").toLowerCase().includes("gate") || u.id === "U30";
   const unitsSinceLast = totalDone - (state.lastBackupUnits || 0);
   const backupDue = isGate || unitsSinceLast >= 5;
 
@@ -7338,10 +7338,10 @@ Choose, then **tell site**. A recovery that exists only on paper isn't a recover
   {k:"explain",p:"Explain why 'planned minus elapsed' gives a dishonest update, with a real example from your site."},
   {k:"done"}]},
 
- {id:"U20",day:20,title:"Gate 1: Foundation exam",mins:45,gate:true,
-  card:{id:"c-gate1",title:"Gate 1 passed: the foundation holds",rule:"Schedule = activities + durations + logic; calculate in marks, convert once; forward = largest + add once; backward = smallest + subtract; float = LS − ES; report the level AND the rate; price recovery options; check the ROS for long-lead items.",example:"From any project (hospital, commercial or external works) you can build a small network, find the critical path, read the float trend, and write an impact statement with options.",trap:"Thinking the gate is the end. It's the base for P6, progress and cost."},
+ {id:"U20",day:20,title:"Day 20: Schedule Mechanics Checkpoint",mins:30,milestone:true,
+  card:{id:"c-sched-check",title:"Schedule Mechanics: Logic, Float & Critical Paths",rule:"Schedule = activities + durations + logic; calculate in marks, convert once; forward = largest + add once; backward = smallest + subtract; float = LS − ES; report the level AND the rate; price recovery options; check the ROS for long-lead items.",example:"From any project (hospital, commercial or external works) you can build a small network, find the critical path, read the float trend, and write an impact statement with options.",trap:"Thinking the gate is the end. It's the base for P6, progress and cost."},
   screens:[
-  {k:"read",t:`**Gate 1 checks everything from Days 1–19 together**, across project types: hospital, commercial, residential and external works.
+  {k:"read",t:`**Day 20 Checkpoint checks everything from Days 1–19 together**, consolidating your CPM scheduling foundations before proceeding to site measurement, quantity control, and commercial audits.
 
 1. A full guided CPM pass with SS links (one run)
 2. A duration check and a procurement back-calculation
@@ -7380,14 +7380,1257 @@ const APPLY2={
  U17:{task:"Pick two long-lead items on a live project (one non-hospital item if possible). Work out the ROS from the installation's late start, back-calculate the PO-by and indent-by dates, and the procurement float against the vendor's forecast.",good:["ROS taken from the installation's late start","Vendor time in calendar days, TAT in working days","PO-by and indent-by dates","Procurement float with its sign"],tmpl:"Item 1: ROS | transit | manufacture | TAT | PO by | indent by | forecast delivery | float\nItem 2: "},
  U18:{task:"Run the six checks on a real contractor programme (P6, MSP, Excel or PDF is fine). Write your numbered comments back to the contractor.",good:["Each of the 6 checks reported with a count or example","Missing scope named (procurement, approvals, T&C, external works)","Numbered, specific comments","Professional and short"],tmpl:"Programme: \n1) Open ends: \n2) Leads/lags: \n3) Hard constraints: \n4) Long durations: \n5) Missing scope: \n6) Critical path sense: \nComments to contractor:\n1. "},
  U19:{task:"Do an honest mini-update for 3–5 activities in progress on your site: actual start, % done by quantity, the site's estimate of remaining duration. State the forecast impact and one priced recovery.",good:["Remaining durations from site, not planned minus elapsed","Forecast impact on the critical path in days","A priced recovery with days recovered","Who executes it on site"],tmpl:"Data date: \nActivity | actual start | % by qty | remaining (site) | impact\n\nRecovery: (cost, days, who)"},
- U20:{task:"Capstone for Gate 1: for one live project (any type), send a 1-page note: the critical path in plain words, the top 2 near-critical risks with their trends, one impact statement for the biggest current issue, and the decision you need from your COO.",good:["Critical path described in plain words, start to handover","Float trends with rates","Impact statement: event, days, money, options, decision","A clear decision request with a date"],tmpl:"Project: \nCritical path: \nNear-critical 1: \nNear-critical 2: \nImpact statement: \nDecision needed from COO (by when): "},
+ U20:{task:"Schedule mechanics checkpoint: for one live project (any type), submit a 1-page note: the critical path in plain words, the top 2 near-critical risks with their float trends, an impact statement for the biggest current delay, and two priced recovery options.",good:["Critical path described in plain words, start to handover","Float trends with rates","Impact statement: event, days, money, options, decision","A clear decision request with a date"],tmpl:"Project: \nCritical path: \nNear-critical 1: \nNear-critical 2: \nImpact statement: \nDecision needed from COO (by when): "},
 };
 Object.assign(APPLY,APPLY2);
 UNITS2.forEach(u=>{ if(APPLY[u.id] && !u.screens.some(s=>s.k==="apply")){ const di=u.screens.findIndex(s=>s.k==="done"); u.screens.splice(di,0,{k:"apply"}); } });
+const UNITS3 = [
+  // ================= DAY 21 =================
+  {
+    id: "U21", day: 21, title: "Day 21: Measurement Book (MB) Governance & Joint Protocol", mins: 25,
+    card: {
+      id: "c-mb-gov",
+      title: "MB Governance: Joint signature before cover; zero erasures; legal primacy",
+      rule: "The Measurement Book (MB) is the original legal record of work done (CPWD Works Manual Section 7 / FIDIC Sub-Clause 12.1). Three binding rules: 1) Measure before cover (below-ground trenches, encased conduits, rebar before pouring); 2) Joint sign-off by Contractor and Engineer within 48 hours; 3) No erasures or overwriting—single strike-through in red with initials and date.",
+      example: "Cast-in-situ storm water drain: take invert levels and cross-section dimensions jointly with the contractor before backfilling. Both engineers sign the site measurement sheet on the same day.",
+      trap: "Measuring work after it is concealed, relying on unilateral contractor measurements, or using correction fluid in an MB."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** A contractor on a ₹600 Cr hospital project submits an RA Bill claiming ₹48 Lakhs for 3,200 m² of blindside basement waterproofing membrane. The waterproofing is already concealed behind backfilled soil and RCC retaining walls.
+
+The contractor presents a handwritten measurement sheet signed only by their own site foreman, claiming the PMC engineer *"saw the work being done"*. The PMC rejects the claim. In arbitration, an unmeasured concealed item without a signed joint measurement record is legally unenforceable under Indian contract law.`
+      },
+      {
+        k: "read",
+        t: `**The CPWD / FIDIC 3-Tier Measurement Hierarchy**
+
+1. **Tier 1: Field Measurement Sheet (FMS)**: Rough entry taken physically at the workface with steel tape, levelling staff, or total station. Must record grid locations (e.g., Grids A4–D4, Level −4.20m to −0.50m).
+2. **Tier 2: Joint Inspection & Signature**: Both Contractor Billing Engineer and PMC Site Engineer must sign with name, designation, and date within 48 hours of measurement.
+3. **Tier 3: The Measurement Book (MB)**: The formal ledger. Every page is machine-numbered. Blank lines must be cancelled with diagonal lines. Overwriting is strictly prohibited: if an error occurs, strike through cleanly in red ink, write the correct figure above, and initial.
+
+**The "Measure Before Cover" Rule (CPWD Works Manual 7.14 & FIDIC 12.1):**
+Any work intended to be covered (foundations, under-slab plumbing, structural rebar, wall chase conduits) **MUST** be measured and recorded in the MB before subsequent trades cover it. If covered without joint inspection, the contractor must uncover it at their own expense or forfeit payment.`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under CPWD Works Manual and FIDIC Sub-Clause 12.1, when must foundation trenches or underground pipes be measured?",
+            o: [
+              ["Before the work is backfilled, covered, or concealed by subsequent trades", true, "The 'measure before cover' rule prevents unverifiable retrospective billing."],
+              ["At the end of the financial quarter during final billing", false, "By that time the work is buried and cannot be physically verified."],
+              ["Only after the whole building achieves Occupancy Certificate (OC)", false, "Measurements must be recorded concurrently as work proceeds."],
+              ["Whenever the contractor requests an advance payment", false, "Advances are governed by separate financial clauses, not MB measurements."]
+            ]
+          },
+          {
+            q: "A junior engineer makes an entry error on page 42 of an official Measurement Book (MB). What is the contractually mandated correction method?",
+            o: [
+              ["Strike through the incorrect entry with a single line in red ink, write the correct value above, and initial with date", true, "Full traceability with no erasures or white-out fluid preserves the legal integrity of the MB."],
+              ["Apply white correction fluid and write the correct number on top", false, "Correction fluid invalidates the page in arbitration and implies fraudulent tampering."],
+              ["Tear out the spoiled page and rewrite the measurements on the next page", false, "MB pages are machine-numbered; tearing a page is a serious disciplinary violation."],
+              ["Cross out the whole book and issue a new MB", false, "Single entries are corrected in place with an initialled red strike-through."]
+            ]
+          },
+          {
+            q: "Who must sign the Joint Measurement Sheet for it to form a binding basis for an RA Bill?",
+            o: [
+              ["Both the Contractor's authorized engineer and the PMC/Employer's designated site engineer", true, "Joint signature binds both parties to the recorded physical dimensions."],
+              ["The contractor's site engineer alone", false, "Unilateral contractor records are not binding on the Employer."],
+              ["The corporate procurement manager from head office", false, "Measurement requires on-site physical verification at the workface."],
+              ["The municipal building inspector only", false, "Municipal inspectors verify statutory bylaws, not contractual billing quantities."]
+            ]
+          },
+          {
+            q: "A contractor covered 300 meters of underground drainage pipe before PMC joint inspection. The contractor demands payment based on approved design drawings. Contractual ruling?",
+            o: [
+              ["Payment is withheld until the contractor exposes test pits at their own cost to verify physical depth and invert levels", true, "CPWD Section 7.14 dictates that unauthorized covering requires uncovering at contractor's expense."],
+              ["Certify 100% because design drawings show where the pipe should be", false, "Design drawings show intent, not as-built site reality."],
+              ["Certify 50% as a compromise without digging", false, "Compromise billing without physical verification breaches fiduciary duty."],
+              ["Delete the drainage item entirely from the contract", false, "The scope remains; it must be inspected and verified before certification."]
+            ]
+          },
+          {
+            q: "Why are empty blank lines or remaining white spaces on an MB page cancelled with diagonal lines?",
+            o: [
+              ["To prevent unauthorized retrospective entries or fraudulent insertions after sign-off", true, "Cancelling blank lines locks the record against post-hoc modifications."],
+              ["To save paper in government archives", false, "It actually consumes the line; the reason is fraud prevention."],
+              ["To indicate that the contractor is running behind schedule", false, "Schedule progress is tracked in CPM/S-curves, not MB blank lines."],
+              ["Because the page layout requires alternating lines", false, "Lines are ruled continuously; diagonal strikes prevent back-filling."]
+            ]
+          },
+          {
+            q: "What is the legal status of an entry in an official Measurement Book (MB) in an Indian court of law or arbitration?",
+            o: [
+              ["It is primary contemporaneous evidence under the Indian Evidence Act, Section 34", true, "Books of account regularly kept in the course of business hold high probative legal value."],
+              ["It is purely advisory and has no legal standing in disputes", false, "MBs are the fundamental evidentiary document in construction arbitration."],
+              ["It is secondary evidence superseded by WhatsApp messages and phone calls", false, "Informal communications do not override contemporaneous signed technical ledgers."],
+              ["It is only valid if stamped by a High Court notary", false, "Contemporaneous entries signed by authorized contractual representatives are self-authenticating."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain in your own words why 'measure before cover' is a non-negotiable legal safeguard for a Project Controls Manager, citing a scenario from your site."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 22 =================
+  {
+    id: "U22", day: 22, title: "Day 22: Earthwork & Excavation: In-Situ Cut vs Loose Truck Factor", mins: 25,
+    card: {
+      id: "c-earthwork-vol",
+      title: "Earthwork Measurement: In-situ bank cut vs loose haulage (IS 1200 Part 1)",
+      rule: "Earthwork is measured strictly on net in-situ volume before excavation (bank measure) computed from initial and final spot levels using Average End Area or Prismoidal formulas. Bulking/swell factor (typically 1.25 to 1.30) increases loose volume for dumper truck haulage, but cannot be billed to the client.",
+      example: "A basement cut of 10,000 m³ in-situ generates ~12,500 m³ of loose soil (1,250 dumper trips of 10 m³). Pay the contractor for 10,000 m³ in-situ excavation, not 12,500 m³ loose truck volume.",
+      trap: "Paying earthwork excavation based on dumper truck challan counts or loose muck volume."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** The contractor on a tertiary hospital basement excavation bills 15,600 m³ of earthwork based on 1,560 dumper truck challans (10 m³ capacity each).
+
+The original ground survey contour map and final pit bottom levels calculate to exactly 12,000 m³ in-situ bank cut. The contractor insists: *"We paid our transport dumper fleet for 15,600 m³, so the client must pay us for 15,600 m³!"*
+
+Who pays for the 3,600 m³ (₹18 Lakhs) difference? Under IS 1200 Part 1, the client pays strictly for in-situ bank volume.`
+      },
+      {
+        k: "read",
+        t: `**IS 1200 Part 1 Standards & Soil Volume Mathematics**
+
+1. **The Three States of Soil**:
+   - **Bank Measure (In-Situ)**: Undisturbed natural ground in place. Density $\\approx 1,800\\text{ kg/m}^3$. **This is the ONLY billable volume under IS 1200**.
+   - **Loose Measure (Bulking / Swell)**: Broken soil loaded into dumpers. Soil particles loosen, void ratio increases by 20% to 30% (bulking factor 1.20 to 1.30), density drops to $\\approx 1,400\\text{ kg/m}^3$. Used only for calculating truck fleet logistics!
+   - **Compacted Measure (Shrinkage)**: Re-compacted soil in embankments or backfill. Shrunk by 10%–15% compared to bank measure.
+
+2. **Calculation Methods**:
+   - **Spot Levels (Grid Method)**: Divide the site into $5\\text{m} \\times 5\\text{m}$ grids. Measure initial ground levels before starting, and final formation levels after completion.
+   - **Average End Area Method**: For linear infrastructure (trenches, ramps, roads):
+     $$V = \\frac{A_1 + A_2}{2} \\times L$$
+   - **Prismoidal Formula** (for tapering irregular pits):
+     $$V = \\frac{L}{6} (A_1 + 4A_m + A_2)$$`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under IS 1200 Part 1, how is earthwork excavation payable in standard BOQ contracts?",
+            o: [
+              ["Net in-situ bank volume computed from ground levels taken before and after excavation", true, "Bank measure represents the true geometric displacement of soil before disturbance."],
+              ["Loose volume measured in dumper truck bodies or transport challans", false, "Loose volume includes swell/voids, which is not billable scope."],
+              ["Weight of excavated earth on the site weighbridge converted to volume", false, "Moisture content and rain drastically alter weighbridge tonnage."],
+              ["Theoretical building footprint multiplied by foundation depth without side slopes", false, "Working space and authorized slopes must follow contractual drawing specifications."]
+            ]
+          },
+          {
+            q: "An excavation pit has in-situ volume of 8,000 m³. If the soil has a swell/bulking factor of 1.25, what loose volume will the hauling dumpers transport?",
+            o: [
+              ["10,000 m³", true, "8,000 × 1.25 = 10,000 m³ loose volume."],
+              ["6,400 m³", false, "Dividing by 1.25 gives shrinkage, not swell."],
+              ["8,000 m³", false, "Soil expands upon excavation; loose volume is greater than bank volume."],
+              ["12,500 m³", false, "Recalculate: 8,000 × 1.25 = 10,000 m³."]
+            ]
+          },
+          {
+            q: "A contractor over-excavates a hospital basement foundation by 400 mm deeper than the approved structural formation level due to poor machine control. Who pays to fill it back to design grade?",
+            o: [
+              ["The contractor must backfill with M10 lean concrete or approved granular material at their own expense", true, "Under CPWD Section 2.6 and FIDIC, over-excavation beyond design lines is rectified entirely at contractor's cost."],
+              ["The client pays for the extra excavation and the lean concrete backfill", false, "The client only pays for authorized lines and levels shown on drawings."],
+              ["Leave the hole empty and increase column height", false, "Altering structural column height compromises seismic and load calculations."],
+              ["Backfill with loose uncompacted excavated soil", false, "Loose soil under a foundation causes catastrophic differential settlement."]
+            ]
+          },
+          {
+            q: "For a linear drainage trench 100 meters long, cross-section area at start is 4.0 m² and at end is 6.0 m². What is the in-situ volume by the Average End Area method?",
+            o: [
+              ["500 m³", true, "V = ((4.0 + 6.0) / 2) × 100 = 5.0 × 100 = 500 m³."],
+              ["1,000 m³", false, "Don't add areas without dividing by 2."],
+              ["240 m³", false, "V = (A1 + A2)/2 × L."],
+              ["600 m³", false, "That takes only the maximum end area."]
+            ]
+          },
+          {
+            q: "Why are initial grid levels taken jointly with a Total Station before earthmoving equipment mobilizes?",
+            o: [
+              ["To establish the undisputed baseline profile of original ground level (OGL) before any physical alteration", true, "Once earthmoving begins, the original ground surface is destroyed forever; baseline data is mandatory."],
+              ["Because municipal permits expire if levels are not recorded on Day 1", false, "Municipal approvals govern zoning, not daily level sheets."],
+              ["To calibrate the excavator's fuel consumption meter", false, "Survey levels measure ground geometry, not machine fuel efficiency."],
+              ["To determine the depth of the water table", false, "Water table depth is determined by geotechnical boreholes, not surface levels."]
+            ]
+          },
+          {
+            q: "When excavating in hard rock requiring blasting, how is rock volume measured under IS 1200 Part 1?",
+            o: [
+              ["By stack measurement of excavated rock with a mandatory 50% void deduction, or by pre- and post-levels", true, "IS 1200 Part 1 mandates a 50% deduction on rock stacks to discount voids between blasted stones."],
+              ["By truck weighbridge receipts without void deduction", false, "Stacked or trucked rock has huge void ratios between boulders."],
+              ["By the volume of dynamite used", false, "Explosive consumption is a chemical index, not a geometric measure."],
+              ["Rock is never measured; it is always paid as an unverified lump sum", false, "Rock excavation is heavily itemized due to high differential unit rates."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain how you would resolve a dispute where a contractor demands payment for 2,000 m³ of loose soil bulking in an excavation bill."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 23 =================
+  {
+    id: "U23", day: 23, title: "Day 23: Concrete Quantity Calculations: Drawings vs Batch Tickets", mins: 25,
+    card: {
+      id: "c-concrete-recon",
+      title: "Concrete Billing: Net drawing volume vs RMC batching reconciliation (IS 1200 Part 2)",
+      rule: "Concrete is billed strictly on net theoretical volume calculated from structural drawing dimensions. No deduction is made for reinforcement steel volume, conduits under 500 cm² cross-section, or chamfers under 100 cm². RMC transit mixer batch tickets prove receipt on site; reconciliation ensures contractor wastage stays within contractual limits (typically 1.5% to 3.0%).",
+      example: "Radiation oncology bunker mat: drawing volume = 588 m³. RMC delivered = 604 m³ (2.7% wastage). The contractor is paid for 588 m³ at BOQ rate; the 16 m³ wastage is evaluated against the 3% contractual allowance.",
+      trap: "Paying concrete directly from RMC computerized batch slips without drawing verification, or deducting rebar volume from concrete."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** During the continuous pour of a 1.8-meter thick radiation oncology bunker raft, the RMC batching plant dispatches 102 transit mixers delivering 612 m³ of M40 self-compacting concrete.
+
+The structural drawings show dimensions $18.0\\text{m} \\times 16.0\\text{m} \\times 1.8\\text{m} = 518.4\\text{m}^3$. A 93.6 m³ discrepancy (worth ₹5.1 Lakhs) appears between dispatch challans and structural design volume.
+
+Who absorbs this difference? Under IS 1200 Part 2 and standard Indian construction contracts, concrete billing is governed strictly by **net structural drawing volume**.`
+      },
+      {
+        k: "read",
+        t: `**IS 1200 Part 2 Standards & Reconciliation Mechanics**
+
+1. **The Net Dimension Rule**:
+   - Concrete is calculated strictly from the dimensions shown on approved structural construction drawings.
+   - **Do NOT deduct**:
+     - Reinforcement steel bar volume (even though steel displaces concrete, the standard ignores it).
+     - Embedded conduits, pipes, and sleeves with cross-sectional area $\\le 500\\text{ cm}^2$ (0.05 m²).
+     - Chamfers, splays, or fillets $\\le 100\\text{ cm}^2$.
+     - Voids or openings $\\le 0.1\\text{ m}^3$ (100 liters).
+
+2. **RMC Batch Ticket Reconciliation**:
+   $$\\text{Wastage \\%} = \\frac{\\text{Actual RMC Consumed} - \\text{Theoretical Drawing Volume}}{\\text{Theoretical Drawing Volume}} \\times 100$$
+   - **Permissible Wastage**: Typically 1.5% to 3.0% (for pump line residue, formwork deflection, and handling).
+   - If wastage exceeds the contractual limit (e.g., 18% in the bunker above due to soil overbreak or form bulging), the excess concrete is **contractor's loss** and cannot be certified!`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under IS 1200 Part 2, is the volume occupied by steel reinforcement bars deducted when calculating payable concrete volume?",
+            o: [
+              ["No deduction is made for the volume of reinforcement steel bars", true, "IS 1200 Part 2 explicitly specifies that steel rebar volume is ignored in concrete measurement."],
+              ["Yes, steel volume must always be deducted based on steel density 7,850 kg/m³", false, "That is an amateur error; standard measurement rules deliberately disregard rebar displacement."],
+              ["Deduct steel only for bars greater than 32 mm diameter", false, "The standard makes no diameter-based deduction for rebar in cast concrete."],
+              ["Deduct 5% flat across all concrete elements", false, "Arbitrary percentage deductions violate standard measurement protocols."]
+            ]
+          },
+          {
+            q: "What is the primary contractual purpose of collecting and signing RMC transit mixer computerized batch tickets on site?",
+            o: [
+              ["To verify physical delivery, batching time (initial set window), and enable material reconciliation", true, "Batch slips prove time of batching, mix grade, water-cement ratio, and delivery on site."],
+              ["To serve as the direct payable quantity on the contractor's monthly RA bill", false, "Payable quantity is determined by structural drawing dimensions, not delivery slips."],
+              ["To replace compressive strength cube test registers", false, "Batch slips verify batching data; cube tests verify hardened physical strength."],
+              ["To provide tax exemptions from local municipal octroi", false, "Batch tickets are quality and logistics records, not tax exemption certificates."]
+            ]
+          },
+          {
+            q: "Drawing volume for an RCC slab is 200 m³. RMC delivered and poured is 205 m³. The contract allows 3% permissible concrete wastage. How much is certified for payment at BOQ rate?",
+            o: [
+              ["200 m³ (the net drawing volume)", true, "Under item-rate contracts, the client pays the net drawing quantity at the BOQ rate; the 2.5% wastage is built into the contractor's unit rate."],
+              ["205 m³ (the full RMC batch slip quantity)", false, "The client does not pay for delivery slips over drawing volume."],
+              ["206 m³ (drawing volume plus 3% allowance)", false, "Allowances set upper limits on consumption, they are not automatic pay additions."],
+              ["195 m³ (penal deduction)", false, "Wastage is 2.5%, which is within the 3.0% allowable limit."]
+            ]
+          },
+          {
+            q: "Under IS 1200 Part 2, what is the maximum volume of an opening or void that is NOT deducted from concrete measurements?",
+            o: [
+              ["Openings or voids up to 0.1 m³ (100,000 cm³)", true, "IS 1200 Part 2 allows voids up to 0.1 m³ without deduction."],
+              ["Openings up to 1.0 m³", false, "1.0 m³ is huge (a 1m × 1m × 1m hole) and must definitely be deducted."],
+              ["Openings up to 0.01 m³ only", false, "The threshold in IS 1200 Part 2 is 0.1 m³."],
+              ["All openings must be deducted, even 0.001 m³", false, "Small pipe sleeves and pockets are excluded from deduction to balance shuttering labor."]
+            ]
+          },
+          {
+            q: "Due to poorly braced timber formwork, a basement retaining wall bulges outward by 60 mm during pumping, consuming 18 m³ of extra concrete. Who bears the cost of this extra concrete?",
+            o: [
+              ["The contractor absorbs the cost because formwork stability and dimensional accuracy are contractor responsibilities", true, "Defective shuttering that results in over-pouring is entirely the contractor's liability."],
+              ["The client pays 50% under the shared risk doctrine", false, "Contractor's defective workmanship is not a shared employer risk."],
+              ["The structural engineer because the wall was too thin", false, "The structural engineer designs dimensions; the contractor must build to those dimensions."],
+              ["The RMC supplier because the concrete was too fluid", false, "Workability and slump are specified in mix designs approved by site engineers."]
+            ]
+          },
+          {
+            q: "What mandatory document must be cross-referenced and verified before certifying payment for a structural concrete pour in an RA Bill?",
+            o: [
+              ["The 28-day concrete cube compressive strength test register confirming characteristic strength (fck)", true, "Unsound concrete that fails compressive strength criteria cannot be certified for full payment."],
+              ["The contractor's monthly profit and loss balance sheet", false, "Contractor accounting books are irrelevant to technical certification."],
+              ["The cement manufacturer's corporate ESG sustainability report", false, "Sustainability brochures do not prove structural integrity."],
+              ["The truck driver's commercial driver's license", false, "Logistics licenses have no bearing on concrete payment certification."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain how to audit an RMC concrete bill when batch tickets total 1,050 m³ but structural drawing dimensions show 980 m³."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 24 =================
+  {
+    id: "U24", day: 24, title: "Day 24: Rebar BBS: d²/162, Couplers vs Laps & Rolling Margins", mins: 25,
+    card: {
+      id: "c-rebar-bbs",
+      title: "Rebar Measurement: BBS weight (d²/162), rolling margins & coupler optimization (IS 2502)",
+      rule: "Reinforcement steel is paid on theoretical weight = Length × (d²/162.28) based on approved Bar Bending Schedules (IS 2502). Weighbridge receipts establish gate entry, but billing is governed by BBS. Rolling margin (IS 1786) must not exceed tolerance (-4% for bars >16mm; -7% for ≤10mm). Drawing laps are paid; unauthorized contractor laps are rejected; mechanical couplers eliminate lap tonnage.",
+      example: "A 25 mm bar has standard weight 25²/162 = 3.858 kg/m. For a 50d lap (1.25m), lap steel = 4.82 kg. Using an approved mechanical coupler saves 4.82 kg of steel per splice on 300 column bars = 1.45 MT (₹1.0 Lakh savings).",
+      trap: "Paying steel based on weighbridge slips instead of BBS, or accepting negative rolling margins exceeding IS 1786 limits."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** In a hospital basement raft, the contractor bills 125 MT of Fe500D rebar using weighbridge delivery slips.
+
+The PMC billing engineer recalculates the cutting sheets using approved structural drawings and IS 2502 BBS formulas, finding only 111.4 MT of theoretical steel.
+
+The contractor added 8.6 MT for offcuts/scrap and 5.0 MT for extra laps introduced for contractor convenience. Under IS 2502, steel is paid strictly on **theoretical Bar Bending Schedule (BBS) weight**.`
+      },
+      {
+        k: "read",
+        t: `**Mathematical Standards & IS 1786 Rolling Margins**
+
+1. **Theoretical Weight Derivation**:
+   Based on steel density $\\rho = 7,850\\text{ kg/m}^3$:
+   $$W = \\frac{\\pi \\times (d/1000)^2}{4} \\times 7,850 = \\frac{d^2}{162.28} \\approx \\frac{d^2}{162}\\text{ kg/m}$$
+   - 8 mm: $0.395\\text{ kg/m}$
+   - 12 mm: $0.888\\text{ kg/m}$
+   - 16 mm: $1.578\\text{ kg/m}$
+   - 20 mm: $2.466\\text{ kg/m}$
+   - 25 mm: $3.853\\text{ kg/m}$
+   - 32 mm: $6.313\\text{ kg/m}$
+
+2. **IS 1786 Rolling Margin Tolerances**:
+   Steel rolling mills cannot produce bars with absolute mathematical precision.
+   - Diameter $\\le 10\\text{ mm}$: $\\pm 7.0\\%$
+   - Diameter $12\\text{ mm} \\text{ to } 16\\text{ mm}$: $\\pm 5.0\\%$
+   - Diameter $> 16\\text{ mm}$: $\\pm 3.0\\%$
+   - **Billing Rule**: If steel is lighter (negative rolling margin) within tolerance, client pays the lighter weight or theoretical as per contract. If steel is heavier (positive rolling margin), client pays **ONLY theoretical weight**! The contractor cannot bill for overweight steel!
+
+3. **Laps vs Mechanical Couplers**:
+   - A $50d$ lap on a 32 mm bar consumes $50 \\times 0.032 = 1.6\\text{m} = 10.1\\text{ kg}$ of steel per bar!
+   - In 400 hospital columns with 12 bars each, replacing laps with mechanical threaded couplers eliminates over 48 MT of lap steel.`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "What is the theoretical unit weight of a 20 mm high-yield deformed steel rebar per meter length?",
+            o: [
+              ["2.47 kg/m", true, "20² / 162.28 = 400 / 162.28 = 2.465 kg/m (rounds to 2.47 kg/m)."],
+              ["1.58 kg/m", false, "1.58 kg/m is the weight of a 16 mm bar."],
+              ["3.85 kg/m", false, "3.85 kg/m is the weight of a 25 mm bar."],
+              ["0.89 kg/m", false, "0.89 kg/m is the weight of a 12 mm bar."]
+            ]
+          },
+          {
+            q: "Under CPWD and standard Indian civil contracts, are rebar offcuts, scrap ends, and binding wire payable separately under the reinforcement BOQ item?",
+            o: [
+              ["No, rolling margins, cutting wastage, scrap, and binding wire are deemed included in the contractor's quoted item rate", true, "IS 1200 Part 8 states that rebar is measured on net BBS length; binding wire and cutting waste are contractor overheads."],
+              ["Yes, contractors are entitled to add 10% flat for scrap on every bill", false, "Scrap steel belongs to the contractor to sell; clients never pay for offcuts."],
+              ["Binding wire is paid as a separate item per metric tonne", false, "Binding wire is an incidental fixing consumable included in rebar fixing rates."],
+              ["Yes, if weighbridge receipts show the delivered weight", false, "Weighbridge receipts do not dictate payable BOQ quantities."]
+            ]
+          },
+          {
+            q: "A batch of 25 mm Fe500D rebar arrives on site. Physical sampling shows it weighs 3.98 kg/m instead of standard 3.85 kg/m (+3.4% overweight). How is it billed?",
+            o: [
+              ["Paid strictly at the theoretical standard weight of 3.85 kg/m; client never pays for overweight steel", true, "Standard contracts protect clients from paying for mill overweight rolling margins."],
+              ["Paid at 3.98 kg/m because the contractor paid for that weight at the gate", false, "Overweight rebar provides no structural advantage and cannot be billed."],
+              ["Rejected completely and sent back to the steel plant", false, "If within chemical and mechanical test limits, it may be used, but paid only at theoretical weight."],
+              ["Paid at double rate because it is stronger", false, "Strength is governed by yield stress (500 MPa), not extra bar thickness."]
+            ]
+          },
+          {
+            q: "Under IS 456 and structural specifications, which reinforcement lap lengths are contractually payable to the contractor?",
+            o: [
+              ["Only laps clearly shown on approved structural drawings or mandated by standard 12-meter commercial bar lengths", true, "Unauthorized laps introduced for contractor convenience (e.g., using up short cut pieces) are non-payable."],
+              ["Any lap the site foreman decides to insert during bar placement", false, "Unauthorized laps increase congestion and cost; they are prohibited without approval."],
+              ["All laps every 3 meters regardless of bar length", false, "Standard rebar is supplied in 12m lengths; splicing every 3m is unacceptable."],
+              ["Laps are never paid under any circumstance", false, "Authorized structural splices shown on engineering drawings are legitimate payable scope."]
+            ]
+          },
+          {
+            q: "In heavy hospital columns with 32 mm bars, what is the primary structural and economic benefit of substituting welded or threaded mechanical couplers for lap splices?",
+            o: [
+              ["Eliminates 10.1 kg of lap rebar per splice, relieves rebar congestion, and ensures superior concrete flow", true, "Couplers eliminate 1.6m of overlapping 32mm steel while preventing honeycombing."],
+              ["Allows using lower grade concrete like M15", false, "Couplers have no impact on specified concrete mix grade."],
+              ["Eliminates the need for column ties and stirrups", false, "Transverse shear ties are still mandatory under IS 13920."],
+              ["Doubles the speed of concrete curing", false, "Mechanical couplers do not affect hydration chemistry."]
+            ]
+          },
+          {
+            q: "Under IS 2502 and IS 1200 Part 8, when are rebar spacer chairs and cover blocks payable?",
+            o: [
+              ["Cover blocks are included in the rate; chairs are paid only if specifically itemized or shown on approved drawings", true, "Cover blocks are standard workmanship consumables; heavy raft spacer chairs require contractual provision or structural approval."],
+              ["Both cover blocks and chairs are always paid separately at full rebar rates", false, "Cement/PVC cover blocks are never measured in rebar steel tonnage."],
+              ["Chairs are paid only if made of structural stainless steel", false, "Spacer chairs are made from ordinary Fe500 rebar."],
+              ["Chairs and cover blocks are strictly forbidden on hospital sites", false, "They are essential for maintaining specified structural concrete cover."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "A contractor submits an RA bill for 100 MT steel based on weighbridge dockets, while your BBS calculation shows 92 MT. How do you defend your certification in a review meeting?"
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 25 =================
+  {
+    id: "U25", day: 25, title: "Day 25: Architectural Finishes & IS 1200 Part 12 Plaster Deductions", mins: 25,
+    card: {
+      id: "c-plaster-is1200",
+      title: "Plaster & Pointing Measurement: The IS 1200 Part 12 3-Tier Opening Rule",
+      rule: "Plaster is measured in square meters of wall surface. Opening deductions follow IS 1200 Part 12: 1) ≤ 0.5 m²: NO deduction, and NO addition for jambs/soffits/sills; 2) 0.5 m² to 3.0 m²: Deduct for ONE face only; no addition for jambs/soffits; 3) > 3.0 m²: Deduct for BOTH faces, and add jambs, soffits, and sills separately.",
+      example: "A hospital ward door 1.2m × 2.1m = 2.52 m² falls in tier 2 (0.5 to 3.0 m²). Deduct 2.52 m² from one wall face only. Do not add door jambs or soffits.",
+      trap: "Deducting both faces for small doors/windows or failing to add jambs/soffits when openings exceed 3.0 m²."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** A contractor finishes 6,000 m² of internal cement plaster across 40 hospital patient rooms and corridors.
+
+The billing sheet simply multiplies room perimeter by floor-to-ceiling height without deducting for 80 patient doors, 40 bathroom doors, 60 windows, and fire extinguisher niches.
+
+When the PMC deducts 480 m², the contractor argues: *"We had to plaster all the door jambs, reveals, and soffits, which took more labor than flat walls!"* Who is right? IS 1200 Part 12 establishes an exact mathematical compromise.`
+      },
+      {
+        k: "read",
+        t: `**IS 1200 Part 12: The 3-Tier Opening Rule**
+
+Plastering narrow jambs and reveals requires careful trowel work and corner bead alignment. Rather than forcing surveyors to measure dozens of 100mm-wide jamb strips, IS 1200 Part 12 provides a clean standard:
+
+1. **Tier 1: Opening $\\le 0.5\\text{ m}^2$ (Ventilators, small niches, electrical DBs)**:
+   - Deduction: **ZERO** (do not deduct from wall area).
+   - Addition: **ZERO** for jambs, soffits, sills.
+   - *Rationale*: The labor of plastering the small reveal balances out the unplastered void.
+
+2. **Tier 2: Opening $> 0.5\\text{ m}^2$ up to $3.0\\text{ m}^2$ (Standard doors, windows)**:
+   - Deduction: **ONE FACE ONLY**. (If the wall is plastered on both sides, deduct area from one side; other side remains fully measured).
+   - Addition: **ZERO** for jambs, soffits, sills.
+
+3. **Tier 3: Opening $> 3.0\\text{ m}^2$ (Large glass facades, ICU sliding partitions)**:
+   - Deduction: **BOTH FACES DEDUCTED**.
+   - Addition: **MEASURE AND ADD** jambs, soffits, and sills in m².`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under IS 1200 Part 12, what deduction is made for an electrical DB cutout measuring 0.5 m × 0.8 m (0.40 m²) in a plastered wall?",
+            o: [
+              ["No deduction is made, and no addition is made for jambs or soffits", true, "Area is 0.40 m² (≤ 0.5 m²), which falls under Tier 1: zero deduction and zero addition."],
+              ["Deduct 0.40 m² from both sides of the wall", false, "Tier 1 openings are never deducted."],
+              ["Deduct 0.40 m² from one side only", false, "One-face deduction applies only to Tier 2 (0.5 to 3.0 m²)."],
+              ["Deduct 50% of the opening area", false, "There is no 50% rule in IS 1200 Part 12."]
+            ]
+          },
+          {
+            q: "A hospital patient room door measures 1.2 m wide × 2.1 m high (2.52 m²). The wall is plastered on both internal faces. How is plaster deducted under IS 1200 Part 12?",
+            o: [
+              ["Deduct 2.52 m² from one face only; do not add door jambs or soffits", true, "2.52 m² falls in Tier 2 (0.5 to 3.0 m²): deduct for one face only, with no addition for jambs."],
+              ["Deduct 2.52 m² from both faces (total 5.04 m²)", false, "Deducting both faces applies only to Tier 3 (> 3.0 m²)."],
+              ["Make no deduction because door jambs take extra labor", false, "Openings above 0.5 m² must be deducted."],
+              ["Deduct 2.52 m² from both faces and add 2.52 m² for jambs", false, "Jambs are measured separately only in Tier 3."]
+            ]
+          },
+          {
+            q: "An ICU viewing glass window measures 2.0 m high × 2.5 m wide (5.0 m²). The masonry wall is plastered on both sides. What is the measurement procedure under IS 1200 Part 12?",
+            o: [
+              ["Deduct 5.0 m² from BOTH faces (total 10.0 m²), and measure and add jambs, soffits, and sills separately", true, "5.0 m² exceeds 3.0 m² (Tier 3): deduct both faces and add jambs/soffits/sills."],
+              ["Deduct 5.0 m² from one face only and ignore jambs", false, "Tier 2 rules do not apply to openings exceeding 3.0 m²."],
+              ["Deduct 5.0 m² and do not measure jambs", false, "In Tier 3, jambs, soffits, and sills must be physically measured and added."],
+              ["No deduction because it is an ICU specialty room", false, "Architectural measurement standards apply uniformly across hospital rooms."]
+            ]
+          },
+          {
+            q: "A concrete ceiling has downstand beams projecting 400 mm below the slab soffit. How is the ceiling plaster measured under IS 1200?",
+            o: [
+              ["Measure the flat slab soffit plus the vertical beam sides and beam soffit", true, "All exposed plaster surfaces on beam sides and soffits are measured."],
+              ["Measure only the flat slab area and ignore beam sides", false, "Beam sides represent significant plastering surface area."],
+              ["Ceiling plaster is measured in cubic meters", false, "Plaster is always a surface area item measured in square meters (m²)."],
+              ["Deduct beam area from the room floor area", false, "Plaster measurement is based on actual wall/ceiling surfaces, not floor area."]
+            ]
+          },
+          {
+            q: "Where internal plaster abuts an unplastered acoustic modular false ceiling, up to what height is wall plaster measured?",
+            o: [
+              ["Up to 100 mm to 150 mm above the false ceiling grid line, as specified in project contracts", true, "Standard hospital specifications require plastering ~100-150 mm above false ceilings to maintain acoustic and fire seals."],
+              ["All the way to the structural slab top without exception", false, "Plastering all concealed ceiling plenum walls is wasteful unless fire-rated or specified."],
+              ["Exactly to the false ceiling level with 0 mm overlap", false, "A gap would leave unsealed wall visible if false ceiling tiles shift."],
+              ["Wall plaster stops 1 meter below the false ceiling", false, "That would leave bare unplastered masonry in patient view."]
+            ]
+          },
+          {
+            q: "Under IS 1200 Part 12, are plaster grooves, drip molds, and architectural reveals measured in running meters or square meters?",
+            o: [
+              ["Grooves and drip molds are measured in Running Meters (RM) stating width and depth, or included in item description", true, "Linear architectural profiles like drip courses and shadow grooves are measured in RM."],
+              ["Measured in square meters of groove cross-section", false, "Linear features are measured by length in running meters."],
+              ["Measured in cubic meters of mortar", false, "Finishes are never measured in m³."],
+              ["Ignored and considered free contractor work", false, "Grooves require specialized formers or tools and are payable items."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Calculate the net payable plaster area for a 200mm brick wall (8m long × 3m high, plastered on both faces) with a double door 1.5m × 2.1m and an electrical niche 0.4m × 0.5m, explaining which IS 1200 tier applies to each."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 26 =================
+  {
+    id: "U26", day: 26, title: "Day 26: Flooring, Waterproofing & Cladding Measurement", mins: 25,
+    card: {
+      id: "c-flooring-waterproofing",
+      title: "Flooring & Waterproofing: Net clear floor area & 300mm vertical coving upturns",
+      rule: "Flooring (IS 1200 Part 11) is measured net between plastered walls; door openings within frames are added. Skirting ≤ 300mm height is measured in running meters (RM); > 300mm is measured in m² as wall lining. Waterproofing (IS 1200 Part 14) MUST measure horizontal base slab PLUS vertical upturn (flashing) up to minimum 300mm above finished floor level.",
+      example: "A hospital ICU washroom 2.5m × 2.0m: floor area = 5.0 m². Waterproofing perimeter = 9.0m. Vertical upturn 0.3m = 2.7 m². Total billable waterproofing = 5.0 + 2.7 = 7.7 m².",
+      trap: "Measuring flooring across unbuilt walls or omitting vertical waterproofing upturns from the BOQ line item."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** In a 100-bed critical care hospital wing, infection control mandates seamless antistatic PVC vinyl flooring with a 100 mm concave vertical coving up the wall, and heavy-duty polyurethane waterproofing in all dirty utility and washrooms.
+
+The contractor's bill combines flat floor vinyl and vertical coving into one gross square-meter rate, while failing to record vertical waterproofing upturns, leading to a ₹6.2 Lakh audit deadlock.
+
+Under IS 1200 Part 11 and Part 14, clear separation between flat surfaces, linear skirting, and vertical flashings is mandatory.`
+      },
+      {
+        k: "read",
+        t: `**IS 1200 Part 11 & Part 14 Standards**
+
+1. **Flooring Net Dimensioning (Part 11)**:
+   - Measured flat inside the room perimeter between finished plastered wall surfaces.
+   - **Additions**: Floor covering extended into door frames/jambs is added.
+   - **Deductions**: No deduction is made for columns, piers, or fixtures with base area $\\le 0.1\\text{ m}^2$.
+
+2. **Skirting vs Dado vs Hospital Coving**:
+   - Height $\\le 300\\text{ mm}$: Measured in **Running Meters (RM)** specifying height.
+   - Height $> 300\\text{ mm}$: Measured in **Square Meters (m²)** under Wall Lining/Dado.
+   - **Hospital Seamless Vinyl Coving**: PVC cove former fillet at junction + vertical vinyl turn-up + aluminum/PVC capping strip. Measured in Running Meters (RM).
+
+3. **Waterproofing (Part 14) Vertical Upturns**:
+   - Horizontal base alone is NEVER complete waterproofing.
+   - Any wet area, terrace, or basement must terminate in a vertical upturn (parapet flashing or wall chase) at least **300 mm above finished floor level (FFL)**.
+   - Total Billable Area = $\\text{Horizontal Area} + (\\text{Perimeter} \\times \\text{Upturn Height})$.`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under IS 1200 Part 11, how is room skirting of 150 mm height measured?",
+            o: [
+              ["In Running Meters (RM), stating the height and material specification", true, "Skirting ≤ 300 mm is standardized as a linear running meter item."],
+              ["In square meters of floor area", false, "Skirting is on walls, not floors, and ≤ 300 mm is measured in RM."],
+              ["In cubic meters of mortar backing", false, "Finishes are never measured in m³."],
+              ["Included free in the main floor tile rate without separate measurement", false, "Skirting requires separate cutting, edge polishing, and fixing, and is a distinct BOQ item."]
+            ]
+          },
+          {
+            q: "A hospital toilet room has floor dimensions 3.0 m × 2.0 m. Polyurethane waterproofing is applied across the base slab and turned up the walls by 300 mm. What is the total payable waterproofing area under IS 1200 Part 14?",
+            o: [
+              ["9.0 m²", true, "Floor = 3×2 = 6.0 m². Perimeter = 2×(3+2) = 10.0m. Vertical upturn = 10.0 × 0.3 = 3.0 m². Total = 6.0 + 3.0 = 9.0 m²."],
+              ["6.0 m²", false, "That counts only the horizontal floor and misses the mandatory vertical upturn."],
+              ["12.0 m²", false, "Check the calculation: 6.0 + (10.0 × 0.3) = 9.0 m²."],
+              ["3.0 m²", false, "That is only the vertical upturn area."]
+            ]
+          },
+          {
+            q: "Under IS 1200 Part 11, what is the deduction threshold for isolated RCC columns or service ducts passing through a tiled floor?",
+            o: [
+              ["No deduction is made for columns or obstructions having an area up to 0.1 m²", true, "IS 1200 Part 11 sets 0.1 m² as the non-deduction limit to compensate for cutting tiles around obstructions."],
+              ["No deduction for columns up to 1.0 m²", false, "1.0 m² is a large column (1m × 1m) and must be deducted."],
+              ["All columns must be deducted regardless of size, even 0.01 m²", false, "Small obstructions involve complex tile cutting labor, so voids ≤ 0.1 m² are not deducted."],
+              ["Deduct 10% across the entire floor", false, "Arbitrary deductions violate standard measurement codes."]
+            ]
+          },
+          {
+            q: "In an Operation Theatre (OT), seamless conductive PVC vinyl flooring requires a 100 mm wall coving with a curved PVC fillet former and capping strip. How is this coving item measured?",
+            o: [
+              ["In Running Meters (RM) of room perimeter, including cove fillet and capping strip", true, "Specialized coving with profile formers is measured in running meters."],
+              ["In square meters of floor area", false, "Coving is a perimeter detail, not floor area."],
+              ["In kilograms of adhesive", false, "Consumables are included in item rates, not measured separately."],
+              ["In cubic meters of concrete", false, "Vinyl is a thin polymer sheet finish."]
+            ]
+          },
+          {
+            q: "When measuring ceramic wall tiles (dado) around a bathroom window opening of 0.8 m × 0.6 m (0.48 m²), how is the dado area calculated?",
+            o: [
+              ["Deduct the window opening and add the tiled window reveal/jamb surfaces", true, "Dado is measured strictly on actual tiled surface area; reveals are measured if tiled."],
+              ["Make no deduction for the window because it is under 0.5 m²", false, "The IS 1200 Part 12 plaster trade-off rule does NOT apply to expensive tiled dado."],
+              ["Measure the entire room wall from floor to ceiling ignoring windows", false, "Tiles are expensive finishes; voids are not paid."],
+              ["Measure tile adhesive volume in liters", false, "Tile finishes are measured in surface area (m²)."]
+            ]
+          },
+          {
+            q: "Why is water ponding testing for 48 to 72 hours a contractual prerequisite before certifying waterproofing in an RA Bill?",
+            o: [
+              ["To physically prove that the membrane is watertight under hydrostatic pressure before being concealed by protective screed", true, "Ponding tests identify punctures and joint failures while the membrane is exposed and repairable."],
+              ["To clean dust off the slab before tiling", false, "Ponding is a statutory leak-tightness test, not cleaning."],
+              ["To cool the concrete slab during hot weather", false, "Waterproofing testing is independent of weather cooling."],
+              ["Because municipal water tankers require meter testing", false, "Testing verifies membrane integrity."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Why must waterproofing always be specified and measured with a vertical upturn, and how do you calculate the payable quantity for an ICU wet room?"
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 27 =================
+  {
+    id: "U27", day: 27, title: "Day 27: MEP Measurement Rules: Item Descriptions & Stage Payments", mins: 25,
+    card: {
+      id: "c-mep-stages",
+      title: "MEP Measurement: Centerline lengths, composite items & milestone stage gates",
+      rule: "MEP piping and ductwork (IS 1200 Part 16 & 19) are measured along centerlines over all fittings. High-value composite items ('Supply, Installation, Testing & Commissioning' - SITC) MUST be unbundled into stage payments: Supply at site (60-70%), Erection (15-20%), Hydrotest/Flushing (10%), Testing & Commissioning (5-10%). Never certify 100% on erection.",
+      example: "A ₹1.2 Cr medical gas copper piping item cannot be billed at 100% just because pipes are hanging on brackets. Without nitrogen purge brazing, 24-hr pressure hold test, and medical air certification, max payable is 75%.",
+      trap: "Paying 100% of an SITC rate upon physical installation before testing, flushing, or statutory licensing."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** An HVAC subcontractor installed 800 running meters of 200 mm MS chilled water piping throughout a hospital tower.
+
+The junior billing engineer certified 100% of the BOQ SITC rate because *"all the pipes are physically hanging in the ceiling"*.
+
+Two months later, during pre-commissioning hydrotesting, 14 welded joints burst under 10 bar pressure, flooding the oncology department. The subcontractor abandoned the site with 100% of the money in their pocket, leaving the PMC with ₹35 Lakhs in repairs!
+
+Never pay 100% of a composite MEP item on erection alone.`
+      },
+      {
+        k: "read",
+        t: `**Measurement Rules & The SITC Stage Payment Breakdown**
+
+1. **Centerline Measurement (IS 1200 Part 16 & 19)**:
+   - Pipes, conduits, cable trays, and busducts are measured along their **central longitudinal axis**.
+   - Standard inline fittings (elbows, tees, bends, reducers) are included in the running length:
+     - Do **NOT** deduct fitting lengths from pipe runs.
+     - Do **NOT** pay fittings separately unless the contract has distinct itemized fitting lines!
+   - Specialized equipment (valves, strainers, fire dampers) are measured as distinct **Numbers (Nos)**.
+
+2. **Unbundling SITC (Supply, Install, Test, Commission)**:
+   When a single BOQ rate covers the entire life cycle, certified payments must strictly follow milestone stage gates:
+   - **Stage 1 (Delivery at Site & Material Inspection)**: 60%–70% (requires Manufacturer Test Certificates and Joint Gate Entry).
+   - **Stage 2 (Erection, Alignment & Clamping)**: 15%–20% (requires visual inspection and alignment sign-off).
+   - **Stage 3 (Pressure Testing, Flushing & Cleaning)**: 10% (requires signed hydrotest chart).
+   - **Stage 4 (Final Integrated Testing & Commissioning)**: 5%–10% (requires NABH/statutory handover).`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under IS 1200 Part 16, how is chilled water MS piping measured for payment?",
+            o: [
+              ["Along the centerline over all standard inline fittings like bends and tees", true, "Centerline measurement over fittings is the standard rule across Indian and British standards."],
+              ["Straight pipe lengths only, deducting the exact length of every elbow and tee", false, "Deducting small fittings is practically impossible and contrary to IS 1200."],
+              ["By the total weight of the installed pipes on a weighbridge", false, "Piping is a linear running meter (RM) item, not a bulk tonnage item."],
+              ["By the volume of water the pipe can hold", false, "Internal fluid capacity is a hydraulic metric, not a civil billing measure."]
+            ]
+          },
+          {
+            q: "A contractor has completed hanging 1,000 meters of Medical Gas copper piping, but has not performed pressure testing or nitrogen flushing. The BOQ item is SITC (Supply, Installation, Testing & Commissioning). What percentage should be certified?",
+            o: [
+              ["70% to 75% in accordance with contractual stage payment milestones", true, "Testing, flushing, and commissioning represent 25%–30% of the critical technical risk."],
+              ["100% because the pipes are completely installed", false, "Paying 100% before testing leaves the client vulnerable to abandonment if joints leak."],
+              ["0% until the entire hospital is inaugurated", false, "Withholding all cash flow for completed physical installation causes contractor insolvency."],
+              ["50% as a flat penalty", false, "Stage payments follow agreed contract milestone percentages, not arbitrary penalties."]
+            ]
+          },
+          {
+            q: "How are inline isolation valves, balancing valves, and motorized fire smoke dampers measured in an MEP BOQ?",
+            o: [
+              ["As distinct enumerated items by Number (Nos), specifying type, rating, and diameter", true, "Valves and motorized dampers are specialized mechanical devices measured by unit count."],
+              ["In running meters along their valve body length", false, "Valves have high unit costs independent of length; they are counted by Nos."],
+              ["By their scrap metal weight in kilograms", false, "Machined engineered valves are not scrap metal."],
+              ["Included free in the pipe running meter rate", false, "High-value valves are itemized separately in standard MEP bills of quantities."]
+            ]
+          },
+          {
+            q: "Under IS 1200 Part 19, how is GI sheet metal ductwork for hospital HVAC measured?",
+            o: [
+              ["In square meters (m²) of surface area computed along centerlines, including seams and bends", true, "Sheet metal ducting is standardized as surface area (m²) calculated from duct perimeter × length."],
+              ["In running meters of duct regardless of width and height", false, "A 1200×600 mm duct uses far more sheet metal than a 300×200 mm duct; linear measurement is invalid."],
+              ["In cubic meters of conditioned air volume", false, "Air volume is CFM (airflow rate), not sheet metal quantity."],
+              ["By counting the number of acoustic dampers", false, "Dampers are accessories, not duct surface area."]
+            ]
+          },
+          {
+            q: "During cable tray installation, a subcontractor claims separate payment for 40 fabricated bends and tees in addition to the linear running meters of cable tray. Contractual ruling?",
+            o: [
+              ["Standard bends and tees are included in the linear centerline measurement of cable trays unless specifically itemized in the BOQ", true, "Standard cable tray items include factory fittings within the linear running meter rate unless noted otherwise."],
+              ["Pay both the full linear meter run and the extra fitting prices without question", false, "Double billing for fittings already included in centerline runs is improper."],
+              ["Reject the entire cable tray installation", false, "The installation is valid; only the double-billed claims are rejected."],
+              ["Deduct 50% of the cable tray length for every bend", false, "Arbitrary deductions violate standard measurement codes."]
+            ]
+          },
+          {
+            q: "Why must Medical Gas Pipeline System (MGPS) copper piping be brazed under continuous inert nitrogen purge before certification?",
+            o: [
+              ["To prevent formation of toxic black cupric oxide scale inside the pipe, which would poison neonatal and ICU patients", true, "Nitrogen purging during brazing prevents internal oxidation; unpurged pipes contaminate medical life-support air."],
+              ["To make the outside of the pipe look shiny for photos", false, "Purging protects the inside of the lumen, not external aesthetics."],
+              ["To speed up the cooling of the brazed joint", false, "Nitrogen prevents oxidation; it is not a cooling quenching agent."],
+              ["Because municipal fire codes require nitrogen in all pipes", false, "MGPS is governed by HTM 02-01 / NFPA 99 medical safety standards."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Draft a 4-stage payment milestone schedule for a ₹50 Lakh Medical Gas Pipeline System (MGPS) vacuum pump installation, justifying the percentage assigned to each stage."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 28 =================
+  {
+    id: "U28", day: 28, title: "Day 28: The 6-Point Running Account (RA) Bill Forensic Audit", mins: 25,
+    card: {
+      id: "c-rabill-audit",
+      title: "The 6-Point RA Bill Audit: Forensic baseline, deductions & legal sign-offs",
+      rule: "Never certify a contractor's Running Account (RA) Bill without executing the 6-Point Forensic Audit: 1) Cumulative quantity check against previous bill; 2) Deviation audit against BOQ contract caps; 3) Statutory deductions (TDS 1-2%, Labor Cess 1%, GST-TDS 2%); 4) Mobilization advance recovery & 5% retention; 5) Mandatory QA/QC test pass certificates; 6) Cross-referenced, jointly signed MB pages.",
+      example: "A ₹2.5 Cr gross RA bill: deduct ₹12.5L retention (5%), ₹25.0L mobilization advance recovery (10%), ₹2.5L labor cess (1%), and ₹5.0L TDS (2%) → Net certified payable = ₹2.05 Cr.",
+      trap: "Checking only current monthly quantities without cross-checking cumulative totals, or certifying without attached concrete cube strength certificates."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** The main civil contractor marches into the PMC site office at 5:00 PM on Friday with a ₹4.2 Crore RA Bill (Bill No. 14).
+
+The contractor’s Vice President calls the Client CEO: *"Our 1,200 site laborers will strike on Monday morning if this bill isn't certified tonight!"* The Client CEO tells you: *"Just sign the summary certificate; we will check the details later."*
+
+A true Project Controls Manager knows that once money leaves the client's escrow account, it can **never** be recovered. You need a 6-point forensic audit protocol that takes 20 minutes and protects you from commercial liability.`
+      },
+      {
+        k: "read",
+        t: `**The 6-Point Project Controls Forensic Audit Protocol**
+
+1. **Check 1: Cumulative Baseline Verification**:
+   Contractors often accidentally (or intentionally) lower the *"Previous Certified Cumulative"* column to inflate the *"Current Month"* quantity. Always cross-check Column 4 against the exact approved figures from Bill No. 13.
+2. **Check 2: BOQ Quantity Deviation Audit**:
+   Verify that no item exceeds 100% of the BOQ limit. Under CPWD Clause 12 and FIDIC, any quantity exceeding the contractual deviation limit (typically $\\pm 10\\%$ to $25\\%$) requires prior written approval from the Employer before payment!
+3. **Check 3: Mandatory Statutory Tax Deductions**:
+   - Income Tax TDS (Section 194C): 1.0% (individual/proprietor) or 2.0% (company).
+   - BOCW Labor Welfare Cess: **1.0%** mandatory deduction on total construction cost.
+   - GST-TDS: 2.0% (1% CGST + 1% SGST) for public/government projects.
+4. **Check 4: Financial Recovery & Retention**:
+   - Mobilization Advance: Deduct agreed amortization (e.g., 10%–15% of gross bill).
+   - Security Deposit / Retention Money: Strictly withhold **5.0%** from every bill until Defect Liability Period (DLP).
+5. **Check 5: Mandatory QA/QC Clearance**:
+   Every structural concrete item must have 28-day cube strength certificates attached.
+6. **Check 6: Measurement Book (MB) Reconciliation**:
+   Every single entry must reference an exact, jointly signed MB page (e.g., *MB No. 104, Pages 42–48*).`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "In an RA Bill audit, what is the 'cumulative baseline verification' check?",
+            o: [
+              ["Comparing the contractor's 'previous certified cumulative' column against the exact figures certified in the last bill", true, "This prevents contractors from manipulating previous quantities to inflate current monthly earnings."],
+              ["Adding all previous bills using a calculator to check arithmetic", false, "Arithmetic check is basic; baseline verification specifically verifies Column 4 figures."],
+              ["Comparing the bill with the contractor's initial tender bid price", false, "Tender bids establish rates, not previous certified cumulative quantities."],
+              ["Checking if the contractor has paid their suppliers", false, "Supplier payments are internal contractor commercial affairs."]
+            ]
+          },
+          {
+            q: "Under the Building and Other Construction Workers (BOCW) Act in India, what mandatory statutory labor welfare cess must be deducted from gross construction bills?",
+            o: [
+              ["1.0% of the gross construction cost", true, "Section 3 of the BOCW Welfare Cess Act mandates a 1.0% deduction on construction cost."],
+              ["5.0% of the net bill", false, "5.0% is the standard retention money rate, not labor welfare cess."],
+              ["0.1% of the contract value", false, "The statutory cess rate is exactly 1.0%."],
+              ["18.0% GST", false, "GST is an indirect tax, not labor welfare cess."]
+            ]
+          },
+          {
+            q: "A contractor submits a gross RA Bill for ₹2,00,00,000. The contract specifies 5% retention money, 10% mobilization advance recovery, and statutory 1% labor cess and 2% TDS. What is the total deduction before net payout?",
+            o: [
+              ["₹36,00,000 (18% total deductions)", true, "Retention (5% = ₹10L) + Mob Adv (10% = ₹20L) + Cess (1% = ₹2L) + TDS (2% = ₹4L) = ₹36,00,000."],
+              ["₹10,00,000 (5% retention only)", false, "Omits mobilization advance recovery and statutory taxes."],
+              ["₹30,00,000", false, "Recalculate: 10L + 20L + 2L + 4L = 36L."],
+              ["₹50,00,000", false, "Total deductions equal 18%, not 25%."]
+            ]
+          },
+          {
+            q: "What happens if an RA bill contains a BOQ item whose cumulative quantity exceeds 120% of the original contract quantity without an approved variation order?",
+            o: [
+              ["Certify up to the contractual deviation limit (e.g., 100% or 110%) and hold the excess quantity until Employer approves the variation", true, "Project Controls Managers cannot unilaterally authorize payments exceeding contractual deviation caps."],
+              ["Pay the entire quantity and hope the client doesn't notice", false, "Certifying unauthorized quantities exceeding contract caps breaches fiduciary duty."],
+              ["Delete the entire item from the bill and pay zero", false, "Work executed up to the contract cap is legitimate and must be certified."],
+              ["Issue a notice of termination to the contractor", false, "Quantity deviation requires commercial variation processing, not termination."]
+            ]
+          },
+          {
+            q: "Why is 5% Retention Money withheld from every Running Account Bill until the end of the Defect Liability Period (DLP)?",
+            o: [
+              ["To provide financial security ensuring the contractor returns to rectify defects and latent failures during the warranty period", true, "Retention ensures the client has financial leverage to rectify defects if the contractor defaults during DLP."],
+              ["To fund the client's corporate office parties", false, "Retention money is client-held security for contractual warranty fulfillment."],
+              ["To cover inflation and price escalation", false, "Price escalation is covered under formulaic indices (e.g., CPWD 10CA/10CC), not retention."],
+              ["Because government banks require a 5% deposit for all loans", false, "Retention is a contractual condition between Employer and Contractor."]
+            ]
+          },
+          {
+            q: "Can a Project Controls Manager certify payment for structural concrete in an RA Bill if 28-day cube strength results fail to achieve specified characteristic strength (fck)?",
+            o: [
+              ["No, payment is withheld or certified at reduced penal rate pending non-destructive core testing and structural designer clearance", true, "Unsound concrete cannot be certified as sound work; IS 456 core tests or load tests are required before any payment."],
+              ["Yes, certify 100% because the concrete has already hardened", false, "Hardened concrete that lacks compressive strength can cause structural collapse."],
+              ["Yes, if the contractor signs a personal guarantee", false, "Personal guarantees cannot support defective structural columns."],
+              ["Deduct 1% and certify the rest", false, "Non-compliant structural work cannot be certified without engineering acceptance."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Given a gross bill of ₹1,00,00,000, calculate the net payable amount after deducting 5% retention, 10% mobilization advance recovery, 1% labor welfare cess, and 2% TDS, detailing each deduction."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 29 =================
+  {
+    id: "U29", day: 29, title: "Day 29: First-Principles Rate Analysis & Star Items (CPWD Clause 12)", mins: 25,
+    card: {
+      id: "c-rate-analysis",
+      title: "Star & Extra Items: First-principles rate analysis (CPWD Clause 12 & 15% CP&OH)",
+      rule: "Non-BOQ extra or substituted items are priced using CPWD Clause 12 / FIDIC Sub-Clause 12.3 hierarchy: 1) Rates from similar BOQ items; 2) Rates from Delhi Schedule of Rates (DSR) with market cost index; 3) First-principles market rate analysis = Basic Material (with vouchers + 2.5% carriage) + Labor output constants + Equipment hire + 15% Contractor's Profit & Overheads (CP&OH) + GST.",
+      example: "Lead-lined drywall for CT-scan: Material = ₹3,200/m²; Labor = ₹600/m²; Tools = ₹100/m². Subtotal = ₹3,900. Add 15% CP&OH (₹585) = ₹4,485/m² net rate before GST.",
+      trap: "Accepting unverified contractor lump-sum quotations, or calculating 15% CP&OH on taxes or unauthorized equipment stand-by."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** During interior fit-out of the oncology diagnostic center, the radiologist updates shielding specifications to require 2 mm lead-sheet backing behind gypsum partitions. This item was omitted from the original civil BOQ.
+
+The contractor submits a Star Item rate of ₹7,800/m² backed by a single generic quotation, demanding an immediate ₹12 Lakh variation approval.
+
+The Project Controls Manager must defend the client against rate gouging by performing a rigorous **first-principles rate analysis** under CPWD Clause 12.`
+      },
+      {
+        k: "read",
+        t: `**CPWD Clause 12 Hierarchy & First-Principles Rate Analysis**
+
+1. **The 3-Tier Rate Derivation Hierarchy**:
+   - **Tier 1 (Contractual Analogy)**: Derive the rate from similar items in the existing contract BOQ (e.g., take standard gypsum partition rate and add the net market delta of lead sheet).
+   - **Tier 2 (Standard Schedule of Rates)**: If absent from BOQ, use DSR (Delhi Schedule of Rates) adjusted by the approved project Cost Index.
+   - **Tier 3 (Market Rate Analysis from First Principles)**: When scope is completely novel and unsupported by schedules.
+
+2. **The Anatomy of a First-Principles Rate**:
+   $$\\text{Unit Rate} = (\\text{Material} + \\text{Carriage} + \\text{Labor} + \\text{Plant}) \\times (1 + 0.15 \\text{ CP\\&OH}) + \\text{GST}$$
+   - **Material**: Actual purchase invoices from primary manufacturers $+ 2.5\\%$ handling, storage, and site carriage.
+   - **Labor**: Output constants from CPWD Analysis of Rates (DAR) multiplied by notified minimum wages.
+   - **Plant & Machinery**: Operating hours and diesel consumption directly attributable to the work.
+   - **Contractor's Profit and Overheads (CP&OH)**: **Strictly capped at 15.0%** under CPWD GCC. It covers site supervision, project head office overheads, insurance, and profit.`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under CPWD GCC Clause 12, what is the maximum permissible markup for Contractor's Profit and Overheads (CP&OH) in a first-principles rate analysis?",
+            o: [
+              ["15.0% on the subtotal of materials, labor, and plant", true, "CPWD GCC standardized CP&OH at exactly 15.0% to cover head office overheads, site supervision, and profit."],
+              ["25.0% for private projects", false, "Standard public and institutional contracts strictly cap CP&OH at 15.0%."],
+              ["10.0% profit plus 10% overheads (total 20%)", false, "The unified allowance under CPWD is 15.0% total."],
+              ["5.0% administrative markup", false, "5.0% is insufficient for contractor site overheads."]
+            ]
+          },
+          {
+            q: "What is the contractual difference between an 'Extra Item' and a 'Substituted Item' in construction contracts?",
+            o: [
+              ["An Extra Item is completely new scope outside the BOQ; a Substituted Item replaces an existing BOQ item with modified specifications", true, "Substituted items replace an existing item, so only the cost differential (rate delta) is payable."],
+              ["Extra Items are paid in cash; Substituted Items are paid in material", false, "All payments are executed through official banking channels."],
+              ["Extra Items require client approval; Substituted Items do not", false, "Both require formal variation approval."],
+              ["There is no difference; they are identical terms", false, "They follow distinct rate determination mechanisms under Clause 12."]
+            ]
+          },
+          {
+            q: "A contractor submits purchase invoices for lead shielding sheets totaling ₹3,000/m². Under CPWD rate analysis guidelines, what percentage is added for local carriage, handling, and storage?",
+            o: [
+              ["2.5% on the basic material cost", true, "CPWD Analysis of Rates prescribes a standard 2.5% allowance for handling, local carriage, and storage."],
+              ["10.0% for freight and packaging", false, "Standard carriage allowance is 2.5% unless long-distance interstate transport is proven."],
+              ["0% because carriage is always free", false, "Material handling and offloading are legitimate direct costs."],
+              ["15.0%", false, "15% is the CP&OH markup, not carriage."]
+            ]
+          },
+          {
+            q: "Under CPWD Clause 12, within how many days must a contractor give written notice of a claim for an Extra / Star Item after the instruction is issued?",
+            o: [
+              ["Within 14 to 15 days of the instruction, prior to commencing the work", true, "Timely notice gives the Employer opportunity to evaluate cost implications or choose alternatives."],
+              ["At the end of the 12-month Defect Liability Period", false, "Retrospective claims after a year are contractually time-barred."],
+              ["Within 24 hours via phone call", false, "Formal contractual claims require written notice with technical particulars."],
+              ["Anytime before the final bill is prepared", false, "Late notice forfeits the contractor's right to claim extra rates."]
+            ]
+          },
+          {
+            q: "A contractor calculates 15% CP&OH on top of GST tax amounts in their rate analysis submission. Is this mathematically and contractually valid?",
+            o: [
+              ["No, CP&OH is applied strictly to direct prime costs (material + labor + plant); GST is added at the very end on the gross rate", true, "Charging contractor profit on statutory government taxes is unlawful tax compounding."],
+              ["Yes, contractors are entitled to earn profit on everything including taxes", false, "Taxes are statutory pass-throughs, not productive contractor work."],
+              ["Yes, if approved by the site accountant", false, "Accountants cannot violate tax laws or contractual rate analysis formulas."],
+              ["Only for international imported materials", false, "GST rules apply uniformly across domestic and imported items."]
+            ]
+          },
+          {
+            q: "When evaluating labor costs in a first-principles rate analysis, what labor outputs must be adopted?",
+            o: [
+              ["Standard labor constants from CPWD Analysis of Rates (DAR) or National Building Code (NBC) multiplied by notified minimum wages", true, "Standardized labor constants prevent contractors from fabricating inflated labor gang sizes."],
+              ["Whatever number of laborers the contractor claims were present on site", false, "Unverified contractor headcounts lead to massive labor over-billing."],
+              ["Zero labor cost because machines do all the work", false, "Finishes and specialty installations require skilled manual labor."],
+              ["Average rates from local newspaper classifieds", false, "Notified statutory minimum wage schedules are legally binding."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "A contractor submits a rate analysis for an extra epoxy floor screed claiming 25% for overheads and profit, plus unvouched machinery hire. How do you audit and correct this submission?"
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 30: GATE 1 =================
+  {
+    id: "U30", day: 30, title: "Gate 1: Comprehensive Block 1 Exam (Foundations & Site Measurement)", mins: 45, gate: true,
+    card: {
+      id: "c-gate1",
+      title: "Gate 1 passed: Foundations & Site Measurement Mastered",
+      rule: "The dual pillars of Project Controls: Schedule logic calculates the critical path and float; Site measurement verifies physical progress and cost reality. Mastered: CPM forward/backward passes, SS lags, duration calculations, procurement ROS back-calculations, IS 1200 plaster & earthwork, rebar d²/162 BBS, MB governance, and 6-point RA bill forensic audits.",
+      example: "You can build a 20-activity hospital critical path, audit an MB entry for plaster and steel, detect contractor over-billing, and report float trends to the COO with priced recovery options.",
+      trap: "Treating scheduling and measurement as separate silos. Progress on paper is an illusion unless rooted in verified site measurements."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Gate 1 checks everything from Days 1–29 together**, combining CPM scheduling mechanics with physical site measurement and forensic commercial billing.
+
+**The Exam Structure:**
+1. **Full Guided CPM Pass**: SS links, lags, and early/late date calculations.
+2. **Duration Calculation**: Deriving duration from physical quantities and crew output.
+3. **Rebar BBS Drill**: Calculating theoretical steel weight from diameter ($d^2/162$).
+4. **12 Comprehensive Questions**: Mixed across CPM math, float trends, IS 1200 deductions, rebar rolling margin, RMC batch reconciliation, and CPWD Clause 12 star items. Pass = **10 of 12**.
+
+If you do not pass, the engine shows exactly which days to revisit. No guessing: this milestone ensures your foundations are rock solid before entering Block 2 (Delay Forensics, Claims & Hospital Packages).`
+      },
+      {
+        k: "guided", level: 3, fwd: false,
+        t: "Full CPM pass with SS links and lags. No candidates shown until a mistake."
+      },
+      {
+        k: "drill", id: "duration",
+        t: "Duration calculation from physical scope."
+      },
+      {
+        k: "drill", id: "steel",
+        t: "Bar Bending Schedule (BBS) rebar weight calculation (d²/162)."
+      },
+      {
+        k: "quiz", n: 12,
+        bank: [
+          {
+            q: "Activity B has SS+4 relationship with Activity A. Activity A has ES = 6, EF = 14. What is Activity B's ES?",
+            o: [
+              ["10", true, "A's start 6 + 4 lag = 10."],
+              ["18", false, "That counts from A's finish (FS+4)."],
+              ["14", false, "That is FS with zero lag."],
+              ["4", false, "Add the lag to A's early start."]
+            ]
+          },
+          {
+            q: "Activity D has two predecessors: B (EF = 14) and C (EF = 18), both Finish-to-Start (FS). What is Activity D's Early Start (ES)?",
+            o: [
+              ["18", true, "Forward pass rule: largest EF among all predecessors."],
+              ["14", false, "Smallest is the backward pass rule."],
+              ["32", false, "Do not add predecessor dates."],
+              ["16", false, "CPM never averages dates."]
+            ]
+          },
+          {
+            q: "Activity X has ES = 8, EF = 15, LS = 12, LF = 19. What is its Total Float (TF)?",
+            o: [
+              ["4", true, "TF = LS − ES = 12 − 8 = 4 (or LF − EF = 19 − 15 = 4)."],
+              ["11", false, "Subtract ES from LS; do not add."],
+              ["7", false, "7 is the duration (15 − 8)."],
+              ["0", false, "Total float is 4, so it is non-critical."]
+            ]
+          },
+          {
+            q: "Under IS 1200 Part 12, what deduction is made for a door measuring 1.2 m × 2.1 m (2.52 m²) on a wall plastered on both faces?",
+            o: [
+              ["Deduct 2.52 m² from one face only; do not add door jambs or soffits", true, "2.52 m² falls in Tier 2 (0.5 to 3.0 m²): deduct one face only with no jamb addition."],
+              ["Deduct 2.52 m² from both faces (5.04 m² total)", false, "Deducting both faces applies only to Tier 3 (> 3.0 m²)."],
+              ["No deduction because it is under 3.0 m²", false, "Openings > 0.5 m² must be deducted."],
+              ["Deduct 50% from both faces", false, "IS 1200 Part 12 specifies one full face deduction, not 50%."]
+            ]
+          },
+          {
+            q: "What is the theoretical weight of 100 meters of 16 mm diameter TMT rebar?",
+            o: [
+              ["158 kg", true, "16² / 162.28 = 256 / 162.28 = 1.578 kg/m × 100m = 157.8 kg ≈ 158 kg."],
+              ["89 kg", false, "89 kg is the weight of 100m of 12 mm rebar."],
+              ["247 kg", false, "247 kg is the weight of 100m of 20 mm rebar."],
+              ["385 kg", false, "385 kg is the weight of 100m of 25 mm rebar."]
+            ]
+          },
+          {
+            q: "A basement excavation pit measures 10,000 m³ in-situ. If soil swell factor is 1.30, what volume is payable to the contractor under IS 1200 Part 1?",
+            o: [
+              ["10,000 m³ (the net in-situ bank volume)", true, "Earthwork is paid strictly on bank cut volume; swell is logistics volume."],
+              ["13,000 m³ (loose dumper volume)", false, "Client does not pay for soil void expansion."],
+              ["11,500 m³ (average)", false, "Standard measurement uses exact in-situ survey levels."],
+              ["7,692 m³", false, "Do not divide in-situ volume by swell."]
+            ]
+          },
+          {
+            q: "An RMC batching plant dispatches 520 m³ of concrete for an RCC raft. Structural drawing dimensions calculate to 500 m³. If the contract allows 3% wastage, how much is certified for payment at BOQ rate?",
+            o: [
+              ["500 m³ (the net drawing volume)", true, "Payable concrete is strictly net drawing volume; allowable wastage is covered in the unit rate."],
+              ["520 m³ (the full dispatched batch volume)", false, "Client does not pay for delivery slips beyond drawings."],
+              ["515 m³ (drawing plus 3%)", false, "Allowances set upper limits on consumption, not automatic payment additions."],
+              ["480 m³", false, "Wastage is 4%, which is slightly over 3%, but net drawing volume remains 500 m³."]
+            ]
+          },
+          {
+            q: "Under the 'measure before cover' rule (CPWD Section 7 / FIDIC Sub-Clause 12.1), what happens if a contractor covers underground drainage without joint inspection?",
+            o: [
+              ["Payment is withheld until contractor uncovers inspection pits at their own expense to verify work", true, "Unauthorized covering forces re-exposure at contractor's cost."],
+              ["Pay 100% based on design drawings", false, "Drawings show design intent, not physical execution."],
+              ["Issue immediate contract termination", false, "Non-destructive verification is the first contractual step."],
+              ["Deduct 10% and certify the rest", false, "Unverified underground scope cannot be certified."]
+            ]
+          },
+          {
+            q: "Under CPWD GCC Clause 12, what is the maximum markup for Contractor's Profit & Overheads (CP&OH) in a first-principles rate analysis?",
+            o: [
+              ["15.0% on prime cost (material + labor + plant)", true, "CPWD GCC strictly caps CP&OH at 15.0%."],
+              ["25.0% for private works", false, "Institutional construction standards limit CP&OH to 15.0%."],
+              ["20.0%", false, "Standard allowance is 15.0%."],
+              ["10.0%", false, "15% is the recognized contractual standard."]
+            ]
+          },
+          {
+            q: "What mandatory statutory deductions must be made from a contractor's gross Running Account (RA) Bill in India?",
+            o: [
+              ["Income Tax TDS (1–2%) and BOCW Labor Welfare Cess (1.0%)", true, "Section 194C TDS and Section 3 BOCW Cess are mandatory statutory withholdings."],
+              ["5% corporate tax and 10% import duty", false, "Corporate income tax is filed annually, not deducted per RA bill."],
+              ["18% GST deducted from gross bill", false, "GST is paid to the contractor to remit, or 2% GST-TDS is withheld in public works."],
+              ["Zero statutory deductions are permitted", false, "Failure to withhold statutory cess exposes PMC and Employer to legal penalties."]
+            ]
+          },
+          {
+            q: "A contractor's schedule shows critical path total float falling from +12 WD to −4 WD over two consecutive monthly updates. What is the correct executive reporting line?",
+            o: [
+              ["Critical path has slipped by 16 working days, now 4 days negative; forecast handover is delayed unless recovery is funded", true, "Executive reports must state level, rate, consequence, and action."],
+              ["Schedule is fine because the project is only 4 days late", false, "Ignores the dangerous 16-day downward velocity."],
+              ["Contractor must be penalized Liquidated Damages immediately", false, "LDs apply at contract completion, not during progress."],
+              ["Change the baseline to restore positive float", false, "Manipulating baselines conceals true delay."]
+            ]
+          },
+          {
+            q: "A high-value Medical Gas copper piping BOQ item is 'Supply, Installation, Testing & Commissioning' (SITC). All pipes are physically installed on hangers, but hydrotesting and medical air purging are not done. Can 100% be certified?",
+            o: [
+              ["No; certify 70%–75% under milestone stage payments, retaining 25%–30% for pressure testing and statutory commissioning", true, "Never pay 100% on erection; testing and commissioning represent critical technical risk."],
+              ["Yes, because the pipes are 100% physically erected", false, "Erection without pressure testing is incomplete scope."],
+              ["Pay 0% until the hospital is fully open", false, "Holding all cash flow causes contractor site distress."],
+              ["Pay 50% only as a penalty", false, "Stage payments follow agreed milestone schedules."]
+            ]
+          },
+          {
+            q: "Why is an approved mechanical coupler preferred over a rebar lap splice in heavily reinforced 32 mm hospital column cages?",
+            o: [
+              ["Eliminates 10.1 kg of lap steel per splice and relieves rebar congestion, ensuring proper concrete compaction", true, "Couplers eliminate 1.6m of overlapping 32mm steel and prevent honeycombing."],
+              ["Allows using lower grade concrete", false, "Couplers have no relation to concrete strength grade."],
+              ["Eliminates the need for column ties", false, "Shear ties are still mandatory under IS 13920."],
+              ["Doubles curing speed", false, "Couplers do not affect hydration."]
+            ]
+          },
+          {
+            q: "Under IS 1200 Part 14, how is waterproofing measured for a hospital terrace or wet room?",
+            o: [
+              ["Horizontal flat slab surface PLUS vertical upturn/flashing up to minimum 300 mm above finished floor level", true, "Waterproofing must include both horizontal deck and 300mm vertical flashings."],
+              ["Horizontal flat slab surface only", false, "Omitting vertical upturns under-measures billable scope and encourages leaks."],
+              ["In cubic meters of chemical membrane", false, "Membranes are thin sheet/liquid coatings measured in m²."],
+              ["In running meters of perimeter", false, "Deck waterproofing is a surface area item in square meters."]
+            ]
+          },
+          {
+            q: "When a contractor submits a Star Item rate for an extra non-BOQ item, what is the first step under CPWD Clause 12?",
+            o: [
+              ["Determine if the rate can be derived from analogous items in the existing contract BOQ", true, "Clause 12 mandates looking first at contractual BOQ rates before turning to schedules or market rates."],
+              ["Accept the contractor's quotation immediately", false, "Unverified contractor quotations lead to rate gouging."],
+              ["Reject the work and refuse to allow the architect to make changes", false, "Variations are standard in construction; they must be priced properly."],
+              ["Deduct 50% from the contractor's monthly bill", false, "Arbitrary deductions violate contractual dispute protocols."]
+            ]
+          },
+          {
+            q: "In an official Measurement Book (MB), how must an incorrect figure be corrected?",
+            o: [
+              ["Single red strike-through, write the correct figure above, and initial with date; zero correction fluid", true, "Full transparency and traceability preserve evidentiary integrity."],
+              ["Apply white correction fluid and write over it", false, "Correction fluid invalidates the page in arbitration."],
+              ["Tear out the page", false, "Tearing pages from a machine-numbered MB is a serious violation."],
+              ["Discard the book and start a new one", false, "Single entries are corrected in place."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Gate 1 Executive Capstone: How will combining CPM network logic with forensic site measurement change your daily control of contractors on your live project?"
+      },
+      { k: "done" }
+    ]
+  }
+];
+UNITS.push(...UNITS3);
+const APPLY3 = {
+  U21: {
+    task: "Take one underground, hidden, or structural item on your live project (foundation pit, concealed plumbing riser, under-slab conduit, or rebar cage). Draft a 1-page Joint Measurement Protocol detailing: 1) Physical location and grid references; 2) Mandatory inspection hold point before covering; 3) Designated signatories for Contractor and PMC; 4) Strict procedure for recording entries and correcting errors in the Measurement Book (MB).",
+    good: [
+      "Names a specific concealed item with grid lines and invert/elevation levels",
+      "Specifies the 'measure before cover' inspection notice window (e.g. 24-48h)",
+      "Identifies authorized signatories by role/designation",
+      "Cites CPWD Works Manual Section 7 or FIDIC 12.1 for zero erasures and red strike-through rule"
+    ],
+    tmpl: "Project: \nConcealed Item & Location (Grids/Level): \nInspection Hold Point Notice: \nSignatories (Contractor & PMC): \nMB Recording & Correction Protocol: "
+  },
+
+  U22: {
+    task: "For an active or past earthwork excavation on your project (basement, raft pit, or utility trench): 1) Calculate the net in-situ bank cut volume from survey spot levels or average end areas; 2) Compare it with the contractor's loose dumper truck count; 3) Calculate the swell/bulking factor; 4) Draft a short contractual determination letter resolving any over-billing claim based on IS 1200 Part 1.",
+    good: [
+      "In-situ volume calculated from levels or dimensions (m³)",
+      "Loose truck haulage volume and swell factor calculated",
+      "Clear contractual determination citing IS 1200 Part 1 (bank cut vs loose)",
+      "Over-excavation responsibility clarified"
+    ],
+    tmpl: "Project & Excavation Scope: \nIn-Situ Bank Cut Volume (Levels/Dimensions): \nLoose Dumper Volume (Trucks × Capacity): \nCalculated Bulking Factor: \nContractual Ruling under IS 1200 Part 1: "
+  },
+
+  U23: {
+    task: "Audit a recent major concrete pour (mat foundation, column group, or suspended slab): 1) Calculate net structural drawing volume without rebar deductions; 2) Reconcile against total RMC transit mixer computerized batch tickets; 3) Compute actual wastage percentage; 4) Compare with the contractual allowable limit (e.g. 2-3%) and state the commercial recovery action if excess occurred.",
+    good: [
+      "Net structural drawing volume calculated accurately (L × W × H)",
+      "RMC dispatch ticket total stated with mix grade",
+      "Wastage percentage computed correctly",
+      "Commercial reconciliation evaluated against contract allowance"
+    ],
+    tmpl: "Pour Location & Mix Grade: \nNet Drawing Volume (m³): \nDelivered RMC Volume (Batch Slips m³): \nWastage % Computed: \nContractual Allowance (e.g. 3%): \nCommercial Action / Reconciliation: "
+  },
+
+  U24: {
+    task: "Select one structural member (heavy column or foundation beam) from your project drawings: 1) Calculate theoretical rebar weight using d²/162 on cutting lengths; 2) Check lap lengths against IS 456 / IS 13920; 3) For bars ≥ 20 mm, calculate the steel tonnage and cost saved by substituting mechanical rebar couplers for laps; 4) Verify rolling margin tolerance under IS 1786.",
+    good: [
+      "Bar diameters and cutting lengths listed",
+      "Theoretical weight calculated using d²/162",
+      "Lap length calculated and steel savings from couplers quantified",
+      "Rolling margin rule applied correctly"
+    ],
+    tmpl: "Structural Member & Rebar Sizes: \nTheoretical BBS Weight (kg/m and total MT): \nLap Length (IS 456 40d/50d): \nCoupler Substitution Analysis (Steel MT saved & cost): \nRolling Margin Verification: "
+  },
+
+  U25: {
+    task: "Take an architectural layout (patient room, corridor, or office suite) with at least two different sized openings (e.g. a small electrical DB and a double door): 1) Calculate gross wall surface area; 2) Classify each opening under IS 1200 Part 12 (Tier 1 ≤ 0.5 m², Tier 2 0.5–3.0 m², Tier 3 > 3.0 m²); 3) Compute net payable plaster area for both wall faces.",
+    good: [
+      "Gross wall dimensions and surface areas stated",
+      "Each opening categorized into correct IS 1200 tier with justification",
+      "Correct deduction rules applied (zero, one-face, or both faces + jambs)",
+      "Net payable plaster area computed accurately"
+    ],
+    tmpl: "Room & Wall Dimensions: \nGross Wall Area (Both Faces): \nOpening 1 (Size, Area, IS 1200 Tier): \nOpening 2 (Size, Area, IS 1200 Tier): \nNet Payable Plaster Area Calculation: "
+  },
+
+  U26: {
+    task: "Measure flooring and waterproofing for an ICU, wet room, or terrace area: 1) Calculate net floor finish area inside finished walls; 2) Calculate skirting or hospital coving in running meters (RM); 3) Calculate waterproofing area including the mandatory 300 mm vertical upturn; 4) Cite the 48-hour ponding test requirement.",
+    good: [
+      "Net floor area calculated between finished wall lines",
+      "Skirting / coving measured in RM with height specified",
+      "Waterproofing includes horizontal deck plus 300mm vertical upturn",
+      "Ponding test quality sign-off confirmed"
+    ],
+    tmpl: "Room / Wet Area Description: \nNet Floor Area (m²): \nSkirting / Hospital Coving (RM & Height): \nWaterproofing Area (Horizontal + 300mm Upturn m²): \nTesting Hold Point (48-72h Ponding Test): "
+  },
+
+  U27: {
+    task: "Select a high-value MEP package item (HVAC chilled water piping, ductwork, or Medical Gas piping): 1) Confirm centerline measurement rules under IS 1200 Part 16/19; 2) Develop a 4-tier milestone stage payment schedule unbundling the SITC composite rate (Supply, Erection, Pressure Testing, Commissioning); 3) State the QA/QC hold point for each stage.",
+    good: [
+      "Centerline measurement criteria verified over fittings",
+      "Composite SITC rate broken down into 4 stages with percentages totaling 100%",
+      "Testing (hydrotest/nitrogen purge) given appropriate financial weight (10-15%)",
+      "Statutory/QA hold point linked to final payment"
+    ],
+    tmpl: "MEP Package & Scope: \nCenterline Measurement Rules: \nStage 1 - Supply at Site (% & Hold Point): \nStage 2 - Erection (% & Hold Point): \nStage 3 - Pressure Testing/Flushing (% & Hold Point): \nStage 4 - Testing & Commissioning (% & Hold Point): "
+  },
+
+  U28: {
+    task: "Perform the 6-Point Forensic Audit on an active contractor Running Account (RA) Bill: 1) Verify previous certified cumulative baseline; 2) Check BOQ quantities against contract deviation caps; 3) Compute statutory deductions (1% Labor Cess, 2% TDS); 4) Deduct 5% retention and mobilization advance recovery; 5) Verify concrete cube test reports; 6) Cross-reference MB page numbers.",
+    good: [
+      "All 6 audit checkpoints addressed with specific numbers",
+      "Cumulative baseline verified against previous bill",
+      "Statutory deductions and contractual retentions computed correctly",
+      "Quality clearance and signed MB page numbers referenced"
+    ],
+    tmpl: "Contractor & Bill No: \nCheck 1 - Cumulative Baseline Check: \nCheck 2 - BOQ Deviation Audit: \nCheck 3 - Statutory Deductions (TDS, Cess): \nCheck 4 - Retention (5%) & Advance Recovery: \nCheck 5 - QA/QC Test Certificates (Cube strength): \nCheck 6 - Measurement Book (MB) Pages: \nNet Certified Payable Amount: "
+  },
+
+  U29: {
+    task: "Prepare a first-principles rate analysis for a Star / Extra Item (e.g. lead-lined drywall, specialized epoxy screed, or acoustic wall panel) under CPWD Clause 12: 1) Material cost with manufacturer purchase vouchers + 2.5% carriage/storage; 2) Labor output constants from CPWD DAR; 3) Equipment hire/fuel; 4) Add strictly 15.0% CP&OH; 5) Add applicable GST.",
+    good: [
+      "Rate analysis structured into Material, Labor, Plant, CP&OH, and GST",
+      "Material includes 2.5% carriage/storage allowance",
+      "Labor constants referenced from CPWD DAR or recognized standards",
+      "Contractor Profit & Overheads strictly capped at 15.0%"
+    ],
+    tmpl: "Star Item Description: \n1. Materials (Basic Cost + 2.5% Carriage): \n2. Labor (Gangs & Output Constants): \n3. Plant & Machinery (Direct hire/power): \nSubtotal Prime Cost: \n4. Contractor's Profit & Overheads (15.0%): \n5. Applicable GST: \nTotal Certified Star Item Rate: "
+  },
+
+  U30: {
+    task: "Gate 1 Comprehensive Capstone: Prepare a 2-page Project Controls Executive Briefing for your Project Director: 1) Hospital Master Schedule Critical Path and top 2 near-critical float trends with priced recovery options; 2) Physical material reconciliation (Concrete batch tickets vs drawing volume, and Rebar BBS vs weighbridge receipts); 3) Summary of the 6-Point RA Bill audit certified for the month.",
+    good: [
+      "Critical path and float trends clearly articulated with rates and consequences",
+      "Priced recovery options provided with cost and days saved",
+      "Concrete and steel material reconciliations documented with wastage %",
+      "RA Bill financial summary certified with all 6 audit checkpoints fulfilled"
+    ],
+    tmpl: "Project Director Executive Briefing (Gate 1 Milestone):\n1. Critical Path & Float Velocity Analysis:\n- Critical Path:\n- Near-Critical Risks & Float Trends:\n- Priced Recovery Options:\n\n2. Site Material & Measurement Reconciliation:\n- Concrete (Drawings vs Batch Slips vs Wastage %):\n- Reinforcement Rebar (BBS d²/162 vs Weighbridge vs Rolling Margin):\n\n3. Monthly RA Bill Certification Summary:\n- Gross Work Done & MB References:\n- Statutory Deductions & Retentions:\n- Net Certified Amount & Sign-Off: "
+  }
+};
+Object.assign(APPLY, APPLY3);
+UNITS3.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
 const ROADMAP=[
- {days:"21–50",title:"Block 2: Controls core",items:"P6 hands-on (build, baseline, update, read big schedules) · progress measurement, rules of credit, S-curves · cost control (budget, commitments, accruals, EAC) · earned value · procurement control & cash flow · risk register · Gate 2 on Day 50"},
- {days:"51–70",title:"Block 3: Advanced",items:"Delay analysis & EOT (TIA, windows) · change control, variations, LDs & contracts · integrated monthly control cycle · reporting & executive communication · portfolio planning & digital tools · Gate 3 on Day 70"},
- {days:"71–90",title:"Block 4: Capstone",items:"Full project simulations (hospital, commercial building, external works/infrastructure) · monthly reports and recovery plans end to end · viva-style questioning · interleaved revision of everything · final exam on Day 90"},
+ {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
+ {days:"66–95",title:"Block 3: P6 Enterprise Mastery, Rules of Credit & Cost/EVM Controls",items:"P6 Architecture, EPS/OBS & WBS dictionary · Calendars, Activity Types & DCMA 14 logic auditing · Physical % complete & Rules of Credit · Cost loading, cash flow & S-curve banana envelopes · EVM & Earned Schedule (ES) · P6-to-Claim Bridge Day (re-running Block 2 claim in P6) · Gate 3 on Day 95"},
+ {days:"96–120",title:"Block 4: Mega Project Flight Simulations, Executive Defense & Final Exam",items:"Full end-to-end 500-bed hospital project flight simulations · Monthly executive review packets & recovery plans · Director's Hot Seat (60s oral boardroom defense) · Interleaved revision across all disciplines · Final Viva Voce & Master Certification Exam on Day 120"},
 ];
 
 // ================= SITE MEASUREMENT TRACK (parallel, M1–M6) =================
@@ -7788,7 +9031,7 @@ function handoffPack(){
   const r=readiness(), due=dueList();
   const items=Object.values(state.items).filter(i=>i.status!=="not_started").map(i=>`- ${ST[i.status]?.[0]||""} ${i.item} (${i.domain}) ${i.score!=null?i.score:""}${i.weakness?" — weakness: "+i.weakness:""}`).join("\n");
   const book=Object.values(state.bank).map(e=>`### ${e.title}\nRule: ${e.rule}\n${e.explain?"Why: "+e.explain+"\n":""}${e.example?"Example: "+e.example+"\n":""}${e.trap?"My trap: "+e.trap+"\n":""}`).join("\n");
-  return `# Project Controls 90-day programme — handoff pack (${today()})
+  return `# Project Controls 120-day mastery programme — handoff pack (${today()})
 
 Paste this whole file into another assistant to continue a session while my Claude limit resets. When I'm back in the app, I'll paste that assistant's final summary into the Director.
 

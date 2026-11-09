@@ -43,7 +43,7 @@ async function completeUnit(env, uid) {
     if (sc.k === "cal") { const c = w.eval(`cst("${uid}").cal["${s.screen}"]`); d.querySelector(`[data-d="${w.eval(`iso(addWorking(D0(new Date("${c.start}")),${c.n}))`)}"]`).click(); await wait(1); }
     if (sc.k === "drill") { const q = w.eval("pr.q"); d.querySelectorAll("#u-d [data-k]").forEach(x => x.value = q.ans[x.dataset.k]);
       d.querySelectorAll("#u-d [data-choice]").forEach(gr => [...gr.querySelectorAll("button")].find(bb => bb.dataset.v === String(q.ans[gr.dataset.choice]))?.click()); $("pr-check").click(); await wait(1); }
-    if (sc.k === "quiz") { let q = 0; while (q++ < 14 && !/Passed|Not yet/.test(d.querySelector("#u-body .q")?.textContent || "")) {
+    if (sc.k === "quiz") { let q = 0; while (q++ < 20 && !/Passed|Not yet/.test(d.querySelector("#u-body .q")?.textContent || "")) {
       const z = w.eval(`cst("${uid}").quiz`), Q = sc.bank[z.pick[z.i]]; d.querySelector(`#u-body [data-o="${Q.o.findIndex(o => o[1])}"]`).click(); await wait(1); $("q-next").click(); await wait(1); } }
     if (sc.k === "done") break;
     if ($("u-next").disabled) return `stuck at screen ${s.screen} (${sc.k})`;
@@ -81,14 +81,14 @@ async function completeUnit(env, uid) {
   // ---------- 3. full course, fresh learner ----------
   {
     const env = boot(); await wait(600); const { w, d } = env;
-    P("fresh start shows Day 0 on Learn", d.getElementById("daytag").textContent === "Day 0 / 90" && /Day 0/.test(d.getElementById("learnwrap").textContent));
+    P("fresh start shows Day 0 on Learn", d.getElementById("daytag").textContent === "Day 0 / 120" && /Day 0/.test(d.getElementById("learnwrap").textContent));
     P("foundation cards pre-seeded in review deck on fresh start", w.eval('FOUNDATION_CARDS.every(c => state.bank[c.id] && state.sr[c.id])'));
     P("Practice is empty before any day is passed", d.querySelectorAll("#pracwrap [data-d]").length === 0);
     const order = w.eval("UNITS.filter(u=>!u.track).map(u=>u.id)").concat(w.eval('UNITS.filter(u=>u.track==="M").map(u=>u.id)'));
     const res = []; for (const id of order) { const r = await completeUnit(env, id); if (r !== "ok") res.push(id + ":" + r); }
-    P(`all ${order.length} units (Days 0–20 + M1–M6) can be completed`, res.length === 0, res.join(", "));
+    P(`all ${order.length} units (Days 0–30 + M1–M6) can be completed`, res.length === 0, res.join(", "));
     const S = JSON.parse(env.store["data/users/u1/state"].state);
-    P("day advances to 21 after Gate 1; the measurement track doesn't move the day", S.day === 21, "day " + S.day);
+    P("day advances to 31 after Gate 1; the measurement track doesn't move the day", S.day === 31, "day " + S.day);
     P("cards for every unit are in the review deck", w.eval('UNITS.filter(u=>u.card).every(u=>state.sr[u.card.id])'));
     P("Practice opens drills after their teaching day", ["cpm1", "proc", "rabill", "recon"].every(id => !!d.querySelector(`#pracwrap [data-d="${id}"]`)) || (w.eval('pr={view:"home"};renderPractice();'), ["cpm1", "proc", "rabill", "recon"].every(id => !!d.querySelector(`#pracwrap [data-d="${id}"]`))));
     P("Practice drill filter isolates measurement vs planning drills", await w.eval(`(async () => {
@@ -127,7 +127,7 @@ async function completeUnit(env, uid) {
     } });
     await wait(700); const { w, d } = env;
     P("shim provides db/user/downloads; Director sample ready out of the box", await w.eval('(async()=>{ const db=await claude.use("db"), s=await claude.use("sample"); await db.doc("t/x").set({a:1}); const g=await db.doc("t/x").get(); return g.exists && g.data().a===1 && typeof s==="function"; })()'));
-    P("your saved progress loads (Day 2, Days 0–1 passed)", d.getElementById("daytag").textContent === `Day ${PROGRESS.state.day} / 90` && w.eval('cst("U1").done'));
+    P("your saved progress loads (Day 2, Days 0–1 passed)", d.getElementById("daytag").textContent === `Day ${PROGRESS.state.day} / 120` && w.eval('cst("U1").done'));
     P("settings button (⚙) present", [...d.querySelectorAll("button")].some(b => b.textContent === "⚙"));
     P("status confirms Director is active", /ready|due|Day|Director/i.test(d.getElementById("status").textContent));
     P("All 9 interactive visual sandboxes (Deliverables, S-Curve, LPS, Scale/Volume, MB Audit, Hot Seat, Schedule Doctor, Hospital Playbook, SCL TIA) render and operate cleanly", await w.eval(`(async () => {
