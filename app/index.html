@@ -191,13 +191,17 @@ nav button{font-size:.8rem}
     <button role="tab" aria-selected="true" data-v="learn">Learn</button>
     <button role="tab" aria-selected="false" data-v="chat">Tutor</button>
     <button role="tab" aria-selected="false" data-v="prac">Practice</button>
-    <button role="tab" aria-selected="false" data-v="book">Notes</button>
+    <button role="tab" aria-selected="false" data-v="book">Notes / Deck</button>
     <button role="tab" aria-selected="false" data-v="prog">More</button>
   </nav>
 </header>
 <main>
   <section class="view on" id="v-learn"><div class="wrap" id="learnwrap"></div></section>
   <section class="view" id="v-chat">
+    <div id="tutor-lock-banner" style="background:var(--surface,#fff);border:1px solid var(--line);border-left:4px solid var(--bar,#2F5BD3);border-radius:8px;padding:8px 12px;margin:8px 10px 4px;font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:8px">
+      <span style="font-size:1rem">🔒</span>
+      <div><b style="color:var(--ink)">Curriculum Lock Active:</b> The Director keeps you focused on your current day's foundations. Questions on later modules (EOT, Delay Windows, Claims) are locked until their gate is passed so you don't build on shaky ground.</div>
+    </div>
     <div id="log" aria-live="polite"></div>
     <div class="composer"><div class="cin">
       <div class="offline" id="offline" style="display:none !important">
@@ -1158,7 +1162,7 @@ function renderBook(){
   const entries=Object.values(state.bank).sort((a,b)=>(b.day||0)-(a.day||0)||String(a.title).localeCompare(b.title));
   const q=bookFilter.toLowerCase();
   const shown=entries.filter(e=>!q||[e.title,e.rule,e.explain,e.example,e.trap].join(" ").toLowerCase().includes(q));
-  let h=`<h2 class="sec">Notebook</h2><p class="lead">Everything the Director has taught you, as cards to reread before a review. Only the Director writes here.</p>`;
+  let h=`<h2 class="sec">Director's Review Deck &amp; Notes</h2><p class="lead">Core principles taught by the Director, scheduled by the SM-2 spaced repetition algorithm for active recall. Use the search bar below or review due cards.</p>`;
   if(drillQ.length) { $("bookwrap").innerHTML=h+drillHtml(); wireDrill(); return; }
   if(entries.length){ const f=srForecast();
     h+=`<div class="rt ${f.now?"due":""}"><div><b>${f.now?`${f.now} card${f.now>1?"s":""} due for review`:"Nothing due right now"}</b><br><small>Tomorrow ${f.tomorrow} · within 7 days ${f.week} · about 20 seconds a card</small></div></div>
@@ -1181,10 +1185,27 @@ function renderBook(){
       <p style="color:var(--muted);font-size:.78rem;margin-top:8px">${(()=>{ const s=srOf(e.id); return s.reps?`Next review ${s.due} · interval ${s.interval} days${s.lapses?` · forgotten ${s.lapses}×`:""}`:"New: first review due now"; })()}</p>
       <div class="btnrow"><button class="btn" data-rt="${esc(e.id)}" data-tt="${esc(e.title)}">Retest me on this</button></div></div></details>`;
   });
+  h+=`<div class="card" style="margin-top:20px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <b style="font-size:.9rem;color:var(--ink)">📝 Your Site Notes &amp; Scratchpad</b>
+      <span id="pnotes-status" style="font-size:.74rem;color:var(--ok);opacity:0;transition:opacity .3s">Saved ✓</span>
+    </div>
+    <p style="font-size:.78rem;color:var(--muted);margin:0 0 8px">Keep your real hospital site notes, vendor lead times, contractor disputes, and thoughts here. Persisted automatically in your local storage.</p>
+    <textarea id="personal-notes" rows="4" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:8px 10px;font-family:inherit;font-size:.82rem;resize:vertical" placeholder="Jot down notes from today's site walk, hospital equipment delivery status, BOQ discrepancies, or topics to ask the Director...">${esc(state.personalNotes || "")}</textarea>
+  </div>`;
   $("bookwrap").innerHTML=h;
   $("drillbtn")&&($("drillbtn").onclick=()=>startDrill(false)); $("drillall")&&($("drillall").onclick=()=>startDrill(true));
   const bq=$("bq"); bq.oninput=()=>{ bookFilter=bq.value; const pos=bq.selectionStart; renderBook(); const n=$("bq"); n.focus(); n.setSelectionRange(pos,pos); };
   $("bookwrap").querySelectorAll("[data-rt]").forEach(b=>b.onclick=()=>prefill(`[RETEST] Cold retest me on notebook card "${b.dataset.tt}" (${b.dataset.rt}). New scenario, no hints.`));
+  const pn = $("personal-notes");
+  if(pn){
+    pn.oninput = () => {
+      state.personalNotes = pn.value;
+      save();
+      const st = $("pnotes-status");
+      if(st){ st.style.opacity = "1"; setTimeout(() => { st.style.opacity = "0"; }, 1500); }
+    };
+  }
 }
 
 // ---------- hospital weekly deliverables studio & visual sandboxes ----------
@@ -4196,6 +4217,21 @@ function renderProg(){
    <div><b>${cnt}/${total}</b><span>Checklist items competent or above</span></div>
    <div><b style="color:${gap==null?'inherit':gap>10?'var(--crit)':gap<-10?'var(--warn)':'var(--ok)'}">${gap==null?"—":(gap>0?"+":"")+gap}</b><span>${gap==null?"Calibration after 3 scored answers":gap>10?"Overconfident: your confidence runs above your scores":gap<-10?"Underconfident":"Well calibrated"}</span></div>
    <div><b>${Object.keys(state.bank).length}</b><span>Notebook cards</span></div></div>`;
+  h+=`<div class="card" style="padding:14px;margin:14px 0;border:1px solid var(--barSoft,#E8EEFA);background:var(--bg,#f8f9fa);border-radius:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <b style="font-size:1rem;color:var(--bar,#2F5BD3)">🛠️ Interactive Sandboxes &amp; Simulators</b>
+      <span style="font-size:.76rem;background:var(--barSoft);color:var(--bar);padding:2px 8px;border-radius:10px;font-weight:700">Hands-on Tools</span>
+    </div>
+    <p style="font-size:.84rem;color:var(--muted);margin:0 0 10px">Practical visual sandboxes for site audits, schedule controls, drawing measurements, and executive defense. Available anytime:</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
+      <button class="btn" id="prog-btn-hotseat" style="padding:8px 10px;font-size:.8rem;font-weight:700;border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A);background:var(--surface,#fff);text-align:left">🎙️ Hot Seat (60s Viva)</button>
+      <button class="btn" id="prog-btn-mb" style="padding:8px 10px;font-size:.8rem;font-weight:700;border:1px solid var(--ok,#1F8A4C);color:var(--ok,#1F8A4C);background:var(--surface,#fff);text-align:left">📑 Drawing &amp; MB Audit</button>
+      <button class="btn" id="prog-btn-scurve" style="padding:8px 10px;font-size:.8rem;font-weight:700;border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3);background:var(--surface,#fff);text-align:left">📈 S-Curve Banana</button>
+      <button class="btn" id="prog-btn-lps" style="padding:8px 10px;font-size:.8rem;font-weight:700;border:1px solid var(--line);background:var(--surface,#fff);text-align:left">📋 3-Wk Look-Ahead</button>
+      <button class="btn" id="prog-btn-scale" style="padding:8px 10px;font-size:.8rem;font-weight:700;border:1px solid var(--line);background:var(--surface,#fff);text-align:left">👁️ Room Scale Tool</button>
+      <button class="btn" id="prog-btn-dlv" style="padding:8px 10px;font-size:.8rem;font-weight:700;border:1px solid var(--line);background:var(--surface,#fff);text-align:left">📝 Deliverable Studio</button>
+    </div>
+  </div>`;
   h+=`<h2 class="sec">Final rating weights</h2><table class="wt">${Object.entries(WEIGHTS).map(([k,v])=>{ const s=state.domain_scores[k]; return `<tr><td>${esc(k)} <small style="color:var(--muted)">${v}%</small><div class="m"><i style="width:${s||0}%"></i></div></td><td>${s==null?"—":s}</td></tr>`; }).join("")}</table>`;
 
   // Study Activity Calendar Heatmap (90 days)
@@ -4250,6 +4286,12 @@ function renderProg(){
   h+=`<h2 class="sec">Parking lot</h2>`+(state.parking.length?state.parking.map(p=>`<div class="rt"><div>${esc(p)}</div></div>`).join(""):`<div class="empty">Empty.</div>`);
   h+=`<h2 class="sec">Backup</h2><div class="btnrow" style="margin-top:0"><button class="btn" id="exp">Download backup</button><button class="btn" id="pack">Handoff pack for another app</button><label class="btn" style="cursor:pointer">Restore backup<input id="restore" type="file" accept=".json,application/json" style="display:none"></label><button class="btn danger" id="rst">Reset programme</button></div>`;
   $("progwrap").innerHTML=h;
+  $("prog-btn-hotseat")&&($("prog-btn-hotseat").onclick=()=>openHotSeatSimulator());
+  $("prog-btn-mb")&&($("prog-btn-mb").onclick=()=>openMBAuditSandbox());
+  $("prog-btn-scurve")&&($("prog-btn-scurve").onclick=()=>openSCurveSandbox());
+  $("prog-btn-lps")&&($("prog-btn-lps").onclick=()=>openLPSBoard());
+  $("prog-btn-scale")&&($("prog-btn-scale").onclick=()=>openScaleVisualizer());
+  $("prog-btn-dlv")&&($("prog-btn-dlv").onclick=()=>openDeliverableStudio(1));
   $("progwrap").querySelectorAll("[data-dlv]").forEach(b=>b.onclick=()=>openDeliverableStudio(+b.dataset.dlv));
   $("progwrap").querySelectorAll("[data-rt]").forEach(b=>b.onclick=()=>prefill(`[RETEST] Cold retest me on: ${state.bank[b.dataset.rt]?.title||b.dataset.rt}. New scenario, no hints.`));
   $("progwrap").querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{
@@ -4794,7 +4836,19 @@ function renderPractice(){
   if(pr.view==="lesson") return renderLesson(w);
   if(pr.view==="drill") return renderDrill(w);
   const log=state.practice||[], last7=log.filter(x=>Date.now()-x.t<7*864e5);
-  let h=`<h2 class="sec">Practice without Claude</h2>${!DRILLS.some(d=>practiceUnlocked(0,d.id))?`<div class="note">Nothing to practise yet. Drills open as you pass days in <b>Learn</b> (the first ones after Day 3–4, measurement after M2). Do today's day first.</div>`:""}<p class="lead">These lessons and drills run entirely in the app, so they work when your Claude limit is reached. Drills are marked by exact calculation and show the full working. Results go to the Director as objective evidence, but only the Director can move your checklist.</p>`;
+  let h=`<h2 class="sec">Practice without Claude</h2>${!DRILLS.some(d=>practiceUnlocked(0,d.id))?`<div class="note" style="border-left:4px solid var(--bar,#2F5BD3);background:var(--barSoft,#E8EEFA);color:var(--ink);padding:10px 14px;border-radius:8px;margin-bottom:12px">
+  <b style="font-size:.88rem">🎯 Progressive Mastery Gating: Drills Unlock by Day</b>
+  <p style="margin:4px 0 6px;font-size:.82rem">Drills unlock automatically as you pass their teaching units in <b>Learn</b>, ensuring you only practice what has already been taught:</p>
+  <div style="font-size:.78rem;color:var(--muted);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:5px;margin-top:6px">
+    <span>🔒 <b>Day 3–4:</b> CPM Forward/Backward &amp; Float</span>
+    <span>🔒 <b>Day 10:</b> Duration from Quantities</span>
+    <span>🔒 <b>Unit M2:</b> Rebar Weight (d²/162)</span>
+    <span>🔒 <b>Unit M3:</b> IS 1200 Plaster Deductions</span>
+    <span>🔒 <b>Unit M5:</b> Contractor RA Bill Audit</span>
+    <span>🔒 <b>Day 12:</b> Earned Value (EVM) Metrics</span>
+  </div>
+  <p style="margin:8px 0 0;font-size:.78rem;color:var(--bar);font-weight:600">Tip: You can use the Interactive Visual Sandboxes below anytime!</p>
+</div>`:``}<p class="lead">These lessons and drills run entirely in the app, so they work when your Claude limit is reached. Drills are marked by exact calculation and show the full working. Results go to the Director as objective evidence, but only the Director can move your checklist.</p>`;
   const gdone=log.filter(x=>/^guided/.test(x.type)), gbest=l=>{ const xs=gdone.filter(x=>x.type==="guided"+l); return xs.length?Math.max(...xs.map(x=>x.score)):null; };
   h+=`<div class="drill" style="border-color:var(--bar);border-width:2px"><div class="q">Start here: CPM, step by step</div>
     <p>Watch the schedule get built on a ruler, one move at a time. Then do it yourself: one number per step, an instant check, and a hint that names the exact mistake.</p>
@@ -6312,13 +6366,17 @@ mark: 0   1   2   3   4   5
        d1  d2  d3  d4  d5
 \`\`\`
 
-- **Mark 0** = the start line: Monday morning, before anyone has worked.
-- **Day 1** is the gap between mark 0 and mark 1.
-- **Mark 3** = the **end** of working day 3.
+- **Mark 0** = the start line: Monday 8:00 AM, before anyone has worked.
+- **Day 1** is the working day between mark 0 and mark 1.
+- **Mark 1** = Monday 5:00 PM (the **end** of Day 1, which is also the start of Day 2).
+- **Mark 3** = Wednesday 5:00 PM (the **end** of working day 3).
 
 So a 3-day activity starting at mark 0 **ends at mark 3**. The next activity starts at mark 3, which is physically the **start of day 4**.
 
-Rule: **end mark = start mark + duration.** The crew works on the days *between* the marks.`},
+💡 **Why planners calculate with Marks instead of Dates:**
+With marks, CPM arithmetic is pure addition:
+**End mark = start mark + duration** (0 + 3 = Mark 3).
+If people use dates ("starts on 1st, lasts 3 days"), they mistakenly calculate 1 + 3 = 4th, when the work is actually on the 1st, 2nd, and 3rd! Marks eliminate this off-by-one trap completely.`},
   {k:"ruler",acts:RISER,t:`**See it.** B starts at mark 3 and lasts 5 days, so it ends at mark 8.
 
 The crew is on site on **days 4, 5, 6, 7 and 8**: that's 5 days. ✓
@@ -6684,6 +6742,9 @@ function renderLearn(){
     <p style="margin:0 0 10px;font-size:.84rem;color:var(--muted);line-height:1.45">
       How quantities are measured on site and how bills are checked: MB and joint measurement, civil, finishes, MEP and external works, RA bills, rate analysis &amp; reconciliation. <b>Do one whenever you have a spare 25 minutes; it doesn't hold up the main days.</b>
     </p>
+    <div style="background:var(--barSoft,#E8EEFA);border-left:3px solid var(--bar,#2F5BD3);padding:6px 10px;border-radius:6px;font-size:.78rem;color:var(--ink);margin-bottom:10px">
+      <b>⚡ Parallel Track Note:</b> Runs alongside your 90-day schedule. Completing M units builds site measurement competence without moving the main Day clock (your schedule days advance when you complete Day units).
+    </div>
     ${mOpen && nextM ? `
       <div style="background:var(--bg,#f8f9fa);padding:8px 12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
         <div>
@@ -6706,6 +6767,9 @@ function renderLearn(){
       <button class="btn" id="mcard-btn-hosp" style="font-size:.76rem;padding:3px 8px;color:var(--bar,#2F5BD3);font-weight:700">🏥 Hospital Playbook</button>
       <button class="btn" id="mcard-btn-tia" style="font-size:.76rem;padding:3px 8px;color:var(--ok,#1F8A4C);font-weight:700">⏱️ SCL TIA</button>
       <button class="btn" id="mcard-btn-formulas" style="font-size:.76rem;padding:3px 8px">📐 Formulas</button>
+      <button class="btn" id="btn-learn-hotseat" style="font-size:.76rem;padding:3px 8px;color:var(--crit,#D9383A);font-weight:700">🎙️ Hot Seat</button>
+      <button class="btn" id="btn-learn-scurve" style="font-size:.76rem;padding:3px 8px">📈 S-Curve</button>
+      <button class="btn" id="btn-learn-lps" style="font-size:.76rem;padding:3px 8px">📋 Look-Ahead</button>
     </div>
   </div>`;
 
@@ -6741,6 +6805,8 @@ function renderLearn(){
   $("mcard-btn-tia")&&($("mcard-btn-tia").onclick=()=>openTIASandbox());
   $("mcard-btn-formulas")&&($("mcard-btn-formulas").onclick=()=>openFormulaDrawer());
   $("btn-learn-hotseat")&&($("btn-learn-hotseat").onclick=()=>openHotSeatSimulator());
+  $("btn-learn-scurve")&&($("btn-learn-scurve").onclick=()=>openSCurveSandbox());
+  $("btn-learn-lps")&&($("btn-learn-lps").onclick=()=>openLPSBoard());
   $("mx-start")&&($("mx-start").onclick=startMixed);
 }
 function renderUnit(w){
@@ -6863,7 +6929,7 @@ function renderUnitDone(body,u,s,gate){
   const nx=u.track?UNITS.filter(x=>x.track===u.track)[UNITS.filter(x=>x.track===u.track).indexOf(u)+1]:UNITS.filter(x=>!x.track)[UNITS.filter(x=>!x.track).indexOf(u)+1];
   body.innerHTML=ok?`<div class="drill" style="border-color:var(--ok);border-width:2px"><div class="q">✓ ${u.track?u.id:"Day "+u.day} complete</div>
      ${u.card?`<p><b>Your card</b> (now in Notes; it comes back for review in 2 days, then further apart):</p><div class="note"><b>${esc(u.card.title)}</b><br>${esc(u.card.rule)}</div>`:""}
-     <p style="color:var(--muted);font-size:.86rem">${u.track?(nx?`Next in the measurement track: <b>${nx.id}: ${esc(nx.title)}</b>. Carry on with your main day too.`:"Measurement track complete."):nx?`Tomorrow: <b>Day ${nx.day}: ${esc(nx.title)}</b>. One unit a day works better than three in one sitting.`:"Block finished."}</p></div>`
+     <p style="color:var(--muted);font-size:.86rem">${u.track?(nx?`Next in the measurement track: <b>${nx.id}: ${esc(nx.title)}</b>. Carry on with your main day too (main schedule track remains on Day ${state.day}).`:"Measurement track complete."):nx?`Tomorrow: <b>Day ${nx.day}: ${esc(nx.title)}</b>. One unit a day works better than three in one sitting.`:"Block finished."}</p></div>`
    :`<div class="note">Pass the check first. Go <b>Back</b> to it.</div>`;
   $("u-next").textContent="Back to all units"; $("u-next").disabled=false; $("u-next").onclick=()=>{ lv={unit:null}; renderLearn(); $("learnwrap").parentElement.scrollTop=0; };
 }
