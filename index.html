@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=33"></script>
+<script src="shim.js?v=34"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -11480,6 +11480,974 @@ const APPLY6 = {
 };
 Object.assign(APPLY, APPLY6);
 UNITS6.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS7 = [
+  {
+    "id": "U58",
+    "day": 58,
+    "title": "Day 58: The Anatomy of a Winning Claim: Cause, Effect, Entitlement & Substantiation (CEES)",
+    "mins": 25,
+    "card": {
+      "id": "c-cees-framework",
+      "title": "CEES Claim Structure: Cause, Effect, Entitlement & Substantiation",
+      "rule": "Every legally enforceable construction claim must satisfy all 4 CEES pillars: 1) Cause (factual event backed by contemporary site logs/RFIs); 2) Effect (demonstrated critical path delay via CPM fragnet snapshot or measured disruption); 3) Entitlement (exact contractual clause such as FIDIC 8.4/CPWD 5 or legal statute); 4) Substantiation (audited payroll, invoices, plant logs, zero arbitrary estimates). Missing any single pillar invalidates the claim.",
+      "example": "Submitting a 200-page narrative complaining about late drawing issues (Cause) without a CPM fragnet showing critical path delay (Effect) and without audited payroll vouchers (Substantiation) leads to instant rejection.",
+      "trap": "Conflating Cause with Effect—assuming that because an Employer delayed an RFI by 30 days, completion was automatically delayed by 30 days without testing schedule float."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹550 Crore hospital project in Hyderabad, the general contractor submitted a massive **₹14.2 Crore \"Global Claim\"** demanding a 90-day Extension of Time (EOT) and direct compensation.\n\nThe claim dossier was over 350 pages long, filled with photographs of wet basements, angry letters, and a list of 142 unanswered Requests for Information (RFIs).\n\nThe PMC Project Director rejected the claim in its entirety within 5 days.\n\nWhy? The claim lacked the fundamental **CEES structure**. It proved that RFIs were delayed (*Cause*), but it completely failed to show whether those RFIs were on the critical path at the time they occurred (*Effect*). It cited no specific contract clauses (*Entitlement*), and calculated the ₹14.2 Crores by taking 15% of the total contract value as an arbitrary lump-sum (*Substantiation*).\n\nIn arbitration, arbitral tribunals and courts routinely dismiss unstructured global claims as unproven legal speculation."
+      },
+      {
+        "k": "read",
+        "t": "**The 4 Pillars of a Legally Unassailable Claim (CEES Framework):**\n\n1. **Cause (The Factual Event):**\n   - What specifically happened, where, and when?\n   - Must be proved exclusively through **contemporaneous site records**: Daily Progress Reports (DPRs), RFI submission logs, drawing transmittals, weather logs, inspection request rejections.\n\n2. **Effect (The Schedule / Cost Impact):**\n   - How did the Cause alter the critical path or labor productivity?\n   - *For Time:* Proven strictly through a **Time-Impact Analysis (TIA) CPM Fragnet** inserted into the approved native schedule snapshot immediately preceding the event. Demonstrating that total float was consumed and the contract completion milestone shifted.\n   - *For Disruption:* Proven via the **Measured Mile** productivity comparison.\n\n3. **Entitlement (The Contractual / Legal Right):**\n   - Under what contract clause or statutory provision does relief lie?\n   - Examples: FIDIC Red Book Sub-Clause 8.4(a) (Variations), 8.4(c) (Exceptionally adverse climatic conditions), or Indian Contract Act Section 54/67 (Employer non-performance).\n\n4. **Substantiation (The Audited Quantum):**\n   - Zero theoretical assumptions or lump-sum percentages.\n   - Every rupee claimed must tie directly to **audited accounting ledgers, bank payroll statements, equipment logbooks, and supplier invoices** incurred strictly within the prolonged period."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What are the four mandatory pillars required to substantiate a construction claim under international arbitration standards and SCL Protocol?",
+            "o": [
+              [
+                "Cause, Effect, Entitlement, and Substantiation (CEES)",
+                true,
+                "A successful claim requires proving the factual Cause, demonstrating the critical path Effect via CPM fragnet, establishing contractual Entitlement under specific clauses, and providing audited financial Substantiation."
+              ],
+              [
+                "Cost, Escalation, Engineer sympathy, and Schedule buffers",
+                false,
+                "Engineer sympathy and schedule buffers are not legal grounds for claim substantiation."
+              ],
+              [
+                "Correspondence volume, Photo evidence, Contractor frustration, and Overhead percentages",
+                false,
+                "Volume of letters and emotional assertions do not substitute for rigorous cause-and-effect proof."
+              ],
+              [
+                "Notice of dispute, Arbitrator selection, Bank guarantee freeze, and Media press releases",
+                false,
+                "These are dispute escalation tactics, not claim substantiation fundamentals."
+              ]
+            ]
+          },
+          {
+            "q": "Why are 'Global Claims' (lumping multiple delay events into a single lump-sum time and cost demand) routinely rejected by courts and arbitral tribunals?",
+            "o": [
+              [
+                "Because they fail to establish a direct causal nexus between each individual employer event and the specific resulting delay or financial loss",
+                true,
+                "Tribunals reject global claims because without discrete cause-and-effect fragnets, it is impossible to separate employer delays from contractor culpable delays or non-compensable float consumption."
+              ],
+              [
+                "Because global claims are only permitted in residential villa construction, not multi-specialty hospitals",
+                false,
+                "The legal evidentiary standard applies equally across all commercial, institutional, and infrastructure projects."
+              ],
+              [
+                "Because P6 software automatically invalidates any schedule with more than one delay event",
+                false,
+                "P6 can model hundreds of events; the failure is the claimant's lack of legal causation and evidence."
+              ],
+              [
+                "Because tribunals require all claims to be handwritten in blue ink",
+                false,
+                "Procedural formatting has nothing to do with the fundamental legal doctrine of causation."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never submit or accept a claim structured as a generic narrative essay. Always enforce the CEES Matrix: a tabular schedule where every row maps a single Cause directly to its CPM Fragnet Effect, Contract Clause Entitlement, and Audited Voucher Substantiation. If one column is blank, that claim item is legally dead."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U59",
+    "day": 59,
+    "title": "Day 59: Prolongation Cost Auditing: Field Overheads, Head Office Overheads & Plant Idle Rates",
+    "mins": 25,
+    "card": {
+      "id": "c-prolongation-auditing",
+      "title": "Prolongation Auditing: Site prelims, HOOH lost opportunity & plant idle rates",
+      "rule": "Prolongation costs compensate for time-related site overheads (staff salaries, temporary utilities, site camp) incurred during the compensable delay window, proven by audited accounting ledgers. Head Office Overheads (HOOH) under Hudson/Emden/Eichleay formulas require proof under Indian Contract Act Section 73 that the contractor had to decline other profitable tenders due to tied-up capacity. Idled equipment is compensable only at standby/depreciation rates (approx 40%–50% of market hire), never full operating hire or fuel.",
+      "example": "Claiming full diesel fuel costs and operator overtime for a tower crane that was standing idle during a monsoon stop order was struck out during forensic audit.",
+      "trap": "Applying a blanket percentage markup (e.g. 15%) for site overheads instead of proving actual time-related expenses incurred on site during the prolongation window."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A major infrastructure contractor was granted a valid 60-day Extension of Time (EOT) on an oncology hospital project due to late client radiation oncology design changes.\n\nThe contractor immediately submitted a **₹3.8 Crore Prolongation Cost Claim** consisting of:\n1. Site preliminaries at ₹15 Lakhs/month.\n2. Head Office Overheads calculated using the **Hudson Formula** at 10% of contract value.\n3. Full daily commercial hire charges for two 10-tonne tower cranes, three excavators, and five 500-kVA diesel generators.\n\nThe PMC forensic audit slashed the claim from ₹3.8 Crores to **₹1.15 Crores**.\n\nWhy? First, the contractor included diesel fuel and generator lubrication costs in the equipment claim—even though the generators were shut down and consumed zero fuel during the stoppage! Second, the contractor claimed full commercial equipment hire, whereas law permits only **standby capital ownership depreciation (40–50% of hire)**. Third, the HOOH claim under Hudson's formula was struck down because the contractor could not prove they had turned away other jobs due to tied-up key personnel."
+      },
+      {
+        "k": "read",
+        "t": "**Forensic Rules for Prolongation Cost Auditing:**\n\n1. **Direct Time-Related Site Overheads (Preliminaries):**\n   - *Allowable:* Project manager and site engineers' salaries, safety staff, security guards, temporary electricity and water, site office internet, and camp lease.\n   - *Forensic Test:* Must be **time-related, not volume-related**. Must be supported by actual salary slips, EPF records, bank debit advices, and utility bills strictly covering the extended delay window.\n\n2. **Head Office Overheads (HOOH) & The Indian Legal Standard:**\n   - Formulaic calculations (**Hudson, Emden, Eichleay**) multiply contract sum by an assumed head office percentage.\n   - *Indian Supreme Court Precedent (McDermott International v. Burn Standard & Bharat Coking Coal v. Annapurna Construction):* A formula is not an automatic entitlement! Under **Section 73 of the Indian Contract Act**, the contractor must prove that: (1) Key corporate resources were tied up, and (2) Had they been released on time, the contractor would have secured other profitable work in the market (*Lost Opportunity Rule*).\n\n3. **Idled Plant & Equipment Recovery:**\n   - *Operating vs Standby:* Equipment that is stopped incurs no fuel, oil, wear-and-tear, or operator overtime.\n   - *Contractor-Owned Equipment:* Compensable only at **standby rate = depreciation + finance/interest charges** (typically $40\\%\\text{ to } 50\\%$ of commercial hire rate).\n   - *Hired Equipment:* Actual invoice hire costs paid to third parties, subject to the contractor's legal **duty to mitigate** (e.g. off-hiring machines if delay exceeds 30 days)."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under Section 73 of the Indian Contract Act and Supreme Court precedents, what evidentiary burden must a contractor satisfy to recover Head Office Overheads (HOOH)?",
+            "o": [
+              [
+                "The contractor must prove that head office resources were actually tied up and that it had to decline other profitable business opportunities in the market as a direct result",
+                true,
+                "Under Indian law (McDermott International & Bharat Coking Coal), formulaic HOOH claims (Hudson/Emden) require actual evidence of lost business opportunity due to tied-up capacity."
+              ],
+              [
+                "The contractor merely has to write the Hudson formula on letterhead and apply an arbitrary 15% markup",
+                false,
+                "Formulaic calculations without proof of actual business loss or tied-up capacity are rejected by Indian arbitral tribunals."
+              ],
+              [
+                "The contractor must prove that the Employer made a net corporate profit during the delay period",
+                false,
+                "The employer's profitability is irrelevant; what matters is the contractor's demonstrated lost opportunity."
+              ],
+              [
+                "The contractor must present income tax returns of the Employer's board of directors",
+                false,
+                "Irrelevant to contractor overhead recovery."
+              ]
+            ]
+          },
+          {
+            "q": "When calculating compensable delay costs for contractor-owned equipment idling on site due to an employer-caused delay, what rate structure is legally allowable?",
+            "o": [
+              [
+                "Standby / depreciation rate (typically 40% to 50% of commercial hire) reflecting capital depreciation and financing costs, with zero fuel or operating consumables",
+                true,
+                "Idle plant incurs no fuel, lubrication, or operating wear-and-tear. Law allows only the capital cost of ownership (depreciation and financing), roughly 40-50% of full operating hire."
+              ],
+              [
+                "Full commercial hire rate plus 200% overtime bonus for machinery fatigue",
+                false,
+                "Machines do not experience human fatigue; charging full operating hire for idle plant constitutes unjust enrichment."
+              ],
+              [
+                "The replacement cost of purchasing brand-new replacement machinery from the manufacturer",
+                false,
+                "Compensating full machine purchase cost for a temporary delay is an absurd commercial overreach."
+              ],
+              [
+                "Zero compensation under all circumstances because machinery cannot suffer legal injury",
+                false,
+                "Legitimate capital financing and depreciation costs during employer-caused suspension are compensable under contract law."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "When auditing prolongation claims, always request the native general ledger accounts, bank statements, and equipment fuel logbooks. Strip out all fuel, oil, and operator overtime for standing equipment, and demand proof of lost market opportunity before entertaining any formulaic head office overhead percentage."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U60",
+    "day": 60,
+    "title": "Day 60: Disruption & Loss of Productivity Quantification: The Measured Mile vs Industry Norms",
+    "mins": 25,
+    "card": {
+      "id": "c-measured-mile",
+      "title": "Disruption Claims: The Measured Mile productivity ratio vs industry factors",
+      "rule": "Delay is late completion of an activity; Disruption is reduced productivity and efficiency of labor/equipment caused by employer interference (out-of-sequence work, trade stacking, design changes). The 'Measured Mile' is the gold standard calculation: comparing productivity in an unimpacted baseline period (e.g. 4.2 man-hours/m² drywall) against the disrupted period (6.8 man-hours/m²). Industry factor studies (MCAA, NECA) are acceptable only as secondary fallbacks when no unimpacted mile exists.",
+      "example": "Flooding the 3rd-floor OT corridor with 4 competing trades simultaneously caused a 38% productivity loss, proven by comparing daily m² installed per worker against the uninterrupted 5th-floor ward.",
+      "trap": "Confusing a delay claim with a disruption claim. An activity can be heavily disrupted and cost double the labor without affecting the project critical path or extending contract completion."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a hospital interior fit-out project in Bangalore, the electrical and plumbing contractor finished all works exactly on the contract completion date. There was zero project delay.\n\nYet, the contractor suffered a massive financial loss of **₹2.4 Crores** in labor overruns and filed a claim for **Disruption & Loss of Labor Productivity**.\n\nThe developer rejected the claim: *\"You finished on time! Since there is no delay to the critical path, you have no claim!\"*\n\nThe developer was legally wrong. The contractor had been forced to work in an overcrowded, stacked environment: the client revised the ceiling ductwork 6 times, forcing electricians to stop, dismantle conduits, wait for HVAC duct modifications, and work around painters and flooring contractors in cramped corridors.\n\nBecause the contractor maintained meticulous daily man-hour allocation records, they successfully proved that installing $100\\text{ meters}$ of cable conduit took **18 man-hours** during the disrupted weeks, compared to only **11 man-hours** during an unimpacted baseline month on Level 4. The arbitral tribunal awarded the full ₹2.4 Crores using the **Measured Mile** calculation."
+      },
+      {
+        "k": "read",
+        "t": "**Delay vs Disruption & The Measured Mile Mechanics:**\n\n1. **The Critical Legal Distinction:**\n   - *Delay:* An event that extends the project completion date or delays an activity milestone (measured in days/weeks on a CPM network).\n   - *Disruption:* An event that disrupts the contractor's planned manner of working, causing labor or equipment productivity to plunge (measured in unproductive man-hours and excess labor cost).\n   - *Key Rule:* **A project can be disrupted without being delayed** (contractor absorbs disruption by throwing extra labor at non-critical activities), and **delayed without being disrupted** (a simple site shutdown).\n\n2. **The Measured Mile Calculation (The Gold Standard):**\n   - SCL Delay Protocol and international courts recognize the **Measured Mile** as the most credible method for quantifying disruption.\n   - *Method:* Identify a period of work or a section of the project that was **unimpacted** by employer changes (the 'Measured Mile'). Measure the actual productivity achieved:\n     $\\text{Baseline Productivity} = \\frac{\\text{Actual Man-Hours Expended}}{\\text{Units of Output Installed}}$\n   - Compare this to the productivity achieved during the **impacted period** for the identical work:\n     $\\text{Disruption Loss (Hours)} = \\text{Actual Impacted Hours} - (\\text{Impacted Output} \\times \\text{Baseline Productivity})$\n\n3. **Secondary Fallback: Industry Factored Studies:**\n   - If no unimpacted 'mile' exists on the project, tribunals accept recognized industry factor charts (**MCAA - Mechanical Contractors Association of America**, NECA, or US Army Corps of Engineers) for specific disruption causes: Overcrowding/Trade Stacking (10–30%), Dilution of Supervision (10–25%), Fatigue from excessive overtime (10–20%)."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the fundamental difference between a Delay claim and a Disruption claim in construction law?",
+            "o": [
+              [
+                "Delay concerns critical path time extension to project completion, whereas Disruption concerns reduced productivity and uneconomic working regardless of whether completion is extended",
+                true,
+                "Delay impacts time to milestone completion; Disruption impacts productivity and labor efficiency (excess man-hours to complete the same scope of work)."
+              ],
+              [
+                "Delay applies only to structural concrete, while Disruption applies only to painting and finishes",
+                false,
+                "Both delay and disruption apply across all civil, structural, MEP, and architectural packages."
+              ],
+              [
+                "Delay claims are legally valid, whereas disruption claims are strictly prohibited under Indian contract law",
+                false,
+                "Disruption claims are fully recognized under Section 73 of the Indian Contract Act as direct loss arising naturally from breach."
+              ],
+              [
+                "Delay is caused only by the contractor, while Disruption is caused only by the weather",
+                false,
+                "Delay and disruption can be caused by either party or neutral risk events."
+              ]
+            ]
+          },
+          {
+            "q": "How is the 'Measured Mile' methodology executed to calculate loss of labor productivity in an arbitration claim?",
+            "o": [
+              [
+                "By comparing the contractor's actual productivity rate during an unimpacted baseline period on the project against the actual productivity rate achieved during the disrupted period for identical work",
+                true,
+                "The Measured Mile compares identical work on the same site between an unimpacted period (the baseline mile) and the impacted period, eliminating theoretical estimation disputes."
+              ],
+              [
+                "By measuring the physical distance walked by laborers from the site gate to the work front using GPS trackers",
+                false,
+                "The 'Mile' is a legal metaphor for an unimpacted representative sample of work, not a physical travel distance."
+              ],
+              [
+                "By taking the average labor rate in the United States and applying it to an Indian site without adjustment",
+                false,
+                "Arbitration requires project-specific contemporaneous evidence; foreign generic averages are rejected."
+              ],
+              [
+                "By multiplying the total project labor payroll by the inflation index published by the Reserve Bank of India",
+                false,
+                "Inflation indices measure price escalation, not physical labor productivity or inefficiency."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The biggest barrier to winning or defending a disruption claim is lack of cost-coding in daily site muster rolls. Planning managers must ensure daily reports record not just total headcount, but specific man-hours expended per activity (e.g. 'Drywall framing: 8 men, 64 hours, 42 m²'). That simple discipline unlocks the Measured Mile."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U61",
+    "day": 61,
+    "title": "Day 61: Constructive Acceleration & Mitigation Costs: Notice, Mitigation & Premium Audits",
+    "mins": 25,
+    "card": {
+      "id": "c-constructive-acceleration",
+      "title": "Constructive Acceleration: The 5-element test & acceleration premium recovery",
+      "rule": "Constructive acceleration occurs when a contractor is legally entitled to an EOT, gives timely notice, but the Employer/Engineer fails or refuses to grant the EOT and wrongfully insists on completion by the original date, compelling the contractor to accelerate with extra shifts and overtime under threat of Liquidated Damages. To recover acceleration costs, the contractor must satisfy all 5 legal tests: excusable delay, timely EOT request, employer failure to grant EOT, employer directive to maintain schedule, and actual incurrence of acceleration expenses.",
+      "example": "After an employer foundation revision delayed the critical path by 45 days, the PMC threatened LDs instead of granting EOT. The contractor deployed double night shifts and recovered ₹2.4 Cr in acceleration premiums.",
+      "trap": "Accelerating voluntarily without issuing a formal Notice of Constructive Acceleration reserving rights to recover overtime and efficiency losses."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹700 Crore hospital project in Mumbai, the client delayed the delivery of radiation oncology structural design revisions by 50 days, pushing the critical path out by 50 calendar days.\n\nThe contractor submitted a compliant FIDIC Sub-Clause 20.1 Notice of Claim and requested a 50-day EOT.\n\nThe Employer's CEO replied angrily: *\"EOT is rejected. The hospital must open on November 1st as scheduled. If you fail to achieve the completion milestone, we will deduct maximum Liquidated Damages of 10% (₹70 Crores) from your next bill!\"*\n\nFacing catastrophic LD deductions, the contractor had no choice: they mobilized two additional night shifts, deployed 140 extra workers, and paid premium overtime to maintain the original November 1st date. The hospital opened on time.\n\nThe contractor then billed the Employer **₹3.6 Crores for Constructive Acceleration Costs**. The Employer refused to pay, arguing they never issued a formal \"Acceleration Instruction\" under the contract. In arbitration, the tribunal ruled completely in favor of the contractor, awarding the full ₹3.6 Crores plus 12% interest."
+      },
+      {
+        "k": "read",
+        "t": "**The 5 Mandatory Legal Elements of Constructive Acceleration:**\n\n1. **Element 1: Excusable Delay:**\n   - The contractor must have experienced an excusable delay that legitimately entitled them to an Extension of Time (EOT) under the contract.\n\n2. **Element 2: Timely Notice & Request for EOT:**\n   - The contractor complied with contractual notice requirements (e.g. FIDIC 28-day notice) and formally requested an EOT with proper substantiation.\n\n3. **Element 3: Employer Refusal / Failure to Grant EOT:**\n   - The Employer or Engineer wrongfully refused to grant the EOT, or failed to determine it within a reasonable time, leaving the completion date unextended.\n\n4. **Element 4: Express or Implied Coercive Directive to Maintain Schedule:**\n   - The Employer ordered the contractor to complete by the unextended date, threatened termination, or threatened Liquidated Damages if the original date was missed.\n\n5. **Element 5: Actual Acceleration & Incurred Costs:**\n   - The contractor actually accelerated work (demonstrated via increased headcount, overtime hours, second shifts, extra equipment) and incurred verified additional costs.\n\n**Compensable Acceleration Cost Components:**\n- Overtime wage premiums ($1.5\\times$ or $2\\times$ standard hourly rates).\n- Night shift lighting and logistics allowances.\n- Second-shift productivity inefficiency losses (night shifts are typically 15–25% less productive than day shifts).\n- Additional supervision and expedited freight charges for fast-tracked materials."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Which set of conditions must be proven for a contractor to succeed in a claim for Constructive Acceleration under international construction law?",
+            "o": [
+              [
+                "Excusable delay, timely EOT request, employer failure/refusal to grant EOT, employer directive or LD threat to maintain schedule, and actual incurred acceleration costs",
+                true,
+                "All 5 legal elements must be established: an excusable delay occurred, EOT was requested, employer refused or failed to act, employer insisted on original completion, and contractor actually accelerated and incurred costs."
+              ],
+              [
+                "Contractor voluntarily doubled manpower without informing the client and finished 3 months ahead of schedule",
+                false,
+                "Voluntary acceleration without employer delay or coercion is at the contractor's own cost and risk."
+              ],
+              [
+                "The project suffered a cyclone and the government declared a national emergency",
+                false,
+                "Force majeure provides time relief, but does not constitute constructive acceleration unless the employer refuses EOT and forces catch-up."
+              ],
+              [
+                "The Engineer signed an agreement promising a 20% bonus for early completion",
+                false,
+                "Early completion bonuses are governed by incentive clauses, not constructive acceleration doctrine."
+              ]
+            ]
+          },
+          {
+            "q": "In an audited constructive acceleration claim, which of the following cost items are legally compensable?",
+            "o": [
+              [
+                "Overtime wage premiums, additional shift supervisory allowances, night lighting logistics, and documented second-shift productivity inefficiencies",
+                true,
+                "Compensable acceleration costs include direct overtime wage premiums, extra supervision, logistics, and productivity losses resulting from accelerated working hours."
+              ],
+              [
+                "The entire base salary of all workers on site regardless of whether they worked overtime",
+                false,
+                "Base wages are already covered in the original contract price; only the incremental acceleration premium is recoverable."
+              ],
+              [
+                "A penalty surcharge of 50% to punish the client for being unreasonable",
+                false,
+                "Contract damages are compensatory to restore actual loss; punitive damages are strictly barred under Indian contract law."
+              ],
+              [
+                "Luxury international hotel accommodation for corporate directors during the acceleration period",
+                false,
+                "Only costs directly and reasonably incurred on site to accelerate the critical path are recoverable."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "If the Employer ignores your EOT claim and issues a letter demanding completion on the original date, NEVER accelerate quietly. Immediately issue a formal 'Notice of Constructive Acceleration': state clearly that you are deploying extra shifts under protest to mitigate threatened LDs, and reserve all rights to recover full acceleration costs."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U62",
+    "day": 62,
+    "title": "Day 62: Claims Defense & The Engineer's Determination: Rebuttal Techniques & Neutrality",
+    "mins": 25,
+    "card": {
+      "id": "c-engineers-determination",
+      "title": "Engineer's Determination: 4-step forensic rebuttal & Sub-Clause 3.7 neutrality",
+      "rule": "When determining claims under FIDIC Sub-Clause 3.7 / CPWD Clause 5, the Engineer must act professionally and neutrally. The 4-step forensic rebuttal procedure: 1) Condition Precedent Audit (time-barred if 28-day notice missed under 20.1); 2) Critical Path Test (did the event consume total float or extend completion?); 3) Concurrency Audit (offsetting overlapping contractor culpable delay); 4) Financial Audit (stripping unsupported vouchers, unallowable profit, and duplicated equipment rates). Issue a reasoned, signed determination within 42 days.",
+      "example": "Contractor claimed 60 days EOT for late client tile selection; the Engineer's Determination granted 0 days because the tile selection had 45 days of positive float and the structural core was 80 days behind schedule.",
+      "trap": "Acting as a defensive rubber stamp for the Employer, rejecting valid contractor claims out of hand and exposing the Employer to massive interest penalties and legal fees in arbitration."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** As the newly appointed PMC Project Director on a ₹650 Crore hospital project, you receive a formal claim from the main contractor demanding **75 calendar days EOT and ₹4.2 Crores** in prolongation costs for *\"Late Issuance of Modular OT Wall Layout Drawings\"*.\n\nThe Employer's Chairman calls you into his office: *\"Reject this claim completely! Tell them they get zero days and zero money!\"*\n\nIf you simply obey the Chairman and issue a one-sentence rejection letter, you commit professional suicide. Under **FIDIC Red Book Sub-Clause 3.7**, the Engineer has an express contractual duty to make a fair, reasoned determination based on contract terms and facts.\n\nIf you issue an unreasoned rejection, the contractor will immediately escalate to the Dispute Avoidance/Adjudication Board (DAAB) or Arbitration. The arbitral tribunal will find the Engineer biased, overturn the decision, grant the EOT, and penalize the Employer with 12% compound interest and full legal costs.\n\nInstead, you execute a professional **4-Step Forensic Determination Audit**, demonstrating that the OT drawing delay only impacted non-critical work with 35 days of available float, fairly awarding an EOT of only 8 days and ₹18 Lakhs in direct costs—protecting the Employer legally while upholding contractual integrity."
+      },
+      {
+        "k": "read",
+        "t": "**The 4-Step Forensic Claim Rebuttal Framework:**\n\n1. **Step 1: Condition Precedent & Time-Bar Audit:**\n   - Did the contractor issue the formal Notice of Claim within **28 calendar days** of becoming aware of the event (FIDIC Sub-Clause 20.1)?\n   - If the contractor missed the 28-day deadline, the Employer is legally discharged from liability (*Time-Bar Defense*).\n\n2. **Step 2: The Critical Path Impact Test:**\n   - Did the event actually affect the **critical path** of the project at the time the event occurred?\n   - If the delayed activity possessed positive Total Float, the delay consumed float without extending the project completion milestone. Entitlement to EOT is **zero** until total float is exhausted.\n\n3. **Step 3: Concurrency & Mitigation Audit:**\n   - Was the contractor concurrently delayed by its own culpable failures (e.g. lack of manpower on the structural frame, defective concrete rework)?\n   - Under SCL Core Principle 10, true concurrency grants time relief (EOT) to prevent unfair LDs, but **strictly zero prolongation money**.\n\n4. **Step 4: Financial Quantum Audit (Stripping Inadmissible Costs):**\n   - Strip out formulaic Head Office Overheads lacking proof of lost opportunity.\n   - Strip out fuel and operating charges for idle plant (allow only standby depreciation).\n   - Strip out profit markups (prolongation compensates cost, not lost profit under standard contracts).\n   - Verify every rupee against audited payroll ledgers and third-party invoices."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "When an Engineer audits an EOT claim under FIDIC Red Book, what is the first gate that must be audited before analyzing schedule fragnets?",
+            "o": [
+              [
+                "The Condition Precedent Audit: verifying whether the contractor submitted a compliant formal Notice of Claim within the mandatory 28-day contractual time-bar window",
+                true,
+                "Under FIDIC Sub-Clause 20.1/20.2, the 28-day notice is a condition precedent. If missed, the claim is legally barred at the threshold, rendering schedule analysis moot."
+              ],
+              [
+                "The contractor's bank credit score and financial balance sheet",
+                false,
+                "Credit rating is irrelevant to contractual claim entitlement."
+              ],
+              [
+                "The aesthetic quality and thickness of the claim binder",
+                false,
+                "Superficial packaging has zero bearing on contractual validity."
+              ],
+              [
+                "Whether the contractor has offered a discount on future construction packages",
+                false,
+                "Commercial negotiations are distinct from objective claim determinations."
+              ]
+            ]
+          },
+          {
+            "q": "Under FIDIC Sub-Clause 3.7, what must the Engineer do if the Employer and Contractor cannot reach an amicable agreement on a claim within the consultation period?",
+            "o": [
+              [
+                "Issue a fair, neutral, and reasoned determination within 42 days, taking due regard of all relevant circumstances and contract provisions",
+                true,
+                "If no amicable agreement is reached, the Engineer must make a fair determination within 42 days, providing detailed reasons and contractual justifications."
+              ],
+              [
+                "Automatically reject the claim and award maximum liquidated damages to the Employer",
+                false,
+                "Arbitrary rejection breaches the Engineer's duty of neutrality and invites legal defeat in arbitration."
+              ],
+              [
+                "Resign from the project to avoid making a controversial decision",
+                false,
+                "The Engineer is contractually bound to administer the contract and issue determinations."
+              ],
+              [
+                "Flip a coin in front of both parties to ensure complete statistical impartiality",
+                false,
+                "Determinations must be grounded in contract terms, law, and contemporary facts, not chance."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "A professional Engineer's Determination is not a denial letter—it is a legally bulletproof forensic defense document. Show your work: detail the 28-day notice check, present the CPM float calculation, audit the voucher ledger, and state your determination clearly within the 42-day statutory window."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U63",
+    "day": 63,
+    "title": "Day 63: Assembling the Expert Witness Forensic Bundle: Contemporary Records & Audit Trails",
+    "mins": 25,
+    "card": {
+      "id": "c-forensic-bundle",
+      "title": "Forensic Trial Bundle: SCL Principle 1 contemporary records & 5-tier evidence structure",
+      "rule": "In construction arbitration and litigation, contemporaneous records are supreme over retrospective witness testimony (SCL Core Principle 1). The 5-Layer Forensic Evidence Bundle must be organized with unbroken chain-of-custody: 1) Native P6 .XER schedule updates and baseline logs; 2) Daily Progress Reports (DPRs), labor muster rolls, equipment logs, pour cards; 3) Contractual transmittals, RFI logs, drawing issue sheets; 4) Third-party data (IMD weather records, government ban orders); 5) Audited financial ledgers and bank payment receipts. Unsubstantiated claims are dismissed by tribunals.",
+      "example": "An email from the site engineer dated the day of the flood attaching the DPR and water-level photograph proved the excusable delay, defeating the employer's assertion that rain was normal.",
+      "trap": "Reconstructing site records months after the fact using fabricated logs, which destroys tribunal credibility under forensic cross-examination."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** In a landmark ₹38 Crore arbitration hearing involving a multi-specialty hospital in New Delhi, the contractor called three senior project managers to testify that the site was stopped for 4 months due to employer waterlogging and delayed drawings.\n\nUnder cross-examination, the Employer's Senior Counsel produced the PMC's contemporaneous **Daily Progress Reports (DPRs)** and concrete batching logs signed jointly by both parties during the alleged stoppage period.\n\nThe records proved that during the exact weeks the contractor claimed the site was 100% paralyzed, the contractor had cast two basement slabs and poured 420 cubic meters of concrete!\n\nThe contractor's oral witnesses crumbled on the witness stand. The arbitral tribunal dismissed the contractor's entire ₹38 Crore claim with costs, citing **SCL Delay Protocol Core Principle 1**: *\"Contemporaneous records are the best evidence of what actually occurred on site; retrospective witness memories, however confident, cannot overcome signed contemporary documents.\"*"
+      },
+      {
+        "k": "read",
+        "t": "**The 5-Layer Forensic Evidence Architecture (The Trial Bundle):**\n\n1. **Layer 1: The Schedule Baseline & Native Update Archive:**\n   - The original approved Baseline Schedule (`.XER` / `.MPP`).\n   - Untampered, monthly native schedule update files showing actual start/finish dates, data dates, logic links, and float values at each monthly snapshot.\n\n2. **Layer 2: Daily Site Contemporaneous Records:**\n   - Signed Daily Progress Reports (DPRs) recording daily weather conditions, trade headcount, equipment on site, and specific physical works executed.\n   - Concrete pour cards, joint measurement sheets, material delivery challans, and equipment daily log sheets.\n\n3. **Layer 3: Contractual Correspondence & Technical Communications:**\n   - Formal letters, Notices of Claim, Variation Orders, and Engineer Determinations.\n   - Requests for Information (RFI) logs with submission dates and response turnaround times.\n   - Drawing transmittal slips with revision numbers and cloud markups.\n\n4. **Layer 4: Objective Third-Party External Evidence:**\n   - Certified meteorological data from the Indian Meteorological Department (IMD) for rainfall and temperature extremes.\n   - Official government Gazettes and municipal stop-work orders (NGT pollution bans, pandemic lockdowns, local riots).\n\n5. **Layer 5: Audited Financial Quantum Records:**\n   - General ledgers, audited balance sheets, EPF labor muster roll submissions, plant hire invoices, and bank payment confirmation vouchers."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under SCL Delay Protocol Core Principle 1 and international arbitration case law, why are contemporaneous records given higher evidentiary weight than post-hoc witness recollections?",
+            "o": [
+              [
+                "Because contemporaneous records were recorded in real time during the event by people on site before disputes arose, making them immune to retrospective bias or faded memory",
+                true,
+                "Contemporaneous records created in the normal course of business reflect immediate reality without the distorting influence of subsequent litigation positioning."
+              ],
+              [
+                "Because written records are automatically legally binding even if proved to be fraudulent",
+                false,
+                "Fraudulent records are illegal; contemporary records carry weight because they are verified by both parties at the time of work."
+              ],
+              [
+                "Because arbitral tribunals are prohibited by law from listening to oral human testimony",
+                false,
+                "Tribunals listen to witnesses, but weigh their oral assertions against verified contemporary documents."
+              ],
+              [
+                "Because electronic emails cannot be deleted from computer servers",
+                false,
+                "Server retention is an IT feature; evidentiary value lies in contemporaneous fact recording."
+              ]
+            ]
+          },
+          {
+            "q": "What constitutes the foundation layer of a defensible forensic delay analysis bundle submitted to an arbitral tribunal?",
+            "o": [
+              [
+                "The approved baseline schedule and untampered native monthly P6 (.XER) update files establishing chronological project snapshots",
+                true,
+                "Without the approved baseline and native monthly schedule update files (.XER), dynamic critical path movements and float consumption cannot be mathematically demonstrated."
+              ],
+              [
+                "A collection of newspaper articles describing city traffic jams",
+                false,
+                "General news clippings are irrelevant to project-specific critical path analysis."
+              ],
+              [
+                "A single summary Gantt chart drawn in Microsoft Excel the night before the arbitration hearing",
+                false,
+                "Excel bar charts lack CPM mathematical logic, float calculations, and relationship integrity; tribunals reject them."
+              ],
+              [
+                "Audio recordings of informal tea breaks between site engineers",
+                false,
+                "Informal banter lacks contractual standing and evidentiary rigor."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The party with the best organized contemporaneous records always wins construction disputes. Organize your project archive daily into the 5-layer structure: Native XERs, Signed DPRs, RFI logs, IMD weather certificates, and Audited payroll ledgers. Never rely on human memory when millions are at stake."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U64",
+    "day": 64,
+    "title": "Day 64: The Director's Hot Seat: Defending Time & Cost Claims in Front of the Board",
+    "mins": 25,
+    "card": {
+      "id": "c-boardroom-defense",
+      "title": "Boardroom Authority: The 3-Sentence Executive Defense Rule",
+      "rule": "Executive Boards, CEOs, and CFOs do not read 300-page forensic reports during crisis meetings; they demand concise, authoritative leadership. The 3-Sentence Executive Defense Rule: 1) Quantified milestone impact in calendar days; 2) Exact structural/contractual mechanism and financial exposure; 3) Decisive commercial action requested today with an explicit deadline. Never display defensive hedging, vague excuses, or technical jargon without financial translation.",
+      "example": "'Level 2 OT commissioning is delayed by 24 calendar days due to client medical equipment rough-in revisions. Contractor has issued a valid ₹1.2 Cr prolongation notice under FIDIC 20.1. I request approval today to freeze equipment cut-sheets by 5:00 PM Thursday, or the opening milestone slips to next quarter with ₹3.5 Cr in overheads.'",
+      "trap": "Using passive, defensive language ('We tried our best but MEP is very complicated and the contractor is being uncooperative') which destroys executive confidence."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** It is 8:30 AM on a Monday in the executive boardroom of a major private healthcare chain. The Chairman, Managing Director, and Chief Financial Officer sit at the head of the marble table.\n\nThe ₹600 Crore hospital project is scheduled to open in 90 days. The board has just discovered that the MEP contractor has stopped commissioning the Modular Operation Theatres, claiming design revisions.\n\nThe Chairman points directly at you, the Project Controls Lead: *\"Why is the OT suite stalled? The contractor says we owe them ₹2 Crores and 45 days. Are we opening on time or not? Explain yourself!\"*\n\nIf you stutter, mumble technical jargon about static pressures and unistrut drops, or blame the architects defensively, you lose control of the room. The board will view you as an incompetent bureaucrat.\n\nInstead, you stand straight, look the Chairman in the eye, and deliver the **3-Sentence Executive Defense**:\n*1. 'The OT commissioning milestone is currently delayed by 18 calendar days due to late client vendor cut-sheets for the surgical pendants.'*\n*2. 'The contractor's ₹2 Crore claim is legally inflated; our forensic audit values legitimate entitlement at only ₹28 Lakhs under FIDIC Sub-Clause 13.3.'*\n*3. 'I request board authorization today to approve the vendor interface by 5:00 PM Wednesday and release ₹28 Lakhs, which allows us to execute a 7-day double-shift recovery plan and protect the opening date.'*\n\nThe room falls silent. The Chairman nods: *\"Approved. Make it happen.\"*"
+      },
+      {
+        "k": "read",
+        "t": "**The 3-Sentence Executive Boardroom Defense Framework:**\n\n```\n+-----------------------------------------------------------------------------------------+\n|                                 THE 3-SENTENCE RULE                                     |\n+-----------------------------------------------------------------------------------------+\n| Sentence 1: QUANTIFIED MILESTONE IMPACT                                                 |\n|             State the exact milestone name and the delay quantified in calendar days.    |\n|             (Zero vague adjectives like \"slight delay\" or \"significant progress\").    |\n+-----------------------------------------------------------------------------------------+\n| Sentence 2: CONTRACTUAL / PHYSICAL MECHANISM & FINANCIAL EXPOSURE                       |\n|             State the root technical cause, the contract clause, and the real financial  |\n|             exposure vs the contractor's inflated demand.                              |\n+-----------------------------------------------------------------------------------------+\n| Sentence 3: DECISIVE ACTION REQUESTED TODAY (WITH DEADLINE)                             |\n|             Ask for the specific decision, approval, or budget needed from the board    |\n|             with an explicit time deadline, stating the cost of inaction.               |\n+-----------------------------------------------------------------------------------------+\n```\n\n**Boardroom Delivery Commandments:**\n1. **Translate Technical to Commercial:** Never say *\"The duct static pressure fell below 250 Pa due to VAV throttling.\"* Say: *\"Air balancing will take 12 additional days, requiring ₹4 Lakhs in chiller running power.\"*\n2. **Eliminate Hedging:** Ban words like *\"hopefully\"*, *\"we believe\"*, *\"probably\"*, and *\"we tried our best\"*. Use definitive verbs: *\"The audit confirms\"*, *\"The critical path proves\"*, *\"We require\"*.\n3. **Own the Solution:** Senior leadership doesn't want problems dumped on their desk. Bring the diagnosis, the legal valuation, and the executable recommendation."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "When presenting a critical delay and cost exposure to a hospital Board of Directors or CEO, what is the exact structure of the 3-Sentence Executive Defense Rule?",
+            "o": [
+              [
+                "Sentence 1: Quantified milestone impact in calendar days; Sentence 2: Contractual mechanism and audited financial exposure; Sentence 3: Decisive action requested today with an explicit deadline",
+                true,
+                "Executive decision-makers demand immediate clarity: What is the exact delay (days)? What is the legal/financial reality (rupees)? What specific decision is required right now (action + deadline)?"
+              ],
+              [
+                "Sentence 1: Explain that construction is difficult; Sentence 2: Blame the architects and sub-contractors; Sentence 3: Ask for more money without a deadline",
+                false,
+                "Defensive excuses and blaming others destroys professional credibility and boardroom confidence."
+              ],
+              [
+                "Sentence 1: Read the entire contract clause verbatim; Sentence 2: Show a 500-line P6 activity list; Sentence 3: Tell the board to hire a consultant",
+                false,
+                "Dumping raw technical details without synthesis shows lack of leadership capability."
+              ],
+              [
+                "Sentence 1: Promise that everything is fine; Sentence 2: Hide the delay until next month; Sentence 3: Request emergency vacation leave",
+                false,
+                "Concealing delays is ethical misconduct that leads to catastrophic project failure."
+              ]
+            ]
+          },
+          {
+            "q": "How should a Project Controls Manager handle an aggressive cold-call challenge from the CFO: 'Why should we pay the contractor ₹1 Crore when the project is 2 months late?'",
+            "o": [
+              [
+                "By distinguishing compensable employer-caused delays from contractor culpable delays, presenting the audited entitlement figure backed by contract clauses, and explaining how settling avoids high arbitration interest",
+                true,
+                "An authoritative response explains contractual entitlement objectively, demonstrates that the claim was forensically audited and reduced, and highlights commercial risk mitigation."
+              ],
+              [
+                "By agreeing with the CFO immediately and refusing to pay any contractor bills regardless of contract terms",
+                false,
+                "Arbitrarily withholding certified contractual payments breaches the contract and triggers contractor work suspension."
+              ],
+              [
+                "By arguing emotionally that the contractor has poor laborers who need food",
+                false,
+                "Commercial governance is based on contract rights and audited performance, not emotional appeals."
+              ],
+              [
+                "By refusing to answer questions unless the CFO reads all 400 pages of the SCL Delay Protocol",
+                false,
+                "Confrontational obstruction destroys professional relationships with executive leadership."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The Director's Hot Seat is where careers are made or broken. Senior executives do not value planners who merely report history—they value Project Controls Directors who control the commercial narrative, protect company capital, and drive decisive actions."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U65",
+    "day": 65,
+    "title": "Day 65: Gate 2 Milestone Exam: Delay Forensics, FIDIC/CPWD Claims & Hospital Packages",
+    "mins": 45,
+    "card": {
+      "id": "c-gate2-capstone",
+      "title": "Gate 2 Capstone: Mastery across SCL Forensics, Contracts & Hospital Packages",
+      "rule": "Gate 2 certifies professional mastery across Block 2 (Days 31–65): SCL Delay Protocol forensics (fragnets, concurrency, float ownership), FIDIC Red Book / CPWD contract mechanics (28-day notices, variations, Section 74 LDs, Bank Guarantees, LIE bank audits), Hospital Technical Packages (Cleanrooms ISO 7, MGPS HTM 02-01, LINAC Radiation Bunkers, Fire NOC, TABS air balancing, Statutory precedence), and boardroom claims defense. Passing requires high-precision application across all core competencies.",
+      "example": "Successfully solving a multi-tier hospital claim scenario combining an unnotified medical gas variation with concurrent structural delay and calculating exact EOT and compensable prolongation days.",
+      "trap": "Guessing answers or relying on theoretical rules without verifying contractual time-bars and schedule critical paths."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**GATE 2 MILESTONE ASSESSMENT: THE HOSPITAL PROJECT DIRECTOR'S TRIAL BY FIRE**\n\nWelcome to **Gate 2**. You have reached the halfway summit of the 120-Day Master Curriculum.\n\nYou are the Lead Project Controls Director on a **₹850 Crore, 600-Bed Tertiary Care Hospital & Regional Oncology Center** in Bengaluru. The project comprises a 12-story main hospital tower, 16 Modular Operation Theatres, a subterranean Radiation Oncology LINAC bunker, a 30-bed ICU, and an advanced diagnostic imaging suite (3.0T MRI / 128-slice CT).\n\nWith 6 months remaining before contractual completion, the project has been hit by a storm of commercial, technical, and statutory challenges:\n1. The contractor has filed a ₹22 Crore omnibus claim for delay, disruption, and prolongation.\n2. The Fire Department inspection is approaching, but motorized smoke dampers and hydrant pressure cascades are failing witness tests.\n3. The Lenders' Independent Engineer (LIE) has threatened to freeze bank loan disbursements due to S-curve divergence.\n4. The Board of Directors has convened an emergency inquiry to determine whether the hospital will open on time.\n\nThis 10-question comprehensive milestone examination evaluates your forensic rigor, contractual command, and clinical engineering acumen. You must score **100%** across all scenarios to clear Gate 2 and earn access to Block 3 (P6 Software Mastery & EVM Controls)."
+      },
+      {
+        "k": "read",
+        "t": "**Gate 2 Assessment Domains:**\n\n- **Domain 1: SCL Delay Forensics & CPM Mechanics** (TIA Fragnets, Concurrent Delay Core Principle 10, Float Ownership Core Principle 8).\n- **Domain 2: FIDIC Red Book & Indian Contract Law** (Sub-Clause 20.1 28-day Notice Bar, Clause 13 Variations, Section 74 LDs & *Kailash Nath* Doctrine, Bank Guarantee Injunctions).\n- **Domain 3: Hospital Technical Packages & Precedence** (Cleanroom ISO 7/ISO 5 sequencing, MGPS HTM 02-01 Nitrogen Purging & 24h pressure hold, LINAC heavy concrete $3,200\\text{ kg/m}^3$ & serpentine sleeves, 100 dB MRI Faraday Cage & Cryogen Quench routes).\n- **Domain 4: Statutory Licensing & Boardroom Authority** (Fire NOC, CEIG, PCB CTO $\\rightarrow$ Municipal Occupancy Certificate, 3-Sentence Executive Defense).\n\nReview each scenario carefully. Check contractual clauses, examine the critical path, and apply the exact legal and engineering standards."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Scenario 1 (SCL Delay Concurrency): On a hospital tower, the Employer delayed issuing medical gas riser drawings by 30 days on the critical path. Concurrently during the exact same 30-day window, the contractor suffered a complete labor strike on the structural concrete frame (also on the critical path). Under SCL Delay Protocol Core Principle 10, what is the contractor's entitlement?",
+            "o": [
+              [
+                "Entitled to 30 days Extension of Time (time relief without LDs), but ZERO financial compensation for prolongation costs during the overlapping window",
+                true,
+                "Under SCL Core Principle 10 and the Prevention Principle, concurrent delay entitles the contractor to an EOT (preventing LD deductions), but bars monetary prolongation compensation because the contractor would have incurred site overheads anyway due to its own strike."
+              ],
+              [
+                "Entitled to both 30 days Extension of Time AND full prolongation costs of ₹1.5 Crores",
+                false,
+                "Granting prolongation money during contractor culpable delay violates the fundamental legal test of causation."
+              ],
+              [
+                "Zero days Extension of Time, and the Employer deducts maximum Liquidated Damages immediately",
+                false,
+                "Deducting LDs when the Employer concurrently delayed the critical path violates the Prevention Principle."
+              ],
+              [
+                "The contract is automatically cancelled by operation of law",
+                false,
+                "Concurrent delays are routine commercial events resolved through EOT apportionment, not contract termination."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 2 (FIDIC 28-Day Time-Bar): An Employer issued revised radiation oncology bunker drawings that delayed bunker casting. The contractor knew of the delay on June 1st. However, the contractor did not submit a formal Notice of Claim until July 15th (45 days later). Under FIDIC Red Book Sub-Clause 20.1 / 20.2, what is the legal outcome?",
+            "o": [
+              [
+                "The claim is strictly time-barred; the Employer is discharged from all liability, and the contractor loses all entitlement to both time (EOT) and additional payment",
+                true,
+                "Sub-Clause 20.1 establishes a strict condition precedent: notice must be given within 28 days of awareness. Failure to notify within 28 days completely discharges the Employer from liability."
+              ],
+              [
+                "The Engineer must overlook the delay because radiation bunkers are structurally critical",
+                false,
+                "The Engineer has no contractual power to waive mandatory condition precedent notice periods without Employer consent."
+              ],
+              [
+                "The contractor can still claim 100% of the money if they attach 50 photographs of the bunker",
+                false,
+                "Photographs cannot resurrect a claim that is contractually time-barred under Sub-Clause 20.1."
+              ],
+              [
+                "The contractor is fined ₹10 Lakhs by the municipal police for late filing",
+                false,
+                "Contractual time-bars are civil contractual boundaries, not criminal matters."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 3 (Liquidated Damages under Indian Law): A hospital contract contains an LD clause of 0.5% per week up to a cap of 10% (₹85 Crores). The contractor finishes 4 weeks late. Under Section 74 of the Indian Contract Act and the Supreme Court's Kailash Nath doctrine, how can the Employer legally deduct LDs?",
+            "o": [
+              [
+                "The Employer can only deduct LDs if it proves it suffered actual commercial injury or loss (e.g. lost patient revenue, prolonged consultant fees), up to the 10% ceiling",
+                true,
+                "Under Indian Contract Act Sec 74 and Kailash Nath Associates v. DDA, liquidated damages are not an automatic penalty. The employer must prove actual commercial injury, with the stipulated percentage acting as an upper ceiling."
+              ],
+              [
+                "The Employer can automatically forfeit the entire ₹85 Crores without proving any financial loss",
+                false,
+                "Automatic forfeiture without proof of loss constitutes an illegal penalty under Indian contract law."
+              ],
+              [
+                "The Employer cannot deduct any money unless the contractor signs a written letter of confession",
+                false,
+                "The employer can establish loss through financial ledgers and commercial operational delay costs."
+              ],
+              [
+                "LDs under Indian law are strictly capped at ₹1 Lakh regardless of contract size",
+                false,
+                "There is no statutory ₹1 Lakh cap; the cap is determined by the contract agreement."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 4 (Bank Guarantee Injunctions): An Employer issues an invocation letter to the bank encashing the contractor's ₹85 Crore Performance Bank Guarantee. The contractor rushes to the High Court under Section 9 of the Arbitration Act seeking an injunction. Under the Vinitec Electronics doctrine, will the court grant the injunction?",
+            "o": [
+              [
+                "The court will REFUSE the injunction unless the contractor proves egregious, established fraud known to the bank or extraordinary irretrievable injustice",
+                true,
+                "Under Indian Supreme Court precedent (Vinitec Electronics), unconditional bank guarantees are independent contracts. Courts will not injunct encashment over ordinary contractual disputes without egregious fraud."
+              ],
+              [
+                "The court will grant an injunction automatically whenever a contractor claims the Employer is unfair",
+                false,
+                "General disputes regarding delays or claims do not qualify as grounds for injuncting a bank guarantee."
+              ],
+              [
+                "The bank will cancel the guarantee on its own if the contractor's CEO calls the branch manager",
+                false,
+                "Banks are legally bound to pay unconditional demand guarantees upon presentation of a conforming demand."
+              ],
+              [
+                "Bank guarantees are illegal in India under the Banking Regulation Act",
+                false,
+                "Bank guarantees are standard commercial instruments fully recognized under Indian law."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 5 (Modular OT Cleanroom Sequencing): In constructing a 16-suite Modular Operation Theatre complex, what is the mandatory sequence of works to prevent contamination and damage to delicate finishes?",
+            "o": [
+              [
+                "Slab coring & ceiling unistrut support grid load-tested (300-500 kg) -> Overhead MEP rough-in & laminar flow plenum -> Antimicrobial wall panels & hermetic doors -> Conductive vinyl with copper earth (< 1 Ω) -> Cleanroom Enclosure Lock -> Terminal HEPA filter installation",
+                true,
+                "Heavy overhead structural drilling and load testing must occur first, followed by cleanroom envelope panelling, conductive vinyl grounding, and finally the Cleanroom Enclosure Lock before terminal HEPA filters are exposed."
+              ],
+              [
+                "Install terminal HEPA filters -> Lay conductive vinyl -> Drill slab anchor bolts for surgical lights",
+                false,
+                "Drilling overhead slabs after installing HEPA filters blinds the filters with concrete dust and destroys them immediately."
+              ],
+              [
+                "Lay conductive vinyl flooring before any ceiling or wall framing to keep the floor clean",
+                false,
+                "Laying vinyl before overhead works ruins the floor with ladders, scaffolding, and dropped tools."
+              ],
+              [
+                "Paint the walls with standard oil paint and install ceiling fans instead of laminar plenums",
+                false,
+                "Standard oil paint and ceiling fans violate all hospital cleanroom and infection control norms."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 6 (MGPS Testing & Quality): Under HTM 02-01 and NFPA 99, why is it mandatory to silver-braze medical gas copper tubes under continuous dry Nitrogen purge, and how must the distribution lines be pressure-tested before closing ceilings?",
+            "o": [
+              [
+                "Nitrogen purge displaces oxygen to prevent internal toxic black cupric oxide scale from forming; lines must pass a 24-hour pneumatic hold test at 1.5x working pressure with dry nitrogen (water hydrostatic testing is strictly prohibited)",
+                true,
+                "Nitrogen prevents internal oxidation that creates toxic cupric oxide flakes that ruin ventilators. Testing requires a 24-hour pneumatic hold test at 1.5x pressure; water testing is barred due to bacterial contamination risks."
+              ],
+              [
+                "Nitrogen purges are used only to cool the exterior pipe; lines are tested with soapy water for 5 minutes",
+                false,
+                "Nitrogen purges the internal bore to prevent oxide flaking; a 5-minute soap test is legally insufficient."
+              ],
+              [
+                "Pipes are filled with pressurized drinking water for 30 days to test for rust",
+                false,
+                "Introducing water into medical gas pipelines causes microbial growth and oxidizes anesthesia machines."
+              ],
+              [
+                "Pipes do not require testing if they are stamped with the manufacturer's logo",
+                false,
+                "Every single brazed joint and terminal outlet must be tested before ceiling closure."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 7 (Radiation Oncology Bunker Engineering): In casting the 2.0-meter thick primary barrier walls for a LINAC cancer therapy bunker, what structural and MEP design rules are non-negotiable for AERB clearance?",
+            "o": [
+              [
+                "High-density concrete (>= 3,200 kg/m³ with Hematite/Barite aggregate), mass concrete core-to-surface ΔT <= 20°C to prevent thermal cracks, and multi-bend serpentine (Z-shaped) lead-lined MEP penetration sleeves with zero direct line-of-sight",
+                true,
+                "AERB requires high-density concrete (>= 3,200 kg/m³) to attenuate high-energy photons, mass concrete thermal cracking control (ΔT <= 20°C), and serpentine lead-lined penetration sleeves to prevent radiation streaming."
+              ],
+              [
+                "Standard hollow concrete blocks filled with sand and straight PVC pipes cut through the center of the wall",
+                false,
+                "Hollow blocks and straight penetrations allow lethal radiation leakage into adjacent hospital spaces."
+              ],
+              [
+                "Standard 100mm brick walls painted with three coats of lead-based exterior paint",
+                false,
+                "100mm brick walls provide virtually zero shielding against 15 MV LINAC photon beams."
+              ],
+              [
+                "Concrete mixed with salt water to accelerate setting time within 2 hours",
+                false,
+                "Salt water severely corrodes rebar and destroys structural concrete integrity."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 8 (MRI Faraday Cage & Cryogen Quench Route): What are the two life-critical engineering parameters for an MRI diagnostic imaging suite?",
+            "o": [
+              [
+                "Continuous 6-sided copper/aluminum RF Faraday Cage providing >= 100 dB attenuation (10–130 MHz), and a direct non-magnetic stainless steel Quench Pipe with zero low pockets discharging boiling helium (-269°C) safely to the atmosphere",
+                true,
+                "The Faraday cage must provide 100 dB RF attenuation to block ambient noise; the quench pipe must have zero low pockets to prevent cryogen ice plugs that cause explosive pressure rupture during magnet boil-off."
+              ],
+              [
+                "A 500-watt sound speaker system and a 1-inch garden hose connected to the domestic water supply",
+                false,
+                "Unrelated to MRI electromagnetic shielding or cryogenic helium safety."
+              ],
+              [
+                "Lead shielding sheets on all walls to block radioactive X-rays from the magnet",
+                false,
+                "MRIs use non-ionizing magnetic fields and radio waves; they emit zero X-rays and do not use lead shielding."
+              ],
+              [
+                "Standard drywall partitions with unshielded steel screws and standard wooden doors",
+                false,
+                "Unshielded drywall allows external radio frequencies to destroy MRI image quality completely."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 9 (Hospital Statutory Licensing Precedence): In what sequence must statutory approvals be obtained before a multi-specialty hospital can legally admit patients in India?",
+            "o": [
+              [
+                "CEIG Substation Clearance + Lift Licenses + PCB CTO for STP/ETP + Final Fire NOC -> Municipal Occupancy Certificate (OC) -> Clinical Establishments Act Registration & BMW Authorization -> NABH Final Accreditation",
+                true,
+                "Municipal authorities cannot issue an Occupancy Certificate without Fire NOC, CEIG, Lift, and PCB clearances. Clinical operation requires OC and CEA registration; NABH accreditation follows after 3-6 months of active operations."
+              ],
+              [
+                "NABH Accreditation -> Municipal Occupancy Certificate -> Fire NOC -> Pouring Foundation Concrete",
+                false,
+                "Completely backwards; NABH requires active operations, and Fire NOC must precede the Occupancy Certificate."
+              ],
+              [
+                "Hospital Grand Opening -> Admit patients -> Apply for Fire NOC 12 months later",
+                false,
+                "Admitting patients without Fire NOC and Occupancy Certificate is illegal and leads to immediate criminal sealing."
+              ],
+              [
+                "Pharmacy license -> Lift license -> Municipal building sanction -> Foundation excavation",
+                false,
+                "Violates physical construction and statutory permitting logic."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 10 (Executive Boardroom Hot Seat Defense): The hospital Chairman asks: 'The contractor claims Level 2 OT commissioning is 21 days late and demands ₹1.5 Crores. Are we opening on time?' How do you respond using the 3-Sentence Executive Defense Rule?",
+            "o": [
+              [
+                "'Level 2 OT commissioning is delayed by 21 calendar days due to late medical gas rough-in sign-offs. Our forensic audit values the contractor's valid entitlement at only ₹18 Lakhs under FIDIC Sub-Clause 13.3. I request board approval today to authorize the ₹18 Lakhs and mandate a 7-day double-shift recovery schedule by 5:00 PM tomorrow to protect our targeted inauguration date.'",
+                true,
+                "Perfect execution of the 3-Sentence Rule: Sentence 1 states the exact milestone and calendar delay; Sentence 2 states the legal/forensic reality and financial figure; Sentence 3 makes a decisive action request with an explicit deadline."
+              ],
+              [
+                "'MEP is really complicated and doctors keep changing their minds, so we probably won't open on time.'",
+                false,
+                "Vague, defensive, and abdicates leadership authority."
+              ],
+              [
+                "'We should immediately sue the contractor in High Court and let the judges decide who is right.'",
+                false,
+                "Premature litigation freezes the site, halts hospital opening, and causes massive commercial damage."
+              ],
+              [
+                "'Everything is 100% fine and the contractor is lying about everything.'",
+                false,
+                "Dishonest denial destroys executive trust when real milestone delays materialize."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "CONGRATULATIONS! You have mastered Block 2 of the 120-Day Curriculum. You now possess elite command over SCL Delay Protocol forensics, FIDIC/CPWD contract governance, high-stakes prolongation and disruption quantification, specialized hospital technical engineering, and boardroom executive presence. You are now officially cleared to enter BLOCK 3: Primavera P6 Enterprise Software Mastery, Rules of Credit, S-Curve Banana Envelopes & EVM Cost Controls!"
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS7);
+const APPLY7 = {
+  "U58": {
+    "task": "Build a CEES Claim Formulation Matrix for an emerging delay or cost event on your project: 1) Identify the Cause with specific contemporary records (DPRs, RFIs, transmittals); 2) Quantify the Effect on the critical path using a CPM fragnet or productivity loss; 3) Cite the exact contractual Entitlement clause (e.g. FIDIC 8.4/CPWD 5); 4) Compile the financial Substantiation from audited accounting vouchers.",
+    "good": [
+      "Satisfies all 4 pillars of the CEES claim framework without gaps",
+      "Binds factual cause strictly to contemporaneous site records",
+      "Demonstrates critical path schedule impact via CPM fragnet",
+      "Replaces lump-sum estimates with audited accounting ledgers"
+    ],
+    "tmpl": "Project & Claim Reference: \n1. Factual Cause (Event Date, Description & Contemporaneous DPR/RFI Records): \n2. Critical Path / Productivity Effect (CPM Fragnet Snapshot Delta or Measured Mile Ratio): \n3. Contractual & Statutory Entitlement (FIDIC 8.4 / 13.3 / CPWD Clause 5): \n4. Financial Substantiation (Audited Payroll, Plant Logs, Ledger Accounts ₹): "
+  },
+  "U59": {
+    "task": "Audit a Contractor's Prolongation Cost Claim against audited site records: 1) Examine claimed site preliminaries and verify against payroll records and bank debit advices; 2) Audit Head Office Overhead (HOOH) claims against Indian Contract Act Section 73 lost opportunity standards; 3) Reclassify idle plant equipment from commercial hire to standby depreciation rates (40-50%); 4) Issue a formal determination adjustment schedule.",
+    "good": [
+      "Distinguishes time-related site preliminaries from volume-related costs",
+      "Applies the Section 73 Lost Opportunity Rule to formulaic HOOH claims",
+      "Adjusts idled equipment to capital standby/depreciation rates (zero fuel/oil)",
+      "Provides an audited, defensible determination breakdown"
+    ],
+    "tmpl": "Contractor Claim Ref & Claimed Amount (₹): \nCompensable Prolongation Window (Calendar Days): \n1. Direct Site Preliminaries Audit (Audited Payroll vs Unsupported Vouchers): \n2. Head Office Overheads (HOOH) Audit (Section 73 Lost Opportunity Verification): \n3. Plant & Equipment Standby Depreciation Adjustment: \nFinal Recommended Prolongation Determination (₹): "
+  },
+  "U60": {
+    "task": "Calculate Disruption & Lost Productivity using the Measured Mile method: 1) Identify the disrupted work scope and specific interference events (trade stacking, out-of-sequence work); 2) Establish the unimpacted baseline period (The Measured Mile) and calculate baseline productivity (man-hours/unit); 3) Calculate actual productivity during the disrupted period; 4) Quantify the net disrupted man-hours and financial entitlement.",
+    "good": [
+      "Distinguishes labor disruption from critical path schedule delay",
+      "Establishes a valid unimpacted baseline 'Measured Mile' on the same project",
+      "Applies the Measured Mile formula to calculate excess unproductive man-hours",
+      "Monetizes disruption using audited base hourly wage rates"
+    ],
+    "tmpl": "Disrupted Trade & Work Activity Scope: \nNature of Employer Disruption (Trade Stacking, Multiple Drawing Revisions): \nBaseline Unimpacted Period ('Measured Mile') Productivity (Man-Hours / Unit): \nImpacted Period Productivity (Man-Hours / Unit): \nCalculated Disruption Hours & Audited Financial Quantum (₹): "
+  },
+  "U61": {
+    "task": "Draft a Notice of Constructive Acceleration and build an Acceleration Cost Substantiation Matrix: 1) Document the excusable delay and prior timely EOT request; 2) Cite the Employer's refusal/failure to grant EOT and directive or LD threat to maintain schedule; 3) Detail the acceleration measures taken (overtime, second shifts, extra crews); 4) Compile audited acceleration premiums.",
+    "good": [
+      "Demonstrates all 5 mandatory legal elements of Constructive Acceleration",
+      "Documents the employer's refusal/threat of Liquidated Damages",
+      "Isolates incremental acceleration costs (overtime premiums, shift inefficiencies)",
+      "Formulates a legally reservation-compliant Notice of Acceleration"
+    ],
+    "tmpl": "Formal Notice of Constructive Acceleration:\nTo (Employer / Engineer): \nExcusable Delay Event & Prior EOT Notice Ref: \nEmployer Directive / Threat of Liquidated Damages: \nNotice of Acceleration under Protest & Reservation of Rights: \nAcceleration Measure Details & Incremental Cost Matrix (Overtime, Extra Crews ₹): "
+  },
+  "U62": {
+    "task": "Draft a Formal Engineer's Determination and Rebuttal Report for a contractor's time and cost claim under FIDIC Sub-Clause 3.7 / CPWD Clause 5: 1) Conduct the Condition Precedent 28-day notice audit; 2) Perform the Critical Path float consumption test; 3) Evaluate concurrent contractor delays; 4) Audit financial quantum and issue the formal reasoned determination.",
+    "good": [
+      "Executes the 4-step forensic claim rebuttal framework",
+      "Upholds professional neutrality and objectivity under FIDIC Sub-Clause 3.7",
+      "Documents critical path float consumption and concurrent delay offsets",
+      "Issues a reasoned, legally defensible determination report"
+    ],
+    "tmpl": "Engineer's Formal Determination Report:\nContract Reference & Claim ID: \nStep 1 - Condition Precedent Audit (28-Day Notice Compliance): \nStep 2 - Critical Path Analysis & Schedule Float Impact: \nStep 3 - Concurrency & Mitigation Evaluation: \nStep 4 - Quantum Audit & Inadmissible Cost Reductions: \nFinal Determined Entitlement (EOT Days & Additional Payment ₹): "
+  },
+  "U63": {
+    "task": "Build a Forensic Claim Evidence Index & Contemporaneous Document Matrix for arbitration: 1) Index native P6 .XER schedule update archives; 2) Collate signed daily progress reports (DPRs), concrete pour cards, and muster rolls; 3) Index contractual transmittals, RFI logs, and variation orders; 4) Compile third-party certified weather and regulatory records.",
+    "good": [
+      "Structures contemporaneous evidence across the 5-tier forensic hierarchy",
+      "Preserves native P6 .XER update schedules with unbroken audit trails",
+      "Integrates signed daily site progress logs and inspection test records",
+      "Establishes a chronological evidence matrix for arbitral cross-examination"
+    ],
+    "tmpl": "Forensic Evidence Master Index:\nDispute & Arbitration Reference: \nTier 1 - Native Schedule Archive (.XER Baseline & Monthly Updates): \nTier 2 - Signed Daily Site Records (DPRs, Pour Cards, Muster Rolls): \nTier 3 - Contractual Communications (Notices, RFIs, Drawing Transmittals): \nTier 4 - Third-Party External Proof (IMD Weather Reports, Statutory Orders): \nTier 5 - Audited Financial Quantum (Ledgers, Invoices, Bank Payment Vouchers): "
+  },
+  "U64": {
+    "task": "Draft a 3-Sentence Executive Boardroom Defense Memorandum for a live critical delay on your project: 1) Formulate Sentence 1 stating the exact milestone and calendar delay; 2) Formulate Sentence 2 detailing the root contractual/structural cause and audited financial exposure; 3) Formulate Sentence 3 requesting the specific executive decision and deadline.",
+    "good": [
+      "Strictly adheres to the 3-Sentence Executive Defense Rule",
+      "Quantifies delay in calendar days without vague approximations",
+      "Translates complex technical engineering issues into financial P&L terms",
+      "Demands an actionable decision with an explicit executive deadline"
+    ],
+    "tmpl": "Executive Memorandum to Board of Directors / CEO:\nProject & Critical Milestone Subject: \nSentence 1 (Quantified Milestone Impact in Calendar Days): \nSentence 2 (Contractual/Physical Mechanism & Audited Financial Exposure): \nSentence 3 (Decisive Board Action Requested Today & Explicit Decision Deadline): \nSupporting Risk-Mitigation Summary: "
+  },
+  "U65": {
+    "task": "Gate 2 Comprehensive Milestone Portfolio: Assemble a complete Project Controls Executive Briefing Pack for a 500-bed hospital project: 1) SCL Time-Impact Analysis (TIA) fragnet showing EOT and concurrency assessment; 2) Contractual claim determination under FIDIC 3.7 / CPWD Clause 5; 3) Hospital technical commissioning gate checklist (Cleanrooms ISO 7, MGPS, AERB bunker, Fire NOC); 4) Master Statutory Precedence Network.",
+    "good": [
+      "Demonstrates comprehensive mastery across all Block 2 technical domains",
+      "Applies SCL Delay Protocol principles to resolve complex delay/concurrency disputes",
+      "Integrates hospital engineering package constraints into the master schedule",
+      "Presents an executive-ready project governance and claims defense portfolio"
+    ],
+    "tmpl": "GATE 2 COMPREHENSIVE EXECUTIVE PORTFOLIO:\nProject Profile: 500-Bed Tertiary Care Hospital & Oncology Center\nPart 1: Forensic Delay & Concurrency Determination (SCL Protocol 2nd Ed): \nPart 2: Contractual Claims & Financial Prolongation Audit (FIDIC / CPWD): \nPart 3: Specialized Hospital Package Commissioning & Precedence Gates: \nPart 4: Statutory Licensing Precedence Matrix (AERB, Fire NOC, CEIG -> OC -> NABH): \nPart 5: Boardroom Executive Defense & Action Summary: "
+  }
+};
+Object.assign(APPLY, APPLY7);
+UNITS7.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
