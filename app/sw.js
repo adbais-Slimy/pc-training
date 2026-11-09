@@ -1,7 +1,7 @@
-const CACHE_NAME = 'pc-training-v25';
+const CACHE_NAME = 'pc-training-v26';
 const PRECACHE_URLS = [
   './index.html',
-  './shim.js?v=24',
+  './shim.js?v=25',
   './icon.svg',
   './manifest.json'
 ];

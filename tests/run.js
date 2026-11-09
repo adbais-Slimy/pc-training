@@ -91,6 +91,27 @@ async function completeUnit(env, uid) {
     P("day advances to 21 after Gate 1; the measurement track doesn't move the day", S.day === 21, "day " + S.day);
     P("cards for every unit are in the review deck", w.eval('UNITS.filter(u=>u.card).every(u=>state.sr[u.card.id])'));
     P("Practice opens drills after their teaching day", ["cpm1", "proc", "rabill", "recon"].every(id => !!d.querySelector(`#pracwrap [data-d="${id}"]`)) || (w.eval('pr={view:"home"};renderPractice();'), ["cpm1", "proc", "rabill", "recon"].every(id => !!d.querySelector(`#pracwrap [data-d="${id}"]`))));
+    P("Practice drill filter isolates measurement vs planning drills", await w.eval(`(async () => {
+      tab("practice");
+      document.querySelector('[data-df="m"]')?.click();
+      const mOk = !!document.querySelector('#drills-list [data-d="steel"]') && !document.querySelector('#drills-list [data-d="cpm1"]');
+      document.querySelector('[data-df="plan"]')?.click();
+      const planOk = !document.querySelector('#drills-list [data-d="steel"]') && !!document.querySelector('#drills-list [data-d="cpm1"]');
+      document.querySelector('[data-df="all"]')?.click();
+      const allOk = !!document.querySelector('#drills-list [data-d="steel"]') && !!document.querySelector('#drills-list [data-d="cpm1"]');
+      return mOk && planOk && allOk;
+    })()`));
+    P("Learn filter and parallel measurement track card render properly", await w.eval(`(async () => {
+      tab("learn");
+      const cardOk = !!document.getElementById("mcard-btn-scale") && !!document.getElementById("mcard-btn-formulas");
+      document.querySelector('[data-ltf="m"]')?.click();
+      const mOnlyOk = document.querySelectorAll('#learnwrap [data-u^="M"]').length > 0 && document.querySelectorAll('#learnwrap [data-u^="U"]').length === 0;
+      document.querySelector('[data-ltf="days"]')?.click();
+      const daysOnlyOk = document.querySelectorAll('#learnwrap [data-u^="U"]').length > 0 && document.querySelectorAll('#learnwrap [data-u^="M"]').length === 0;
+      document.querySelector('[data-ltf="all"]')?.click();
+      const allOk = document.querySelectorAll('#learnwrap [data-u^="M"]').length > 0 && document.querySelectorAll('#learnwrap [data-u^="U"]').length > 0;
+      return cardOk && mOnlyOk && daysOnlyOk && allOk;
+    })()`));
     // fail path
     w.eval('state.course.U4={screen:5,ok:{},tries:0,done:false,missed:[]}; lv={unit:"U4"}; renderLearn();'); await wait(2);
     for (let i = 0; i < 5; i++) { const z = w.eval('cst("U4").quiz'), Q = w.eval("UNITS[4].screens[5].bank")[z.pick[z.i]]; d.querySelector(`#u-body [data-o="${Q.o.findIndex(o => !o[1])}"]`).click(); await wait(1); d.getElementById("q-next").click(); await wait(1); }
