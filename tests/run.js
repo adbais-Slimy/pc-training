@@ -130,7 +130,7 @@ async function completeUnit(env, uid) {
     P("your saved progress loads (Day 2, Days 0–1 passed)", d.getElementById("daytag").textContent === `Day ${PROGRESS.state.day} / 90` && w.eval('cst("U1").done'));
     P("settings button (⚙) present", [...d.querySelectorAll("button")].some(b => b.textContent === "⚙"));
     P("status confirms Director is active", /ready|due|Day|Director/i.test(d.getElementById("status").textContent));
-    P("Deliverable Studio, S-Curve Sandbox, and LPS Board render and operate cleanly", await w.eval(`(async () => {
+    P("Deliverable Studio, S-Curve Sandbox, LPS Board, MB Audit, and Hot Seat render and operate cleanly", await w.eval(`(async () => {
       openDeliverableStudio(1);
       const dlvOk = !!document.getElementById("deliverable-modal");
       document.getElementById("dlv-close")?.click();
@@ -143,7 +143,13 @@ async function completeUnit(env, uid) {
       openScaleVisualizer();
       const scvOk = !!document.getElementById("scale-modal") && document.getElementById("scv-area-m")?.textContent !== "";
       document.getElementById("scv-close")?.click();
-      return dlvOk && scOk && lpsOk && scvOk;
+      openMBAuditSandbox();
+      const mbOk = !!document.getElementById("mb-audit-modal") && document.querySelectorAll(".mb-item-card").length === 3;
+      document.getElementById("mb-close")?.click();
+      openHotSeatSimulator();
+      const hsOk = !!document.getElementById("hotseat-modal") && !!document.getElementById("hotseat-timer");
+      document.getElementById("hotseat-close")?.click();
+      return dlvOk && scOk && lpsOk && scvOk && mbOk && hsOk;
     })()`));
     P("no runtime errors (standalone)", env.errs.length === 0, env.errs.join(" | "));
   }

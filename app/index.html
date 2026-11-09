@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=25"></script>
+<script src="shim.js?v=26"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -2435,6 +2435,695 @@ function openScaleVisualizer(){
   updateVisualizer();
 }
 
+function openMBAuditSandbox(scenarioIdx = 0){
+  const old = $("mb-audit-modal");
+  if(old) old.remove();
+
+  let curIdx = scenarioIdx;
+  let audited = {};
+  let activeItemInSvg = null;
+
+  const SCENARIOS = [
+    {
+      title: "🧱 1. Wall Plaster & Masonry (IS 1200 Part 12)",
+      sub: "Hospital Ward 6m × 3m Wall with Door, Window, MGPS Box, and Passage",
+      svgW: 560, svgH: 260,
+      renderSvg: (activeItem) => {
+        return '<rect width="560" height="260" fill="var(--bg,#f8f9fa)" rx="8"/>' +
+          '<pattern id="mb-grid" width="20" height="20" patternUnits="userSpaceOnUse">' +
+            '<path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--line,#e2e8f0)" stroke-width="0.7"/>' +
+          '</pattern>' +
+          '<rect width="560" height="260" fill="url(#mb-grid)"/>' +
+          '<rect x="40" y="30" width="480" height="190" fill="#E2E8F0" stroke="#475569" stroke-width="2.5" rx="3"/>' +
+          '<text x="280" y="22" font-size="12" font-weight="700" fill="#475569" text-anchor="middle">Wall: 6.0m L × 3.0m H × 230mm thk (Gross: 36.0 m² both faces)</text>' +
+          '<rect x="60" y="87" width="96" height="133" fill="' + (activeItem===0?'#FDE68A':'#93C5FD') + '" stroke="#1E40AF" stroke-width="2" rx="2"/>' +
+          '<text x="108" y="145" font-size="10" font-weight="800" fill="#1E3A8A" text-anchor="middle">Door D1</text>' +
+          '<text x="108" y="160" font-size="9" fill="#1E3A8A" text-anchor="middle">1.2 × 2.1m</text>' +
+          '<text x="108" y="174" font-size="8.5" font-weight="700" fill="#B45309" text-anchor="middle">2.52 m² (0.5–3m²)</text>' +
+          '<rect x="180" y="60" width="120" height="76" fill="' + (activeItem===0?'#FDE68A':'#A7F3D0') + '" stroke="#065F46" stroke-width="2" rx="2"/>' +
+          '<text x="240" y="94" font-size="10" font-weight="800" fill="#064E3B" text-anchor="middle">Window W1</text>' +
+          '<text x="240" y="108" font-size="9" fill="#064E3B" text-anchor="middle">1.5 × 1.2m</text>' +
+          '<text x="240" y="122" font-size="8.5" font-weight="700" fill="#B45309" text-anchor="middle">1.80 m² (0.5–3m²)</text>' +
+          '<rect x="320" y="55" width="48" height="38" fill="' + (activeItem===1?'#FECACA':'#FED7AA') + '" stroke="#C2410C" stroke-width="1.8" rx="2"/>' +
+          '<text x="344" y="74" font-size="9" font-weight="800" fill="#7C2D12" text-anchor="middle">MGPS V1</text>' +
+          '<text x="344" y="86" font-size="7.5" font-weight="700" fill="#991B1B" text-anchor="middle">0.36 m² (≤0.5)</text>' +
+          '<rect x="380" y="94" width="130" height="126" fill="' + (activeItem===0?'#FDE68A':'#DDD6FE') + '" stroke="#5B21B6" stroke-width="2" rx="2"/>' +
+          '<text x="445" y="150" font-size="10" font-weight="800" fill="#4C1D95" text-anchor="middle">Open Arch OP1</text>' +
+          '<text x="445" y="165" font-size="9" fill="#4C1D95" text-anchor="middle">2.0 × 2.0m</text>' +
+          '<text x="445" y="179" font-size="8.5" font-weight="700" fill="#991B1B" text-anchor="middle">4.0 m² (&gt;3m² both)</text>' +
+          '<line x1="40" y1="230" x2="520" y2="230" stroke="#64748B" stroke-width="1.2"/>' +
+          '<text x="280" y="244" font-size="9" font-weight="700" fill="#64748B" text-anchor="middle">← Total Length: 6,000 mm →</text>' +
+          '<line x1="28" y1="30" x2="28" y2="220" stroke="#64748B" stroke-width="1.2"/>' +
+          '<text x="20" y="130" font-size="9" font-weight="700" fill="#64748B" text-anchor="middle" transform="rotate(-90 20 130)">3,000 mm H</text>';
+      },
+      items: [
+        {
+          id: 1,
+          desc: "12mm Cement Plaster 1:4 on internal & external wall faces (2 × 6.0m × 3.0m). Contractor claimed ZERO opening deductions claiming jamb plaster offsets openings.",
+          unit: "m²",
+          qty: 36.0,
+          rate: 240,
+          amount: 8640,
+          isError: true,
+          correctQty: 25.06,
+          correctAmount: 6014,
+          savings: 2626,
+          options: [
+            { text: "IS 1200 Part 12 Cl. 4.1: Openings 0.5–3.0m² (Door 2.52m² + Window 1.80m²) are deducted on ONE face each; openings >3m² (OP1 4m²) on BOTH faces. Net area is 25.06m².", correct: true },
+            { text: "Deduct all openings completely on both faces regardless of dimensions.", correct: false },
+            { text: "Jamb plaster always equals opening area so zero deduction is acceptable.", correct: false }
+          ],
+          citation: "IS 1200 (Part 12) Clause 4.1 & 4.2"
+        },
+        {
+          id: 2,
+          desc: "Medical Gas console box cutout (0.6m × 0.6m = 0.36m²). Contractor deducted 0.72m² on both faces, but added Extra Non-BOQ Item: 'Intricate corner beading around MGPS console: ₹4,500'.",
+          unit: "Item",
+          qty: 1,
+          rate: 4500,
+          amount: 4500,
+          isError: true,
+          correctQty: 0,
+          correctAmount: 0,
+          savings: 4500,
+          options: [
+            { text: "IS 1200 Part 12 Cl. 4.1: No deduction is made for openings up to 0.5m², and NO addition is made for jambs/soffits/beading. Disallow the ₹4,500 extra item.", correct: true },
+            { text: "Approve because hospital medical gas outlets require special cleanroom workmanship.", correct: false },
+            { text: "Deduct the box at 50% of the material cost.", correct: false }
+          ],
+          citation: "IS 1200 (Part 12) Clause 4.1"
+        },
+        {
+          id: 3,
+          desc: "Brickwork in 1:6 cement mortar 230mm thick. Gross volume 4.14 m³ minus full thickness deductions for Door D1 (0.58 m³), Window W1 (0.41 m³), and Arch OP1 (0.92 m³). Net claimed: 2.23 m³.",
+          unit: "m³",
+          qty: 2.23,
+          rate: 5200,
+          amount: 11596,
+          isError: false,
+          correctQty: 2.23,
+          correctAmount: 11596,
+          savings: 0,
+          options: [
+            { text: "Correct measurement. Under IS 1200 Part 3, masonry openings exceeding 0.1 m² are fully deducted through the entire wall thickness.", correct: true }
+          ],
+          citation: "IS 1200 (Part 3) Clause 4.1"
+        }
+      ]
+    },
+    {
+      title: "🏗️ 2. Structural Frame & BBS Steel Weight",
+      sub: "Beam B1 (300 × 450mm, 6m clear span) & Column C1 (400 × 400mm)",
+      svgW: 560, svgH: 260,
+      renderSvg: (activeItem) => {
+        return '<rect width="560" height="260" fill="var(--bg,#f8f9fa)" rx="8"/>' +
+          '<pattern id="mb-grid2" width="20" height="20" patternUnits="userSpaceOnUse">' +
+            '<path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--line,#e2e8f0)" stroke-width="0.7"/>' +
+          '</pattern>' +
+          '<rect width="560" height="260" fill="url(#mb-grid2)"/>' +
+          '<rect x="40" y="30" width="70" height="190" fill="#CBD5E1" stroke="#334155" stroke-width="2"/>' +
+          '<rect x="450" y="30" width="70" height="190" fill="#CBD5E1" stroke="#334155" stroke-width="2"/>' +
+          '<text x="75" y="130" font-size="10" font-weight="700" fill="#334155" text-anchor="middle">Col C1</text>' +
+          '<text x="485" y="130" font-size="10" font-weight="700" fill="#334155" text-anchor="middle">Col C2</text>' +
+          '<rect x="110" y="60" width="340" height="75" fill="#E2E8F0" stroke="#334155" stroke-width="2"/>' +
+          '<text x="280" y="78" font-size="11" font-weight="800" fill="#1E293B" text-anchor="middle">Beam B1: 300 × 450 mm (Clear span: 6,000 mm)</text>' +
+          '<line x1="75" y1="88" x2="485" y2="88" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>' +
+          '<text x="280" y="99" font-size="9" font-weight="700" fill="#B91C1C" text-anchor="middle">2 nos 12 mm Top Hanger Bars (0.889 kg/m)</text>' +
+          '<line x1="75" y1="122" x2="485" y2="122" stroke="#2563EB" stroke-width="4.5" stroke-linecap="round"/>' +
+          '<text x="280" y="117" font-size="9.5" font-weight="800" fill="#1D4ED8" text-anchor="middle">4 nos 20 mm Main Bottom Bars (2.469 kg/m)</text>' +
+          '<rect x="268" y="118" width="24" height="8" rx="2" fill="#F59E0B" stroke="#B45309" stroke-width="1.5"/>' +
+          '<text x="280" y="138" font-size="8.5" font-weight="800" fill="#92400E" text-anchor="middle">Mechanical Couplers (No Lap)</text>' +
+          [140, 180, 220, 260, 300, 340, 380, 420].map(x => '<line x1="' + x + '" y1="85" x2="' + x + '" y2="125" stroke="#475569" stroke-width="1.5" stroke-dasharray="2,2"/>').join("") +
+          '<text x="280" y="152" font-size="8.5" fill="#475569" text-anchor="middle">8 mm 2L Stirrups @ 150 c/c (0.395 kg/m)</text>' +
+          '<rect x="110" y="180" width="340" height="34" rx="4" fill="var(--surface,#fff)" stroke="var(--line)"/>' +
+          '<text x="280" y="195" font-size="9.5" font-weight="700" fill="var(--ink)">Drawing Specification: 20mm bars joined with Mechanical Couplers.</text>' +
+          '<text x="280" y="208" font-size="8.5" fill="var(--muted)">Couplers paid under BOQ Item 4.2; Laps strictly prohibited.</text>';
+      },
+      items: [
+        {
+          id: 1,
+          desc: "TMT Fe500D Reinforcement Steel in Beam B1. Contractor billed 348.5 kg from weighbridge delivery challan (which includes manufacturer rolling margin +4.8% and rust/mud scale).",
+          unit: "kg",
+          qty: 348.5,
+          rate: 78,
+          amount: 27183,
+          isError: true,
+          correctQty: 318.2,
+          correctAmount: 24820,
+          savings: 2363,
+          options: [
+            { text: "IS 2502 & Contract: Reinforcement is paid ONLY by theoretical weight derived from approved BBS (Length × d²/162). Challan rolling margin or overweight is at contractor's risk.", correct: true },
+            { text: "Pay challan weight because actual steel delivered was consumed on site.", correct: false },
+            { text: "Deduct 10% uniformly for all site deliveries.", correct: false }
+          ],
+          citation: "IS 2502 & Contract Clause 10"
+        },
+        {
+          id: 2,
+          desc: "Lap lengths claimed for 4 nos 20mm main bars in Beam B1: 4 laps × 50d = 4.0m × 2.47 kg/m = 9.88 kg (₹771). PLUS claimed 4 nos Mechanical Couplers @ ₹350 = ₹1,400.",
+          unit: "Item",
+          qty: 1,
+          rate: 2171,
+          amount: 2171,
+          isError: true,
+          correctQty: 1,
+          correctAmount: 1400,
+          savings: 771,
+          options: [
+            { text: "Double Claim: Drawings mandate mechanical threaded couplers to replace lap lengths. The contractor cannot bill both the coupler item and the lap rebar weight. Disallow the lap steel.", correct: true },
+            { text: "Couplers and laps are both standard site allowances and can be co-billed.", correct: false },
+            { text: "Disallow the couplers and pay only the laps.", correct: false }
+          ],
+          citation: "BOQ Preamble: Couplers replace Laps"
+        },
+        {
+          id: 3,
+          desc: "R.C.C. M30 in Beam B1: Measured clear span between column faces = 0.30m width × 0.45m depth × 6.0m clear span = 0.81 m³.",
+          unit: "m³",
+          qty: 0.81,
+          rate: 6800,
+          amount: 5508,
+          isError: false,
+          correctQty: 0.81,
+          correctAmount: 5508,
+          savings: 0,
+          options: [
+            { text: "Correct measurement. Column-beam junction concrete is paid under column; beam is measured clear between column faces to prevent double counting.", correct: true }
+          ],
+          citation: "IS 1200 (Part 2) Clear Span Concrete"
+        }
+      ]
+    },
+    {
+      title: "🚜 3. Raft Foundation & Bulk Earthwork",
+      sub: "Hospital Basement Raft Cut (Ch 0 to Ch 25) & 1.2m Deep M35 Raft",
+      svgW: 560, svgH: 260,
+      renderSvg: (activeItem) => {
+        return '<rect width="560" height="260" fill="var(--bg,#f8f9fa)" rx="8"/>' +
+          '<pattern id="mb-grid3" width="20" height="20" patternUnits="userSpaceOnUse">' +
+            '<path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--line,#e2e8f0)" stroke-width="0.7"/>' +
+          '</pattern>' +
+          '<rect width="560" height="260" fill="url(#mb-grid3)"/>' +
+          '<line x1="20" y1="50" x2="540" y2="50" stroke="#16A34A" stroke-width="3" stroke-dasharray="6,3"/>' +
+          '<text x="70" y="42" font-size="10" font-weight="700" fill="#15803D">OGL: +100.00m</text>' +
+          '<polygon points="60,50 120,180 440,180 500,50" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>' +
+          '<text x="280" y="115" font-size="12" font-weight="800" fill="#B45309" text-anchor="middle">Basement Pit: A1=120m², A2=140m² over L=25m</text>' +
+          '<text x="280" y="130" font-size="10" font-weight="700" fill="#78350F" text-anchor="middle">Average End Area = (120 + 140)/2 × 25 = 3,250 m³ in-situ</text>' +
+          '<rect x="120" y="180" width="320" height="10" fill="#94A3B8" stroke="#475569" stroke-width="1"/>' +
+          '<text x="280" y="188" font-size="7.5" font-weight="700" fill="#1E293B" text-anchor="middle">PCC 100mm (Drawing Footprint)</text>' +
+          '<rect x="120" y="190" width="320" height="45" fill="#CBD5E1" stroke="#334155" stroke-width="2"/>' +
+          '<text x="280" y="215" font-size="11" font-weight="800" fill="#0F172A" text-anchor="middle">Raft Concrete M35: Drawing Depth = 1.20 m</text>' +
+          '<rect x="105" y="190" width="15" height="45" fill="#FCA5A5" stroke="#DC2626" stroke-dasharray="2,2"/>' +
+          '<rect x="440" y="190" width="15" height="45" fill="#FCA5A5" stroke="#DC2626" stroke-dasharray="2,2"/>' +
+          '<text x="280" y="250" font-size="9" font-weight="700" fill="#DC2626" text-anchor="middle">⚠️ Red Zones: Pit cave-in extra concrete (Not Instructed in Writing)</text>';
+      },
+      items: [
+        {
+          id: 1,
+          desc: "Bulk Earthwork Excavation for Basement. Contractor recorded 325 truck trips × 12.5 m³ = 4,062.5 m³, applying a 1.25 bulking/swell factor for loose excavated earth.",
+          unit: "m³",
+          qty: 4062.5,
+          rate: 160,
+          amount: 650000,
+          isError: true,
+          correctQty: 3250.0,
+          correctAmount: 520000,
+          savings: 130000,
+          options: [
+            { text: "IS 1200 Part 1: Excavation is measured in-situ in original natural ground from initial & final levels by Average End Area ((A1+A2)/2 × L = 3,250 m³). Swell/loose truck factor is strictly disallowed.", correct: true },
+            { text: "Truck trip measurement is valid if weighbridge passes are signed by security gate.", correct: false },
+            { text: "Deduct 5% for moisture and pay the truck trip total.", correct: false }
+          ],
+          citation: "IS 1200 (Part 1) In-situ Natural Ground"
+        },
+        {
+          id: 2,
+          desc: "Raft Foundation Concrete M35. Drawing depth is 1.20m. Contractor billed 1.35m depth (+150mm over-pour due to uneven bottom and trench cave-in): 320m² × 0.15m = 48 m³ extra (₹345,600).",
+          unit: "m³",
+          qty: 48.0,
+          rate: 7200,
+          amount: 345600,
+          isError: true,
+          correctQty: 0,
+          correctAmount: 0,
+          savings: 345600,
+          options: [
+            { text: "Disallow: Over-excavation or over-pour without written instruction from the Engineer-in-Charge is at contractor's own expense. Payment is restricted to drawing thickness (1.20m).", correct: true },
+            { text: "Pay 50% as a goodwill gesture because site soil was loose.", correct: false },
+            { text: "Convert the over-pour into PCC blinding layer rate.", correct: false }
+          ],
+          citation: "CPWD Spec 4.1.3 & Contract Clause 12"
+        },
+        {
+          id: 3,
+          desc: "P.C.C. 1:4:8 blinding layer (100mm thk) under raft: Footprint 320 m² × 0.10m = 32.0 m³ strictly to drawing dimensions.",
+          unit: "m³",
+          qty: 32.0,
+          rate: 4100,
+          amount: 131200,
+          isError: false,
+          correctQty: 32.0,
+          correctAmount: 131200,
+          savings: 0,
+          options: [
+            { text: "Correct measurement. PCC blinding is measured strictly to drawing footprint and thickness specified.", correct: true }
+          ],
+          citation: "IS 1200 (Part 2) PCC Sub-base"
+        }
+      ]
+    }
+  ];
+
+  const m = document.createElement("div");
+  m.id = "mb-audit-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  function renderModal(){
+    const sc = SCENARIOS[curIdx];
+    let totalClaimed = 0, totalCertified = 0, totalSavings = 0, passedCount = 0;
+    
+    sc.items.forEach(it => {
+      totalClaimed += it.amount;
+      const res = audited[curIdx + "_" + it.id];
+      if(res){
+        if(res.ok){
+          passedCount++;
+          if(it.isError){
+            totalCertified += it.correctAmount;
+            totalSavings += it.savings;
+          } else {
+            totalCertified += it.amount;
+          }
+        }
+      }
+    });
+
+    m.innerHTML = '<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:920px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(0,0,0,.35);overflow:hidden;box-sizing:border-box">' +
+      '<div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">' +
+        '<div>' +
+          '<b style="font-size:1.05rem;color:var(--ok,#1F8A4C)">📑 Site Drawing &amp; MB Audit Sandbox</b>' +
+          '<div style="font-size:.78rem;color:var(--muted)">Audit authentic contractor bill claims against engineering drawings &amp; IS 1200 rules</div>' +
+        '</div>' +
+        '<button id="mb-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>' +
+      '</div>' +
+
+      '<!-- Scenario Selector -->' +
+      '<div style="display:flex;gap:6px;padding:10px 18px;border-bottom:1px solid var(--line);overflow-x:auto;background:var(--surface)">' +
+        SCENARIOS.map((s, idx) => '<button class="btn mb-sc-btn" data-sc="' + idx + '" style="font-size:.78rem;padding:5px 12px;font-weight:700;' + (idx===curIdx?'background:var(--okSoft,#e6f4ea);color:var(--ok,#1F8A4C);border-color:var(--ok,#1F8A4C)':'') + '">' + s.title + '</button>').join("") +
+      '</div>' +
+
+      '<!-- Body (Scrollable) -->' +
+      '<div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+          '<div><b style="font-size:.95rem">' + sc.title + '</b><div style="font-size:.78rem;color:var(--muted)">' + sc.sub + '</div></div>' +
+          '<span style="font-size:.76rem;background:var(--barSoft,#E8EEFA);color:var(--bar,#2F5BD3);padding:2px 8px;border-radius:10px;font-weight:700">' + passedCount + '/' + sc.items.length + ' Items Verified</span>' +
+        '</div>' +
+
+        '<!-- Technical Drawing SVG Canvas -->' +
+        '<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:14px;background:#fff;box-shadow:inset 0 1px 3px rgba(0,0,0,0.05)">' +
+          '<svg viewBox="0 0 ' + sc.svgW + ' ' + sc.svgH + '" style="width:100%;height:auto;display:block">' +
+            sc.renderSvg(activeItemInSvg) +
+          '</svg>' +
+        '</div>' +
+
+        '<!-- Audit KPI Dashboard -->' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px">' +
+          '<div style="background:var(--bg,#f8f9fa);padding:8px 12px;border-radius:8px;border:1px solid var(--line)">' +
+            '<div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;font-weight:700">Contractor Claimed</div>' +
+            '<b style="font-size:1.05rem;color:var(--ink)">₹' + totalClaimed.toLocaleString("en-IN") + '</b>' +
+          '</div>' +
+          '<div style="background:var(--bg,#f8f9fa);padding:8px 12px;border-radius:8px;border:1px solid var(--line)">' +
+            '<div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;font-weight:700">Auditor Certified</div>' +
+            '<b style="font-size:1.05rem;color:var(--ok,#1F8A4C)">₹' + totalCertified.toLocaleString("en-IN") + '</b>' +
+          '</div>' +
+          '<div style="background:var(--bg,#f8f9fa);padding:8px 12px;border-radius:8px;border:1px solid var(--line)">' +
+            '<div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;font-weight:700">Client Money Saved</div>' +
+            '<b style="font-size:1.05rem;color:var(--crit,#D9383A)">₹' + totalSavings.toLocaleString("en-IN") + '</b>' +
+          '</div>' +
+        '</div>' +
+
+        '<!-- Measurement Book Entries -->' +
+        '<b style="font-size:.9rem;display:block;margin-bottom:8px">Measurement Book (MB) Entries Submitted for Certification:</b>' +
+        sc.items.map((it, i) => {
+          const res = audited[curIdx + "_" + it.id];
+          return '<div class="card mb-item-card" data-it="' + i + '" style="padding:12px 14px;margin-bottom:12px;border-left:4px solid ' + (res?(res.ok?'var(--ok,#1F8A4C)':'var(--crit,#D9383A)'):'var(--line)') + '">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px">' +
+              '<div style="flex:1">' +
+                '<b style="font-size:.88rem">Item #' + it.id + ': ' + it.desc + '</b>' +
+                '<div style="font-size:.78rem;color:var(--muted);margin-top:2px">Claimed: <b>' + it.qty + ' ' + it.unit + '</b> @ ₹' + it.rate + '/' + it.unit + ' = <b>₹' + it.amount.toLocaleString("en-IN") + '</b></div>' +
+              '</div>' +
+              (res ? '<span style="font-size:.76rem;font-weight:700;padding:2px 8px;border-radius:8px;background:' + (res.ok?'var(--okSoft,#e6f4ea)':'var(--critSoft,#fce8e6)') + ';color:' + (res.ok?'var(--ok,#1F8A4C)':'var(--crit,#D9383A)') + '">' + (res.ok?(it.isError?'🚩 Flagged & Corrected':'✓ Certified Valid'):'❌ Incorrect Audit') + '</span>' : '') +
+            '</div>' +
+
+            (!res ? '<div style="display:flex;gap:8px;margin-top:10px">' +
+              '<button class="btn mb-act-pass" data-it="' + it.id + '" style="flex:1;padding:6px;font-size:.8rem;font-weight:700;background:var(--okSoft,#e6f4ea);color:var(--ok,#1F8A4C);border-color:var(--ok,#1F8A4C)">✓ Approve &amp; Certify</button>' +
+              '<button class="btn mb-act-flag" data-it="' + it.id + '" style="flex:1;padding:6px;font-size:.8rem;font-weight:700;background:var(--critSoft,#fce8e6);color:var(--crit,#D9383A);border-color:var(--crit,#D9383A)">🚩 Flag Error / Trap</button>' +
+            '</div>' : '') +
+
+            (res && res.flagging ? '<div style="margin-top:10px;padding:10px;background:var(--bg,#f8f9fa);border-radius:8px;border:1px solid var(--line)">' +
+              '<div style="font-size:.8rem;font-weight:700;margin-bottom:6px">Select Contractual / IS Standard Reason for Disallowing:</div>' +
+              it.options.map((opt, oIdx) => '<button class="btn mb-opt-btn" data-it="' + it.id + '" data-opt="' + oIdx + '" style="display:block;width:100%;text-align:left;font-size:.78rem;padding:6px 10px;margin-bottom:6px;line-height:1.4">' + opt.text + '</button>').join("") +
+            '</div>' : '') +
+
+            (res && !res.flagging ? '<div style="margin-top:8px;font-size:.8rem;padding:8px 10px;border-radius:6px;background:' + (res.ok?'var(--okSoft,#e6f4ea)':'var(--critSoft,#fce8e6)') + ';color:' + (res.ok?'var(--ok,#1F8A4C)':'var(--crit,#D9383A)') + '">' +
+              '<b>' + (res.ok ? '✓ Correct Audit Determination:' : '❌ Audit Mistake:') + '</b> ' +
+              (it.isError ? (res.ok ? 'Overclaim detected! Certified ' + it.correctQty + ' ' + it.unit + ' (₹' + it.correctAmount.toLocaleString("en-IN") + '), saving ₹' + it.savings.toLocaleString("en-IN") + '. Citing ' + it.citation + '.' : 'This item has an intentional over-claim or rule violation. You certified it without catching the trap!') : (res.ok ? 'Item complies strictly with drawings & contract. Certified ₹' + it.amount.toLocaleString("en-IN") + '.' : 'This item is 100% compliant with drawing dimensions and IS codes. Flagging it delays legitimate contractor cash flow.')) +
+            '</div>' : '') +
+          '</div>';
+        }).join("") +
+
+        '<!-- Reset Button -->' +
+        '<div style="display:flex;justify-content:flex-end;margin-top:14px">' +
+          '<button class="btn" id="mb-reset-btn" style="font-size:.8rem;padding:5px 12px">🔄 Reset Audit</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    $("mb-close").onclick = () => m.remove();
+    $("mb-reset-btn").onclick = () => { audited = {}; renderModal(); };
+
+    m.querySelectorAll(".mb-sc-btn").forEach(b => b.onclick = () => {
+      curIdx = +b.dataset.sc;
+      activeItemInSvg = null;
+      renderModal();
+    });
+
+    m.querySelectorAll(".mb-act-pass").forEach(b => b.onclick = () => {
+      const itId = +b.dataset.it;
+      const it = sc.items.find(x => x.id === itId);
+      audited[curIdx + "_" + itId] = { action: "pass", ok: !it.isError, flagging: false };
+      renderModal();
+    });
+
+    m.querySelectorAll(".mb-act-flag").forEach(b => b.onclick = () => {
+      const itId = +b.dataset.it;
+      const it = sc.items.find(x => x.id === itId);
+      if(it.options.length > 1){
+        audited[curIdx + "_" + itId] = { action: "flag", flagging: true };
+        renderModal();
+      } else {
+        audited[curIdx + "_" + itId] = { action: "flag", ok: it.isError, flagging: false };
+        renderModal();
+      }
+    });
+
+    m.querySelectorAll(".mb-opt-btn").forEach(b => b.onclick = () => {
+      const itId = +b.dataset.it;
+      const oIdx = +b.dataset.opt;
+      const it = sc.items.find(x => x.id === itId);
+      const isCorrect = it.options[oIdx].correct;
+      audited[curIdx + "_" + itId] = { action: "flag", ok: isCorrect && it.isError, flagging: false, optIdx: oIdx };
+      renderModal();
+    });
+
+    m.querySelectorAll(".mb-item-card").forEach(c => {
+      c.onmouseenter = () => { activeItemInSvg = +c.dataset.it; const svgBox = m.querySelector("svg"); if(svgBox) svgBox.innerHTML = sc.renderSvg(activeItemInSvg); };
+    });
+  }
+
+  document.body.appendChild(m);
+  renderModal();
+}
+
+function openHotSeatSimulator(scenarioIdx = 0){
+  const old = $("hotseat-modal");
+  if(old) old.remove();
+
+  let curIdx = scenarioIdx;
+  let timerSec = 60;
+  let timerInterval = null;
+  let userChoices = { impact: null, cause: null, decision: null };
+  let submitted = false;
+
+  const SCENARIOS = [
+    {
+      title: "1. Hospital Modular OT Milestone Slip",
+      context: "Executive Steering Committee · Day 45 of Construction",
+      directorPrompt: "The Modular OT contractor is 22 days behind schedule installing ceiling unistrut frames, but insists he can crash the vinyl flooring gang later. The surgical handover milestone shows 34 calendar days delay. The hospital CEO is threatening to terminate the contract today. You have 60 seconds. What is your 3-sentence decision request?",
+      timeLimit: 60,
+      exemplar: {
+        s1: "Surgical handover is delayed by 34 calendar days on the critical path because vinyl flooring is a finish activity and cannot crash the physical curing and laminar airflow testing windows.",
+        s2: "The unistrut ceiling grid is a hard mandatory predecessor to medical gas copper drops and pendant anchors, meaning no MEP work can proceed in parallel.",
+        s3: "I request approval today to enforce Clause 8.3 notice requiring the contractor to mobilize a dedicated night shift for ceiling framing by Friday, failing which PMC will step in with risk-purchase framing gangs."
+      },
+      choices: {
+        impact: [
+          { text: "Surgical handover milestone is delayed by 34 calendar days on the primary critical path, and cannot be recovered during vinyl flooring.", correct: true },
+          { text: "The contractor is doing his best and promised to work faster next month.", correct: false },
+          { text: "We have some float left on external landscaping so overall project is fine.", correct: false }
+        ],
+        cause: [
+          { text: "Ceiling unistruts are a hard predecessor to medical gas pipes and laminar HEPA plenums; vinyl flooring cannot start until all overhead services are sealed and tested.", correct: true },
+          { text: "The contractor forgot to order screws and adhesives from the supplier.", correct: false },
+          { text: "The hospital CEO is being unreasonable about the timeline.", correct: false }
+        ],
+        decision: [
+          { text: "Issue a 7-day contractual Clause 8.3 cure notice today mandating a dual-shift ceiling framing crew, with PMC holding the next RA bill until compliance is verified.", correct: true },
+          { text: "Wait 2 more weeks to see if the contractor's promise comes true.", correct: false },
+          { text: "Immediately terminate the contractor and re-tender the entire hospital contract.", correct: false }
+        ]
+      }
+    },
+    {
+      title: "2. Structural Steel Cost Overrun vs Schedule SPI",
+      context: "Monthly Project Review with CFO & Board",
+      directorPrompt: "Structural steel package spending is ₹1.4 Cr (14%) over the baseline budget, but Schedule Performance Index (SPI) is 1.06. The CFO says the controls team is letting the project bleed cash uncontrollably. Defend this in 60 seconds.",
+      timeLimit: 60,
+      exemplar: {
+        s1: "Cost variance is currently negative ₹1.4 Cr because we pre-purchased 800 tonnes of structural steel coils early to hedge against a 12% market tariff hike, while SPI of 1.06 confirms we are 11 days ahead of schedule.",
+        s2: "This is a timing and secured-advance variance rather than labor inefficiency, as physical erection productivity is tracking at 1.02 CPI.",
+        s3: "I request the CFO confirm retaining the early-procured inventory under secured advance, which saves the hospital an estimated ₹68 Lakhs in net escalation over the next two quarters."
+      },
+      choices: {
+        impact: [
+          { text: "SPI of 1.06 confirms we are 11 days ahead of schedule, while the ₹1.4 Cr variance reflects upfront bulk material hedge, not project waste.", correct: true },
+          { text: "Steel prices in the market are too high and nobody could have predicted this.", correct: false },
+          { text: "The contractor made a mistake in his invoice and we will ask for a refund.", correct: false }
+        ],
+        cause: [
+          { text: "Advance bulk purchase of raw steel hedged a 12% price hike; the steel is in our yard under secured advance and will amortize over the next 4 billing cycles.", correct: true },
+          { text: "The site team over-ordered steel by accident.", correct: false },
+          { text: "EVM calculations don't apply to Indian construction projects.", correct: false }
+        ],
+        decision: [
+          { text: "Approve adjusting the cash flow forecast to reflect bulk material drawdown, and lock the cost baseline with the ₹68 Lakhs net escalation savings.", correct: true },
+          { text: "Stop all steel work on site until the budget balances out.", correct: false },
+          { text: "Cut contractor rates retroactively by 14%.", correct: false }
+        ]
+      }
+    },
+    {
+      title: "3. Contractor 45-Day EOT Claim on Medical Gas",
+      context: "Contract Claims & Disputes Meeting",
+      directorPrompt: "The contractor submitted a formal claim for 45 calendar days EOT with cost compensation because the client took 21 days to approve Medical Gas manifold room layout drawings. Contractor shows a 45-day slip on his P6 Gantt chart. What is your 3-sentence determination?",
+      timeLimit: 60,
+      exemplar: {
+        s1: "The 45-day EOT claim is contractually untenable; my Time Impact Analysis demonstrates the net compensable delay is only 8 calendar days.",
+        s2: "Although the client took 21 days for drawing approval, the manifold room had 13 days of total float, and during the same window the contractor had a 12-day concurrent critical delay due to missing piping gangs.",
+        s3: "I request authority to issue a formal determination granting 8 days excusable non-compensable EOT with zero cost liability, protecting the owner against ₹42 Lakhs in prolongation claims."
+      },
+      choices: {
+        impact: [
+          { text: "Under SCL Protocol Time Impact Analysis, the contractor's net excusable delay is only 8 calendar days, not 45 days.", correct: true },
+          { text: "We should grant 45 days because the client was late and we don't want a court case.", correct: false },
+          { text: "Reject the claim 100% and charge liquidated damages immediately.", correct: false }
+        ],
+        cause: [
+          { text: "The manifold room was on a path with 13 days of float, and contractor had concurrent unexcused labor shortage during the same window.", correct: true },
+          { text: "Medical gas pipes are imported from Germany so delays are normal.", correct: false },
+          { text: "The contractor didn't submit the claim on legal stamp paper.", correct: false }
+        ],
+        decision: [
+          { text: "Issue the Director's determination letter certifying 8 days non-compensable EOT, barring any prolongation cost compensation.", correct: true },
+          { text: "Send the claim to external lawyers and halt site work.", correct: false },
+          { text: "Split the difference and give 22.5 days with full costs.", correct: false }
+        ]
+      }
+    },
+    {
+      title: "4. ₹85 Lakhs Unapproved Non-BOQ Lead Drywall Bill",
+      context: "Commercial & RA Bill Audit Review",
+      directorPrompt: "Contractor submitted RA Bill #12 claiming ₹85 Lakhs for non-BOQ lead-shielded drywall for the CT Scan room. The site engineer signed the Measurement Book entry because the lead sheets are physically installed. Commercial VP wants to release payment to maintain site goodwill. Do you certify or hold?",
+      timeLimit: 60,
+      exemplar: {
+        s1: "I advise holding the ₹85 Lakhs payment in full on RA Bill #12 because non-BOQ extra items cannot be certified without an approved Variation Order and rate analysis.",
+        s2: "While the site engineer's signature verifies physical installation, the contractor's claimed rate of ₹8,200/m² includes an unauthorized 35% markup over first principles prime cost.",
+        s3: "I request immediate sign-off on the rate analysis derivation (Prime Cost + 15% CP&OH = ₹5,850/m²), allowing ₹60.6 Lakhs to be certified in the next bill cycle while saving ₹24.4 Lakhs in unapproved overage."
+      },
+      choices: {
+        impact: [
+          { text: "Hold the ₹85 Lakhs claim on this bill pending approval of the formal Variation Order and derived first-principles rate analysis.", correct: true },
+          { text: "Pay the full ₹85 Lakhs because the site engineer signed the MB and work is done.", correct: false },
+          { text: "Reject the CT room installation and tell the contractor to remove the lead drywall.", correct: false }
+        ],
+        cause: [
+          { text: "Physical verification does not equal commercial entitlement; contractor markup is 35% instead of contractually mandated 15% CP&OH.", correct: true },
+          { text: "Lead is hazardous so the government bans paying for it in RA bills.", correct: false },
+          { text: "The commercial VP has higher authority than the contract.", correct: false }
+        ],
+        decision: [
+          { text: "Approve the derived first-principles rate of ₹5,850/m² today, certifying ₹60.6 Lakhs in next bill and saving the client ₹24.4 Lakhs.", correct: true },
+          { text: "Pay 50% on account with no paperwork.", correct: false },
+          { text: "Hold payment indefinitely until the final project bill.", correct: false }
+        ]
+      }
+    }
+  ];
+
+  const m = document.createElement("div");
+  m.id = "hotseat-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  function startTimer(){
+    if(timerInterval) clearInterval(timerInterval);
+    timerSec = SCENARIOS[curIdx].timeLimit || 60;
+    timerInterval = setInterval(() => {
+      timerSec--;
+      const el = m.querySelector("#hotseat-timer");
+      if(el){
+        el.textContent = timerSec + "s";
+        if(timerSec <= 15){
+          el.style.color = "var(--crit,#D9383A)";
+        }
+      }
+      if(timerSec <= 0){
+        clearInterval(timerInterval);
+        submitDefense();
+      }
+    }, 1000);
+  }
+
+  function submitDefense(){
+    if(timerInterval) clearInterval(timerInterval);
+    submitted = true;
+    renderModal();
+  }
+
+  function renderModal(){
+    const sc = SCENARIOS[curIdx];
+    const ok1 = userChoices.impact != null && sc.choices.impact[userChoices.impact]?.correct;
+    const ok2 = userChoices.cause != null && sc.choices.cause[userChoices.cause]?.correct;
+    const ok3 = userChoices.decision != null && sc.choices.decision[userChoices.decision]?.correct;
+    const score = [ok1, ok2, ok3].filter(Boolean).length;
+    const pct = Math.round((score / 3) * 100);
+
+    m.innerHTML = '<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:840px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(0,0,0,.35);overflow:hidden;box-sizing:border-box">' +
+      '<div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">' +
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<b style="font-size:1.05rem;color:var(--crit,#D9383A)">🎙️ The Director\'s Hot Seat</b>' +
+          '<span style="font-size:.76rem;background:var(--critSoft,#fce8e6);color:var(--crit,#D9383A);padding:2px 8px;border-radius:10px;font-weight:700">60s Executive Defense</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:12px">' +
+          (!submitted ? '<span id="hotseat-timer" style="font-size:1.1rem;font-weight:800;color:var(--bar);background:var(--barSoft);padding:3px 10px;border-radius:6px">' + timerSec + 's</span>' : '') +
+          '<button id="hotseat-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>' +
+        '</div>' +
+      '</div>' +
+
+      '<!-- Scenario Switcher -->' +
+      '<div style="display:flex;gap:6px;padding:8px 18px;border-bottom:1px solid var(--line);overflow-x:auto;background:var(--surface)">' +
+        SCENARIOS.map((s, idx) => '<button class="btn hs-sc-btn" data-sc="' + idx + '" style="font-size:.78rem;padding:4px 10px;font-weight:700;' + (idx===curIdx?'background:var(--barSoft,#E8EEFA);color:var(--bar,#2F5BD3);border-color:var(--bar,#2F5BD3)':'') + '">' + s.title + '</button>').join("") +
+      '</div>' +
+
+      '<!-- Body -->' +
+      '<div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">' +
+        '<!-- Context Box -->' +
+        '<div style="background:var(--bg,#f8f9fa);border-left:4px solid var(--crit,#D9383A);padding:12px 14px;border-radius:6px;margin-bottom:14px">' +
+          '<div style="font-size:.74rem;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:4px">' + sc.context + '</div>' +
+          '<div style="font-size:.94rem;font-weight:700;color:var(--ink);line-height:1.45">' + sc.directorPrompt + '</div>' +
+        '</div>' +
+
+        (!submitted ? '<p style="color:var(--muted);font-size:.82rem;margin-bottom:12px">Construct your 3-sentence defense: 1) Milestone Impact (calendar days) → 2) Contractual/Engineering Root Cause → 3) Specific Decision Request today.</p>' : '') +
+
+        '<!-- Sentence 1 Selector -->' +
+        '<div class="card" style="padding:10px 14px;margin-bottom:10px">' +
+          '<b style="font-size:.82rem;color:var(--bar);text-transform:uppercase">Sentence 1: Milestone Impact (Calendar Days)</b>' +
+          '<div style="margin-top:6px;display:flex;flex-direction:column;gap:6px">' +
+            sc.choices.impact.map((opt, oIdx) => {
+              const sel = userChoices.impact === oIdx;
+              const clr = submitted ? (opt.correct ? 'var(--okSoft,#e6f4ea);border-color:var(--ok,#1F8A4C);color:var(--ok,#1F8A4C)' : (sel ? 'var(--critSoft,#fce8e6);border-color:var(--crit,#D9383A);color:var(--crit,#D9383A)' : '')) : (sel ? 'var(--barSoft,#E8EEFA);border-color:var(--bar,#2F5BD3)' : '');
+              return '<button class="btn hs-choice-btn" data-type="impact" data-opt="' + oIdx + '" style="text-align:left;font-size:.8rem;padding:6px 10px;line-height:1.4;' + (clr ? 'background:' + clr : '') + '" ' + (submitted?'disabled':'') + '>' + (sel ? '● ' : '○ ') + opt.text + '</button>';
+            }).join("") +
+          '</div>' +
+        '</div>' +
+
+        '<!-- Sentence 2 Selector -->' +
+        '<div class="card" style="padding:10px 14px;margin-bottom:10px">' +
+          '<b style="font-size:.82rem;color:var(--bar);text-transform:uppercase">Sentence 2: Contractual &amp; Technical Root Cause</b>' +
+          '<div style="margin-top:6px;display:flex;flex-direction:column;gap:6px">' +
+            sc.choices.cause.map((opt, oIdx) => {
+              const sel = userChoices.cause === oIdx;
+              const clr = submitted ? (opt.correct ? 'var(--okSoft,#e6f4ea);border-color:var(--ok,#1F8A4C);color:var(--ok,#1F8A4C)' : (sel ? 'var(--critSoft,#fce8e6);border-color:var(--crit,#D9383A);color:var(--crit,#D9383A)' : '')) : (sel ? 'var(--barSoft,#E8EEFA);border-color:var(--bar,#2F5BD3)' : '');
+              return '<button class="btn hs-choice-btn" data-type="cause" data-opt="' + oIdx + '" style="text-align:left;font-size:.8rem;padding:6px 10px;line-height:1.4;' + (clr ? 'background:' + clr : '') + '" ' + (submitted?'disabled':'') + '>' + (sel ? '● ' : '○ ') + opt.text + '</button>';
+            }).join("") +
+          '</div>' +
+        '</div>' +
+
+        '<!-- Sentence 3 Selector -->' +
+        '<div class="card" style="padding:10px 14px;margin-bottom:12px">' +
+          '<b style="font-size:.82rem;color:var(--bar);text-transform:uppercase">Sentence 3: Specific Decision Requested Today</b>' +
+          '<div style="margin-top:6px;display:flex;flex-direction:column;gap:6px">' +
+            sc.choices.decision.map((opt, oIdx) => {
+              const sel = userChoices.decision === oIdx;
+              const clr = submitted ? (opt.correct ? 'var(--okSoft,#e6f4ea);border-color:var(--ok,#1F8A4C);color:var(--ok,#1F8A4C)' : (sel ? 'var(--critSoft,#fce8e6);border-color:var(--crit,#D9383A);color:var(--crit,#D9383A)' : '')) : (sel ? 'var(--barSoft,#E8EEFA);border-color:var(--bar,#2F5BD3)' : '');
+              return '<button class="btn hs-choice-btn" data-type="decision" data-opt="' + oIdx + '" style="text-align:left;font-size:.8rem;padding:6px 10px;line-height:1.4;' + (clr ? 'background:' + clr : '') + '" ' + (submitted?'disabled':'') + '>' + (sel ? '● ' : '○ ') + opt.text + '</button>';
+            }).join("") +
+          '</div>' +
+        '</div>' +
+
+        (!submitted ? '<div style="display:flex;justify-content:flex-end">' +
+          '<button class="send" id="hs-submit-btn" style="padding:8px 20px;font-weight:700" ' + (userChoices.impact==null||userChoices.cause==null||userChoices.decision==null?'disabled':'') + '>🎙️ Deliver Defense to Director</button>' +
+        '</div>' : '') +
+
+        (submitted ? '<div style="background:' + (pct>=80?'var(--okSoft,#e6f4ea)':'var(--bg,#f8f9fa)') + ';border:1px solid ' + (pct>=80?'var(--ok,#1F8A4C)':'var(--line)') + ';border-radius:10px;padding:14px;margin-top:14px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+            '<b style="font-size:.95rem;color:' + (pct>=80?'var(--ok,#1F8A4C)':'var(--ink)') + '">' + (pct===100?'🎯 Masterful Defense! (100%)':pct>=66?'👍 Solid Technical Defense ('+pct+'%)':'⚠️ Executive Review Failed ('+pct+'%)') + '</b>' +
+            '<span style="font-size:.76rem;font-weight:700">' + score + '/3 Pillars Met</span>' +
+          '</div>' +
+          '<div style="font-size:.82rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">' + (pct>=80?'Your response was concise, protected the owner, and framed an immediate actionable decision.':'Review the Director\'s model answer below to eliminate rambling or contractual traps.') + '</div>' +
+          '<div style="background:var(--surface,#fff);padding:10px 12px;border-radius:6px;border:1px solid var(--line);font-size:.84rem;line-height:1.55">' +
+            '<b style="color:var(--bar);display:block;margin-bottom:4px">Director\'s Exemplar 3-Sentence Formulation:</b>' +
+            '1. ' + sc.exemplar.s1 + '<br>' +
+            '2. ' + sc.exemplar.s2 + '<br>' +
+            '3. ' + sc.exemplar.s3 +
+          '</div>' +
+          '<div style="display:flex;justify-content:flex-end;margin-top:10px">' +
+            '<button class="btn" id="hs-retry-btn" style="font-size:.8rem;padding:5px 12px">🔄 Try Another Defense</button>' +
+          '</div>' +
+        '</div>' : '') +
+      '</div>' +
+    '</div>';
+
+    $("hotseat-close").onclick = () => { if(timerInterval) clearInterval(timerInterval); m.remove(); };
+    $("hs-submit-btn") && ($("hs-submit-btn").onclick = submitDefense);
+    $("hs-retry-btn") && ($("hs-retry-btn").onclick = () => {
+      userChoices = { impact: null, cause: null, decision: null };
+      submitted = false;
+      startTimer();
+      renderModal();
+    });
+
+    m.querySelectorAll(".hs-sc-btn").forEach(b => b.onclick = () => {
+      curIdx = +b.dataset.sc;
+      userChoices = { impact: null, cause: null, decision: null };
+      submitted = false;
+      startTimer();
+      renderModal();
+    });
+
+    m.querySelectorAll(".hs-choice-btn").forEach(b => b.onclick = () => {
+      const type = b.dataset.type;
+      const opt = +b.dataset.opt;
+      userChoices[type] = opt;
+      renderModal();
+    });
+  }
+
+  document.body.appendChild(m);
+  startTimer();
+  renderModal();
+}
+
+
 // ---------- progress ----------
 function renderProg(){
   const r=readiness(), gap=calibration();
@@ -3082,11 +3771,15 @@ function renderPractice(){
     </div>
     <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px">Hands-on visual models for executive schedule control: analyze S-curve banana envelope slippage and clear 3-week look-ahead constraint gates.</p>
     <div class="btnrow" style="margin:0 0 6px;gap:8px">
-      <button class="btn" id="btn-open-scurve-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--line)">📈 S-Curve Banana Simulator</button>
-      <button class="btn" id="btn-open-lps-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--line)">📋 3-Wk Look-Ahead Board</button>
+      <button class="btn" id="btn-open-scurve-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--line)">📈 S-Curve Banana</button>
+      <button class="btn" id="btn-open-lps-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--line)">📋 3-Wk Look-Ahead</button>
+    </div>
+    <div class="btnrow" style="margin:0 0 6px;gap:8px">
+      <button class="btn" id="btn-open-scale-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3)">👁️ Room Space Visualizer</button>
+      <button class="btn" id="btn-open-mb-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--ok,#1F8A4C);color:var(--ok,#1F8A4C)">📑 Drawing &amp; MB Audit</button>
     </div>
     <div class="btnrow" style="margin:0;gap:8px">
-      <button class="btn" id="btn-open-scale-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3)">👁️ Visual Scale &amp; Room Space Visualizer</button>
+      <button class="btn" id="btn-open-hotseat-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--crit,#D9383A);color:var(--crit,#D9383A)">🎙️ The Director's Hot Seat (60s Defense)</button>
     </div>
   </div>`;
   const open=DRILLS.filter(d=>practiceUnlocked(d.week,d.id));
@@ -3112,6 +3805,8 @@ function renderPractice(){
   $("btn-open-scurve-box")&&($("btn-open-scurve-box").onclick=()=>openSCurveSandbox());
   $("btn-open-lps-box")&&($("btn-open-lps-box").onclick=()=>openLPSBoard());
   $("btn-open-scale-box")&&($("btn-open-scale-box").onclick=()=>openScaleVisualizer());
+  $("btn-open-mb-box")&&($("btn-open-mb-box").onclick=()=>openMBAuditSandbox());
+  $("btn-open-hotseat-box")&&($("btn-open-hotseat-box").onclick=()=>openHotSeatSimulator());
   w.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>startGuided(+b.dataset.gl));
   w.querySelectorAll("[data-lf]").forEach(b=>b.onclick=()=>{ pr.lf=b.dataset.lf; renderPractice(); });
   w.querySelectorAll("[data-df]").forEach(b=>b.onclick=()=>{ pr.df=b.dataset.df; renderPractice(); });
@@ -3149,6 +3844,8 @@ function openFormulaDrawer(){
       <button class="btn f-tab-btn" data-tab="tab-scurve" style="font-size:.78rem;padding:4px 8px">📈 S-Curve</button>
       <button class="btn f-tab-btn" data-tab="tab-lps" style="font-size:.78rem;padding:4px 8px">📋 LPS</button>
       <button class="btn f-tab-btn" data-tab="tab-scale" style="font-size:.78rem;padding:4px 8px">👁️ Scale</button>
+      <button class="btn f-tab-btn" data-tab="tab-mb" style="font-size:.78rem;padding:4px 8px">📑 MB Audit</button>
+      <button class="btn f-tab-btn" data-tab="tab-hotseat" style="font-size:.78rem;padding:4px 8px">🎙️ Hot Seat</button>
     </div>
 
     <!-- TAB 1: FORMULAS SHEET -->
@@ -3335,6 +4032,24 @@ function openFormulaDrawer(){
       </div>
     </div>
 
+    <!-- TAB 9: MB AUDIT SANDBOX -->
+    <div id="tab-mb" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--ok,#1F8A4C);margin:8px 0 8px">📑 Site Drawing &amp; MB Audit Sandbox</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem;line-height:1.5">
+        <p style="margin:0 0 8px">Inspect engineering drawings &amp; audit contractor Measurement Book entries for real site over-claims: IS 1200 plaster opening deductions, rebar delivery challan rolling margins, and loose excavation factors.</p>
+        <button id="drawer-btn-mb" class="btn" style="width:100%;padding:10px;font-weight:700;background:var(--ok,#1F8A4C);color:#fff;border:none;cursor:pointer">Launch Drawing &amp; MB Audit Sandbox →</button>
+      </div>
+    </div>
+
+    <!-- TAB 10: HOT SEAT SIMULATOR -->
+    <div id="tab-hotseat" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--crit,#D9383A);margin:8px 0 8px">🎙️ The Director's Hot Seat (60s Defense)</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem;line-height:1.5">
+        <p style="margin:0 0 8px">60 seconds on the clock. Defend schedule slips, cost variances, medical gas claims, and unapproved bills using the 3-Sentence Rule: Finish Slip → Root Cause → Decision Request.</p>
+        <button id="drawer-btn-hotseat" class="btn" style="width:100%;padding:10px;font-weight:700;background:var(--crit,#D9383A);color:#fff;border:none;cursor:pointer">Enter The Director's Hot Seat →</button>
+      </div>
+    </div>
+
     <div style="margin-top:auto;padding-top:10px;border-top:1px solid var(--line)">
       <button id="form-dismiss" style="width:100%;padding:10px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Done</button>
     </div>
@@ -3461,6 +4176,8 @@ function openFormulaDrawer(){
   m.querySelector("#drawer-btn-scurve") && (m.querySelector("#drawer-btn-scurve").onclick = () => { m.remove(); openSCurveSandbox(); });
   m.querySelector("#drawer-btn-lps") && (m.querySelector("#drawer-btn-lps").onclick = () => { m.remove(); openLPSBoard(); });
   m.querySelector("#drawer-btn-scale") && (m.querySelector("#drawer-btn-scale").onclick = () => { m.remove(); openScaleVisualizer(); });
+  m.querySelector("#drawer-btn-mb") && (m.querySelector("#drawer-btn-mb").onclick = () => { m.remove(); openMBAuditSandbox(); });
+  m.querySelector("#drawer-btn-hotseat") && (m.querySelector("#drawer-btn-hotseat").onclick = () => { m.remove(); openHotSeatSimulator(); });
 
   m.onclick = e => { if(e.target === m) m.remove(); };
   m.querySelector("#form-close").onclick = () => m.remove();
@@ -4912,12 +5629,13 @@ function renderLearn(){
     `}
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       <button class="btn" id="mcard-btn-scale" style="font-size:.76rem;padding:3px 8px">👁️ Visual Scale &amp; Room Spaces</button>
+      <button class="btn" id="mcard-btn-mbaudit" style="font-size:.76rem;padding:3px 8px">📑 Drawing &amp; MB Audit</button>
       <button class="btn" id="mcard-btn-formulas" style="font-size:.76rem;padding:3px 8px">📐 Field Formulas Sheet</button>
     </div>
   </div>`;
 
   const passedN=UNITS.filter(u=>cst(u.id).done&&u.screens.some(x=>x.k==="quiz")).length, applied=UNITS.filter(u=>cst(u.id).apply?.sent).length, applyTotal=UNITS.filter(u=>APPLY[u.id]).length;
-  if(passedN>=2) h+=`<div class="rt"><div><b>Mixed review</b> · 8 questions from ${UNITS.filter(u=>cst(u.id).done&&(u.track||u.day>0)).map(u=>u.track?u.id:"Day "+u.day).join(", ")}<br><small>Do it 2–3 times a week. Shuffling topics is what makes them stick.</small></div><button class="btn" id="mx-start">Start</button></div>`;
+  if(passedN>=2) h+=`<div class="rt"><div><b>Mixed review</b> · 8 questions from ${UNITS.filter(u=>cst(u.id).done&&(u.track||u.day>0)).map(u=>u.track?u.id:"Day "+u.day).join(", ")}<br><small>Do it 2–3 times a week. Shuffling topics is what makes them stick.</small></div><div style="display:flex;gap:6px"><button class="btn" id="btn-learn-hotseat" style="background:var(--critSoft,#fce8e6);color:var(--crit,#D9383A);border-color:var(--crit,#D9383A);font-weight:700">🎙️ Hot Seat</button><button class="btn" id="mx-start">Start</button></div></div>`;
   h+=`<div class="rt ${applied<UNITS.filter(u=>cst(u.id).done&&APPLY[u.id]).length?"due":""}"><div><b>Real-work portfolio</b> · ${applied} of ${applyTotal} tasks submitted<br><small>${UNITS.filter(u=>cst(u.id).done&&APPLY[u.id]&&!cst(u.id).apply?.sent).map(u=>u.track?u.id:"Day "+u.day).join(", ")||"Each day from 1 to 10 has one task on your own hospitals."}${UNITS.some(u=>cst(u.id).done&&APPLY[u.id]&&!cst(u.id).apply?.sent)?" still to do. Open the day → 'Apply it at work'.":""}</small></div></div>`;
   h+=`<div class="score"><div><b>${doneN}/${MAIN.length}</b><span>Block 1 days passed</span></div><div><b>${(()=>{const d=dueCards().length; return d;})()}</b><span>cards due for review (Notes)</span></div></div>`;
 
@@ -4942,7 +5660,9 @@ function renderLearn(){
   w.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>{ lv={unit:b.dataset.u}; const s=cst(b.dataset.u); if(s.done) s.screen=0; renderLearn(); w.parentElement.scrollTop=0; });
   w.querySelectorAll("[data-ltf]").forEach(b=>b.onclick=()=>{ learnTrackFilter=b.dataset.ltf; renderLearn(); });
   $("mcard-btn-scale")&&($("mcard-btn-scale").onclick=()=>openScaleVisualizer());
+  $("mcard-btn-mbaudit")&&($("mcard-btn-mbaudit").onclick=()=>openMBAuditSandbox());
   $("mcard-btn-formulas")&&($("mcard-btn-formulas").onclick=()=>openFormulaDrawer());
+  $("btn-learn-hotseat")&&($("btn-learn-hotseat").onclick=()=>openHotSeatSimulator());
   $("mx-start")&&($("mx-start").onclick=startMixed);
 }
 function renderUnit(w){
