@@ -1,41 +1,45 @@
-# PC Training: standalone export (for Google Antigravity or any editor)
+# PC Training: 120-Day Planning & Project Controls Mastery Track
 
-Your 90-day Planning & Project Controls programme, exported from Claude. It runs in any browser. The AI tutor works with your own Gemini, Anthropic or OpenAI key.
+A full-scale, mobile-first learning platform that trains **Aditya** (Manager, Planning & Project Controls at a PMC running multi-site hospital projects in India) to achieve master-level authority across 120 days.
 
-## 1. Open it in Antigravity
-1. Unzip this folder.
-2. In Antigravity: **Open Folder → `pc-training`**. Antigravity automatically reads `AGENTS.md` and `.agents/rules/*.md`, so its agent knows how the app works, how the tutor must answer, and the content standards.
-3. Start a fresh agent task (so the rules load) and say, for example:
-   *"Run the tests, then serve the app on port 8080."*
+**Live Application**: [https://adbais-slimy.github.io/pc-training/](https://adbais-slimy.github.io/pc-training/)
 
-## 2. Run it
-- In the terminal: `npx serve app` (or `python -m http.server -d app 8080`), then open the address it prints. Use your phone (same Wi-Fi) or a narrow browser window.
-- Tests: `npm install`, then `npm test`.
+---
 
-## 3. Bring your progress across
-In the app: **More → Restore backup → choose `data/my-progress.json`**. You'll be back on **Day 2**, with Day 0 and Day 1 passed, your cards and your Tutor chat.
+## 🏛️ Curriculum Structure (120 Days / 127 Units)
 
-## 4. Turn on the Tutor (optional)
-Tap **⚙** (bottom right): choose a provider, paste your API key, and save.
-- **Gemini:** get a key in Google AI Studio. Free-tier limits are low and Google may use free-tier data for training, so keep client-confidential figures out.
-- **Anthropic / OpenAI:** paid keys.
-- Model names change. If a call fails, check the current model names and enter them in ⚙.
+| Block | Days | Technical Scope | Milestone Exam |
+| :--- | :--- | :--- | :--- |
+| **Block 1** | **Days 1–30** | Site Measurement, MB Governance, IS 1200, BBS Rebar & CPM Foundations | **Gate 1 Capstone** (Day 30) |
+| **Block 2** | **Days 31–65** | Forensic Delay Analysis (SCL 2nd Ed), FIDIC/CPWD Contracts & Hospital Packages | **Gate 2 Capstone** (Day 65) |
+| **Block 3** | **Days 66–95** | Primavera P6 Enterprise Architecture, Rules of Credit, S-Curves & EVM Controls | **Gate 3 Capstone** (Day 95) |
+| **Block 4** | **Days 96–120** | Hospital Flight Simulations, Crisis Recovery, Boardroom Hot Seat & Master Certification | **Gate 4 Master Exam** (Day 120) |
+| **Track M** | **Parallel** | Parallel Site Measurement Track (M1–M6): MBs, earthwork, concrete, finishes | Parallel Skill Deck |
 
-Learn, Practice, Notes and the Site measurement track **work without any key**.
+---
 
-## What's inside
-| Path | What it is |
-|---|---|
-| `app/index.html` | The app (Learn days 0–20 + Gate 1, measurement track M1–M6, Practice, Notes, Tutor) |
-| `app/shim.js` | Local storage, AI provider and downloads (replaces Claude's runtime) |
-| `AGENTS.md` | Project rules for Antigravity's agent: architecture, non-negotiables, roadmap |
-| `.agents/rules/tutor-style.md` | Exactly how the AI tutor must answer you |
-| `.agents/rules/content-standards.md` | How new days, checks, drills and real-work tasks must be written |
-| `docs/PROGRAMME.md` | Your original 90-day brief |
-| `docs/TUTOR_SYSTEM_PROMPT.md` | The full tutor protocol the app sends |
-| `data/my-progress.json` | Your progress as of the export |
-| `tests/` | Automated checks (course flow, drills, measurement, standalone runtime) |
+## ⚡ 10 Interactive Flight Sandboxes
+1. **Deliverables Studio**: Spatial WBS decomposition from campus down to system commissioning.
+2. **S-Curve Banana Envelope Simulator**: Early/Late envelope visualization and monthly progress variance.
+3. **Last Planner System (LPS) Board**: 6-week lookahead constraints management and PPC tracking.
+4. **Scale & Volume Visualizer**: 3D spatial scaling of earthwork bulking, rebar weight, and concrete pours.
+5. **Measurement Book (MB) 6-Point Audit**: Forensic audit of contractor Running Account (RA) bills.
+6. **Boardroom Cold-Call Hot Seat**: 60-second oral response drill under C-suite interrogation.
+7. **Schedule Doctor (DCMA 14 Health Diagnostic)**: Automated audit of open ends, lags, and float distortion.
+8. **Hospital Technical Sequence Playbook**: Cleanroom (ISO 7), MGPS (HTM 02-01), LINAC, and Fire NOC chaining.
+9. **SCL Delay Protocol TIA Analyzer**: Prospective fragnet modeling and concurrent delay compensation.
+10. **Schedule Crashing & Recovery Simulator**: Cost slope ($\Delta C / \Delta T$) optimization vs Liquidated Damages.
 
-## Notes
-- Your data stays in the browser you use (localStorage). Use **More → Download backup** regularly, especially before switching browsers or devices.
-- Next content to build: **Block 2 (Days 21–50)**, after you pass Gate 1. Ask Antigravity's agent to write it following `content-standards.md`, or come back to Claude.
+---
+
+## 🎯 Competency Engine & Credentials
+* **6-Pillar Competency Radar**: Live SVG spider chart tracking CPM Math, Site MBs, Delay Forensics, Hospital Systems, P6 & EVM, and Boardroom Defense.
+* **26 Practice Drills**: Offline algorithmic drills scoring 100/100 on 780 validated problem variations.
+* **Master Project Controls Credential (MPCM)**: High-resolution, printable A4 certificate and cryptographic JSON dossier.
+
+---
+
+## 🚀 Running Locally
+* **Test Suite**: `npm test` (verifies all 127 units, 482 check questions, 26 drills, 10 sandboxes).
+* **Local Server**: `npx serve app` (or `python -m http.server -d app 8080`).
+* **Deploy**: Pushed directly to `main` and subtree-pushed to `gh-pages`.
