@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=30"></script>
+<script src="shim.js?v=31"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -8626,6 +8626,835 @@ const APPLY3 = {
 };
 Object.assign(APPLY, APPLY3);
 UNITS3.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS4 = [
+  // ================= DAY 31: SCL Protocol Core Principles =================
+  {
+    id: "U31", day: 31, title: "Day 31: SCL Delay Protocol: Core Principles & Risk Events", mins: 25,
+    card: {
+      id: "c-scl-principles",
+      title: "SCL Core Principles: Risk event taxonomy & the Prevention Principle",
+      rule: "The SCL Delay and Disruption Protocol (2nd Edition, 2017) categorizes delays into: 1) Employer Risk Events (EREs - time + prolongation costs); 2) Contractor Risk Events (CREs - contractor absorbs time/cost, liable for LDs); 3) Neutral Risk Events (NREs - time relief, zero costs). Under the Prevention Principle, an employer cannot enforce Liquidated Damages if the employer's own actions delayed the works.",
+      example: "Late issuance of ICU structural revised drawings is an Employer Risk Event. The contractor is entitled to an Extension of Time (EOT) and direct site prolongation costs for critical path delay.",
+      trap: "Treating unexceptionally bad monsoon weather as an Employer Risk Event instead of a Neutral Risk Event (which grants time but no money)."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** On a ₹500 Cr hospital project in Delhi, the client withholds ₹15 Crores in Liquidated Damages (LDs) for a 90-day handover overrun.
+
+The contractor counters with a ₹22 Crore claim for prolongation costs, blaming the client for a 3-month delay in issuing revised ICU structural foundation drawings.
+
+The dispute lands on the Project Controls Manager's desk. Without the **Society of Construction Law (SCL) Delay Protocol (2nd Edition, 2017)**, projects degenerate into emotional shouting matches. With it, every delay is categorized by contract risk allocation.`
+      },
+      {
+        k: "read",
+        t: `**The SCL Delay Protocol Risk Taxonomy**
+
+1. **Employer Risk Events (EREs)**:
+   - Scope additions, late drawing releases, delayed access to site, employer suspension, late client-nominated equipment delivery.
+   - **Contractual Remedy**: **Time Relief (EOT)** + **Cost Relief (Prolongation Costs)**.
+
+2. **Contractor Risk Events (CREs)**:
+   - Subcontractor insolvency, poor labor productivity, equipment breakdown, unapproved rebar rework, late material ordering.
+   - **Contractual Remedy**: **ZERO Time** + **ZERO Cost**. If on the critical path, contractor is liable for contractual **Liquidated Damages (LDs)**.
+
+3. **Neutral Risk Events (NREs)**:
+   - Force Majeure, exceptionally adverse weather exceeding 10-year historical norms, statutory strikes, pandemic lockdowns.
+   - **Contractual Remedy**: **Time Relief (EOT)** (no LDs), but **ZERO Cost Relief**. Both parties bear their own financial losses.
+
+4. **The Prevention Principle**:
+   Under Indian Contract Act Section 54/55 and common law, an employer cannot insist on adherence to a contractual completion date if the employer's own actions or breaches prevented the contractor from completing on time. If the employer causes delay and there is no workable EOT clause, "time becomes at large".`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under the SCL Delay Protocol (2nd Edition), what are the contractual entitlements for a delay caused by an Employer Risk Event (ERE) on the critical path?",
+            o: [
+              ["Extension of Time (EOT) and compensation for direct site prolongation costs", true, "EREs protect the contractor from Liquidated Damages and reimburse proven site overheads."],
+              ["Extension of Time only, with zero financial compensation", false, "Time-only relief applies to Neutral Risk Events, not employer breaches."],
+              ["Financial compensation only, but the completion date remains unchanged", false, "If the completion date is not extended, the contractor faces unfair LDs."],
+              ["Immediate termination of the contract with 25% profit bonus", false, "Delay events are governed by variation and EOT clauses, not automatic termination."]
+            ]
+          },
+          {
+            q: "During construction of an oncology bunker, a 1-in-50-year torrential flood halts concreting for 14 days. How is this Neutral Risk Event categorized under SCL Protocol?",
+            o: [
+              ["Contractor receives 14 days Extension of Time (EOT), but zero prolongation cost compensation", true, "Neutral events relieve the contractor from LDs, but each party absorbs their own financial cost."],
+              ["Contractor receives full EOT plus full equipment idle hire charges", false, "Clients do not insure contractors against acts of God unless specifically agreed in special conditions."],
+              ["Contractor is penalized 14 days of Liquidated Damages", false, "Penalizing a contractor for an unforeseeable natural disaster violates basic contract law."],
+              ["The contract is automatically cancelled by the municipal authority", false, "Exceptional weather requires schedule extension, not project cancellation."]
+            ]
+          },
+          {
+            q: "What is the 'Prevention Principle' in construction law?",
+            o: [
+              ["An employer cannot hold a contractor to a completion date if the employer's own act or breach prevented completion", true, "The employer cannot benefit from their own default by deducting Liquidated Damages."],
+              ["Contractors must prevent subcontractors from speaking to the client", false, "The prevention principle is a fundamental doctrine of contract law, not site protocol."],
+              ["The safety officer must prevent laborers from working without safety helmets", false, "That is OSHA/site safety compliance, not contractual delay jurisprudence."],
+              ["The engineer must prevent all variations to freeze project cost", false, "Variations are legitimate contract changes; prevention refers to employer impediment."]
+            ]
+          },
+          {
+            q: "A contractor's tower crane breaks down for 10 days, halting the structural critical path. What is the contractor's entitlement under SCL Delay Protocol?",
+            o: [
+              ["Zero days Extension of Time and zero cost compensation; contractor remains liable for project slip", true, "Plant maintenance and equipment availability are strictly Contractor Risk Events."],
+              ["10 days EOT if the crane was imported from Europe", false, "The origin of equipment does not shift the operational maintenance risk to the Employer."],
+              ["Full cost compensation for idle labor wages", false, "Employers never pay idle wages caused by contractor machine breakdowns."],
+              ["Automatic waiver of all future Liquidated Damages", false, "Contractor defaults increase LD exposure, they never waive it."]
+            ]
+          },
+          {
+            q: "Why does SCL Core Principle 1 recommend that baseline schedules be digitally status-updated and archived at every monthly reporting period?",
+            o: [
+              ["To maintain a contemporaneous historical record of progress, logic changes, and critical path evolution for dispute resolution", true, "Contemporary updates provide indisputable proof of what was critical at the time delay events occurred."],
+              ["To fill up corporate cloud storage servers", false, "Archiving has legal evidentiary value under the Indian Evidence Act."],
+              ["Because Primavera P6 licenses expire if monthly updates are not saved", false, "Software licenses are independent of schedule update archiving."],
+              ["To hide contractor mistakes from the client", false, "Transparency and contemporary records prevent retrospective claim fabrication."]
+            ]
+          },
+          {
+            q: "What happens to the contractual completion date under Indian law if the Employer delays the works, but the contract lacks a valid Extension of Time (EOT) mechanism?",
+            o: [
+              ["Time becomes 'at large', the contractual completion date collapses, and the contractor only needs to complete within a reasonable time", true, "Under the Prevention Principle, without an EOT clause to extend the date, the Employer loses the right to deduct Liquidated Damages."],
+              ["The contractor is automatically declared in default and terminated", false, "The employer caused the delay, so the contractor cannot be in default."],
+              ["The contractor must complete in half the original time", false, "Shortening duration after employer delay is legally impossible."],
+              ["The High Court takes over daily project management", false, "Courts interpret contract validity; they do not manage construction sites."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the difference between an Employer Risk Event and a Neutral Risk Event under the SCL Delay Protocol, citing a realistic scenario from your project."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 32: Forensic Delay Analysis Methodologies =================
+  {
+    id: "U32", day: 32, title: "Day 32: The 6 Forensic Delay Analysis Methodologies & Selection", mins: 25,
+    card: {
+      id: "c-scl-methods",
+      title: "Forensic Delay Analysis: SCL Protocol 6-method selection hierarchy",
+      rule: "SCL Protocol 2nd Edition recognizes 6 forensic delay methodologies: 1) Impacted As-Planned (IAP - prospective, static); 2) Time Impact Analysis (TIA - prospective/contemporary, dynamic - gold standard during execution); 3) Time Slice Windows (retrospective, dynamic); 4) As-Planned vs As-Built Windows (retrospective); 5) Longest Path Analysis (retrospective); 6) Collapsed As-Built / But-For (retrospective, deductive).",
+      example: "During live hospital construction, use prospective TIA with fragnets inserted into the latest monthly update. For arbitration 2 years after completion, use Time Slice Windows or Collapsed As-Built.",
+      trap: "Using Impacted As-Planned in arbitration; it ignores progress, logic changes, and actual resource re-sequencing, and is easily dismantled by experts."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** In a commercial arbitration between a hospital trust and a tier-1 EPC contractor, the contractor's claims consultant submits an *"Impacted As-Planned"* claim claiming 120 days of EOT.
+
+The PMC expert witness discredits the entire ₹14 Crore claim in 20 minutes on the witness stand: *"The contractor took the original tender baseline from two years ago, inserted 15 delay bars, and ignored the fact that on site they completely changed construction sequencing, added two tower cranes, and had already worked around the problem!"*
+
+Selecting the wrong forensic delay methodology destroys claim credibility in court.`
+      },
+      {
+        k: "read",
+        t: `**The 6 SCL Forensic Delay Methodologies**
+
+| Method | Timing | Model | Baseline Used | Best Used When... |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Impacted As-Planned (IAP)** | Prospective | Static | As-Planned Baseline | Only when no updated schedules or site records exist. Weakest in arbitration. |
+| **2. Time Impact Analysis (TIA)** | Contemporary / Prospective | Dynamic | Update schedule right before delay | **Live project execution**. Quantifying EOT claims concurrently as delay occurs. |
+| **3. Time Slice Windows** | Retrospective | Dynamic | Monthly updated schedules | **Arbitration / formal disputes** where good contemporary monthly CPM updates exist. |
+| **4. As-Planned vs As-Built Windows** | Retrospective | Dynamic / Observational | Baseline & As-Built | Where CPM schedules are unreliable or lack complete progress updates. |
+| **5. Retrospective Longest Path** | Retrospective | Observational | As-Built Schedule | Tracing what actually controlled completion across the entire project life. |
+| **6. Collapsed As-Built (But-For)** | Retrospective | Dynamic / Deductive | Detailed As-Built | Proving what would have happened "but-for" the Employer's or Contractor's delays. |`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Which forensic delay methodology is recommended by the SCL Delay Protocol as the primary tool for resolving EOT claims contemporaneously during project execution?",
+            o: [
+              ["Time Impact Analysis (TIA) with discrete fragnet insertion into the latest progress update", true, "TIA models the impact of an event on the live critical path at the time the event occurred."],
+              ["Impacted As-Planned (IAP) on the original baseline", false, "IAP ignores actual progress and subsequent logic re-sequencing."],
+              ["Collapsed As-Built (But-For) analysis", false, "Collapsed As-Built is a retrospective method performed only after project completion."],
+              ["Expert gut feeling based on site meeting minutes", false, "Disputes require rigorous quantitative CPM mathematics, not subjective guesses."]
+            ]
+          },
+          {
+            q: "Why is the 'Impacted As-Planned' methodology frequently rejected by arbitral tribunals and courts in high-value construction disputes?",
+            o: [
+              ["Because it inserts theoretical delays into a static baseline, ignoring actual site progress, delays, and contractor re-sequencing", true, "IAP creates a theoretical fiction that bears no resemblance to historical site reality."],
+              ["Because it can only be run on Microsoft Project, not Primavera P6", false, "Methodology validity is independent of scheduling software brand."],
+              ["Because it automatically grants 100% cost compensation to the contractor", false, "IAP does not dictate cost law; it is rejected for technical inaccuracy."],
+              ["Because Indian law prohibits using baselines in construction claims", false, "Baselines are fundamental; IAP fails because it ignores post-baseline updates."]
+            ]
+          },
+          {
+            q: "What is the defining characteristic of a 'Time Slice Windows Analysis'?",
+            o: [
+              ["The project duration is divided into consecutive time windows (e.g. monthly updates) to measure critical path shifts period by period", true, "Windows analysis tracks how the critical path dynamically shifted as work proceeded."],
+              ["The scheduler only works on the schedule during morning office hours", false, "Windows refers to schedule time slices, not office working shifts."],
+              ["Only glass window installation activities are evaluated for delay", false, "Windows is a chronological analysis framework, not architectural glazing."],
+              ["All contractor activities are given a mandatory 30-day lag cushion", false, "Artificial lag cushions violate DCMA 14 and SCL scheduling standards."]
+            ]
+          },
+          {
+            q: "How does a 'Collapsed As-Built' (But-For) forensic delay analysis determine employer-caused delay?",
+            o: [
+              ["By taking the detailed As-Built schedule, subtracting all Employer Risk Events, and measuring how much earlier the project would have completed", true, "The collapsed schedule proves what would have occurred 'but-for' the employer's interference."],
+              ["By demolishing a collapsed retaining wall to inspect rebar placement", false, "Collapsed is a figurative scheduling term for removing delay bars, not physical collapse."],
+              ["By assuming the contractor made zero errors throughout the contract", false, "Contractor delays remain embedded in the as-built model to test net entitlement."],
+              ["By reducing all remaining durations by 50%", false, "Arbitrary duration scaling violates forensic standards."]
+            ]
+          },
+          {
+            q: "When selecting a forensic delay analysis methodology, what is the single most critical governing factor under SCL Section 11?",
+            o: [
+              ["The quality, frequency, and reliability of contemporaneous CPM schedule updates and site records available", true, "Sophisticated dynamic methods like Windows or TIA require robust contemporary digital records."],
+              ["The software subscription cost of Primavera P6 EPPM", false, "License costs do not dictate legal analysis methodology."],
+              ["The nationality of the dispute adjudication board chairman", false, "Method selection is governed by evidence and contract terms, not personalities."],
+              ["Whether the contractor won the tender as lowest bidder (L1)", false, "Procurement bidding ranking is irrelevant to delay methodology selection."]
+            ]
+          },
+          {
+            q: "Under SCL Protocol Core Principle 4, why must retrospective delay analysis focus on the 'longest path' rather than activities with large historical variance?",
+            o: [
+              ["Because an activity delayed by 100 days has zero project impact if it had 120 days of total float", true, "Project completion is governed strictly by the continuous driving critical path."],
+              ["Because the longest path contains the highest cost activities", false, "Cost loading does not dictate CPM float or critical path driving logic."],
+              ["Because P6 cannot calculate float on retrospective schedules", false, "P6 calculates float on any network with valid dates and relationships."],
+              ["Because contractors are only required to report on the longest path", false, "Contractors report on all work, but delay entitlement hinges on critical path impact."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Why is Time Impact Analysis (TIA) considered the gold standard during project execution, whereas Time Slice Windows is preferred in retrospective arbitration?"
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 33: TIA Mechanics & Fragnet Modeling =================
+  {
+    id: "U33", day: 33, title: "Day 33: Time-Impact Analysis (TIA) Mechanics & Fragnet Modeling", mins: 25,
+    card: {
+      id: "c-tia-fragnet",
+      title: "TIA Fragnet Modeling: Snapshot selection, sub-network insertion & CPM delta",
+      rule: "Time-Impact Analysis (TIA) requires 4 sequential steps: 1) Select the approved schedule update immediately preceding the delay event (the unimpacted snapshot); 2) Construct a discrete Fragnet (fragmentary network) representing cause, effect, and scope; 3) Insert the fragnet into the schedule with verified driving logic; 4) Run CPM (F9) to calculate the impacted completion date. The delta in days is the net EOT entitlement.",
+      example: "Day 90 update shows handover on Day 300. Client changes radiation bunker door specs. Insert 25-day fragnet. Impacted completion shifts to Day 320. Net EOT entitlement = 20 working days.",
+      trap: "Inserting a fragnet into an outdated original baseline instead of the latest status-updated schedule, or adding artificial constraints to force delay."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** On Day 90 of a multi-specialty hospital project, the client issues an instruction revising the Radiation Oncology LINAC bunker motorized door from 100 mm to 150 mm lead shielding.
+
+The contractor submits a handwritten letter: *"This drawing change will delay the hospital opening by 60 days. Grant 60 days EOT immediately."*
+
+As Project Controls Manager, you cannot accept subjective guesses. You require a **Fragnet (Fragmentary Network)** inserted into the live P6 schedule to model the mathematical cause-and-effect.`
+      },
+      {
+        k: "read",
+        t: `**The 4-Step Time Impact Analysis (TIA) Protocol**
+
+1. **Step 1: Select the Unimpacted Schedule Update**:
+   Identify the latest approved schedule update whose data date immediately precedes the delay event (e.g., *Update #3, Data Date: Day 90*). Verify that current progress is frozen and out-of-sequence logic is corrected. Note project completion date: **Day 300**.
+
+2. **Step 2: Construct the Fragnet (Sub-Network)**:
+   Create discrete, measurable activities representing the delay event with verified durations:
+   - *ACT-FRAG-01: Architect Issues Revised LINAC Door Specs* (Duration: 5d)
+   - *ACT-FRAG-02: Lead Shielding Vendor Re-engineering & Shop Drawings* (Duration: 12d)
+   - *ACT-FRAG-03: Client / AERB Approval of Structural Weight* (Duration: 8d)
+   - *ACT-FRAG-04: Manufacturing & Motorized Rigging on Site* (Duration: 15d)
+
+3. **Step 3: Insert Fragnet with Driving Predecessors & Successors**:
+   - Predecessor: Link to *Client Change Instruction Notice* (Day 92).
+   - Successor: Link to *LINAC Radiation Vault Wall Closure & Commissioning*.
+
+4. **Step 4: Recalculate Schedule (F9) & Quantify Delta**:
+   - Unimpacted Forecast Completion: **Day 300**
+   - Impacted Forecast Completion: **Day 318**
+   - **Net Contractual EOT Entitlement**: $318 - 300 =$ **18 Working Days**!`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "What is a 'Fragnet' in forensic schedule delay analysis?",
+            o: [
+              ["A discrete sub-network of activities representing the specific sequence, duration, and dependencies of a delay event", true, "A fragnet models the micro-logic of a change to test its effect on the macro CPM network."],
+              ["A fragmented hard drive partition in the site office computer", false, "Fragnet is a scheduling term (fragmentary network), not computer hardware."],
+              ["An invoice sent by an external claims lawyer", false, "Fragnets are scheduling logic models, not commercial invoices."],
+              ["A bar chart showing only completed activities with zero remaining days", false, "A fragnet models the new or delayed scope being evaluated."],
+              ["A tool used strictly for calculating concrete batching plant output", false, "Fragnets model schedule logic, not concrete production."]
+            ]
+          },
+          {
+            q: "In a Time Impact Analysis (TIA), into which schedule must the fragnet be inserted?",
+            o: [
+              ["The approved updated schedule immediately preceding the onset of the delay event", true, "Inserting into the contemporaneous update accounts for actual progress and available float at that exact time."],
+              ["The original tender baseline schedule created before construction started", false, "Baseline schedules do not reflect actual site progress or revised logic."],
+              ["The final as-built schedule after the hospital is completed", false, "TIA during execution evaluates live impacts before project completion."],
+              ["An empty blank P6 project file with no other activities", false, "A fragnet must interact with project successors to measure critical path delay."]
+            ]
+          },
+          {
+            q: "Unimpacted schedule forecast completion is Day 240 (Contract Date: Day 250, Total Float: +10 days). A client change fragnet of 18 days is inserted on the critical path. What is the contractor's EOT entitlement?",
+            o: [
+              ["8 days EOT (Forecast Day 258 − Contract Day 250)", true, "The delay first consumes the available 10 days of positive project float; only the excess 8 days delay beyond contract completion is payable as EOT."],
+              ["18 days EOT", false, "Ignores the fact that the project had 10 days of available total float."],
+              ["Zero days because the project was ahead of schedule", false, "The delay pushed completion beyond the contractual milestone by 8 days."],
+              ["28 days EOT", false, "Do not add positive float to delay duration."]
+            ]
+          },
+          {
+            q: "Why must fragnets use strict Finish-to-Start (FS) or Start-to-Start (SS) links rather than 'Must Finish On' mandatory constraints?",
+            o: [
+              ["Hard constraints override network calculation logic and conceal whether the delay event drove the critical path", true, "Hard constraints prevent CPM forward/backward passes from calculating true float and causal delay."],
+              ["Because P6 displays an error message and crashes if constraints are used", false, "P6 permits constraints, but they violate scheduling best practice and DCMA 14."],
+              ["Because Indian arbitration law makes constraints a criminal offense", false, "Hard constraints are poor technical practice, not statutory crimes."],
+              ["Because constraints increase activity duration automatically", false, "Constraints fix dates, they do not alter duration."]
+            ]
+          },
+          {
+            q: "Who is responsible for preparing and submitting the detailed Fragnet analysis when requesting an Extension of Time (EOT)?",
+            o: [
+              ["The Contractor claiming the time extension, as part of their contemporary particulars", true, "The burden of proof rests on the claimant under standard contracts (FIDIC 20.1 / CPWD Clause 5)."],
+              ["The Employer's boardroom steering committee", false, "The Employer evaluates claims; the contractor must substantiate them."],
+              ["The local municipal building tax assessor", false, "Municipal assessors have no role in contractual scheduling disputes."],
+              ["The software company technical support desk", false, "Software vendors provide platforms, not site claim submissions."]
+            ]
+          },
+          {
+            q: "After inserting a fragnet, the critical path does NOT pass through the fragnet, and the project completion date remains unchanged. What is the contractual result?",
+            o: [
+              ["The delay event occurred on a path with sufficient float; zero days Extension of Time (EOT) is granted", true, "Under SCL Protocol, only delay events that impact the critical path to completion qualify for an EOT."],
+              ["Grant 10 days EOT anyway as a goodwill gesture", false, "PMC engineers have a fiduciary duty to certify strictly based on contractual entitlement."],
+              ["Terminate the contractor for submitting an invalid claim", false, "Claims that do not impact critical paths are rejected, not penalized with termination."],
+              ["Change the data date to make the fragnet critical", false, "Manipulating data dates is fraudulent forensic practice."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain step by step how you would use a Fragnet to evaluate a contractor's claim for 30 days EOT caused by late client approval of Medical Gas plant layout."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 34: Concurrent Delay Forensics =================
+  {
+    id: "U34", day: 34, title: "Day 34: Concurrent Delay Forensics: Time Relief vs Money", mins: 25,
+    card: {
+      id: "c-concurrent-delay",
+      title: "Concurrent Delay: SCL Principle 10 separation of Time Relief vs Cost Relief",
+      rule: "Under SCL Delay Protocol Core Principle 10: Where an Employer Risk Event (ERE) and a Contractor Risk Event (CRE) occur concurrently on driving critical paths: 1) Contractor is entitled to an Extension of Time (Time Relief) to prevent Liquidated Damages under the Prevention Principle; 2) Contractor is NOT entitled to prolongation costs (Cost Relief) for the overlapping window because contractor would have incurred site overheads anyway due to their own delay.",
+      example: "Day 60 to Day 90: Client delays ICU structural handover by 30 days. Concurrently, Contractor fails to mobilize HVAC ducting labor for 30 days. Result: 30 days EOT granted; ₹0 prolongation costs compensated.",
+      trap: "Assuming concurrent delay entitles the contractor to both time extension AND daily prolongation costs."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** During Month 5 of a hospital build, the client delays handing over the 3rd Floor OT wing by 20 days due to architectural MEP duct redesign.
+
+Concurrently, during the exact same 20-day window, the contractor’s specialist cleanroom panel supplier halts deliveries for 20 days because the contractor failed to pay their bills.
+
+The contractor submits a claim for **20 days EOT** PLUS **₹42 Lakhs in site prolongation costs**. The client demands **₹30 Lakhs in Liquidated Damages**.
+
+How does a professional Project Controls Manager resolve this dispute? SCL Protocol **Core Principle 10** provides the definitive legal formula.`
+      },
+      {
+        k: "read",
+        t: `**SCL Core Principle 10: The Two-Pronged Concurrent Delay Rule**
+
+1. **What is True Concurrency?**:
+   Two or more delay events occurring at the same time, where one is an **Employer Risk Event (ERE)** and one is a **Contractor Risk Event (CRE)**, and both would independently cause critical path delay to the completion date.
+
+2. **Prong 1: Time Relief (EOT)**:
+   - **Contractor Entitlement: FULL Extension of Time (EOT)**.
+   - *Legal Reason (The Prevention Principle)*: The employer cannot penalize the contractor with Liquidated Damages (LDs) for failing to complete on time when the employer was also causing delay to completion during that same window.
+
+3. **Prong 2: Cost Relief (Prolongation Costs)**:
+   - **Contractor Entitlement: ZERO Prolongation Costs for the overlapping window**.
+   - *Legal Reason (The 'But-For' Causation Rule)*: To recover damages, the contractor must prove that the employer's breach was the sole cause of their increased overhead expenditure. Since the contractor's own delay would have kept the site open anyway, the contractor suffered no incremental loss caused exclusively by the employer!`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under SCL Delay Protocol 2nd Edition Core Principle 10, how is an Extension of Time (EOT) decided when an Employer Risk Event and a Contractor Risk Event occur concurrently on the critical path?",
+            o: [
+              ["The contractor is granted a full Extension of Time (EOT), relieving them from Liquidated Damages", true, "The Prevention Principle dictates that an employer cannot deduct LDs when their own actions also delayed completion."],
+              ["The contractor's EOT is reduced to zero because they were also in default", false, "That would allow the employer to deduct LDs despite having contributed to the delay."],
+              ["Both parties split the days 50/50", false, "Apportionment is not recognized under English or standard Indian common law construction doctrine."],
+              ["The contract is automatically terminated", false, "Concurrent delay results in time relief, not contract repudiation."]
+            ]
+          },
+          {
+            q: "In the same concurrent delay scenario (20 days employer delay overlapping with 20 days contractor labor delay), what is the contractor's entitlement to site prolongation costs?",
+            o: [
+              ["Zero prolongation cost compensation for the 20-day overlapping concurrent window", true, "Under the 'but-for' test, the contractor would have incurred site overheads anyway due to their own delay."],
+              ["100% of claimed site overheads and equipment idle costs", false, "Employers are not liable for costs that the contractor would have incurred due to contractor default."],
+              ["50% of the site overhead costs", false, "Standard SCL protocol rejects 50/50 cost sharing for concurrent delay."],
+              ["Double cost compensation as a penalty to the client", false, "Damages in contract law are compensatory, never punitive against clients."]
+            ]
+          },
+          {
+            q: "An employer delays releasing OT equipment layout by 30 days. Concurrently, the contractor delays chiller piping on the critical path by 10 days. For how many days is the contractor entitled to prolongation costs?",
+            o: [
+              ["20 days of prolongation costs (30 days total employer delay − 10 days concurrent contractor delay)", true, "The contractor gets cost compensation only for the net period where the employer's delay operated alone without contractor concurrency."],
+              ["30 days of prolongation costs", false, "10 days were concurrent with contractor's own delay, barring cost recovery for that window."],
+              ["Zero days because any concurrency bars all money forever", false, "Cost is barred only during the overlapping period; non-concurrent employer delay is compensable."],
+              ["40 days (30 + 10)", false, "Do not add delays together."]
+            ]
+          },
+          {
+            q: "What is 'Pacing Delay' under SCL Delay Protocol?",
+            o: [
+              ["A contractor deliberately slowing down non-critical work to match an already-existing employer delay on the critical path", true, "Pacing is a rational commercial decision not to waste resources when an upstream employer delay prevents progress anyway."],
+              ["A marathon run by the project team on Sunday", false, "Pacing in scheduling refers to decelerating progress in response to another delay."],
+              ["A method used by P6 to compress schedule durations", false, "P6 does not pace activities automatically."],
+              ["A fraudulent technique used to inflate contractor bills", false, "Legitimate pacing is recognized if the contractor can prove available capacity."]
+            ]
+          },
+          {
+            q: "Why must a contractor give prompt written notice of an intention to 'pace' work in response to an Employer delay?",
+            o: [
+              ["To contemporaneously establish that the slowdown was a deliberate mitigation choice, not an unexcused contractor default", true, "Without contemporaneous notice, courts will treat the slowdown as an ordinary contractor delay event."],
+              ["To ensure the architect receives extra design fees", false, "Architect fees are independent of contractor pacing notices."],
+              ["Because municipal labor laws require 30 days notice before slowing work", false, "Labor laws govern employment contracts, not project pacing notices."],
+              ["To cancel the contractor's performance bank guarantee", false, "Pacing notices do not affect bank guarantees."]
+            ]
+          },
+          {
+            q: "Which party bears the burden of proving that concurrent contractor delay existed during an employer delay event?",
+            o: [
+              ["The Employer / PMC asserting the concurrency to defeat the contractor's prolongation cost claim", true, "The party asserting concurrent delay as a defense must prove it with contemporaneous CPM records."],
+              ["The local trade union leader", false, "Trade unions do not manage contractual scheduling claims."],
+              ["The High Court registrar", false, "Judges evaluate evidence submitted by the parties."],
+              ["The cement supplier", false, "Material vendors are third parties to contractual delay claims."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the legal reasoning behind why a contractor gets time relief (EOT) but NOT cost relief (prolongation costs) during a window of concurrent delay."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 35: Float Ownership =================
+  {
+    id: "U35", day: 35, title: "Day 35: Float Ownership & Commercial Strategy", mins: 25,
+    card: {
+      id: "c-float-ownership",
+      title: "Float Ownership: Project shared resource (SCL Principle 8) vs commercial strategy",
+      rule: "Under SCL Protocol Core Principle 8: Total float belongs to the Project on a first-come, first-served basis, unless the contract explicitly states otherwise. An employer delay that consumes available total float does NOT entitle the contractor to an EOT unless the delay exceeds total float and pushes completion beyond the contractual milestone.",
+      example: "Activity has 15 days total float. Employer delays the activity by 10 days. Total float reduces from 15 to 5 days. Completion date is unaffected. Result: Zero days EOT, because float absorbed the delay.",
+      trap: "Claiming an EOT for an employer delay that merely consumed float without delaying the project completion date."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** The civil contractor finishes the hospital basement retaining walls 25 days ahead of schedule, creating **+25 days of Total Float** across the downstream structure.
+
+The hospital client uses 20 days of this float to redesign the ground floor radiology department layout without granting an EOT.
+
+The contractor is furious: *"We worked night shifts to generate that 25-day float for ourselves! The client stole our buffer! Now a 10-day monsoon rain will push us into Liquidated Damages!"*
+
+Who owns the float? The contractor, the employer, or the project? SCL Protocol **Core Principle 8** gives the answer.`
+      },
+      {
+        k: "read",
+        t: `**SCL Core Principle 8: The Three Doctrines of Float Ownership**
+
+1. **Doctrine 1: Float Belongs to the Contractor**:
+   - Argument: The contractor planned the work and assumed the execution risk; float is the contractor's buffer against their own potential future delays.
+   - *Status*: Rarely accepted by standard contracts unless explicitly written into Special Conditions.
+
+2. **Doctrine 2: Float Belongs to the Employer**:
+   - Argument: The employer paid for the project and owns the schedule; float allows the employer to make scope changes without increasing contract time.
+   - *Status*: Rejected as one-sided and unfair to contractors.
+
+3. **Doctrine 3: Float Belongs to the Project (First-Come, First-Served)**:
+   - **The SCL Protocol & FIDIC Standard**: Total float is a shared project asset.
+   - Whoever needs it first uses it:
+     - If the contractor encounters delays first, contractor consumes float.
+     - If the employer issues changes first, employer consumes float.
+   - **The Golden EOT Rule**: An Employer Risk Event entitles the contractor to an Extension of Time (EOT) **ONLY when the delay exceeds available total float and delays the contractual completion date**!`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "Under SCL Delay Protocol Core Principle 8 and standard FIDIC contracts, who owns the total float in a construction schedule?",
+            o: [
+              ["Float belongs to the Project, available to whichever party needs it first on a first-come, first-served basis", true, "Shared project ownership is the standard legal doctrine governing construction float."],
+              ["Float belongs exclusively to the contractor as private commercial property", false, "Unless special conditions explicitly state so, float is a project resource."],
+              ["Float belongs exclusively to the client's Project Director", false, "Employers do not own float exclusively."],
+              ["Float is owned by the software company that licensed Primavera P6", false, "Software vendors have no ownership in project contractual schedule float."]
+            ]
+          },
+          {
+            q: "An activity on the HVAC installation path has 14 days of Total Float. The client delays issuing equipment access by 10 days. Does this delay entitle the contractor to an Extension of Time (EOT)?",
+            o: [
+              ["No EOT is due because the 10-day delay was absorbed by available total float (float reduces to 4 days)", true, "Under SCL Principle 8, time extensions are granted only when delay extends completion beyond the contract date."],
+              ["Yes, grant 10 days EOT immediately because the employer caused the delay", false, "Causing an event does not create an EOT if the event does not drive the completion date."],
+              ["Grant 14 days EOT to match the total float", false, "Float is not added to EOT grants."],
+              ["The contractor must pay 4 days of Liquidated Damages", false, "The contractor is not in default; the project still has 4 days of positive float."]
+            ]
+          },
+          {
+            q: "What is the difference between 'Total Float' and 'Free Float'?",
+            o: [
+              ["Total Float is the delay an activity can suffer without delaying project completion; Free Float is without delaying any successor's early start", true, "Free float belongs exclusively to a single activity, while total float is shared along the path."],
+              ["Total Float is measured in rupees; Free Float is measured in days", false, "Both are time measurements in working days."],
+              ["Total Float applies only to concrete; Free Float applies to painting", false, "Float applies to network logic across all disciplines."],
+              ["Free Float is only available on free trial versions of P6", false, "Free float is a mathematical property of CPM network early dates."]
+            ]
+          },
+          {
+            q: "How can a contractor commercially protect their float if they wish to retain a float buffer for their own risks?",
+            o: [
+              ["Negotiate an express contract clause stating 'Total float is reserved exclusively for the contractor's benefit'", true, "Express contract conditions override standard SCL default guidelines."],
+              ["Insert artificial negative lags across all activities in P6", false, "Negative lags distort schedule math and violate DCMA 14 standards."],
+              ["Delete all successor relationships in the schedule", false, "Open ends destroy the critical path network completely."],
+              ["Refuse to submit monthly P6 schedule updates to the client", false, "Withholding updates violates reporting clauses and triggers payment withholding."]
+            ]
+          },
+          {
+            q: "If an Employer Risk Event consumes 15 days of total float on a near-critical path, reducing its float to 0 days, what is the operational consequence?",
+            o: [
+              ["The path becomes a new critical path, and any further delay will immediately delay project completion", true, "Float consumption increases project risk by creating multiple parallel critical paths."],
+              ["The project completion date is automatically extended by 15 days", false, "Zero float means on time; it does not extend completion beyond the milestone."],
+              ["The contractor is entitled to immediate prolongation costs", false, "Prolongation costs require actual project delay beyond the contract completion date."],
+              ["The activities on that path are deleted from the contract", false, "The scope remains; it must now be executed with zero float margin."]
+            ]
+          },
+          {
+            q: "What is 'terminal float' in a construction schedule?",
+            o: [
+              ["The period between the contractor's planned early completion date and the contractual completion date", true, "Terminal float represents the contractor's planned buffer before the contractual deadline."],
+              ["The float on the last day before a contractor goes bankrupt", false, "Terminal float is a legitimate planning buffer between planned finish and contract finish."],
+              ["Float on airport terminal building projects only", false, "Terminal float is a generic CPM concept applicable to all project types."],
+              ["Float that cannot be calculated by computer software", false, "Terminal float is easily read on any Gantt chart."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain why total float is treated as a shared project asset under SCL Protocol, and what happens when an Employer delay consumes available float."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 36: Prolongation Cost Quantification =================
+  {
+    id: "U36", day: 36, title: "Day 36: Prolongation Cost Quantification & Head Office Overheads", mins: 25,
+    card: {
+      id: "c-prolongation-hooh",
+      title: "Prolongation Costs: Direct site prelims vs Head Office Overheads (HOOH)",
+      rule: "Prolongation claims compensate actual, proven financial loss caused by critical path delay: 1) Direct Site Overheads (site staff salaries, crane hire, site power, security) proven via contemporary payroll and audited vouchers; 2) Head Office Overheads (HOOH) claimed via Emden/Eichleay formulas require proving lost opportunity under Indian Contract Act Section 73 (contractor was prevented from deploying staff on other profitable work).",
+      example: "Approved 30-day EOT: Direct site prelims = ₹18 Lakhs (verified against payroll logbooks). HOOH claim of ₹35L based on Hudson formula rejected because contractor could not prove staff were barred from other revenue projects.",
+      trap: "Assuming formulaic Head Office Overhead calculations (Hudson/Emden) are automatically accepted in arbitration without proving lost opportunity."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** Following a 45-day critical path delay caused by client foundation design revisions, the contractor secures an approved 45-day Extension of Time (EOT).
+
+The contractor immediately submits a **₹2.4 Crore Prolongation Cost Claim**:
+- Item 1: Site Prelims (Staff salaries, crane hire, site office power): ₹65 Lakhs
+- Item 2: Head Office Overheads (Hudson Formula, 10% markup): ₹1.2 Crores
+- Item 3: Profit Markup (15%): ₹55 Lakhs
+
+The Client CEO asks you: *"Do we have to pay this ₹2.4 Crore bill just because we granted 45 days EOT?"*
+
+A true Project Controls Manager knows how to separate legitimate direct site costs from speculative formulaic claims.`
+      },
+      {
+        k: "read",
+        t: `**The Anatomy of a Forensic Prolongation Claim**
+
+1. **Direct Site Overheads (Compensable)**:
+   - Costs that were incurred *solely because the site remained open for an additional 45 days*:
+     - Site engineering and supervisory salaries.
+     - Tower crane, hoist, and generator rental.
+     - Site security, sanitation, water, and power bills.
+     - Extended insurance premiums and bank guarantee charges.
+   - **Auditing Requirement**: Must be supported by contemporary muster rolls, payslips, equipment hire logbooks, and bank payment vouchers.
+
+2. **Head Office Overheads (HOOH) & The Lost Opportunity Rule**:
+   - Theoretical formulas used in claims:
+     - **Hudson Formula**: $HOOH = \\frac{\\text{HOOH \\%}}{100} \\times \\frac{\\text{Contract Sum}}{\\text{Contract Period}} \\times \\text{Delay Days}$ (heavily criticized in modern courts).
+     - **Emden Formula**: Uses actual audited company accounts overhead percentage instead of tender guess.
+     - **Eichleay Formula**: Prorates actual corporate overheads against project revenue.
+   - **The Indian Contract Act Section 73 Standard**:
+     Under landmark Supreme Court rulings (*McDermott International* & *Associate Builders*), the contractor **MUST prove lost opportunity**:
+     *Did the delay on this hospital prevent the contractor from deploying their staff on another profitable tender?* If the contractor had spare capacity anyway, HOOH is rejected!`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "What is the primary difference between Direct Site Overheads and Head Office Overheads (HOOH) in a prolongation claim?",
+            o: [
+              ["Direct site overheads are incurred physically at the project site; HOOH represents central corporate head office executive and administrative costs", true, "Site overheads (cranes, site staff, trailers) are tangible direct costs; HOOH is corporate indirect cost."],
+              ["Direct site overheads are paid in cash; HOOH is paid in building materials", false, "All payments are monetary."],
+              ["Direct site overheads apply only to civil works; HOOH applies only to electrical works", false, "Overheads span all engineering disciplines."],
+              ["Direct site overheads are never compensable under Indian law", false, "Proven direct site overheads are the core compensable element of prolongation claims."]
+            ]
+          },
+          {
+            q: "Under Indian Contract Act Section 73 and Supreme Court jurisprudence, what must a contractor prove to successfully claim Head Office Overheads via formulas like Hudson or Emden?",
+            o: [
+              ["That the contractor had other profitable commercial work available which they were prevented from undertaking due to staff being tied down (Lost Opportunity)", true, "Without proving lost opportunity, formulaic overhead claims represent pure mathematical windfall."],
+              ["That the corporate head office has air conditioning and elevators", false, "Office amenities are irrelevant to legal causation of damages."],
+              ["That the tender bid was prepared using Microsoft Excel", false, "Software used for bidding has no bearing on proving actual corporate loss."],
+              ["That the contractor's company shares are listed on the National Stock Exchange", false, "Corporate listing status is irrelevant to contract breach damages."]
+            ]
+          },
+          {
+            q: "A contractor claims ₹25 Lakhs for idle tower crane hire during an employer delay. During the audit, the PMC discovers the crane was working 6 hours daily pouring concrete for contractor's non-critical retaining walls. How is this claim audited?",
+            o: [
+              ["The idle claim is rejected because the equipment was actively deployed on productive site work", true, "Idle equipment claims require proving the machine was completely immobilized and unable to work."],
+              ["Pay 100% of the claim because the employer caused the foundation delay", false, "Contractors cannot double-dip by billing idle equipment while using it productively."],
+              ["Pay 50% as a routine settlement", false, "Audits are based on factual logbooks, not unprincipled compromise."],
+              ["Terminate the crane rental company", false, "The dispute is between Contractor and Employer, not the rental vendor."]
+            ]
+          },
+          {
+            q: "Why is the Hudson Formula frequently challenged and discredited by expert schedulers in modern arbitration?",
+            o: [
+              ["Because it uses the contractor's original tender overhead percentage, assuming the contractor made a realistic bid and would have made that profit elsewhere", true, "Tender percentages reflect unproven commercial assumptions rather than actual audited financial losses."],
+              ["Because it was invented before computers existed", false, "Age alone does not invalidate a formula; its failure lies in relying on tender assumptions."],
+              ["Because it only calculates delays in weeks, not days", false, "Formulas can scale across any time unit."],
+              ["Because Indian arbitration acts explicitly name Hudson as illegal", false, "Formulas are evaluated on evidential proof of actual loss under Section 73."]
+            ]
+          },
+          {
+            q: "Which contemporaneous site records are indispensable for substantiating a direct site prolongation cost claim?",
+            o: [
+              ["Signed staff biometric attendance records, plant and machinery daily logbooks, utility bills, and bank payment receipts", true, "Contemporaneous auditable records prove that personnel and machines were physically present and paid."],
+              ["Photographs of the site entrance gate taken on a mobile phone with no timestamp", false, "Unverified photos do not prove payroll expenditure or daily machine costs."],
+              ["A single-page summary letter written by the contractor's managing director", false, "Summary assertions without primary accounting vouchers are legally insufficient."],
+              ["Newspaper clippings reporting on national construction inflation", false, "General economic news does not substantiate site-specific direct costs."]
+            ]
+          },
+          {
+            q: "Under standard FIDIC Red Book and CPWD GCC, can a contractor claim 'lost profit' on prolongation costs during an employer-caused delay?",
+            o: [
+              ["Generally NO; EOT compensation reimburses proven 'cost incurred', which explicitly excludes contractor profit markup", true, "FIDIC Sub-Clause 8.4/20.1 reimburses Cost, defined as expenditure properly incurred, excluding profit unless specified."],
+              ["Yes, contractors are entitled to 20% profit on top of all delay damages", false, "Standard construction contracts distinguish Cost from Profit."],
+              ["Profit is paid only if the project is a luxury private villa", false, "Contractual definition of Cost applies uniformly across project types."],
+              ["Yes, profit is mandatory under the Indian Constitution", false, "Commercial remedies are governed by contract terms and the Contract Act."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain how you would audit a contractor's ₹1 Crore prolongation claim, detailing which items you would certify and which you would reject."
+      },
+      { k: "done" }
+    ]
+  },
+
+  // ================= DAY 37: Acceleration & Disruption Claims =================
+  {
+    id: "U37", day: 37, title: "Day 37: Acceleration, Mitigation & Disruption Claims", mins: 25,
+    card: {
+      id: "c-acceleration-disruption",
+      title: "Acceleration & Disruption: Constructive acceleration & the Measured Mile",
+      rule: "1) Instructed Acceleration: Employer orders faster completion and pays extra resources (FIDIC 8.6/13.1); 2) Constructive Acceleration: Employer wrongfully refuses a valid EOT and insists on original completion date, forcing contractor to accelerate (compensable under SCL Principle 12); 3) Disruption: Loss of productivity/efficiency on specific operations caused by employer interference, measured using the 'Measured Mile' approach.",
+      example: "Hospital OT HVAC: Client changes duct route 6 times in 2 months. Crews work at 55% efficiency compared to an undisrupted 20-day 'measured mile' baseline. Contractor claims the 45% productivity loss.",
+      trap: "Confusing delay (critical path time slip) with disruption (sub-critical productivity loss), or claiming acceleration without prior written notice."
+    },
+    screens: [
+      {
+        k: "read",
+        t: `**Why it matters.** With 4 months left before the hospital’s statutory opening date, the project is 35 days behind schedule due to late client medical gas equipment data.
+
+The contractor submits a valid EOT claim. The client steering committee panics about political inaugurations and responds: *"EOT rejected! Deploy double shifts, work 24/7, and finish by November 15, or we will invoke ₹10 Crores of Liquidated Damages!"*
+
+The contractor complies, hiring 80 extra technicians, air-freighting materials, and paying double overtime, spending ₹95 Lakhs to accelerate.
+
+Who pays for this ₹95 Lakhs? This is classic **Constructive Acceleration**.`
+      },
+      {
+        k: "read",
+        t: `**Acceleration & Disruption Doctrines**
+
+1. **The Three Types of Acceleration**:
+   - **Voluntary Acceleration**: Contractor speeds up at their own cost to recover their own past contractor-caused delay.
+   - **Instructed Acceleration**: Employer issues a formal variation instruction under FIDIC Clause 13.1 / CPWD Clause 12 ordering acceleration and agreeing to pay premium labor and plant costs.
+   - **Constructive Acceleration (SCL Principle 12)**:
+     - Conditions required to establish entitlement:
+       1. Contractor was entitled to an EOT due to an Employer delay.
+       2. Contractor submitted a timely, valid EOT claim with particulars.
+       3. Employer wrongfully refused, ignored, or delayed granting the EOT.
+       4. Employer demanded completion by the unextended contractual date.
+       5. Contractor reasonably incurred additional costs to accelerate and recover time.
+
+2. **Disruption vs Delay (The Measured Mile)**:
+   - **Delay**: Project-level impact along the critical path that postpones overall completion.
+   - **Disruption**: Workface-level impact that reduces labor productivity and efficiency, causing work to cost more money even if it never delays project completion!
+   - **The Measured Mile (SCL Section 18)**:
+     - The gold standard for proving disruption.
+     - Compare labor output in an **undisrupted period** (the baseline mile) against the **disrupted period** on the same site under similar conditions.`
+      },
+      {
+        k: "quiz",
+        bank: [
+          {
+            q: "What is 'Constructive Acceleration' in construction dispute law?",
+            o: [
+              ["When an employer wrongfully refuses a valid EOT and insists on the original completion date, forcing the contractor to incur acceleration costs", true, "Under SCL Principle 12, the contractor is entitled to recover acceleration costs caused by the employer's refusal to grant time."],
+              ["When a building is constructed using 3D printing technology", false, "Constructive acceleration is a legal claims doctrine, not a physical construction method."],
+              ["When a contractor voluntarily works overtime to recover their own poor workmanship", false, "Voluntary recovery of contractor-caused delay is not constructive acceleration."],
+              ["When the government accelerates corporate income tax collections", false, "Tax administration has no relation to project schedule acceleration."]
+            ]
+          },
+          {
+            q: "Under the SCL Delay Protocol, how does 'Disruption' differ from 'Delay'?",
+            o: [
+              ["Delay affects the critical path and project completion date; Disruption is loss of productivity and efficiency on specific workfaces", true, "An operation can be heavily disrupted (costing extra labor hours) without ever affecting project completion."],
+              ["Delay applies to civil works; Disruption applies only to hospital medical gas", false, "Both concepts apply across all construction trades."],
+              ["Delay is paid in money; Disruption is paid in additional materials", false, "Both claims seek financial compensation for incurred losses."],
+              ["There is no difference; they are legally identical terms", false, "They represent completely distinct contractual claims with different evidential tests."]
+            ]
+          },
+          {
+            q: "What is the 'Measured Mile' approach for calculating disruption damages?",
+            o: [
+              ["Comparing labor productivity on an identical operation during an undisrupted period with productivity during the disrupted period on the same project", true, "The measured mile eliminates external variables by benchmarking the contractor against their own proven performance on the same site."],
+              ["Measuring the distance laborers walk between the site office and the tea stall", false, "Measured mile is a productivity ratio metric, not a physical walking distance."],
+              ["Using theoretical textbook industry labor averages from 30 years ago", false, "Textbook averages do not reflect site-specific equipment, climate, and management."],
+              ["Measuring the depth of pile foundation boreholes", false, "Drilling depth is physical measurement, not labor productivity benchmarking."]
+            ]
+          },
+          {
+            q: "Which five conditions are mandatory to establish a successful claim for Constructive Acceleration?",
+            o: [
+              ["Excusable delay occurred; timely EOT claim submitted; EOT wrongfully refused/delayed; employer ordered compliance with original date; acceleration costs actually incurred", true, "All 5 elements are required to prove that the expenditure was compelled by the employer's breach."],
+              ["Contractor hired at least 500 laborers and purchased two extra cranes", false, "Specific resource counts do not establish legal entitlement without the 5 contractual prerequisites."],
+              ["The local trade chamber approved the contractor's holiday schedule", false, "Chamber of commerce certificates do not govern acceleration claims."],
+              ["The project was completed at least 6 months ahead of schedule", false, "Acceleration may only succeed in mitigating delay rather than finishing early."]
+            ]
+          },
+          {
+            q: "A contractor attempts to prove a disruption claim by comparing their actual labor costs against their original optimistic tender labor estimate (the Total Cost method). How will an arbitral tribunal treat this claim?",
+            o: [
+              ["With extreme skepticism or outright rejection, because it assumes the tender estimate was perfect and contractor caused zero inefficiencies", true, "Total cost claims are disfavored because they lump contractor bidding under-estimates with employer disruption."],
+              ["Award 100% of the claim immediately without questions", false, "Arbitrators require causal proof linking specific employer events to specific labor hours."],
+              ["Double the claim amount to account for inflation", false, "Tribunals do not inflate unsubstantiated claims."],
+              ["Terminate the contract retroactively", false, "Flawed claim methodologies are dismissed, not penalized with contract termination."]
+            ]
+          },
+          {
+            q: "Why must a contractor notify the Employer in writing BEFORE embarking on constructive acceleration measures?",
+            o: [
+              ["To give the Employer the opportunity to reconsider the EOT refusal and avoid incurring unnecessary acceleration costs", true, "Notice prevents contractors from racking up unapproved overtime bills without giving the client a chance to extend the date."],
+              ["Because local police require notice before night shifts start", false, "Police permissions are municipal, not contractual claim prerequisites."],
+              ["To allow the architect to double their consulting fees", false, "Architect fee structures do not dictate acceleration notices."],
+              ["Because P6 will not run schedules with night shifts unless notified", false, "P6 handles 24-hour shift calendars through calendar settings."]
+            ]
+          }
+        ]
+      },
+      {
+        k: "explain",
+        p: "Explain the 'Measured Mile' method for proving a labor disruption claim, and why it is superior to comparing actual costs against tender estimates."
+      },
+      { k: "done" }
+    ]
+  }
+];
+UNITS.push(...UNITS4);
+const APPLY4 = {
+  U31: {
+    task: "For an active or past delay on your live project: 1) Identify the root cause event; 2) Classify it under SCL Delay Protocol as an Employer Risk Event (ERE), Contractor Risk Event (CRE), or Neutral Risk Event (NRE); 3) State the contractual entitlement (Time relief, Cost relief, or both/neither); 4) Evaluate whether the Prevention Principle applies.",
+    good: [
+      "Names a specific delay event with dates and location",
+      "Correctly classifies the event into ERE, CRE, or NRE with contractual justification",
+      "Delineates between Time relief (EOT) and Cost relief (prolongation)",
+      "Applies the Prevention Principle to Liquidated Damages exposure"
+    ],
+    tmpl: "Project & Delay Event: \nRoot Cause & Date of Occurrence: \nSCL Risk Classification (ERE / CRE / NRE): \nContractual Entitlement (Time vs Money): \nApplication of Prevention Principle: "
+  },
+
+  U32: {
+    task: "Select one of the 6 SCL forensic delay analysis methodologies for a delay dispute on your project: 1) Identify the chosen methodology; 2) Justify why it fits the available contemporary records (monthly P6 updates, daily site logs, as-built data); 3) Explain why competing methodologies (e.g. Impacted As-Planned) were rejected.",
+    good: [
+      "Names one of the 6 SCL methodologies (e.g. TIA, Time Slice Windows, Collapsed As-Built)",
+      "Evaluates the availability and reliability of contemporary CPM updates and site records",
+      "Justifies the selection against project timing (prospective vs retrospective)",
+      "Identifies specific weaknesses in rejected methods"
+    ],
+    tmpl: "Project & Nature of Dispute: \nSelected Forensic Methodology: \nJustification Based on Available Records: \nRejected Alternative Methodologies (and why): "
+  },
+
+  U33: {
+    task: "Develop a complete Fragnet sub-network for an employer-caused scope change or delay event on your project: 1) Select the unimpacted baseline update schedule immediately preceding the event; 2) Define 3–5 discrete fragnet activities with durations; 3) Specify driving predecessors and successors; 4) State the quantified EOT entitlement in working days.",
+    good: [
+      "Identifies unimpacted schedule snapshot with data date and forecast completion",
+      "Defines discrete fragnet activities with realistic durations",
+      "Specifies driving logic links (FS/SS) without artificial constraints",
+      "Calculates net EOT entitlement from schedule delta"
+    ],
+    tmpl: "Unimpacted Schedule Snapshot (Data Date & Completion Date): \nDelay Event Description: \nFragnet Activities (ID, Name, Duration, Logic Links):\n1. \n2. \n3. \nImpacted Completion Date: \nNet EOT Entitlement (Working Days): "
+  },
+
+  U34: {
+    task: "Analyze a scenario on your project involving potential concurrent delay: 1) Identify an Employer Risk Event and a concurrent Contractor Risk Event occurring in the same window; 2) Apply SCL Core Principle 10 to determine Extension of Time (EOT); 3) Determine contractor prolongation cost entitlement; 4) Detail how you would present this to the client.",
+    good: [
+      "Identifies both an ERE and a CRE occurring in an overlapping time window",
+      "Separates Time Relief (EOT granted under Prevention Principle) from Cost Relief",
+      "Correctly concludes zero prolongation costs for the concurrent window under the 'but-for' rule",
+      "Outlines a professional, legally grounded determination for client leadership"
+    ],
+    tmpl: "Overlapping Time Window: \nEmployer Risk Event (ERE): \nContractor Risk Event (CRE): \nDetermination on Time Relief (EOT & LD protection): \nDetermination on Cost Relief (Prolongation costs): \nExecutive Communication to Client: "
+  },
+
+  U35: {
+    task: "Formulate a float management strategy for an ongoing package on your project: 1) Identify current total float and free float on key critical and near-critical paths; 2) Evaluate how float consumption by employer changes will be treated under contract terms; 3) Detail the contractual notice required when employer changes consume available float.",
+    good: [
+      "States current total float and free float values in working days",
+      "Applies the SCL Principle 8 project-shared float doctrine",
+      "Identifies near-critical paths at risk of becoming critical",
+      "Drafts a formal notice warning the client of float exhaustion"
+    ],
+    tmpl: "Project Package & Paths: \nCurrent Total Float & Free Float Values: \nContractual Float Ownership Terms: \nNear-Critical Path Risk Assessment: \nFormal Float Consumption Notice to Client: "
+  },
+
+  U36: {
+    task: "Perform a forensic audit on a contractor's prolongation cost submission following an approved EOT: 1) Segregate Direct Site Overheads from Head Office Overheads (HOOH); 2) Audit direct site payroll, plant hire, and utilities against contemporary vouchers; 3) Evaluate the HOOH claim under Indian Contract Act Section 73 (lost opportunity test); 4) State the final certified compensable amount.",
+    good: [
+      "Clearly separates direct site prelims from corporate head office overheads",
+      "Specifies primary audit vouchers checked (muster rolls, plant logs, power bills)",
+      "Applies the lost opportunity legal test to reject or adjust formulaic HOOH claims",
+      "Calculates a justified certified settlement figure"
+    ],
+    tmpl: "Approved EOT Period (Days): \nContractor Gross Prolongation Claim: \n1. Direct Site Prelims Audit (Vouchers checked & certified amount): \n2. Head Office Overheads Audit (Evaluation of formula & lost opportunity): \n3. Profit Markup Assessment: \nFinal Certified Compensable Amount: "
+  },
+
+  U37: {
+    task: "Evaluate an acceleration or disruption situation on your project: 1) For an acceleration scenario, verify whether the 5 prerequisites of Constructive Acceleration are satisfied; OR for disruption, identify the disrupted operation and outline how a 'Measured Mile' analysis will be established; 2) Draft a formal contractual communication to the counterparty.",
+    good: [
+      "Addresses either Constructive Acceleration (5 conditions) or Disruption (Measured Mile)",
+      "For acceleration: documents EOT refusal, directive to complete on time, and costs incurred",
+      "For disruption: identifies undisrupted vs disrupted comparison periods and output rates",
+      "Drafts an assertive, legally sound formal letter"
+    ],
+    tmpl: "Scenario (Acceleration / Disruption): \nScope of Affected Work: \nForensic Substantiation (5 Acceleration Conditions OR Measured Mile Output Comparison): \nQuantified Cost Impact: \nFormal Contractual Notice: "
+  }
+};
+Object.assign(APPLY, APPLY4);
+UNITS4.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
