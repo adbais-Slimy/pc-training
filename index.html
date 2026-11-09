@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=24"></script>
+<script src="shim.js?v=25"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -1007,7 +1007,7 @@ const fresh=()=>{
 };
 let state=fresh(), chat=[{role:"assistant",content:SEED,t:Date.now(),day:0}];
 let db=null, sample=null, uid=null, conf=null, pasted=false, busy=false;
-let libFilter="week", libSearchQuery="", bookFilter="", speedMode=false, drillTimerActive=false, drillTimerSec=0, drillTimerInterval=null;
+let libFilter="week", libSearchQuery="", bookFilter="", speedMode=false, drillTimerActive=false, drillTimerSec=0, drillTimerInterval=null, learnTrackFilter="all";
 
 // ---- Feedback utilities: Haptics & Audio ----
 function haptic(ok){
@@ -3095,9 +3095,17 @@ function renderPractice(){
   h+=`<h2 class="sec">Lessons</h2><div class="filter">${[["all","All"],["plan","Planning"],["ctrl","Controls"]].map(([k,l])=>`<button aria-pressed="${(pr.lf||"all")===k}" data-lf="${k}">${l}</button>`).join("")}</div>`;
   LESSONS.filter(l=>(pr.lf||"all")==="all"||((pr.lf==="plan")===l.id.startsWith("P"))).slice().sort((a,b)=>(practiceUnlocked(0,b.id)-practiceUnlocked(0,a.id))||a.week-b.week||a.id.localeCompare(b.id)).forEach(l=>{ const open=practiceUnlocked(l.week,l.id);
     h+=`<div class="rt"><div>${esc(l.title)}<br><small>${l.id.startsWith("P")?"Planning":"Controls"} · ${open?"extra reading":LESSON_UNIT[l.id]?"opens after "+unitTitle(LESSON_UNIT[l.id]):"opens in a later block"}</small></div>${open?`<button class="btn" data-l="${l.id}">Read</button>`:`<small>🔒</small>`}</div>`; });
-  h+=`<h2 class="sec">Drills</h2>`;
-  DRILLS.slice().sort((a,b)=>practiceUnlocked(0,b.id)-practiceUnlocked(0,a.id)).forEach(d=>{ const open=practiceUnlocked(d.week,d.id), mine=log.filter(x=>x.type===d.id), best=mine.length?Math.max(...mine.map(x=>x.score)):null;
+  h+=`<h2 class="sec">Drills</h2><div class="filter" style="margin-bottom:8px">${[["all","All Drills"],["plan","Planning & Scheduling"],["m","📐 Site Measurement & Billing"]].map(([k,l])=>`<button aria-pressed="${(pr.df||"all")===k}" data-df="${k}">${l}</button>`).join("")}</div><div id="drills-list">`;
+  const M_DRILL_IDS = ["steel", "plaster", "endarea", "rabill", "recon"];
+  const filteredDrills = DRILLS.filter(d => {
+    const f = pr.df || "all";
+    if(f === "m") return M_DRILL_IDS.includes(d.id);
+    if(f === "plan") return !M_DRILL_IDS.includes(d.id);
+    return true;
+  }).slice().sort((a,b)=>practiceUnlocked(0,b.id)-practiceUnlocked(0,a.id));
+  filteredDrills.forEach(d=>{ const open=practiceUnlocked(d.week,d.id), mine=log.filter(x=>x.type===d.id), best=mine.length?Math.max(...mine.map(x=>x.score)):null;
     h+=`<div class="rt"><div>${esc(d.title)}<br><small>${open?(mine.length?`${mine.length} done · best ${best}`:"ready"):DRILL_UNIT[d.id]?"opens after "+unitTitle(DRILL_UNIT[d.id]):"opens in a later block"}</small></div>${open?`<button class="btn" data-d="${d.id}">Start</button>`:`<small>🔒</small>`}</div>`; });
+  h+=`</div>`;
   h+=`<p class="lead" style="margin-top:12px">Practice follows the Learn tab: each drill and reading opens once you've passed the day that teaches it, so you only practise what you've actually been taught.</p>`;
   w.innerHTML=h;
   $("gx-start")&&($("gx-start").onclick=()=>{ gx.i=0; pr={view:"explainer"}; renderPractice(); w.parentElement.scrollTop=0; });
@@ -3106,6 +3114,7 @@ function renderPractice(){
   $("btn-open-scale-box")&&($("btn-open-scale-box").onclick=()=>openScaleVisualizer());
   w.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>startGuided(+b.dataset.gl));
   w.querySelectorAll("[data-lf]").forEach(b=>b.onclick=()=>{ pr.lf=b.dataset.lf; renderPractice(); });
+  w.querySelectorAll("[data-df]").forEach(b=>b.onclick=()=>{ pr.df=b.dataset.df; renderPractice(); });
   w.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ pr={view:"lesson",lesson:b.dataset.l}; renderPractice(); w.parentElement.scrollTop=0; });
   w.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>startPractice(b.dataset.d));
 }
@@ -4871,20 +4880,69 @@ function renderLearn(){
     ${cst(cur.id).screen>0?`<p style="margin:0 0 8px;color:var(--muted)">You're on step ${cst(cur.id).screen+1} of ${cur.screens.length}.</p>`:""}
     <div class="btnrow"><button class="send" data-u="${cur.id}" style="flex:1">${cst(cur.id).screen>0?"Continue":"Start"}</button></div></div>`;
   else h+=`<div class="note"><b>Gate 1 passed: Block 1 complete.</b> Block 2 (P6, progress, cost, EVM) gets written next. Meanwhile, mixed review, Practice and your real-work portfolio carry on.</div>`;
+  const MT=UNITS.filter(u=>u.track==="M");
+  const mOpen=cst("U1").done;
+  const nextM=MT.find(u=>!cst(u.id).done);
+  const doneMCount=MT.filter(u=>cst(u.id).done).length;
+
+  h+=`<div class="card" style="border-left:4px solid var(--ok,#1F8A4C);padding:12px 14px;margin-bottom:14px;background:var(--surface,#fff);box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <b style="color:var(--ok,#1F8A4C);font-size:.92rem">📐 Site Measurement Track (Alongside the Days)</b>
+      <span style="font-size:.74rem;background:${mOpen?'var(--okSoft,#e6f4ea)':'var(--bg)'};color:${mOpen?'var(--ok,#1F8A4C)':'var(--muted)'};padding:2px 8px;border-radius:10px;font-weight:700">
+        ${mOpen ? `${doneMCount}/6 Completed` : "Opens after Day 1"}
+      </span>
+    </div>
+    <p style="margin:0 0 10px;font-size:.84rem;color:var(--muted);line-height:1.45">
+      How quantities are measured on site and how bills are checked: MB and joint measurement, civil, finishes, MEP and external works, RA bills, rate analysis &amp; reconciliation. <b>Do one whenever you have a spare 25 minutes; it doesn't hold up the main days.</b>
+    </p>
+    ${mOpen && nextM ? `
+      <div style="background:var(--bg,#f8f9fa);padding:8px 12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+        <div>
+          <b style="font-size:.85rem">${nextM.id} · ${esc(nextM.title)}</b>
+          <div style="font-size:.76rem;color:var(--muted)">Step ${cst(nextM.id).screen + 1} of ${nextM.screens.length} · ~${nextM.mins} min</div>
+        </div>
+        <button class="btn" data-u="${nextM.id}" style="padding:6px 14px;font-weight:700;background:var(--ok,#1F8A4C);color:#fff;border:none;border-radius:6px;cursor:pointer">
+          ${cst(nextM.id).screen > 0 ? "Continue" : "Start"}
+        </button>
+      </div>
+    ` : mOpen ? `
+      <div style="color:var(--ok,#1F8A4C);font-size:.84rem;font-weight:600;margin-bottom:8px">✓ All 6 Measurement Units Completed! Select below to revise.</div>
+    ` : `
+      <div style="font-size:.8rem;color:var(--muted);background:var(--bg,#f8f9fa);padding:8px 12px;border-radius:6px;margin-bottom:8px">🔒 Complete <b>Day 1</b> in the main track to unlock M1: Measurement Books &amp; Joint Measurement.</div>
+    `}
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn" id="mcard-btn-scale" style="font-size:.76rem;padding:3px 8px">👁️ Visual Scale &amp; Room Spaces</button>
+      <button class="btn" id="mcard-btn-formulas" style="font-size:.76rem;padding:3px 8px">📐 Field Formulas Sheet</button>
+    </div>
+  </div>`;
+
   const passedN=UNITS.filter(u=>cst(u.id).done&&u.screens.some(x=>x.k==="quiz")).length, applied=UNITS.filter(u=>cst(u.id).apply?.sent).length, applyTotal=UNITS.filter(u=>APPLY[u.id]).length;
   if(passedN>=2) h+=`<div class="rt"><div><b>Mixed review</b> · 8 questions from ${UNITS.filter(u=>cst(u.id).done&&(u.track||u.day>0)).map(u=>u.track?u.id:"Day "+u.day).join(", ")}<br><small>Do it 2–3 times a week. Shuffling topics is what makes them stick.</small></div><button class="btn" id="mx-start">Start</button></div>`;
   h+=`<div class="rt ${applied<UNITS.filter(u=>cst(u.id).done&&APPLY[u.id]).length?"due":""}"><div><b>Real-work portfolio</b> · ${applied} of ${applyTotal} tasks submitted<br><small>${UNITS.filter(u=>cst(u.id).done&&APPLY[u.id]&&!cst(u.id).apply?.sent).map(u=>u.track?u.id:"Day "+u.day).join(", ")||"Each day from 1 to 10 has one task on your own hospitals."}${UNITS.some(u=>cst(u.id).done&&APPLY[u.id]&&!cst(u.id).apply?.sent)?" still to do. Open the day → 'Apply it at work'.":""}</small></div></div>`;
   h+=`<div class="score"><div><b>${doneN}/${MAIN.length}</b><span>Block 1 days passed</span></div><div><b>${(()=>{const d=dueCards().length; return d;})()}</b><span>cards due for review (Notes)</span></div></div>`;
-  h+=`<h2 class="sec">Block 1: Foundation (Days 0–20)</h2><p class="lead">Planning and scheduling in depth, with examples from hospitals, commercial buildings, residential towers and external works.</p>`;
-  UNITS.forEach((u,i)=>{ if(u.track) return; const s=cst(u.id), open=unitOpen(i);
-    h+=`<div class="rt ${u===cur?"due":""}"><div><b>Day ${u.day}</b>${u.gate?" 🏁":""} · ${esc(u.title.replace(/^Day 0: /,""))}<br><small>${s.done?`✓ passed${s.score!=null?` · ${s.score}%`:""} · tap to revise`:open?`about ${u.mins} min`:"Unlocks when the previous unit is passed"}</small></div>${open?`<button class="btn" data-u="${u.id}">${s.done?"Revise":"Open"}</button>`:`<small>🔒</small>`}</div>`; });
-  const MT=UNITS.filter(u=>u.track==="M");
-  h+=`<h2 class="sec">Site measurement track (alongside the days)</h2><p class="lead">How quantities are measured on site and how bills are checked: MB and joint measurement, civil, finishes, MEP and external works, RA bills, rate analysis & reconciliation. Opens after Day 1. Do one whenever you have a spare 25 minutes; it doesn't hold up the main days.</p>`;
-  MT.forEach(u=>{ const i=UNITS.indexOf(u), s=cst(u.id), open=unitOpen(i);
-    h+=`<div class="rt"><div><b>${u.id}</b> · ${esc(u.title)}<br><small>${s.done?`✓ passed${s.score!=null?` · ${s.score}%`:""} · tap to revise`:open?`about ${u.mins} min`:(cst("U1").done?"Unlocks after the previous measurement unit":"Opens after Day 1")}</small></div>${open?`<button class="btn" data-u="${u.id}">${s.done?"Revise":"Open"}</button>`:`<small>🔒</small>`}</div>`; });
-  ROADMAP.forEach(r=>{ h+=`<h2 class="sec">${esc(r.title)} (Days ${r.days})</h2><div class="rt"><div><small>${esc(r.items)}</small><br><small style="color:var(--muted)">Written to the same standard once the previous gate is passed.</small></div><small>🔒</small></div>`; });
+
+  h+=`<div class="filter" style="margin:16px 0 12px">${[["all","All Units (27)"],["days","📅 Main Days (0–20)"],["m","📐 Site Measurement (M1–M6)"]].map(([k,l])=>`<button aria-pressed="${learnTrackFilter===k}" data-ltf="${k}">${l}</button>`).join("")}</div>`;
+
+  if(learnTrackFilter === "all" || learnTrackFilter === "days"){
+    h+=`<h2 class="sec">Block 1: Foundation (Days 0–20)</h2><p class="lead">Planning and scheduling in depth, with examples from hospitals, commercial buildings, residential towers and external works.</p>`;
+    UNITS.forEach((u,i)=>{ if(u.track) return; const s=cst(u.id), open=unitOpen(i);
+      h+=`<div class="rt ${u===cur?"due":""}"><div><b>Day ${u.day}</b>${u.gate?" 🏁":""} · ${esc(u.title.replace(/^Day 0: /,""))}<br><small>${s.done?`✓ passed${s.score!=null?` · ${s.score}%`:""} · tap to revise`:open?`about ${u.mins} min`:"Unlocks when the previous unit is passed"}</small></div>${open?`<button class="btn" data-u="${u.id}">${s.done?"Revise":"Open"}</button>`:`<small>🔒</small>`}</div>`; });
+  }
+
+  if(learnTrackFilter === "all" || learnTrackFilter === "m"){
+    h+=`<h2 class="sec" style="${learnTrackFilter==='m'?'margin-top:0':''}">Site measurement track (alongside the days)</h2><p class="lead">How quantities are measured on site and how bills are checked: MB and joint measurement, civil, finishes, MEP and external works, RA bills, rate analysis & reconciliation. Opens after Day 1. Do one whenever you have a spare 25 minutes; it doesn't hold up the main days.</p>`;
+    MT.forEach(u=>{ const i=UNITS.indexOf(u), s=cst(u.id), open=unitOpen(i);
+      h+=`<div class="rt"><div><b>${u.id}</b> · ${esc(u.title)}<br><small>${s.done?`✓ passed${s.score!=null?` · ${s.score}%`:""} · tap to revise`:open?`about ${u.mins} min`:(cst("U1").done?"Unlocks after the previous measurement unit":"Opens after Day 1")}</small></div>${open?`<button class="btn" data-u="${u.id}">${s.done?"Revise":"Open"}</button>`:`<small>🔒</small>`}</div>`; });
+  }
+
+  if(learnTrackFilter === "all" || learnTrackFilter === "days"){
+    ROADMAP.forEach(r=>{ h+=`<h2 class="sec">${esc(r.title)} (Days ${r.days})</h2><div class="rt"><div><small>${esc(r.items)}</small><br><small style="color:var(--muted)">Written to the same standard once the previous gate is passed.</small></div><small>🔒</small></div>`; });
+  }
   w.innerHTML=h;
   w.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>{ lv={unit:b.dataset.u}; const s=cst(b.dataset.u); if(s.done) s.screen=0; renderLearn(); w.parentElement.scrollTop=0; });
+  w.querySelectorAll("[data-ltf]").forEach(b=>b.onclick=()=>{ learnTrackFilter=b.dataset.ltf; renderLearn(); });
+  $("mcard-btn-scale")&&($("mcard-btn-scale").onclick=()=>openScaleVisualizer());
+  $("mcard-btn-formulas")&&($("mcard-btn-formulas").onclick=()=>openFormulaDrawer());
   $("mx-start")&&($("mx-start").onclick=startMixed);
 }
 function renderUnit(w){
