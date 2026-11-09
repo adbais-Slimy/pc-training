@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=42"></script>
+<script src="shim.js?v=43"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -4207,6 +4207,231 @@ Net Client Protection Achieved: ₹${clientSaved} Lakhs saved against claimed am
 }
 
 
+// =========================================================================
+// SANDBOX #10: INTERACTIVE SCHEDULE CRASHING & RECOVERY SIMULATOR
+// =========================================================================
+function openCrashingSimulator(){
+  const old = $("crashing-simulator-modal");
+  if(old) old.remove();
+
+  const activities = [
+    { id: "A", name: "Superstructure RCC & PT Slabs", normalD: 45, crashD: 30, normalC: 90, crashC: 120, crashed: 0 },
+    { id: "B", name: "Façade Unitized Glazing Envelope", normalD: 40, crashD: 30, normalC: 80, crashC: 105, crashed: 0 },
+    { id: "C", name: "Hot Floor MEP Above-Ceiling Services", normalD: 50, crashD: 35, normalC: 150, crashC: 210, crashed: 0 },
+    { id: "D", name: "Modular OT Cleanroom & Wall Panels", normalD: 35, crashD: 25, normalC: 70, crashC: 120, crashed: 0 },
+    { id: "E", name: "Integrated TABS & Fire NOC Statutory Chain", normalD: 40, crashD: 30, normalC: 60, crashC: 140, crashed: 0 }
+  ];
+
+  // Pre-calculate slopes
+  activities.forEach(a => {
+    a.maxCrash = a.normalD - a.crashD;
+    a.slope = Math.round(((a.crashC - a.normalC) / a.maxCrash) * 100) / 100;
+  });
+
+  const LD_RATE = 5.0; // ₹ Lakhs per day
+  const INITIAL_DELAY = 60; // Days behind contract finish
+  const LD_CAP = 250.0; // Max LD cap = ₹2.50 Cr
+
+  const m = document.createElement("div");
+  m.id = "crashing-simulator-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  function render(){
+    const daysRecovered = activities.reduce((sum, a) => sum + a.crashed, 0);
+    const totalCost = activities.reduce((sum, a) => sum + (a.crashed * a.slope), 0);
+    const remainingDelay = Math.max(0, INITIAL_DELAY - daysRecovered);
+    const ldIncurred = Math.min(LD_CAP, remainingDelay * LD_RATE);
+    const ldSaved = (INITIAL_DELAY * LD_RATE) - ldIncurred;
+    const netBenefit = ldSaved - totalCost;
+
+    let verdictClass = "background:#FEF3C7;border-color:#F59E0B;color:#92400E;";
+    let verdictTitle = "⚠️ UNMITIGATED DELAY: Severe Liquidated Damages Exposure";
+    let verdictDesc = `Project is currently 60 days behind milestone. Without schedule acceleration, client will levy ₹${ldIncurred.toFixed(1)} Lakhs in Liquidated Damages. Crash critical path activities starting with the lowest cost slope.`;
+
+    if(daysRecovered >= 40 && daysRecovered < 60 && activities[4].crashed === 0){
+      verdictClass = "background:#ECFDF5;border-color:#10B981;color:#065F46;";
+      verdictTitle = "💎 OPTIMAL MARGINAL FRONTIER (Best ROI)";
+      verdictDesc = `Exceptional strategy! By crashing activities A, B, and C whose cost slope (₹2.0L - ₹4.0L/day) is below the LD rate (₹5.0L/day), you recover ${daysRecovered} days and pocket a net financial benefit of +₹${netBenefit.toFixed(1)} Lakhs.`;
+    } else if(daysRecovered === 60){
+      verdictClass = "background:#EFF6FF;border-color:#3B82F6;color:#1E40AF;";
+      verdictTitle = "🎯 FULL ZERO-DELAY RECOVERY: Contract Milestone Rescued";
+      verdictDesc = `All 60 days of delay eliminated! Contract milestone is 100% rescued. Total acceleration premium is ₹${totalCost.toFixed(1)} Lakhs, fully offset by ₹${ldSaved.toFixed(1)} Lakhs avoided Liquidated Damages. Activity E was crashed at ₹8.0L/day which is above LD rate, but required to hit exactly Day 0.`;
+    } else if(activities[4].crashed > 0 && (activities[0].crashed < activities[0].maxCrash || activities[1].crashed < activities[1].maxCrash)){
+      verdictClass = "background:#FEE2E2;border-color:#EF4444;color:#991B1B;";
+      verdictTitle = "❌ IRRATIONAL SEQUENCE ERROR: High-Slope Activity Crashed First!";
+      verdictDesc = `Economic fallacy! You crashed Activity E at ₹8.00 Lakhs/day while cheaper critical path activities like A (₹2.00L/day) or B (₹2.50L/day) still have available compression. Always exhaust lowest slope activities first!`;
+    }
+
+    m.innerHTML = `
+      <div style="background:var(--surface,#fff);border:1px solid var(--border,#ddd);border-radius:12px;max-width:860px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;font-family:system-ui,-apple-system,sans-serif">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border,#eee);display:flex;justify-content:space-between;align-items:center;background:var(--header-bg,#f8fafc)">
+          <div>
+            <h2 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--text,#1e293b);display:flex;align-items:center;gap:8px">
+              <span>⚡ Schedule Crashing &amp; Recovery Simulator</span>
+              <span style="font-size:.72rem;background:#F59E0B;color:#fff;padding:2px 8px;border-radius:12px;font-weight:700">Sandbox #10</span>
+            </h2>
+            <div style="font-size:.8rem;color:var(--muted,#64748b);margin-top:2px">Interactive Critical Path Cost-Slope Frontier (Normal vs. Crash Economics)</div>
+          </div>
+          <button id="crashing-close" class="btn" style="padding:6px 14px;font-size:.85rem;font-weight:700;border-radius:6px;cursor:pointer">✕ Close</button>
+        </div>
+
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+          <!-- KPI Summary Banner -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <div style="background:var(--card,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:8px;padding:10px 12px">
+              <div style="font-size:.7rem;text-transform:uppercase;color:var(--muted,#64748b);font-weight:700">Days Recovered</div>
+              <div id="crashing-days-recovered" style="font-size:1.4rem;font-weight:900;color:#2563EB">${daysRecovered} / ${INITIAL_DELAY} d</div>
+              <div style="font-size:.72rem;color:var(--muted,#64748b)">Delay Remaining: <b>${remainingDelay} d</b></div>
+            </div>
+            <div style="background:var(--card,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:8px;padding:10px 12px">
+              <div style="font-size:.7rem;text-transform:uppercase;color:var(--muted,#64748b);font-weight:700">Acceleration Cost</div>
+              <div id="crashing-total-cost" style="font-size:1.4rem;font-weight:900;color:#D97706">₹${totalCost.toFixed(1)} L</div>
+              <div style="font-size:.72rem;color:var(--muted,#64748b)">Overtime &amp; Plant Premiums</div>
+            </div>
+            <div style="background:var(--card,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:8px;padding:10px 12px">
+              <div style="font-size:.7rem;text-transform:uppercase;color:var(--muted,#64748b);font-weight:700">LDs Avoided</div>
+              <div id="crashing-ld-saved" style="font-size:1.4rem;font-weight:900;color:#10B981">₹${ldSaved.toFixed(1)} L</div>
+              <div style="font-size:.72rem;color:var(--muted,#64748b)">At ₹5.0L/day LD rate</div>
+            </div>
+            <div style="background:var(--card,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:8px;padding:10px 12px">
+              <div style="font-size:.7rem;text-transform:uppercase;color:var(--muted,#64748b);font-weight:700">Net Economic Gain</div>
+              <div id="crashing-net-benefit" style="font-size:1.4rem;font-weight:900;color:${netBenefit >= 0 ? '#10B981' : '#EF4444'}">${netBenefit >= 0 ? '+' : ''}₹${netBenefit.toFixed(1)} L</div>
+              <div style="font-size:.72rem;color:var(--muted,#64748b)">LDs Saved minus Crash Cost</div>
+            </div>
+          </div>
+
+          <!-- Progress / Timeline Bar -->
+          <div style="background:var(--card,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:8px;padding:12px">
+            <div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:6px;font-weight:700">
+              <span>Timeline Recovery: ${Math.round((daysRecovered / INITIAL_DELAY) * 100)}% Milestone Compression</span>
+              <span style="color:${remainingDelay === 0 ? '#10B981' : '#EF4444'}">${remainingDelay === 0 ? '✅ On Contract Finish' : `⚠️ Milestone Slip: -${remainingDelay} Calendar Days`}</span>
+            </div>
+            <div style="height:10px;background:#E2E8F0;border-radius:5px;overflow:hidden;position:relative">
+              <div style="height:100%;width:${(daysRecovered / INITIAL_DELAY) * 100}%;background:linear-gradient(90deg, #10B981, #3B82F6);transition:width .2s ease"></div>
+            </div>
+          </div>
+
+          <!-- Activity Crashing Table -->
+          <div style="border:1px solid var(--border,#e2e8f0);border-radius:8px;overflow:hidden">
+            <table style="width:100%;border-collapse:collapse;font-size:.82rem;text-align:left">
+              <thead>
+                <tr style="background:var(--header-bg,#f1f5f9);border-bottom:1px solid var(--border,#cbd5e1);color:var(--muted,#475569);font-size:.74rem;text-transform:uppercase">
+                  <th style="padding:8px 12px">Activity &amp; Scope</th>
+                  <th style="padding:8px 10px;text-align:center">Normal (d / ₹)</th>
+                  <th style="padding:8px 10px;text-align:center">Crash (d / ₹)</th>
+                  <th style="padding:8px 10px;text-align:center">Cost Slope (ΔC/ΔT)</th>
+                  <th style="padding:8px 12px;text-align:center">Crash Slider</th>
+                  <th style="padding:8px 12px;text-align:right">Cost Incurred</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${activities.map((a, idx) => {
+                  const slopeColor = a.slope <= 2.5 ? "#10B981" : (a.slope <= 5.0 ? "#D97706" : "#EF4444");
+                  const slopeBadge = a.slope <= LD_RATE ? `₹${a.slope.toFixed(2)}L/d &lt; ₹${LD_RATE}L LD` : `₹${a.slope.toFixed(2)}L/d &gt; ₹${LD_RATE}L LD ⚠️`;
+                  return `
+                    <tr style="border-bottom:1px solid var(--border,#f1f5f9);background:${a.crashed > 0 ? '#F8FAFC' : 'transparent'}">
+                      <td style="padding:10px 12px">
+                        <div style="font-weight:700;color:var(--text,#1e293b)">${a.id}. ${a.name}</div>
+                        <div style="font-size:.72rem;color:var(--muted,#64748b)">Max Compression: <b>${a.maxCrash} days</b></div>
+                      </td>
+                      <td style="padding:10px;text-align:center">
+                        <span style="font-weight:600">${a.normalD}d</span> · <span style="color:var(--muted,#64748b)">₹${a.normalC}L</span>
+                      </td>
+                      <td style="padding:10px;text-align:center">
+                        <span style="font-weight:600;color:#2563EB">${a.crashD}d</span> · <span style="color:var(--muted,#64748b)">₹${a.crashC}L</span>
+                      </td>
+                      <td style="padding:10px;text-align:center">
+                        <span style="font-weight:800;color:${slopeColor};background:${slopeColor}18;padding:2px 8px;border-radius:12px;font-size:.76rem">
+                          ${slopeBadge}
+                        </span>
+                      </td>
+                      <td style="padding:10px 12px;text-align:center;min-width:180px">
+                        <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+                          <button class="btn btn-step" data-act="${a.id}" data-dir="-1" style="padding:2px 8px;font-weight:700;font-size:.8rem" ${a.crashed <= 0 ? 'disabled' : ''}>-</button>
+                          <input type="range" min="0" max="${a.maxCrash}" value="${a.crashed}" data-slider="${a.id}" style="width:90px;cursor:pointer">
+                          <button class="btn btn-step" data-act="${a.id}" data-dir="1" style="padding:2px 8px;font-weight:700;font-size:.8rem" ${a.crashed >= a.maxCrash ? 'disabled' : ''}>+</button>
+                          <span style="font-weight:800;font-size:.82rem;min-width:28px">${a.crashed}d</span>
+                        </div>
+                      </td>
+                      <td style="padding:10px 12px;text-align:right;font-weight:800;color:#D97706">
+                        ₹${(a.crashed * a.slope).toFixed(1)} L
+                      </td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Presets and Controls -->
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;gap:8px">
+              <button id="crash-preset-reset" class="btn" style="padding:6px 12px;font-size:.78rem;font-weight:700">↺ Reset (0 Days)</button>
+              <button id="crash-preset-optimal" class="btn" style="padding:6px 12px;font-size:.78rem;font-weight:700;background:var(--ok,#10B981);color:#fff">💎 Optimal Frontier (40d / +₹85L ROI)</button>
+              <button id="crash-preset-full" class="btn" style="padding:6px 12px;font-size:.78rem;font-weight:700;background:var(--bar,#2563EB);color:#fff">🎯 Full Recovery (60d Zero Slip)</button>
+            </div>
+            <div style="font-size:.74rem;color:var(--muted,#64748b)">
+              Liquidated Damages Rate: <b>₹5.00 Lakhs / Calendar Day</b>
+            </div>
+          </div>
+
+          <!-- Verdict Card -->
+          <div style="border-radius:8px;padding:12px 16px;border:1px solid;${verdictClass}">
+            <div style="font-weight:800;font-size:.84rem;margin-bottom:4px">${verdictTitle}</div>
+            <div style="font-size:.78rem;line-height:1.45">${verdictDesc}</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Bind events
+    $("crashing-close").onclick = () => m.remove();
+    m.onclick = (e) => { if(e.target === m) m.remove(); };
+
+    m.querySelectorAll("[data-slider]").forEach(inp => {
+      inp.oninput = (e) => {
+        const act = activities.find(a => a.id === e.target.dataset.slider);
+        if(act){ act.crashed = parseInt(e.target.value, 10); render(); }
+      };
+    });
+
+    m.querySelectorAll(".btn-step").forEach(btn => {
+      btn.onclick = () => {
+        const act = activities.find(a => a.id === btn.dataset.act);
+        const dir = parseInt(btn.dataset.dir, 10);
+        if(act){
+          act.crashed = Math.max(0, Math.min(act.maxCrash, act.crashed + dir));
+          render();
+        }
+      };
+    });
+
+    $("crash-preset-reset").onclick = () => {
+      activities.forEach(a => a.crashed = 0);
+      render();
+    };
+
+    $("crash-preset-optimal").onclick = () => {
+      // Optimal: crash A (15), B (10), C (15), D (0), E (0)
+      activities[0].crashed = 15;
+      activities[1].crashed = 10;
+      activities[2].crashed = 15;
+      activities[3].crashed = 0;
+      activities[4].crashed = 0;
+      render();
+    };
+
+    $("crash-preset-full").onclick = () => {
+      activities.forEach(a => a.crashed = a.maxCrash);
+      render();
+    };
+  }
+
+  document.body.appendChild(m);
+  render();
+}
+
+
 // ---------- progress ----------
 function renderProg(){
   const r=readiness(), gap=calibration();
@@ -4929,6 +5154,7 @@ function renderPractice(){
     </div>
     <div class="btnrow" style="margin:0;gap:8px">
       <button class="btn" id="btn-open-tia-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--ok,#1F8A4C);color:var(--ok,#1F8A4C)">⏱️ SCL Delay Protocol TIA Forensics</button>
+      <button class="btn" id="btn-open-crashing-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--accent,#D97706);color:var(--accent,#D97706)">⚡ Schedule Crashing &amp; Recovery Simulator</button>
     </div>
   </div>`;
   const open=DRILLS.filter(d=>practiceUnlocked(d.week,d.id));
@@ -4959,6 +5185,7 @@ function renderPractice(){
   $("btn-open-doctor-box")&&($("btn-open-doctor-box").onclick=()=>openScheduleDoctor());
   $("btn-open-hosp-box")&&($("btn-open-hosp-box").onclick=()=>openHospitalSequencePlaybook());
   $("btn-open-tia-box")&&($("btn-open-tia-box").onclick=()=>openTIASandbox());
+  $("btn-open-crashing-box")&&($("btn-open-crashing-box").onclick=()=>openCrashingSimulator());
   w.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>startGuided(+b.dataset.gl));
   w.querySelectorAll("[data-lf]").forEach(b=>b.onclick=()=>{ pr.lf=b.dataset.lf; renderPractice(); });
   w.querySelectorAll("[data-df]").forEach(b=>b.onclick=()=>{ pr.df=b.dataset.df; renderPractice(); });
@@ -6803,6 +7030,7 @@ function renderLearn(){
       <button class="btn" id="mcard-btn-doctor" style="font-size:.76rem;padding:3px 8px;color:var(--crit,#D9383A);font-weight:700">🩺 Schedule Doctor</button>
       <button class="btn" id="mcard-btn-hosp" style="font-size:.76rem;padding:3px 8px;color:var(--bar,#2F5BD3);font-weight:700">🏥 Hospital Playbook</button>
       <button class="btn" id="mcard-btn-tia" style="font-size:.76rem;padding:3px 8px;color:var(--ok,#1F8A4C);font-weight:700">⏱️ SCL TIA</button>
+      <button class="btn" id="mcard-btn-crashing" style="font-size:.76rem;padding:3px 8px;color:var(--accent,#D97706);font-weight:700">⚡ Crashing Sim</button>
       <button class="btn" id="mcard-btn-formulas" style="font-size:.76rem;padding:3px 8px">📐 Formulas</button>
       <button class="btn" id="btn-learn-hotseat" style="font-size:.76rem;padding:3px 8px;color:var(--crit,#D9383A);font-weight:700">🎙️ Hot Seat</button>
       <button class="btn" id="btn-learn-scurve" style="font-size:.76rem;padding:3px 8px">📈 S-Curve</button>
@@ -6840,6 +7068,7 @@ function renderLearn(){
   $("mcard-btn-doctor")&&($("mcard-btn-doctor").onclick=()=>openScheduleDoctor());
   $("mcard-btn-hosp")&&($("mcard-btn-hosp").onclick=()=>openHospitalSequencePlaybook());
   $("mcard-btn-tia")&&($("mcard-btn-tia").onclick=()=>openTIASandbox());
+  $("mcard-btn-crashing")&&($("mcard-btn-crashing").onclick=()=>openCrashingSimulator());
   $("mcard-btn-formulas")&&($("mcard-btn-formulas").onclick=()=>openFormulaDrawer());
   $("btn-learn-hotseat")&&($("btn-learn-hotseat").onclick=()=>openHotSeatSimulator());
   $("btn-learn-scurve")&&($("btn-learn-scurve").onclick=()=>openSCurveSandbox());
