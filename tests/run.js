@@ -119,7 +119,10 @@ async function completeUnit(env, uid) {
       openLPSBoard();
       const lpsOk = !!document.getElementById("lps-modal") && document.getElementById("lps-sound-cnt")?.textContent !== "";
       document.getElementById("lps-close")?.click();
-      return dlvOk && scOk && lpsOk;
+      openScaleVisualizer();
+      const scvOk = !!document.getElementById("scale-modal") && document.getElementById("scv-area-m")?.textContent !== "";
+      document.getElementById("scv-close")?.click();
+      return dlvOk && scOk && lpsOk && scvOk;
     })()`));
     P("no runtime errors (standalone)", env.errs.length === 0, env.errs.join(" | "));
   }

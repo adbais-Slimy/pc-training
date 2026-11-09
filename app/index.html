@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=23"></script>
+<script src="shim.js?v=24"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -2203,6 +2203,238 @@ function openLPSBoard(){
   renderBoard();
 }
 
+function openScaleVisualizer(){
+  const old = $("scale-modal");
+  if(old) old.remove();
+
+  const m = document.createElement("div");
+  m.id = "scale-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:75;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+
+  m.innerHTML = `<div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:860px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(0,0,0,.35);overflow:hidden;box-sizing:border-box">
+    <!-- Header -->
+    <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg,#f8f9fa)">
+      <div>
+        <b style="font-size:1.05rem;color:var(--bar,#2F5BD3)">👁️ Visual Measurement &amp; Room Scale Visualizer</b>
+        <div style="font-size:.78rem;color:var(--muted)">Connect feet, meters, and square meters to human body anchors and real hospital rooms</div>
+      </div>
+      <button id="scv-close" style="background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:inherit;padding:4px 8px">&times;</button>
+    </div>
+
+    <!-- Body -->
+    <div style="flex:1;overflow-y:auto;padding:16px 18px;font-size:.86rem">
+      <!-- Everyday Body Anchors Banner -->
+      <div style="background:var(--barSoft,#E8EEFA);border:1px solid var(--barSoft);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;line-height:1.5">
+        <b style="color:var(--bar,#2F5BD3)">🖐️ Physical Body Anchors (Carry These on Site):</b><br>
+        • <b>1 Foot (12 inches / 30.5 cm):</b> Exactly the length of an adult foot with a construction safety boot, or a standard 30 cm ruler.<br>
+        • <b>1 Meter (3.28 feet / 100 cm):</b> Distance from the floor to your belt buckle / hip bone, or the width of a standard room door.<br>
+        • <b>1 Square Foot (1 sq ft):</b> Exactly one standard 12" × 12" ceramic floor tile.<br>
+        • <b>12 Square Meters (12 sqm / 130 sq ft):</b> A standard hospital patient room (3m × 4m / 10ft × 13ft) holding a bed, patient locker, attendant couch, and clearance.
+      </div>
+
+      <!-- Quick Preset Selector -->
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-weight:700;font-size:.82rem;margin-bottom:6px">Select a Dimension to Visualize:</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn scv-preset" data-w="0.7" data-l="0.7" data-name="0.5 m² Toilet Ventilator" style="font-size:.74rem;padding:4px 8px">0.5 m² Ventilator</button>
+          <button class="btn scv-preset" data-w="1.0" data-l="1.0" data-name="1.0 m² Mattress / 10 Tiles" style="font-size:.74rem;padding:4px 8px">1.0 m² Single Mattress</button>
+          <button class="btn scv-preset" data-w="1.2" data-l="1.5" data-name="1.8 m² Bedroom Window" style="font-size:.74rem;padding:4px 8px">1.8 m² Window</button>
+          <button class="btn scv-preset" data-w="1.8" data-l="1.7" data-name="3.0 m² IS 1200 Limit / King Bed" style="font-size:.74rem;padding:4px 8px">3.0 m² King Bed (IS 1200 Limit)</button>
+          <button class="btn scv-preset" data-w="2.0" data-l="2.1" data-name="4.2 m² Hospital Double Door" style="font-size:.74rem;padding:4px 8px">4.2 m² Hospital Double Door</button>
+          <button class="btn scv-preset" data-w="3.0" data-l="4.0" data-name="12 m² Hospital Patient Room" style="font-size:.74rem;padding:4px 8px;font-weight:700;border-color:var(--bar)">12 m² Patient Room</button>
+          <button class="btn scv-preset" data-w="5.0" data-l="5.0" data-name="25 m² ICU Multi-Bed Bay" style="font-size:.74rem;padding:4px 8px">25 m² ICU Bay</button>
+          <button class="btn scv-preset" data-w="7.0" data-l="7.2" data-name="50 m² Modular Operation Theatre" style="font-size:.74rem;padding:4px 8px">50 m² Operation Theatre (MOT)</button>
+        </div>
+      </div>
+
+      <!-- Sliders for Custom Dimensions -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--bg,#f8f9fa);padding:10px 14px;border-radius:8px;border:1px solid var(--line);margin-bottom:14px">
+        <div>
+          <label style="display:block;font-weight:600;font-size:.8rem;margin-bottom:4px">Width: <b id="scv-w-val">3.0</b> m (<span id="scv-w-ft">9.8</span> ft)</label>
+          <input type="range" id="scv-w-slider" min="0.5" max="10.0" step="0.1" value="3.0" style="width:100%">
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:.8rem;margin-bottom:4px">Length: <b id="scv-l-val">4.0</b> m (<span id="scv-l-ft">13.1</span> ft)</label>
+          <input type="range" id="scv-l-slider" min="0.5" max="10.0" step="0.1" value="4.0" style="width:100%">
+        </div>
+      </div>
+
+      <!-- Live Scaled SVG Canvas -->
+      <div style="background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:14px">
+        <svg id="scv-svg" viewBox="0 0 600 300" style="width:100%;height:auto;display:block"></svg>
+      </div>
+
+      <!-- Measurement Conversions & Real-Life Sensory Anchor -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px">
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.74rem;color:var(--muted);text-transform:uppercase;font-weight:700">Area (Metric &amp; Imperial)</div>
+          <div style="font-size:1.25rem;font-weight:800;color:var(--bar,#2F5BD3);margin-top:2px" id="scv-area-m">12.00 m²</div>
+          <div style="font-size:.82rem;color:var(--muted)" id="scv-area-ft">129.17 sq ft · 1.29 Brass</div>
+        </div>
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.74rem;color:var(--muted);text-transform:uppercase;font-weight:700">IS 1200 Opening Plaster Rule</div>
+          <div style="font-size:.92rem;font-weight:700;margin-top:2px" id="scv-is1200-tag">--</div>
+          <div style="font-size:.78rem;color:var(--muted)" id="scv-is1200-sub">--</div>
+        </div>
+        <div style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.74rem;color:var(--muted);text-transform:uppercase;font-weight:700">Concrete &amp; Weight Anchor</div>
+          <div style="font-size:.86rem;font-weight:700;margin-top:2px" id="scv-slab-vol">1.8 m³ slab (150mm)</div>
+          <div style="font-size:.78rem;color:var(--muted)" id="scv-slab-wt">Concrete wt: 4.3 MT (4,320 kg)</div>
+        </div>
+      </div>
+
+      <!-- Sensory Real-World Mental Picture -->
+      <div id="scv-mental-anchor" style="background:var(--bg,#f8f9fa);border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.5;font-size:.84rem">
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:10px 18px;border-top:1px solid var(--line);background:var(--bg,#f8f9fa);display:flex;justify-content:flex-end">
+      <button id="scv-done" class="btn" style="padding:8px 18px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none">Done</button>
+    </div>
+  </div>`;
+
+  document.body.appendChild(m);
+
+  const wSlider = m.querySelector("#scv-w-slider");
+  const lSlider = m.querySelector("#scv-l-slider");
+
+  m.querySelector("#scv-close").onclick = () => m.remove();
+  m.querySelector("#scv-done").onclick = () => m.remove();
+  m.onclick = e => { if(e.target === m) m.remove(); };
+
+  m.querySelectorAll(".scv-preset").forEach(btn => {
+    btn.onclick = () => {
+      wSlider.value = btn.dataset.w;
+      lSlider.value = btn.dataset.l;
+      updateVisualizer(btn.dataset.name);
+    };
+  });
+
+  [wSlider, lSlider].forEach(input => {
+    input.oninput = () => updateVisualizer();
+  });
+
+  function updateVisualizer(customPresetName = null){
+    const w = parseFloat(wSlider.value) || 1.0;
+    const l = parseFloat(lSlider.value) || 1.0;
+    const wFt = (w * 3.28084).toFixed(1);
+    const lFt = (l * 3.28084).toFixed(1);
+    const areaM = +(w * l).toFixed(2);
+    const areaFt = +(areaM * 10.7639).toFixed(1);
+    const brass = (areaFt / 100).toFixed(2);
+
+    m.querySelector("#scv-w-val").textContent = w.toFixed(1);
+    m.querySelector("#scv-w-ft").textContent = wFt;
+    m.querySelector("#scv-l-val").textContent = l.toFixed(1);
+    m.querySelector("#scv-l-ft").textContent = lFt;
+
+    m.querySelector("#scv-area-m").textContent = areaM.toFixed(2) + " m²";
+    m.querySelector("#scv-area-ft").textContent = areaFt + " sq ft · " + brass + " Brass";
+
+    const vol = +(areaM * 0.15).toFixed(2);
+    const concWt = +(vol * 2.4).toFixed(1);
+    m.querySelector("#scv-slab-vol").textContent = vol + " m³ RCC (150mm slab)";
+    m.querySelector("#scv-slab-wt").textContent = "Weight: " + concWt + " MT (" + Math.round(concWt * 1000).toLocaleString("en-IN") + " kg)";
+
+    const isTag = m.querySelector("#scv-is1200-tag");
+    const isSub = m.querySelector("#scv-is1200-sub");
+    if(areaM <= 0.5){
+      isTag.textContent = "≤ 0.5 m²: ZERO DEDUCTION";
+      isTag.style.color = "var(--ok,#1F8A4C)";
+      isSub.textContent = "Mason spends more time on jamb edges than plaster saved. Pay full wall.";
+    } else if(areaM <= 3.0){
+      isTag.textContent = "0.5–3.0 m²: DEDUCT 1 FACE ONLY";
+      isTag.style.color = "var(--warn,#d97706)";
+      isSub.textContent = "Deduct 1 face (" + areaM + " m²). Do not add for jambs, sills, or soffits.";
+    } else {
+      isTag.textContent = "> 3.0 m²: DEDUCT BOTH FACES";
+      isTag.style.color = "var(--crit,#D9383A)";
+      isSub.textContent = "Deduct both sides (" + (areaM * 2).toFixed(2) + " m²). Measure jamb reveals separately.";
+    }
+
+    let mentalHtml = "";
+    if(areaM <= 0.6){
+      mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>toilet ventilator window</b>, a computer monitor, or a microwave oven. If you stand in front of it, you can cover it with your two outstretched hands. IS 1200 says: do not deduct this small opening from plaster billing because cutting and edging around it requires extra craftsmanship.";
+    } else if(areaM <= 2.2){
+      mentalHtml = "<b>Physical Reality:</b> This is roughly the size of a <b>standard bedroom window</b> (" + w.toFixed(1) + "m × " + l.toFixed(1) + "m) or a single-person sleeping mattress. It is large enough to let sunlight through, but under the 3.0 m² threshold, so you only deduct ONE wall face.";
+    } else if(areaM <= 3.5){
+      mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>King Size Bed</b> (1.8m × 2.0m = 3.6 m²) or the absolute maximum boundary for 1-face plaster deduction. Anything larger requires measuring opening perimeter jambs separately!";
+    } else if(areaM <= 5.0){
+      mentalHtml = "<b>Physical Reality:</b> This is the size of a <b>Hospital Double Stretcher Door</b> (2.0m × 2.1m = 4.2 m²) allowing crash carts and beds to pass smoothly. At this size, both front and back faces are fully deducted from wall masonry and plastering.";
+    } else if(areaM <= 16.0){
+      mentalHtml = "<b>Physical Reality of 12 m² (" + areaM + " m²):</b> This is an authentic <b>Private Patient Hospital Room</b> (3m × 4m / 10ft × 13ft). Stand in the center: you have room for 1 patient bed, 1 bedside locker, an attendant sofa-cum-bed against the side wall, an overhead medical gas trunking panel, and a doorway leading to an attached bathroom. It takes about 4 normal walking paces across!";
+    } else if(areaM <= 35.0){
+      mentalHtml = "<b>Physical Reality:</b> This is a <b>4-Bed ICU Step-Down Bay or Central Nurse Station</b>. You can fit 4 patient beds with ventilator carts and central monitoring console with nurses' counter.";
+    } else {
+      mentalHtml = "<b>Physical Reality of 50 m² (" + areaM + " m²):</b> This is a state-of-the-art <b>Modular Operation Theatre (MOT)</b> or an entire compact 1BHK apartment! It holds the central surgical table, dual ceiling pendant arms, anesthesia machine, C-arm fluoroscopy space, and 6 surgical personnel moving freely without touching sterile boundaries.";
+    }
+    m.querySelector("#scv-mental-anchor").innerHTML = mentalHtml;
+
+    const svg = m.querySelector("#scv-svg");
+    const svgW = 600, svgH = 300;
+    const maxDim = Math.max(w, l, 2.0);
+    const scale = Math.min(220 / maxDim, 70);
+    const rectW = Math.max(30, w * scale);
+    const rectH = Math.max(30, l * scale);
+    const rx = (svgW - rectW) / 2;
+    const ry = (svgH - rectH) / 2;
+
+    let furniture = "";
+    if(areaM >= 7.0){
+      const bedW = Math.min(rectW * 0.45, 2.0 * scale);
+      const bedH = Math.min(rectH * 0.45, 1.0 * scale);
+      furniture += `<rect x="${rx + 15}" y="${ry + 15}" width="${bedW}" height="${bedH}" rx="4" fill="var(--barSoft,#E8EEFA)" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+                    <text x="${rx + 15 + bedW/2}" y="${ry + 15 + bedH/2 + 4}" font-size="10" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="middle">Hospital Bed (2×1m)</text>`;
+      furniture += `<path d="M ${rx + rectW} ${ry + rectH - 30} A 30 30 0 0 1 ${rx + rectW - 30} ${ry + rectH}" fill="none" stroke="var(--muted)" stroke-dasharray="2,2"/>
+                    <line x1="${rx + rectW}" y1="${ry + rectH - 30}" x2="${rx + rectW}" y2="${ry + rectH}" stroke="var(--ink,#111)" stroke-width="2"/>`;
+    }
+
+    const hx = rx + rectW / 2;
+    const hy = ry + rectH / 2;
+    const human = `
+      <g transform="translate(${hx}, ${hy})">
+        <circle cx="0" cy="-14" r="5" fill="var(--ok,#1F8A4C)"/>
+        <line x1="0" y1="-9" x2="0" y2="6" stroke="var(--ok,#1F8A4C)" stroke-width="3"/>
+        <line x1="-8" y1="-4" x2="8" y2="-4" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
+        <line x1="0" y1="6" x2="-5" y2="18" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
+        <line x1="0" y1="6" x2="5" y2="18" stroke="var(--ok,#1F8A4C)" stroke-width="2.5"/>
+        <text x="0" y="30" font-size="10" font-weight="700" fill="var(--ok,#1F8A4C)" text-anchor="middle">You (1.75m)</text>
+      </g>
+    `;
+
+    const dimX = `
+      <line x1="${rx}" y1="${ry - 12}" x2="${rx + rectW}" y2="${ry - 12}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+      <line x1="${rx}" y1="${ry - 16}" x2="${rx}" y2="${ry - 8}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+      <line x1="${rx + rectW}" y1="${ry - 16}" x2="${rx + rectW}" y2="${ry - 8}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+      <text x="${rx + rectW/2}" y="${ry - 18}" font-size="12" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="middle">${w.toFixed(1)} m (${wFt} ft)</text>
+    `;
+
+    const dimY = `
+      <line x1="${rx - 12}" y1="${ry}" x2="${rx - 12}" y2="${ry + rectH}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+      <line x1="${rx - 16}" y1="${ry}" x2="${rx - 8}" y2="${ry}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+      <line x1="${rx - 16}" y1="${ry + rectH}" x2="${rx - 8}" y2="${ry + rectH}" stroke="var(--bar,#2F5BD3)" stroke-width="1.5"/>
+      <text x="${rx - 20}" y="${ry + rectH/2 + 4}" font-size="12" font-weight="700" fill="var(--bar,#2F5BD3)" text-anchor="end">${l.toFixed(1)} m (${lFt} ft)</text>
+    `;
+
+    svg.innerHTML = `
+      <pattern id="grid-pat" width="20" height="20" patternUnits="userSpaceOnUse">
+        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--line,#e2e8f0)" stroke-width="0.8"/>
+      </pattern>
+      <rect width="${svgW}" height="${svgH}" fill="url(#grid-pat)"/>
+      <rect x="${rx}" y="${ry}" width="${rectW}" height="${rectH}" rx="6" fill="var(--bg,#f8f9fa)" stroke="var(--ink,#111)" stroke-width="3"/>
+      ${furniture}
+      ${human}
+      ${dimX}
+      ${dimY}
+      <rect x="${rx + rectW/2 - 45}" y="${ry + rectH/2 - 35}" width="90" height="20" rx="4" fill="var(--surface,#fff)" stroke="var(--line)" opacity="0.9"/>
+      <text x="${rx + rectW/2}" y="${ry + rectH/2 - 21}" font-size="11" font-weight="800" fill="var(--ink,#111)" text-anchor="middle">${areaM} m² / ${areaFt} sq ft</text>
+    `;
+  }
+
+  updateVisualizer();
+}
+
 // ---------- progress ----------
 function renderProg(){
   const r=readiness(), gap=calibration();
@@ -2849,9 +3081,12 @@ function renderPractice(){
       <span style="font-size:.76rem;background:var(--barSoft);color:var(--bar);padding:2px 8px;border-radius:10px;font-weight:700">Executive Models</span>
     </div>
     <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px">Hands-on visual models for executive schedule control: analyze S-curve banana envelope slippage and clear 3-week look-ahead constraint gates.</p>
-    <div class="btnrow" style="margin:0;gap:8px">
+    <div class="btnrow" style="margin:0 0 6px;gap:8px">
       <button class="btn" id="btn-open-scurve-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--line)">📈 S-Curve Banana Simulator</button>
       <button class="btn" id="btn-open-lps-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--line)">📋 3-Wk Look-Ahead Board</button>
+    </div>
+    <div class="btnrow" style="margin:0;gap:8px">
+      <button class="btn" id="btn-open-scale-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3)">👁️ Visual Scale &amp; Room Space Visualizer</button>
     </div>
   </div>`;
   const open=DRILLS.filter(d=>practiceUnlocked(d.week,d.id));
@@ -2868,6 +3103,7 @@ function renderPractice(){
   $("gx-start")&&($("gx-start").onclick=()=>{ gx.i=0; pr={view:"explainer"}; renderPractice(); w.parentElement.scrollTop=0; });
   $("btn-open-scurve-box")&&($("btn-open-scurve-box").onclick=()=>openSCurveSandbox());
   $("btn-open-lps-box")&&($("btn-open-lps-box").onclick=()=>openLPSBoard());
+  $("btn-open-scale-box")&&($("btn-open-scale-box").onclick=()=>openScaleVisualizer());
   w.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>startGuided(+b.dataset.gl));
   w.querySelectorAll("[data-lf]").forEach(b=>b.onclick=()=>{ pr.lf=b.dataset.lf; renderPractice(); });
   w.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ pr={view:"lesson",lesson:b.dataset.l}; renderPractice(); w.parentElement.scrollTop=0; });
@@ -2903,6 +3139,7 @@ function openFormulaDrawer(){
       <button class="btn f-tab-btn" data-tab="tab-recon" style="font-size:.78rem;padding:4px 8px">📋 Recon</button>
       <button class="btn f-tab-btn" data-tab="tab-scurve" style="font-size:.78rem;padding:4px 8px">📈 S-Curve</button>
       <button class="btn f-tab-btn" data-tab="tab-lps" style="font-size:.78rem;padding:4px 8px">📋 LPS</button>
+      <button class="btn f-tab-btn" data-tab="tab-scale" style="font-size:.78rem;padding:4px 8px">👁️ Scale</button>
     </div>
 
     <!-- TAB 1: FORMULAS SHEET -->
@@ -3080,6 +3317,15 @@ function openFormulaDrawer(){
       </div>
     </div>
 
+    <!-- TAB 8: SCALE VISUALIZER -->
+    <div id="tab-scale" class="f-tab-pane" style="display:none;overflow-y:auto;flex:1">
+      <h3 style="font-size:.9rem;color:var(--bar);margin:8px 0 8px">👁️ Visual Scale &amp; Room Space Visualizer</h3>
+      <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;font-size:.84rem;line-height:1.5">
+        <p style="margin:0 0 8px">Connect feet, meters, and square meters to human body anchors, standard windows, and hospital rooms (12 m² patient rooms, 50 m² OTs).</p>
+        <button id="drawer-btn-scale" class="btn" style="width:100%;padding:10px;font-weight:700;background:var(--bar,#2F5BD3);color:#fff;border:none;cursor:pointer">Launch Visual Scale &amp; Room Visualizer →</button>
+      </div>
+    </div>
+
     <div style="margin-top:auto;padding-top:10px;border-top:1px solid var(--line)">
       <button id="form-dismiss" style="width:100%;padding:10px;font-weight:700;border-radius:8px;border:none;background:var(--bar,#2F5BD3);color:#fff;cursor:pointer">Done</button>
     </div>
@@ -3205,6 +3451,7 @@ function openFormulaDrawer(){
 
   m.querySelector("#drawer-btn-scurve") && (m.querySelector("#drawer-btn-scurve").onclick = () => { m.remove(); openSCurveSandbox(); });
   m.querySelector("#drawer-btn-lps") && (m.querySelector("#drawer-btn-lps").onclick = () => { m.remove(); openLPSBoard(); });
+  m.querySelector("#drawer-btn-scale") && (m.querySelector("#drawer-btn-scale").onclick = () => { m.remove(); openScaleVisualizer(); });
 
   m.onclick = e => { if(e.target === m) m.remove(); };
   m.querySelector("#form-close").onclick = () => m.remove();
