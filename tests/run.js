@@ -86,9 +86,9 @@ async function completeUnit(env, uid) {
     P("Practice is empty before any day is passed", d.querySelectorAll("#pracwrap [data-d]").length === 0);
     const order = w.eval("UNITS.filter(u=>!u.track).map(u=>u.id)").concat(w.eval('UNITS.filter(u=>u.track==="M").map(u=>u.id)'));
     const res = []; for (const id of order) { const r = await completeUnit(env, id); if (r !== "ok") res.push(id + ":" + r); }
-    P(`all ${order.length} units (Days 0–57 + M1–M6) can be completed`, res.length === 0, res.join(", "));
+    P(`all ${order.length} units (Days 0–65 + M1–M6) can be completed`, res.length === 0, res.join(", "));
     const S = JSON.parse(env.store["data/users/u1/state"].state);
-    P("day advances to 58 after Module 2.3; the measurement track doesn't move the day", S.day === 58, "day " + S.day);
+    P("day advances to 66 after Gate 2; the measurement track doesn't move the day", S.day === 66, "day " + S.day);
     P("cards for every unit are in the review deck", w.eval('UNITS.filter(u=>u.card).every(u=>state.sr[u.card.id])'));
     P("Practice opens drills after their teaching day", ["cpm1", "proc", "rabill", "recon"].every(id => !!d.querySelector(`#pracwrap [data-d="${id}"]`)) || (w.eval('pr={view:"home"};renderPractice();'), ["cpm1", "proc", "rabill", "recon"].every(id => !!d.querySelector(`#pracwrap [data-d="${id}"]`))));
     P("Practice drill filter isolates measurement vs planning drills", await w.eval(`(async () => {
