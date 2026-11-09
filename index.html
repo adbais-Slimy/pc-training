@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=41"></script>
+<script src="shim.js?v=42"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -17644,6 +17644,299 @@ const APPLY14 = {
 };
 Object.assign(APPLY, APPLY14);
 UNITS14.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS15 = [
+  {
+    "id": "U118",
+    "day": 118,
+    "title": "Day 118: Master Comprehensive Practical Review: CPM Math, IS 1200 MBs & SCL Forensics",
+    "mins": 25,
+    "card": {
+      "id": "c-master-review-1",
+      "title": "Master Comprehensive Review: CPM Math, IS 1200 MBs & SCL Forensics",
+      "rule": "Master Project Controls Managers integrate CPM forward/backward pass mathematics, physical field measurement rules (IS 1200 / CPWD), and SCL Delay Forensics into a single unshakeable knowledge architecture. Key review syntheses: 1) Early/Late dates, Free Float vs Total Float, and float ownership; 2) Concrete batch slip reconciliation (1.5–3.0% tolerance), rebar BBS density (d²/162) and rolling margins; 3) The 6 SCL forensic delay methodologies and prospective TIA fragnet modeling; 4) FIDIC Sub-Clause 20.1 mandatory 28-day notice condition precedent.",
+      "example": "In a composite field audit, the Master Controls Lead verified CPM network logic, audited a ₹14 Cr RA Bill against IS 1200 plaster opening deductions, and defeated a ₹6 Cr prolongation claim under SCL Core Principle 10.",
+      "trap": "Forgetting that in multi-calendar CPM networks, free float can exceed total float when calendar non-working periods create local gaps."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** Welcome to the final milestone of the 120-Day Accelerated Master Track.\n\nOver the past 117 days, you have mastered disciplines that 95% of construction professionals never encounter in their entire careers:\n- The exact mathematics of CPM forward and backward passes, float mechanics, and calendar shifts;\n- The physical precision of IS 1200 Measurement Books (MBs), bar bending schedules, and material reconciliations;\n- The legal doctrine of SCL Delay Forensics, FIDIC Sub-Clause 20.1 notice bars, and Section 73 proof of actual overhead loss.\n\nToday, on **Day 118**, we synthesize the first three pillars into an integrated executive audit.\n\nA Master Project Controls Manager cannot be fooled by a contractor's smooth talk, a subcontractor's inflated bill, or a lawyer's convoluted claim. You see through the numbers down to the raw physical and contractual truth."
+      },
+      {
+        "k": "read",
+        "t": "**The Core Foundations Synthesis:**\n\n```\n+-----------------------------------------------------------------------------------------------------+\n|                                 PILLAR 1: CPM NETWORK & FLOAT MECHANICS                             |\n|  ES = max(EF_preds); EF = ES + Dur; LF = min(LS_succs); LS = LF - Dur                              |\n|  Total Float (TF) = LS - ES = LF - EF | Free Float (FF) = min(ES_succs) - EF                        |\n|  SCL Principle 8: Float belongs to the project; EOT due ONLY if delay consumes TF and moves Finish. |\n+-----------------------------------------------------------------------------------------------------+\n|                                 PILLAR 2: IS 1200 MEASUREMENT & RECONCILIATIONS                     |\n|  - Concrete (IS 1200 Pt 2): Net drawing volume; no rebar deductions; batch slip tolerance 1.5–3.0%  |\n|  - Rebar (IS 2502/1786): Weight = d²/162 kg/m; couplers eliminate drawing lap wastage              |\n|  - Plaster Openings (Pt 12): <= 0.5m² (zero ded); 0.5–3.0m² (50% ded, no jambs); > 3.0m² (full ded) |\n+-----------------------------------------------------------------------------------------------------+\n|                                 PILLAR 3: SCL FORENSIC DELAY ANALYSIS                               |\n|  - 6 Methods: TIA (Prospective), Windows Analysis (Retained Logic), Collapsed As-Built              |\n|  - Concurrency (Principle 10): EOT granted under Prevention Principle; ZERO prolongation costs.     |\n|  - Notice Bar (FIDIC 20.1): 28 days awareness bar is an absolute condition precedent in law.       |\n+-----------------------------------------------------------------------------------------------------+\n```\n\n**The Integrated Audit Check:**\nWhen auditing a contractor's claim, always verify: 1) Did the delay affect the critical path? 2) Was formal notice served within 28 days? 3) Does the billing match net IS 1200 measurements without double-counting?"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "On a CPM network, Activity K (duration 6 days) has ES = 10, EF = 16, LS = 14, and LF = 20. Its sole successor, Activity M, has ES = 18. What are the Total Float (TF) and Free Float (FF) of Activity K?",
+            "o": [
+              [
+                "Total Float = 4 days (LS - ES = 14 - 10), and Free Float = 2 days (ES_M - EF_K = 18 - 16)",
+                true,
+                "TF = LS - ES = 14 - 10 = 4 days. FF is the delay Activity K can experience without delaying Activity M: ES_M - EF_K = 18 - 16 = 2 days."
+              ],
+              [
+                "Total Float = 2 days, and Free Float = 4 days",
+                false,
+                "Inverted values; TF cannot be smaller than FF in single-calendar linear links."
+              ],
+              [
+                "Total Float = 0 days, and Free Float = 0 days",
+                false,
+                "Both float values are greater than zero; Activity K is non-critical."
+              ],
+              [
+                "Activity K has infinite float because successor M has not started yet",
+                false,
+                "Float is rigorously calculated from early and late network dates."
+              ]
+            ]
+          },
+          {
+            "q": "Under IS 1200 Part 12 (Plastering) and CPWD Works Manual, what is the mandatory measurement rule for a window opening measuring 2.4 m² in a brick wall plastered on both faces?",
+            "o": [
+              [
+                "Deduct 100% of the opening area from one face only (equivalent to 50% deduction across both faces), and do NOT add any separate measurement for jambs, sills, or soffits",
+                true,
+                "For openings between 0.5 m² and 3.0 m², IS 1200 mandates deduction for one face only, with no additions for jambs and soffits, compensating for the extra labor of edging."
+              ],
+              [
+                "Deduct 100% from both faces and add 50 meters of extra plaster for each window corner",
+                false,
+                "Full deduction from both faces only applies to openings exceeding 3.0 m²."
+              ],
+              [
+                "Zero deduction is made because window openings are considered decorative artwork",
+                false,
+                "Zero deduction only applies to small openings <= 0.5 m²."
+              ],
+              [
+                "Plaster is measured by weighing the plastering trowels after work",
+                false,
+                "Plaster is measured in square meters of surface area."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The foundations of project controls never change: CPM forward and backward passes dictate time, IS 1200 governs physical quantities, and SCL delay forensics governs contractual entitlement. Keep these three pillars permanently aligned."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U119",
+    "day": 119,
+    "title": "Day 119: Master Comprehensive Practical Review: Hospital Engineering Packages, EVM & P6 Integrity",
+    "mins": 25,
+    "card": {
+      "id": "c-master-review-2",
+      "title": "Master Comprehensive Review: Hospital Packages, EVM & P6 Integrity",
+      "rule": "Synthesis across specialized technical packages, P6 enterprise settings, and financial controls: 1) Hospital spatial hierarchy (Hot Floor 4.5m height, 1,200mm ceiling void, gravity drainage -> HVAC -> pressurized wet pipes -> top-tier electrical trays); 2) Cleanroom pressure cascades (+15 Pa OT / -15 Pa isolation) and HTM 02-01 MGPS 5-stage testing; 3) DCMA 14 schedule health metrics (open ends <= 5%, negative lags 0%, CPLI >= 0.95); 4) EVM Earned Schedule time-based analytics (SV_t = ES - AT, SPI_t = ES / AT) and Multi-Model EAC forecasting.",
+      "example": "In a hospital commissioning review, the Master Controls Lead audited DCMA 14 health (0% leads, 98% logic), verified +15 Pa OT pressure balance, and presented an Earned Schedule forecast confirming a 24-day time delay despite traditional SPI showing 0.96.",
+      "trap": "Using Duration % Complete in EVM calculations, which artificially treats elapsed calendar time as physical earned value."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On **Day 119**, we complete the second half of our master review: synthesizing hospital technical packages, Primavera P6 enterprise schedule health, and advanced Earned Value / Earned Schedule analytics.\n\nBuilding a hospital is unlike any other construction project in the world:\n- It is an enclosed life-support machine where cleanroom airflow (+15 Pa), medical gases (EN 13348 copper), and ionizing radiation bunkers ($3,200\\text{ kg/m}^3$ high-density concrete) intersect with heavy civil engineering.\n- It requires sophisticated Primavera P6 scheduling governed by the **DCMA 14-Point Assessment** and **Retained Logic** calculation modes.\n- It demands advanced financial forecasting using **Earned Schedule ($ES$)** and **Multi-Model EAC** to protect bank loan tranches and prevent corporate insolvencies.\n\nMastering this intersection transforms a civil engineer into a high-authority Project Controls Director."
+      },
+      {
+        "k": "read",
+        "t": "**The Advanced Controls Synthesis:**\n\n```\n+-----------------------------------------------------------------------------------------------------+\n|                                 PILLAR 4: HOSPITAL PACKAGES & STATUTORY WATERFALL                   |\n|  - MOT Cleanroom: ISO Class 7/5; Cleanroom Envelope Lock; +15 Pa cascade; PAO/DOP scan <= 0.01%    |\n|  - MGPS (HTM 02-01): 24h pressure hold at 1.5x; 100% Anti-Confusion gas test; dewpoint < -40°C      |\n|  - Statutory Waterfall: CEIG Energization -> Lifts/PCB CTO -> Fire NOC (3.5 bar) -> Municipal OC    |\n+-----------------------------------------------------------------------------------------------------+\n|                                 PILLAR 5: P6 ENTERPRISE ARCHITECTURE & DCMA 14                      |\n|  - Activity Types: Task Dependent vs LOE Hammocks (no driving logic on hammock bars)                |\n|  - DCMA 14 Health: Open ends <= 5%; Negative lags = 0%; Hard constraints <= 5%; CPLI >= 0.95       |\n|  - Calculation Options: F9 under RETAINED LOGIC strictly enforced in schedlog.txt                  |\n+-----------------------------------------------------------------------------------------------------+\n|                                 PILLAR 6: EVM, EARNED SCHEDULE & MULTI-MODEL EAC                    |\n|  - Earned Schedule (ES): Solves SPI failure at project end; SV_t = ES - AT; SPI_t = ES / AT        |\n|  - EAC 1 (Atypical): AC + (BAC - EV) | EAC 2 (Typical Cost): BAC / CPI                              |\n|  - EAC 3 (Cost + Sched): AC + [(BAC - EV) / (CPI * SPI)] | Budget Adequacy Ratio (BAR) >= 1.00       |\n+-----------------------------------------------------------------------------------------------------+\n```\n\n**The Master Readiness Principle:**\nWhen you control the technical packages, schedule integrity, and financial forecasting, no contractor or consultant can mislead you in project review meetings."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why does traditional Schedule Performance Index (SPI = EV / PV) fail to provide reliable schedule delay warnings during the final 20% of a delayed project, and how does Earned Schedule (ES) resolve this?",
+            "o": [
+              [
+                "Because as the project approaches completion, EV and PV mathematically converge toward BAC, forcing SPI toward 1.00 regardless of actual delay; Earned Schedule maps EV horizontally onto the time axis, generating SV_t (calendar time delay) and SPI_t which remain accurate through final handover",
+                true,
+                "Lipke's Earned Schedule theory overcomes the fatal mathematical flaw where traditional SPI falsely reports improvement toward 1.00 at project end. SV_t measures true delay in days or months."
+              ],
+              [
+                "Because SPI is only used for software coding and cannot be used for physical buildings",
+                false,
+                "EVM is used across global construction and defense infrastructure."
+              ],
+              [
+                "Because banks forbid the use of EVM after Day 60",
+                false,
+                "Banks and LIEs actively audit EVM and physical earned value."
+              ],
+              [
+                "Because P6 software automatically deletes EVM data when a project is 80% complete",
+                false,
+                "P6 retains all project performance data."
+              ]
+            ]
+          },
+          {
+            "q": "Under DCMA 14-Point schedule health standards, what is the mandatory benchmark for relationship leads (negative lags)?",
+            "o": [
+              [
+                "Zero percent (0%)—negative lags are completely forbidden because they distort critical path float, represent physically illogical backward time travel, and invalidate forensic delay analysis",
+                true,
+                "DCMA 14, SCL Delay Protocol, and PMI all strictly prohibit negative lags; activities should be broken down into discrete steps instead."
+              ],
+              [
+                "At least 50% of all activities must have negative lags",
+                false,
+                "Negative lags are a schedule defect, not a best practice."
+              ],
+              [
+                "Negative lags are permitted as long as they are greater than 100 days",
+                false,
+                "Larger negative lags cause even worse schedule distortion."
+              ],
+              [
+                "Negative lags are only allowed during the monsoon season",
+                false,
+                "Calendar logic, not negative lags, handles weather."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Hospital technical engineering, P6 DCMA 14 schedule health, and Earned Schedule analytics form the triumvirate of modern mega-project governance. Master the pressure cascades, enforce zero negative lags under Retained Logic, and measure true time delay with SV_t."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U120",
+    "day": 120,
+    "title": "Day 120: Final Master Certification Examination & Boardroom Viva Voce (Gate 4 / Graduation)",
+    "mins": 25,
+    "card": {
+      "id": "c-master-certification-exam",
+      "title": "Final Master Certification Examination & Boardroom Viva Voce",
+      "rule": "The ultimate 60-minute capstone evaluation across all 120 days of the accelerated master track. Candidates are tested on: 1) Numerical calculations (CPM network float, concrete/steel reconciliation, Earned Schedule SV_t, Multi-Model EAC); 2) P6 Enterprise health audit and forensic schedlog.txt analysis; 3) Hospital statutory and MEP technical precedence waterfall; 4) Boardroom Hot Seat 60-second executive defense under direct interrogation. Passing clears the learner to Day 121 (Course Mastered & Certified).",
+      "example": "In the Master Certification Capstone, the candidate successfully calculated EAC_3 = ₹786.4 Cr, diagnosed a negative lag defect in P6, defended +15 Pa OT cascade logic, and delivered a flawless 3-sentence executive defense in the Boardroom Hot Seat.",
+      "trap": "Relying on vague generalities in the Hot Seat defense instead of citing exact milestone days, financial quantum in Crores, and a specific decision requested."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** Today is **Day 120**—the graduation summit of your journey to becoming a certified **Master Project Controls Manager** in Indian hospital construction and PMC.\n\nYou have traversed the complete 4-block journey:\n- **Block 1 (Days 1–30):** Site Measurement, IS 1200 MBs, BBS Rebar Optimization, Concrete Reconciliations & CPM Mathematical Foundations;\n- **Block 2 (Days 31–65):** SCL Delay Forensics, Claims, FIDIC/CPWD Contracts, Bank Guarantees & Hospital Technical Packages (MOT, MGPS, Radiation Bunkers, Fire NOC);\n- **Block 3 (Days 66–95):** Primavera P6 Enterprise Architecture, Specialized Hospital Rules of Credit, S-Curve Banana Envelopes, Cash Flow Waterfalls & EVM Controls;\n- **Block 4 (Days 96–120):** Mega Project Flight Simulations, Crisis Recovery Surgery, Forensic Autopsies & Boardroom Executive Authority.\n\nToday, you sit for the **Final Master Certification Examination & Boardroom Viva Voce**.\n\nYou will be tested on cross-domain numerical calculations, forensic schedule diagnostics, statutory precedence, and executive defense under fire. Upon passing, your status advances to **Day 121: Master Project Controls Certification Achieved**!"
+      },
+      {
+        "k": "read",
+        "t": "**The Master Capstone Portfolio Requirements:**\n\n```\n+-----------------------------------------------------------------------------------------------------+\n|                                 THE 4-PART MASTER CERTIFICATION PACK                                 |\n+-----------------------------------------------------------------------------------------------------+\n| PART 1: THE INTEGRATED CPM & EARNED SCHEDULE CALCULATION                                             |\n| - Given BAC = ₹800 Cr, Actual Cost AC = ₹440 Cr, Physical EV = ₹380 Cr, and Planned Value PV = ₹420 Cr|\n| - Calculate: CV = EV - AC = -₹60 Cr | SV = EV - PV = -₹40 Cr | CPI = 0.864 | SPI = 0.905            |\n| - Earned Schedule: If Planned Duration = 24 months, Actual Time AT = 14 months, and ES = 11.4 months|\n| - Calculate: Time Variance SV_t = ES - AT = -2.6 months | Time SPI_t = ES / AT = 0.814              |\n| - Forecast EAC_3 (Cost + Schedule): AC + [(BAC - EV) / (CPI * SPI)] = ₹440 + [420 / 0.782] = ₹977 Cr|\n+-----------------------------------------------------------------------------------------------------+\n| PART 2: THE FORENSIC SCHEDULE & P6 HEALTH AUDIT                                                     |\n| - Audit schedlog.txt: Verify Retained Logic active, 0% leads (negative lags), and CPLI >= 0.95.      |\n| - Rebut contractor out-of-sequence claim: prove logic override collapsed true delay artificially.    |\n+-----------------------------------------------------------------------------------------------------+\n| PART 3: THE HOSPITAL STATUTORY & COMMISSIONING WATERFALL                                             |\n| - Map non-negotiable FS logic: Substation CEIG -> Fire NOC (3.5 bar) -> PCB CTO -> Municipal OC.    |\n| - Verify Cleanroom Lock (+15 Pa OT / -15 Pa Isolation) and HTM 02-01 MGPS Anti-Confusion test.      |\n+-----------------------------------------------------------------------------------------------------+\n| PART 4: THE BOARDROOM HOT SEAT ORAL DEFENSE                                                         |\n| - Deliver the 3-Sentence Executive Defense in 60 seconds with poise, numbers, and decisive action.   |\n+-----------------------------------------------------------------------------------------------------+\n```\n\nStep forward and take the final examination."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "On a ₹800 Crore hospital project, Current EV is ₹380 Crores, AC is ₹440 Crores, and PV is ₹420 Crores. Actual Time elapsed is 14 months, while Earned Schedule (ES) is 11.4 months. What is the time-based Schedule Variance (SV_t) and the Combined Cost/Schedule Forecasted Estimate at Completion (EAC_3)?",
+            "o": [
+              [
+                "SV_t = -2.6 months (calendar delay), and EAC_3 = ₹977.1 Crores (reflecting compounding cost overruns and schedule acceleration premiums)",
+                true,
+                "SV_t = ES - AT = 11.4 - 14.0 = -2.6 months. CPI = 380/440 = 0.864; SPI = 380/420 = 0.905. EAC_3 = AC + [(BAC - EV) / (CPI * SPI)] = 440 + [(800 - 380) / (0.864 * 0.905)] = 440 + [420 / 0.7819] = 440 + 537.1 = ₹977.1 Crores."
+              ],
+              [
+                "SV_t = +5.0 months (ahead of schedule), and EAC_3 = ₹500 Crores (cost savings)",
+                false,
+                "Negative variances indicate severe delay and cost overrun, not savings."
+              ],
+              [
+                "SV_t is zero because EVM only measures money and cannot measure time",
+                false,
+                "Lipke's Earned Schedule standard specifically measures time variance SV_t in calendar months."
+              ],
+              [
+                "EAC_3 equals exactly BAC (₹800 Cr) because contract budgets never change",
+                false,
+                "EAC_3 forecasts actual expected completion cost based on real site performance trends."
+              ]
+            ]
+          },
+          {
+            "q": "What defines the ultimate professional standard of a certified Master Project Controls Manager when presenting distressed project performance to an executive Board of Directors?",
+            "o": [
+              [
+                "Delivering absolute unvarnished truth within 60 seconds using the 3-Sentence Executive Defense, backed by contemporaneous records, verified CPM mathematics under Retained Logic, and actionable commercial solutions",
+                true,
+                "Executive authority is built on transparent honesty, unassailable technical rigor, contemporaneous evidentiary proof, and decisive commercial leadership."
+              ],
+              [
+                "Hiding bad news in 200-page slide decks until after the project is completed",
+                false,
+                "Concealing delays destroys executive trust and breaches professional ethics."
+              ],
+              [
+                "Blaming subcontractors for everything while claiming personal credit for all progress",
+                false,
+                "Blame-shifting is the mark of amateur management."
+              ],
+              [
+                "Deleting the schedule file and resigning from the company before the board meeting",
+                false,
+                "Abandonment violates professional duty."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Congratulations. You have completed the 120-Day Master Project Controls Accelerated Curriculum. You now possess the integrated engineering, mathematical, contractual, and executive authority to lead mega-infrastructure and healthcare projects to successful completion."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS15);
+const APPLY15 = {
+  "U118": {
+    "task": "Assemble a Master Integrated CPM, IS 1200 Measurement & SCL Forensic Review Dossier: 1) Solve a complex multi-calendar CPM network forward/backward pass with mixed constraints and float ownership determination; 2) Audit a Running Account (RA) Bill reconciling concrete batch tickets, BBS steel rolling margins, and IS 1200 plaster opening deductions; 3) Draft a forensic rebuttal defeating a contractor prolongation claim under SCL Delay Protocol Core Principle 10 (concurrency).",
+    "good": [
+      "Calculates exact CPM network dates, Total Float, and Free Float across multi-calendar shifts",
+      "Performs rigorous IS 1200 physical quantity audits with proper opening deduction thresholds",
+      "Applies SCL Protocol Core Principle 10 to defeat prolongation costs during concurrent delay",
+      "Demonstrates complete synthesis across planning math, field measurement, and contract law"
+    ],
+    "tmpl": "MASTER INTEGRATED CONTROLS DOSSIER (PART 1: CPM, MEASUREMENT & SCL FORENSICS):\nProject Profile: 600-Bed Tertiary Care Hospital & Research Center (₹850 Cr)\n1. CPM Network & Float Mechanics Audit (Forward/Backward Pass, Float Allocation): \n2. IS 1200 Measurement Book & Bill Verification (Concrete Waste, BBS Couplers, Plaster Openings): \n3. SCL Forensic Delay Determination (Prospective TIA Fragnet, Concurrency Rebuttal): \n4. FIDIC 20.1 Notice Condition Precedent & Time-Bar Assessment: \n5. Executive Commercial Determination & Net Entitlement Summary: "
+  },
+  "U119": {
+    "task": "Assemble a Master Integrated Hospital Engineering, EVM & P6 Integrity Dossier: 1) Verify Hot Floor above-ceiling MEP spatial hierarchy and cleanroom pressure cascade balances (+15 Pa OT / -15 Pa isolation); 2) Audit Primavera P6 schedule health against DCMA 14 metrics and verify Retained Logic calculation in schedlog.txt; 3) Perform an advanced EVM Earned Schedule analysis (SV_t, SPI_t) and Multi-Model EAC cost forecast (EAC_1, EAC_2, EAC_3).",
+    "good": [
+      "Validates complex hospital clinical MEP zoning, pressure cascades, and MGPS safety testing",
+      "Audits P6 enterprise schedule health against all 14 DCMA criteria, enforcing Retained Logic",
+      "Calculates time-based Earned Schedule metrics (SV_t, SPI_t) overcoming traditional SPI limitations",
+      "Forecasts Multi-Model EAC cost outcomes and reconciles against bank lender adequacy ratios"
+    ],
+    "tmpl": "MASTER INTEGRATED CONTROLS DOSSIER (PART 2: HOSPITAL PACKAGES, EVM & P6 HEALTH):\nFacility Scope: 12 Modular OTs, 32 ICU Beds, 2 LINAC Bunkers, 3.0T MRI Suite\n1. Hospital Technical Package Coordination Audit (Above-Ceiling Hierarchy, Pressure Cascades, MGPS): \n2. P6 Enterprise Architecture & DCMA 14 Health Assessment (Schedlog.txt, Retained Logic, Zero Leads): \n3. Earned Value & Earned Schedule Analysis (PV, EV, AC, Cost Variance, SV_t Time Variance, SPI_t): \n4. Multi-Model EAC Cost Forecasting Matrix (Atypical EAC_1, Typical EAC_2, Combined EAC_3): \n5. Lenders' Independent Engineer (LIE) Budget Adequacy Ratio (BAR >= 1.00) Reconciliation: "
+  },
+  "U120": {
+    "task": "Deliver the Final Master Certification Capstone Portfolio & Boardroom Viva Voce Defense: 1) Formulate the integrated project controls governance charter for a ₹1,000 Cr mega hospital project; 2) Synthesize the complete statutory precedence waterfall from CEIG to Municipal OC; 3) Prepare and deliver the 60-Second Boardroom Hot Seat Defense under direct interrogation; 4) Submit the final viva voce portfolio for Master Project Controls Manager Certification.",
+    "good": [
+      "Presents an exhaustive, board-level project controls governance architecture",
+      "Maps the complete statutory and commissioning critical path waterfall without omissions",
+      "Executes a flawless 3-Sentence Executive Defense in the Boardroom Hot Seat under pressure",
+      "Demonstrates total cross-domain mastery deserving of Master Project Controls Certification"
+    ],
+    "tmpl": "FINAL MASTER PROJECT CONTROLS CAPSTONE PORTFOLIO & BOARDROOM VIVA VOCE:\nCandidate Certification: Master Project Controls Manager (Indian Hospital Infrastructure & PMC)\n1. Enterprise Project Controls Governance Charter (EPS/WBS, Rules of Credit, Change Control): \n2. End-to-End Hospital Statutory & Technical Precedence Waterfall (CEIG -> Fire NOC -> OC -> NABH): \n3. Forensic Crisis Recovery & Claims Defense Strategy (Autopsy, Crashing, SCL Determination): \n4. The 60-Second Boardroom Hot Seat Executive Defense Script (Reality, Exposure, Decisive Action): \n5. Master Certification Declaration & Boardroom Viva Voce Sign-off: "
+  }
+};
+Object.assign(APPLY, APPLY15);
+UNITS15.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
