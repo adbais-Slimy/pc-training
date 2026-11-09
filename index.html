@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=34"></script>
+<script src="shim.js?v=35"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -12448,6 +12448,869 @@ const APPLY7 = {
 };
 Object.assign(APPLY, APPLY7);
 UNITS7.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS8 = [
+  {
+    "id": "U66",
+    "day": 66,
+    "title": "Day 66: P6 Enterprise Data Architecture: EPS vs OBS, Project Codes vs Global Activity Codes",
+    "mins": 25,
+    "card": {
+      "id": "c-p6-enterprise-architecture",
+      "title": "P6 Architecture: EPS (What/Where), OBS (Who), and Activity Code scoping",
+      "rule": "Primavera P6 enterprise structure separates the Enterprise Project Structure (EPS - hierarchical arrangement of projects by business unit, region, or hospital division) from the Organizational Breakdown Structure (OBS - hierarchical human reporting structure managing those projects). Security privileges and project access are assigned by mapping OBS nodes to EPS nodes. Activity Codes must be scoped at Project or EPS level; creating Global Activity Codes clutters the enterprise database across all other projects.",
+      "example": "Assigning the Regional Hospital Director's OBS node to the 'Healthcare - South' EPS node automatically grants oversight of all 4 upcoming hospital builds while restricting hotel projects.",
+      "trap": "Creating hundreds of Global Activity Codes instead of Project Activity Codes, polluting the enterprise database and causing slow performance for all corporate users."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A major healthcare infrastructure developer managed 14 multi-specialty hospital projects across India in a single centralized Primavera P6 EPPM enterprise database.\n\nOver three years, dozens of individual site planning engineers created whatever Activity Codes they wanted. Whenever a planner needed to categorize subcontractors, they created a **Global Activity Code** named *\"Subcontractor\"*, *\"Sub-Contractor\"*, *\"Vendor\"*, or *\"Contractor Name\"*.\n\nWithin 24 months, the corporate database was bloated with over **650 Global Activity Codes**, many with thousands of overlapping, misspelled dictionary values. Opening a project schedule took 8 minutes. Planners accidentally reassigned codes belonging to other regional hospitals, corrupting national portfolio reports.\n\nEven worse: because the **Organizational Breakdown Structure (OBS)** was not properly mapped to the **Enterprise Project Structure (EPS)**, junior site engineers in Hyderabad had edit rights over confidential budget baselines for flagship hospitals in Delhi!\n\nThe PMO had to shut down the enterprise database for an entire weekend to purge global code dictionaries, enforce strict EPS-OBS security mapping, and mandate that all operational coding be restricted to **Project-level Activity Codes**."
+      },
+      {
+        "k": "read",
+        "t": "**The P6 Enterprise Data Hierarchy:**\n\n1. **Enterprise Project Structure (EPS) — 'What and Where':**\n   - The root hierarchical framework representing how an organization organizes its projects (e.g. `Healthcare Division -> Tertiary Hospitals -> South Region -> Bengaluru 500-Bed Hospital`).\n   - Allows executive multi-project rollups, cross-project portfolio analysis, and central financial budgeting.\n\n2. **Organizational Breakdown Structure (OBS) — 'Who':**\n   - The hierarchical management tree representing the human roles and management responsibility (e.g. `Executive Director -> Regional Project Director -> Project Controls Manager -> Planning Engineer`).\n   - **Security Gateway:** In P6, users do not get permissions assigned directly to projects. A user is assigned an OBS role, and that OBS role is linked to an EPS node. That link determines whether the user has View-Only, Project Manager, or Admin rights.\n\n3. **Activity Code Scoping (Global vs EPS vs Project):**\n   - *Global Activity Codes:* Visible and editable across **every single project** in the enterprise database. Should be restricted strictly to corporate PMO governance (e.g. *Phase*, *Milestone Gate*).\n   - *EPS Activity Codes:* Shared only across projects within a specific EPS branch (e.g. *Hospital Medical Equipment Vendor* across all healthcare projects).\n   - *Project Activity Codes:* Isolated strictly to one individual `.XER` project file. 90% of operational site codes (e.g. *Location Floor*, *Trade Subcontractor*, *Pour Zone*) must be created at Project level to prevent enterprise database pollution."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "In Primavera P6 enterprise administration, how is project access security granted to individual planning engineers?",
+            "o": [
+              [
+                "By mapping the user's assigned Organizational Breakdown Structure (OBS) element to the appropriate Enterprise Project Structure (EPS) node or project",
+                true,
+                "In P6, security profiles are tied to the OBS-to-EPS relationship: assigning an OBS node to an EPS node determines user access rights for all projects residing under that branch."
+              ],
+              [
+                "By typing the user's Windows operating system username into the activity notes column",
+                false,
+                "Activity notes are descriptive text fields with zero security administration function."
+              ],
+              [
+                "By giving every planner the master administrator password so they can work without restrictions",
+                false,
+                "Sharing master admin rights destroys data governance and allows accidental deletion of corporate baselines."
+              ],
+              [
+                "Security access is determined automatically by the speed of the user's computer processor",
+                false,
+                "Hardware specs have no relationship to enterprise database security profiles."
+              ]
+            ]
+          },
+          {
+            "q": "Why is it considered a critical PMO governance violation for site planning engineers to create 'Global Activity Codes' for site-specific subcontractor tracking?",
+            "o": [
+              [
+                "Global codes pollute the central enterprise dictionary across all company projects, causing database bloat, performance slowdowns, and potential code overwrites by other project teams",
+                true,
+                "Global Activity Codes appear in every project in the entire company database. Site-specific tracking must use Project Activity Codes to isolate project data."
+              ],
+              [
+                "Because Global Activity Codes are illegal under the Indian Companies Act",
+                false,
+                "This is a software database architecture best practice, not a corporate statutory violation."
+              ],
+              [
+                "Because P6 deletes all schedules that contain more than three Global Activity Codes",
+                false,
+                "P6 does not delete schedules; it suffers database performance degradation and data clutter."
+              ],
+              [
+                "Because Global Activity Codes can only be typed in Latin, not English",
+                false,
+                "P6 supports standard Unicode/ASCII text strings."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Enforce strict P6 database hygiene: keep the Global Activity Code dictionary locked to PMO administrators. Mandate that site planners create codes strictly as Project Activity Codes. This ensures clean .XER exports and prevents cross-project database corruption."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U67",
+    "day": 67,
+    "title": "Day 67: Work Breakdown Structure (WBS) Architecture & The 100% Rule: Deliverables vs Packages",
+    "mins": 25,
+    "card": {
+      "id": "c-wbs-100-rule",
+      "title": "WBS Architecture: Deliverable-oriented hierarchy & the 100% Rule",
+      "rule": "The Work Breakdown Structure (WBS) is a hierarchical decomposition of the total project scope by deliverables, NOT an organizational chart or execution schedule. The 100% Rule (PMI / ISO 21500) mandates that the WBS must encompass 100% of the project scope defined by the contract—nothing more, nothing less. Child elements under a parent WBS node must sum to exactly 100% of the parent. Work not in the WBS is out of scope.",
+      "example": "In a hospital WBS, Level 2 'Modular Operation Theatres' must sum all civil, MEP, medical gas, cleanroom, and validation packages needed to deliver the completed operating rooms.",
+      "trap": "Structuring the WBS by contractor organizational departments or chronological phases (e.g. 'Month 1', 'Month 2'), which makes earned value rollups and deliverable tracking impossible."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹500 Crore hospital project, the general contractor submitted a baseline P6 schedule with 3,500 activities structured under a WBS organized entirely by **contractor subcontract packages**:\n- `WBS 1: Civil Contractor Scope`\n- `WBS 2: HVAC Contractor Scope`\n- `WBS 3: Electrical Contractor Scope`\n- `WBS 4: Medical Gas Contractor Scope`\n\nWhen the client CEO visited the site and asked: *\"What is the exact physical progress and earned value of the Level 3 Intensive Care Unit (ICU)?\"*, the planning manager could not answer.\n\nTo find the status of Level 3 ICU, the planner had to search across 4 separate WBS branches, manually filtering activities from the civil contractor, electrical subcontractor, HVAC vendor, and medical gas installer. Activities had been missed, double-counted, or tagged to the wrong floor.\n\nBecause the WBS was not **deliverable-oriented**, the project could not roll up earned value by clinical department. The client rejected the baseline and mandated a complete rebuild following the **PMI 100% Rule**."
+      },
+      {
+        "k": "read",
+        "t": "**WBS Architecture Principles & The 100% Rule:**\n\n1. **The 100% Rule (PMI Practice Standard for WBS / ISO 21500):**\n   - The WBS must encompass **100% of the scope** defined by the project contract and internal deliverables.\n   - *Decomposition Rule:* The sum of the work at child level must equal 100% of the parent level. Nothing missing, nothing added (*zero scope creep*).\n   - Any activity or expenditure not contained within the WBS is contractually **out of scope**.\n\n2. **Deliverable-Oriented vs Phase-Oriented WBS:**\n   - *Wrong (Organizational / Phase WBS):* Organizing by `Planning -> Engineering -> Procurement -> Construction -> Commissioning`. This creates massive multi-discipline silos where physical handovers cannot be tracked.\n   - *Right (Deliverable / Spatial WBS for Hospitals):*\n     - `Level 1: Hospital Facility (Total Scope)`\n     - `Level 2: Substructure & Podium / Diagnostic Tower / Inpatient Tower / Central Utility Plant (CUP)`\n     - `Level 3: Floor / Clinical Department (e.g. Level 2 - Modular OT Suite)`\n     - `Level 4: Deliverable Systems (Cleanroom Envelope, MEP Infrastructure, MGPS Distribution, Commissioning & Validation)`\n\n3. **The WBS Dictionary:**\n   - Every terminal WBS node must have an accompanying entry in the **WBS Dictionary** defining the exact scope of work, technical specifications, deliverable handover milestones, and acceptance criteria. This prevents boundary disputes between interfacing trade contractors."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What does the PMI '100% Rule' mandate regarding the hierarchical design of a Work Breakdown Structure (WBS)?",
+            "o": [
+              [
+                "The WBS must encompass 100% of the contractually defined scope, and child elements under any parent node must sum to exactly 100% of the parent scope—nothing more, nothing less",
+                true,
+                "The 100% Rule requires that the WBS capture the entirety of contractual scope; the sum of child elements equals 100% of the parent, ensuring no work is omitted or unauthorized."
+              ],
+              [
+                "Every single activity in the schedule must be 100% finished before the baseline can be created",
+                false,
+                "The 100% Rule refers to scope coverage and hierarchical summation, not progress completion."
+              ],
+              [
+                "The contractor is legally guaranteed a 100% profit margin on all WBS elements",
+                false,
+                "Profit margins are commercial bid terms, entirely unrelated to WBS structural decomposition."
+              ],
+              [
+                "Exactly 100 activities must be created under every WBS summary band",
+                false,
+                "WBS nodes contain as many or as few activities as required by the physical scope."
+              ]
+            ]
+          },
+          {
+            "q": "Why is a deliverable-oriented or spatial WBS superior to an organizational WBS (structured by subcontractor names) for a multi-specialty hospital project?",
+            "o": [
+              [
+                "It enables clear rollup of physical progress, costs, and clinical handover milestones by department (e.g. ICU, Modular OTs) regardless of which trade contractor performs the work",
+                true,
+                "Deliverable-oriented WBS structures progress by completed physical facility assets, allowing project managers and clients to track readiness of functional clinical spaces."
+              ],
+              [
+                "Because P6 software refuses to calculate critical path schedules if subcontractor names appear in the WBS",
+                false,
+                "P6 can calculate CPM on any hierarchy; the failure is in progress visibility, management accountability, and earned value rollups."
+              ],
+              [
+                "Because subcontractors are not allowed to read project schedules under Indian contract law",
+                false,
+                "Subcontractors require schedule access to plan daily labor and material deliveries."
+              ],
+              [
+                "Because deliverable WBS eliminates the need for MEP composite coordination drawings",
+                false,
+                "Technical coordination drawings (CCDs) remain mandatory regardless of WBS structure."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Structure your hospital WBS by physical facility, floor, and clinical deliverable. A deliverable-oriented WBS allows executive management, lenders, and doctors to see the true readiness of critical clinical assets like OTs and ICUs without sorting through thousands of disconnected trade activities."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U68",
+    "day": 68,
+    "title": "Day 68: P6 Activity Types & Percent Complete Types: Task Dependent, LOE & Milestones",
+    "mins": 25,
+    "card": {
+      "id": "c-activity-types",
+      "title": "P6 Activity Types: Task Dependent, LOE, Milestones & % Complete types",
+      "rule": "P6 provides 6 activity types: Task Dependent (follows activity calendar), Resource Dependent (follows resource calendar), Level of Effort (LOE - hammock spanning predecessor/successor without driving critical path), Start/Finish Milestones (zero duration), and WBS Summary. Percent Complete Types: Duration % Complete (assumes linear progress), Units % Complete (labor/material consumption), and Physical % Complete (actual field progress evaluated via Rules of Credit). Never assign driving logic links to LOEs.",
+      "example": "Using a Task Dependent activity instead of an LOE for 'Project Management & Supervision' caused PMC supervision to drive the critical path into next year.",
+      "trap": "Using Duration % Complete on site progress updates, allowing contractor to claim 80% progress simply because 80% of calendar days elapsed without pouring a single yard of concrete."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a hospital construction project in Pune, the planning team ran into a bizarre schedule anomaly: whenever the general contractor added a 2-day delay to a basement concrete pour, the completion date of the entire hospital jumped by **45 days**!\n\nWhen the PMC forensic auditor inspected the `.XER` file, they discovered two fatal setup blunders:\n1. The activity *\"PMC Site Supervision & Safety Oversight\"* was configured as a **Task Dependent** activity with a Finish-to-Start link to commissioning. Because it had a duration of 720 days, it acted as a massive rigid battering ram pushing the critical path!\n2. All civil and MEP activities were configured with **Duration % Complete** as their Percent Complete Type.\n\nOn the monthly progress report, the contractor claimed that Level 4 ductwork was **85% complete**. But when the site engineer walked the floor, only 20% of ducts were hung! Why? The activity had an Original Duration of 30 days, and 25 days had elapsed on the calendar. P6 calculated: $25 / 30 = 83.3\\%$, confusing elapsed time with physical installation!"
+      },
+      {
+        "k": "read",
+        "t": "**Activity Types & Percent Complete Mechanics in P6:**\n\n1. **The 6 P6 Activity Types:**\n   - *Task Dependent:* Follows the activity's assigned calendar. Used for 95% of discrete construction tasks.\n   - *Resource Dependent:* Follows the assigned resource's individual calendar (used when resource availability drives execution, e.g. specialized MRI rigging team).\n   - *Level of Effort (LOE):* A **hammock activity** whose duration is dynamically determined by its predecessor start and successor finish dates. Used for ongoing support functions (e.g. *Site Security*, *Project Management*, *Tower Crane Operation*). **Golden Rule:** An LOE must NEVER drive the critical path and cannot have driving Finish-to-Start logic to discrete tasks!\n   - *Start Milestone / Finish Milestone:* Zero duration ($0\\text{ days}$) representing key contract, regulatory, or handover gates.\n   - *WBS Summary:* Rolls up the span of all activities within a WBS node.\n\n2. **The 3 Percent Complete Types (The Fatal Choice):**\n   - *Duration % Complete:* $\\text{Progress} = (\\text{Original Duration} - \\text{Remaining Duration}) / \\text{Original Duration}$. Assumes work happens linearly with time. **Dangerous on construction sites**—rewards contractors for letting calendar days slip without producing output!\n   - *Units % Complete:* $\\text{Progress} = \\text{Actual Labor or Material Units} / \\text{At Completion Units}$. Useful in manufacturing, but distorts progress if unproductive labor is burning hours.\n   - *Physical % Complete (The Industry Standard):* **Decouples elapsed duration from physical progress.** Progress is entered manually by the engineer based on verified **Rules of Credit (RoC)** (e.g. 50% rebar tied, 30% concrete poured), while Remaining Duration is independently evaluated based on site productivity."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why is 'Physical % Complete' considered the gold standard Percent Complete Type for construction project controls, compared to 'Duration % Complete'?",
+            "o": [
+              [
+                "Because Physical % Complete decouples elapsed calendar time from earned progress, requiring progress to be entered based on verified physical milestones (Rules of Credit) rather than automatic time passage",
+                true,
+                "Duration % Complete blindly calculates progress based on elapsed days, masking delays. Physical % Complete forces the engineer to record verified physical ground progress while independently assessing remaining duration."
+              ],
+              [
+                "Because Physical % Complete automatically calculates the contractor's income tax liability",
+                false,
+                "Percent complete types manage schedule tracking, not tax accounting."
+              ],
+              [
+                "Because P6 software disables all printing features if Duration % Complete is selected",
+                false,
+                "Printing works with all percent complete types; the difference is reporting accuracy and fraud prevention."
+              ],
+              [
+                "Because Physical % Complete allows planners to claim 100% completion before work starts",
+                false,
+                "Physical % Complete prevents premature or unearned progress claims."
+              ]
+            ]
+          },
+          {
+            "q": "How must a Level of Effort (LOE) hammock activity be configured in a P6 construction schedule to avoid distorting critical path calculations?",
+            "o": [
+              [
+                "It must take its start from a predecessor start and its finish from a successor finish, but must NEVER be assigned as a driving predecessor to discrete construction tasks",
+                true,
+                "LOE activities exist to summarize ongoing support costs (security, management); they expand and contract with the network, but must never drive network logic or critical path dates."
+              ],
+              [
+                "It must be assigned a fixed duration of 1,000 days and linked with Finish-to-Start relationships to all milestones",
+                false,
+                "Arbitrary fixed durations and FS links turn support activities into false critical path drivers."
+              ],
+              [
+                "It must be given negative duration to accelerate the overall project completion date",
+                false,
+                "Negative durations do not exist in CPM scheduling."
+              ],
+              [
+                "It can only be used on projects funded by the World Bank",
+                false,
+                "LOE is a standard CPM activity type used across all industries."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Standardize your P6 baseline template: set all discrete construction activities to 'Physical % Complete'. Use 'Task Dependent' for production tasks, 'Milestones' for contract gates, and 'Level of Effort' strictly for overheads. Never let elapsed time masquerade as physical site progress."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U69",
+    "day": 69,
+    "title": "Day 69: P6 Calendars & Work Contours: 6-Day, 7-Day, Monsoon Shifts & Curing Traps",
+    "mins": 25,
+    "card": {
+      "id": "c-p6-calendars",
+      "title": "P6 Calendars: Multi-calendar coordination, 7-day curing & monsoon shifts",
+      "rule": "Multi-calendar scheduling in P6 requires strict discipline: 6-day (standard civil labor), 7-day 24h (concrete curing, soil dewatering, natural settlement), and restricted statutory/permit calendars (5-day government office hours). Assigning a 6-day labor calendar to 'Concrete Curing 14 Days' wrongfully extends curing by 2 extra calendar days over weekends. Monsoon calendars must model heavy rain non-work periods as planned calendar exceptions, not accidental progress delays.",
+      "example": "Putting a 6-day working calendar on a 28-day concrete curing activity pushed stripping formwork out by 32 calendar days, artificially inflating float consumption.",
+      "trap": "Inheriting Global Calendars that get modified by other planners across the enterprise, silently shifting data dates and activity completion across your project."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹400 Crore hospital project in Mumbai, the contractor submitted a 14-day delay claim for the third-floor slab casting. The contractor argued: *\"P6 calculated that concrete curing took 16 calendar days instead of 14, delaying the critical path!\"*\n\nWhen the PMC planning lead examined the activity in P6, the error was glaring: the planner had assigned the standard **\"6-Day Civil Labor Calendar\"** (Monday through Saturday, Sunday off) to the activity *\"Concrete Curing - Level 3 Slab (14 Days)\"*!\n\nConcrete does not stop hydrating on Sundays! Cement hydration is a 24/7 continuous biochemical process that occurs every single hour regardless of human holidays.\n\nBecause Sunday was set as a \"non-work day\" on the calendar, P6 skipped two Sundays, turning 14 days of physical curing into **16 calendar days**. Multiply that calendar error across 12 floor slabs, and the schedule was distorted by **24 phantom non-work days**!\n\nEven worse: the project failed to create a dedicated **Monsoon Shift Calendar**, treating heavy July monsoon rain stoppages as unexpected contractor delays rather than planned seasonal productivity reductions."
+      },
+      {
+        "k": "read",
+        "t": "**P6 Calendar Architecture & Multi-Calendar Mechanics:**\n\n1. **Global vs Project Calendars:**\n   - *Global Calendars:* Shared across all projects in the P6 database. If another planner changes working hours or adds a holiday in a Global Calendar, **your project schedule recalculates silently!**\n   - *Project Calendars:* Isolated strictly to your specific project. **Golden Rule:** Never assign Global Calendars to project activities. Always convert them to dedicated **Project Calendars**.\n\n2. **The 3 Mandatory Hospital Project Calendars:**\n   - *1. Standard Civil Labor Calendar (6-Day, 8 Hours/Day):* Monday through Saturday working; Sunday off; national and state public holidays non-working.\n   - *2. Continuous 7-Day 24h Calendar:* 7 days/week, 24 hours/day working. **Mandatory for:** Concrete Curing, Deep Dewatering, Soil Surcharge Consolidation, Ambient Temperature Logging, Autoclave Continuous Cycles.\n   - *3. Statutory / Municipal Inspection Calendar (5-Day):* Monday through Friday working; Saturday/Sunday and government gazetted holidays non-working. Used for: AERB licensing, Fire Department inspections, CEIG clearances, Municipal town planning approvals.\n\n3. **Modeling Monsoon Stoppages in P6:**\n   - In India, monsoon is not an unforeseeable Force Majeure event; it occurs every year from June through September.\n   - *Best Practice:* In the earthwork and external facade calendars, mark known high-intensity monsoon weeks (e.g. July 15 – August 15) as **non-work days or reduced 4-hour working days**. This builds monsoon impact transparently into the baseline critical path, preventing contentious EOT disputes."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why must concrete curing, soil dewatering, and natural settlement activities be assigned a continuous 7-Day (24-Hour) Calendar in P6 rather than a standard 6-Day Labor Calendar?",
+            "o": [
+              [
+                "Because biochemical cement hydration and physical dewatering occur continuously 7 days a week; assigning a labor calendar with weekend rest days artificially inflates activity calendar duration and distorts critical path float",
+                true,
+                "Concrete hydration is a non-stop chemical process that does not pause on weekends or holidays. A 7-day calendar ensures 14 days of curing equals exactly 14 calendar days."
+              ],
+              [
+                "Because laborers are forced by law to work 24 hours without sleep during concrete curing",
+                false,
+                "Curing requires minimal manual supervision; the 7-day calendar reflects chemical hydration, not continuous labor shifts."
+              ],
+              [
+                "Because P6 software displays a fatal syntax error if concrete activities use a 6-day calendar",
+                false,
+                "P6 will calculate on any calendar assigned; the error is in mathematical accuracy and field reality."
+              ],
+              [
+                "Because the Indian Contract Act prohibits taking Sundays off during structural works",
+                false,
+                "Labor laws mandate weekly rest days for human workers; the 7-day calendar applies to material curing."
+              ]
+            ]
+          },
+          {
+            "q": "What is the primary risk of using Global Calendars instead of Project Calendars in a multi-user corporate P6 database?",
+            "o": [
+              [
+                "Any change made to a Global Calendar by another user on another project instantly alters schedule dates and float calculations across your project without your knowledge",
+                true,
+                "Global calendars share data centrally. If a planner on another project adds a holiday or changes shift hours in a global calendar, all projects linked to it recalculate unexpectedly."
+              ],
+              [
+                "Global Calendars consume all computer memory within 10 minutes",
+                false,
+                "Calendar records are tiny text definitions that do not overload memory."
+              ],
+              [
+                "Global Calendars prevent contractors from billing for Running Account bills",
+                false,
+                "Billing is a commercial process independent of P6 calendar database types."
+              ],
+              [
+                "Global Calendars automatically convert all currency values from Rupees to US Dollars",
+                false,
+                "Calendars define working time, not financial currency units."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Audit all calendars before baseline approval: ensure concrete curing uses a 7-day calendar, statutory inspections use a 5-day calendar, and all calendars are converted from Global to Project Calendars. A single calendar misconfiguration can inject dozens of phantom delay days into your critical path."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U70",
+    "day": 70,
+    "title": "Day 70: Relationship Logic & Leads/Lags: SS/FF Traps, Negative Lags & Laddering Mechanics",
+    "mins": 25,
+    "card": {
+      "id": "c-logic-leads-lags",
+      "title": "P6 Logic Relationships: SCL/DCMA bans on negative lags & SS/FF laddering",
+      "rule": "Finish-to-Start (FS) is the purest and most defensible logic relationship (>= 90% of schedule). Start-to-Start (SS) and Finish-to-Finish (FF) should only be used in pairs ('laddering' concurrent production) with reasonable positive lags. Negative lags (Leads) are strictly BANNED under DCMA 14 and SCL Delay Protocol because they represent an unphysical effect preceding its cause and distort critical path calculation. Deconstruct activities into physical stages rather than using long lags.",
+      "example": "Using FS with a -10 day negative lag to model early electrical rough-ins before drywall closure failed DCMA 14 audit; splitting into 'Drywall Framing' and 'Drywall Boarding' with FS logic passed with 100/100.",
+      "trap": "Using a Start-to-Start relationship with a 30-day positive lag instead of breaking the activity into measurable chunks, hiding real start delays from management."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹600 Crore cancer hospital project, the contractor submitted a P6 baseline schedule with 2,400 activities.\n\nWhen the client's PMC ran an automated schedule diagnostic, the audit threw **82 Negative Lags (Leads)** and **420 Start-to-Start relationships with 30-to-60 day positive lags**.\n\nOne glaring example: the activity *\"Drywall Boarding - Level 3\"* had a Finish-to-Start link to *\"MEP In-Wall Conduit Inspection\"* with a **negative lag of -15 days** (`FS -15d`)!\n\nWhat did `FS -15d` mean in reality? It meant that the contractor planned to close the gypsum drywall walls **15 days before the MEP conduits were even inspected and approved**!\n\nIn physical construction, an effect cannot precede its cause. Negative lags are a cheap scheduling shortcut used by lazy planners to force activities to overlap without breaking down the work.\n\nIn international arbitration and statutory audits (DCMA 14), **negative lags are strictly banned**. A schedule with negative lags is rejected as legally defective because negative lags produce unphysical critical path behavior and distort float calculations."
+      },
+      {
+        "k": "read",
+        "t": "**P6 Relationship Mechanics & Logic Best Practices:**\n\n1. **The 4 Logic Relationship Types:**\n   - *Finish-to-Start (FS):* Activity B cannot start until Activity A finishes. The purest, most transparent logic type (**target: $\\ge 90\\%$ of all relationships**).\n   - *Start-to-Start (SS):* Activity B cannot start until Activity A starts. Used for staggered concurrent work.\n   - *Finish-to-Finish (FF):* Activity B cannot finish until Activity A finishes. Used to tie closing activities.\n   - *Start-to-Finish (SF):* Activity B cannot finish until Activity A starts. Extremely rare; virtually never justified in construction.\n\n2. **The DCMA 14 & SCL Ban on Negative Lags (Leads):**\n   - A negative lag (`FS -xd`) forces an activity to start before its predecessor completes. It assumes that future work is guaranteed to happen on time, masking potential predecessor delays.\n   - *The Professional Solution (Activity Decomposition):* Never use negative lag. Break the predecessor activity into discrete physical stages:\n     - *Instead of:* `Drywall (30d) --[FS -15d]--> MEP Conduits (15d)`\n     - *Do this:* `Drywall Framing (15d) --[FS]--> MEP Conduits (15d) --[FS]--> Drywall Boarding (15d)`.\n\n3. **Laddering Concurrent Work (Paired SS / FF Logic):**\n   - When two linear trades advance concurrently (e.g. cable tray installation followed by cable pulling), use **paired relationships**:\n     - `Tray Installation --[SS +5d]--> Cable Pulling` (Cable pulling starts 5 days after tray starts)\n     - `Tray Installation --[FF +5d]--> Cable Pulling` (Cable pulling finishes 5 days after tray finishes)\n   - *Warning:* If you use `SS` alone without an accompanying `FF`, the successor activity can finish before the predecessor even finishes, creating logical absurdity!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why are Negative Lags (Leads) strictly prohibited under the DCMA 14-Point Assessment and SCL Delay Protocol in construction scheduling?",
+            "o": [
+              [
+                "Because negative lags represent an illogical effect preceding its cause, distort critical path calculations, and mask predecessor delays by prematurely triggering successor start dates",
+                true,
+                "Negative lags imply work starting before its physical predecessor finishes. They distort network float and are universally banned by auditing standards (DCMA, SCL, AACE)."
+              ],
+              [
+                "Because P6 software crashes whenever a minus sign is typed into the lag column",
+                false,
+                "P6 technically accepts negative numbers; the issue is that it corrupts scheduling logic and audit compliance."
+              ],
+              [
+                "Because negative lags can only be used on projects located in the Southern Hemisphere",
+                false,
+                "Geographic hemisphere has no connection to network scheduling mathematics."
+              ],
+              [
+                "Because negative lags double the cost of contractor bank guarantees",
+                false,
+                "Bank guarantees are commercial instruments tied to contract value, not schedule relationship tags."
+              ]
+            ]
+          },
+          {
+            "q": "When modeling concurrent sequential trades (e.g. cable tray installation followed by cable pulling), how must logic relationships be structured to reflect true physical laddering?",
+            "o": [
+              [
+                "Using paired relationships: Start-to-Start (SS) with a positive lag to govern initiation, coupled with Finish-to-Finish (FF) with a positive lag to prevent premature completion",
+                true,
+                "Proper laddering pairs SS (lead-in buffer) with FF (closing buffer), ensuring the successor activity cannot start too early and cannot finish before the predecessor finishes."
+              ],
+              [
+                "Using a single Start-to-Start relationship with zero lag and no successor links",
+                false,
+                "SS alone allows the successor to finish before the predecessor is even halfway done."
+              ],
+              [
+                "Linking all activities with Start-to-Finish (SF) relationships with negative 100 days lag",
+                false,
+                "Start-to-Finish with negative lag creates completely broken, circular schedule networks."
+              ],
+              [
+                "Deleting all logic links and entering dates manually in Microsoft Excel",
+                false,
+                "Static Excel bar charts destroy CPM network mathematics and float visibility."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Strive for 90%+ Finish-to-Start relationships. When activities must overlap, break them into physical phases (e.g. Phase 1 Framing, Phase 2 Boarding) or pair SS with FF lags. Never let a negative lag enter your baseline schedule."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U71",
+    "day": 71,
+    "title": "Day 71: Advanced Constraint Mechanics: Hard vs Soft Constraints & Float Distortion",
+    "mins": 25,
+    "card": {
+      "id": "c-p6-constraints",
+      "title": "P6 Constraints: Hard vs Soft constraints & Total Float distortion",
+      "rule": "Constraints override CPM network logic. Soft constraints (Start On or After, Finish On or Before) respect network logic in one direction; Hard constraints (Mandatory Start, Mandatory Finish) lock dates rigidly, overriding predecessor relationships, preventing activities from moving with logic updates, and artificially generating negative float. DCMA 14 strictly limits hard constraints to <= 5% of non-milestone activities. Contractual milestone deadlines should be set using 'Finish On or Before' on milestones, never 'Mandatory Finish' on work tasks.",
+      "example": "Placing a 'Mandatory Finish' constraint on a basement raft activity hid a 3-week delay from the downstream column predecessor, showing positive float on an actively broken chain.",
+      "trap": "Using 'Must Finish By' on the overall project setting without understanding that every activity on the critical path will show negative float the moment any task slips by 1 day."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a high-profile hospital expansion project, the developer insisted that the Radiation Oncology Bunker must finish exactly on October 15th to accommodate the imported LINAC delivery.\n\nThe contractor's planning engineer right-clicked the activity *\"Cast Bunker Ceiling Slab\"* in P6 and set a **\"Mandatory Finish\"** constraint of October 15th.\n\nTwo months later, basement excavation was delayed by 25 days due to hard basalt rock. When the engineer updated progress and hit `F9` (Schedule), something horrifying happened:\n\nThe bunker ceiling slab **did not move**! Because it had a *Mandatory Finish* constraint, P6 locked the bar to October 15th, but calculated a **Total Float of -25 days** (`TF = -25d`). Downstream activities showed conflicting dates, and activities that physically could not start until the ceiling was cast showed early start dates in September!\n\nThe hard constraint broke the CPM forward and backward pass. It turned a dynamic mathematical network into a frozen, untruthful picture that deceived management into believing work was still coordinated."
+      },
+      {
+        "k": "read",
+        "t": "**Hard vs Soft Constraints & Mathematical Float Distortion:**\n\n1. **Soft Constraints (Logic-Respecting):**\n   - *Start On or After (SOAO):* Prevents an activity from starting before a specific date (e.g. site handover date, permit issue date), but allows it to move later if predecessors delay.\n   - *Finish On or Before (FOOB):* Sets a target milestone deadline. If work finishes early, it shows positive float; if delayed past the date, it flags negative float without breaking network logic.\n   - *As Late As Possible (ALAP):* Consumes all available float, pushing early dates to match late dates (used in just-in-time material procurement).\n\n2. **Hard Constraints (Logic-Breaking):**\n   - *Mandatory Start (MS) / Mandatory Finish (MF):* **Locks early and late dates to a single fixed date.**\n   - *The Danger:* Hard constraints override predecessor logic. Even if predecessor work is unfinished, P6 forces the activity to stay locked to the constrained date. Backward pass calculation is violated, creating **false negative float** and unexecutable schedules.\n\n3. **DCMA 14 Constraint Rule:**\n   - Total constrained non-milestone activities must **NOT exceed 5%** of all activities in the schedule.\n   - Use constraints strictly for external non-negotiable interfaces (e.g. *Client Handover Milestone*, *Statutory Inspection Window*), never to force work tasks to match a manager's wishful thinking."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the critical technical difference between a 'Soft Constraint' (e.g. Finish On or Before) and a 'Hard Constraint' (e.g. Mandatory Finish) in Primavera P6?",
+            "o": [
+              [
+                "Soft constraints respect network logic in one direction and allow activities to shift if predecessors delay, whereas Hard constraints rigidly freeze dates regardless of predecessor logic, overriding CPM calculations",
+                true,
+                "Soft constraints allow CPM logic to push dates if predecessors are delayed. Hard constraints (Mandatory Start/Finish) lock dates unconditionally, violating network mathematics."
+              ],
+              [
+                "Soft constraints can only be applied to electrical activities, while hard constraints apply only to concrete",
+                false,
+                "Constraints apply to any activity type across all disciplines."
+              ],
+              [
+                "Hard constraints are automatically deleted by P6 whenever the schedule is saved",
+                false,
+                "P6 retains hard constraints permanently until manually removed."
+              ],
+              [
+                "Soft constraints multiply the activity cost by 50% during earned value calculations",
+                false,
+                "Constraints dictate dates and float, having no direct mathematical effect on budget cost loading."
+              ]
+            ]
+          },
+          {
+            "q": "Why does the DCMA 14-Point schedule audit framework strictly limit hard constraints to less than 5% of non-milestone activities in a baseline schedule?",
+            "o": [
+              [
+                "Because excessive hard constraints break CPM dynamic logic propagation, mask predecessor slippages, and artificially manipulate critical path float",
+                true,
+                "A schedule full of hard constraints is no longer a dynamic CPM model; it becomes a static drawing that cannot predict real downstream delays or calculate valid critical paths."
+              ],
+              [
+                "Because hard constraints violate international trade copyright laws",
+                false,
+                "DCMA standards are engineering quality metrics, not copyright regulations."
+              ],
+              [
+                "Because hard constraints cause P6 licenses to expire prematurely",
+                false,
+                "Software licensing is completely independent of schedule constraint usage."
+              ],
+              [
+                "Because constraints prevent the contractor from using diesel cranes on site",
+                false,
+                "Unrelated to physical equipment operation."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Use constraints sparingly: apply 'Finish On or Before' to contract milestones to flag negative float when dates slip, but never apply 'Mandatory' constraints to production activities. Let network logic drive the dates."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U72",
+    "day": 72,
+    "title": "Day 72: Schedule Health Auditing: The DCMA 14-Point Assessment Framework",
+    "mins": 25,
+    "card": {
+      "id": "c-dcma-14",
+      "title": "Schedule Health: The DCMA 14-Point Assessment metrics & thresholds",
+      "rule": "The US Defense Contract Management Agency (DCMA) 14-Point Assessment is the global standard for schedule logic integrity: 1) Logic (<= 5% missing predecessors/successors); 2) Leads/Negative Lags (0%); 3) Lags (<= 5% of relationships); 4) Relationship types (>= 90% FS); 5) Hard Constraints (<= 5%); 6) High Float (> 44 days, <= 5%); 7) Negative Float (0%); 8) High Duration (> 44 working days, <= 5%); 9) Invalid Dates (0%); 10) Resources (100% of tasks loaded); 11) Missed Tasks (<= 5%); 12) Critical Path Test; 13) Critical Path Length Index (CPLI >= 0.95); 14) Baseline Execution Index (BEI >= 0.95).",
+      "example": "A hospital contractor's baseline had 28 activities with no successors ('open ends'); fixing them lowered high float from 34% to 3%, achieving a 98% DCMA score.",
+      "trap": "Submitting a P6 baseline with open-ended activities, creating phantom paths that absorb delays without alerting management."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A tier-1 EPC contractor submitted an initial baseline schedule for a ₹750 Crore AIIMS super-specialty hospital. The schedule contained 4,800 activities and looked visually impressive on a 6-page summary Gantt chart.\n\nThe PMC Project Controls Director did not review the schedule with their eyes. They exported the `.XER` file and ran an automated **DCMA 14-Point Schedule Health Audit**.\n\nWithin 30 seconds, the audit revealed a catastrophic schedule collapse:\n- **184 activities had no successors** (*Open Ends*).\n- **312 relationships had negative lags** (`FS -20d`).\n- **45% of activities had Total Float exceeding 60 working days** (*High Float Trap*), because entire wings of the hospital were disconnected from the final handover milestone!\n- The **Critical Path Length Index (CPLI)** was 0.72 (failing the 0.95 pass threshold), indicating that the schedule was broken and mathematically incapable of forecasting critical delays.\n\nThe PMC rejected the baseline outright. The contractor was forced to spend 3 weeks rebuilding schedule logic, closing open ends, and eliminating unphysical lags before a single rupee of mobilization advance was certified."
+      },
+      {
+        "k": "read",
+        "t": "**The DCMA 14-Point Assessment Framework & Pass/Fail Thresholds:**\n\n```\n+----+-----------------------------+------------------------------------+--------------------+\n| #  | Metric                      | Description                        | Threshold / Target |\n+----+-----------------------------+------------------------------------+--------------------+\n| 1  | Logic (Open Ends)           | Activities missing pred or succ    | <= 5% (Ideal 0%)   |\n| 2  | Leads (Negative Lags)       | Relationships with negative lags   | 0% (Strictly zero) |\n| 3  | Lags                        | Relationships with positive lags   | <= 5%              |\n| 4  | Relationship Types          | Finish-to-Start (FS) dominance     | >= 90% FS          |\n| 5  | Hard Constraints            | Mandatory Start / Mandatory Finish | <= 5%              |\n| 6  | High Float                  | Total Float > 44 working days      | <= 5%              |\n| 7  | Negative Float              | Activities with Total Float < 0    | 0% (Baseline)      |\n| 8  | High Duration               | Working duration > 44 days (2 mos) | <= 5%              |\n| 9  | Invalid Dates               | Actual dates past Data Date        | 0% (Strictly zero) |\n| 10 | Resource Loading            | Discrete tasks with cost/man-hours | 100% of tasks      |\n| 11 | Missed Tasks                | Tasks finishing late vs baseline   | <= 5%              |\n| 12 | Critical Path Test          | Inject delay; does finish move?    | PASS (Integrity)   |\n| 13 | CPLI (Critical Path Index)  | (CP Duration + TF) / CP Duration   | >= 0.95            |\n| 14 | BEI (Baseline Execution)    | Actual Completed / Planned To-Date | >= 0.95            |\n+----+-----------------------------+------------------------------------+--------------------+\n```\n\n**The Critical Path Test (Metric 12):**\n- Intentionally inject a 30-day delay into the first activity on the critical path. If the project finish milestone does not slip by exactly 30 days, **your critical path is broken** (logic is disconnected or constrained)."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the DCMA 14-Point schedule audit framework, what is the maximum allowable percentage of activities with missing predecessors or successors ('open ends')?",
+            "o": [
+              [
+                "Maximum 5% (with best practice requiring 0% open ends, except for Project Start and Project Finish milestones)",
+                true,
+                "DCMA Metric 1 mandates that <= 5% of activities may lack logic ties. Every activity must have at least one predecessor and one successor to ensure complete CPM network conductivity."
+              ],
+              [
+                "Up to 50% of activities can be open-ended as long as they are colored green",
+                false,
+                "50% open ends means half the project is disconnected from the critical path."
+              ],
+              [
+                "Open ends are mandatory for all civil concrete activities",
+                false,
+                "Open ends are defects, never mandatory requirements."
+              ],
+              [
+                "P6 automatically deletes any activity that has both a predecessor and a successor",
+                false,
+                "A complete predecessor-successor link is the core definition of valid CPM logic."
+              ]
+            ]
+          },
+          {
+            "q": "What is the purpose of the Critical Path Test (DCMA Metric 12) during a schedule health audit?",
+            "o": [
+              [
+                "To verify that injecting a simulated delay into the critical path causes the project completion milestone to slip by the identical amount, proving logic integrity",
+                true,
+                "The Critical Path Test verifies mathematical conductivity: an unbroken chain of driving logic from project start to final handover milestone."
+              ],
+              [
+                "To test whether the computer monitor can display red Gantt bars without flickering",
+                false,
+                "Hardware display has no connection to CPM network validation."
+              ],
+              [
+                "To check whether the contractor has enough cash in the bank to pay worker salaries",
+                false,
+                "Cash flow audits are distinct from schedule network logic testing."
+              ],
+              [
+                "To reduce the number of activities in the schedule by 50% automatically",
+                false,
+                "The test tests logic responsiveness, it does not delete activities."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never approve a baseline schedule without running a DCMA 14 audit. Verify that open ends are <= 5%, negative lags are 0%, and the Critical Path Test passes. A schedule that fails DCMA 14 is a dangerous legal liability in arbitration."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U73",
+    "day": 73,
+    "title": "Day 73: Baseline Management & Change Control: Setting B1, Maintain vs Assign & Variances",
+    "mins": 25,
+    "card": {
+      "id": "c-baseline-management",
+      "title": "P6 Baseline Management: B1 snapshot, Maintain vs Assign, and Change Control",
+      "rule": "The Project Baseline (B1) is the frozen benchmark against which all time, cost, and resource variances are calculated. In P6, 'Maintain Baseline' saves an exact duplicate snapshot; 'Assign Baseline' links it as Project Baseline or User Baseline (Primary, Secondary, Tertiary). Never overwrite the original approved baseline (B1) with an update. Re-baselining (B2, B3) is permissible ONLY when formal contractual EOTs or approved variations alter contract scope and the Employer formally signs off.",
+      "example": "A planner accidentally clicked 'Update Baseline' instead of 'Assign Baseline', wiping out the approved original dates and destroying all historical variance reporting.",
+      "trap": "Silently adjusting baseline dates to match delayed actual progress, hiding slippage from project executives and lenders."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹800 Crore hospital construction project in Delhi, the project was 4 months behind schedule by Month 10. Columns and floor slabs were lagging, and the earned value S-curve had plummeted into the red zone.\n\nAt the Month 11 executive progress review, the contractor presented a fresh P6 report showing **zero schedule variance (SV = 0 days)** and a clean performance index of 1.0!\n\nThe PMC Project Director was stunned: *\"How did you eliminate a 4-month delay in 30 days?\"*\n\nThe contractor's planner smiled: *\"We re-baselined the schedule in P6 so our forecast dates match the current target dates!\"*\n\nThe contractor had secretly clicked **Maintain Baseline -> Update Baseline**, overwriting the approved original **Baseline 1 (B1)** with their delayed actual dates! By erasing the original baseline, the contractor destroyed all historical record of employer drawing delays, liquidated damages exposure, and schedule slippage.\n\nIn project controls, unauthorized re-baselining is considered **data fraud**. An approved baseline cannot be touched without a formal contract amendment signed by both the Employer and Contractor."
+      },
+      {
+        "k": "read",
+        "t": "**Baseline Architecture & Change Control in P6:**\n\n1. **The Baseline Hierarchy (Maintain vs Assign):**\n   - *Maintain Baseline:* Takes a complete, frozen clone of the current project schedule and archives it as a sub-project in the database.\n   - *Assign Baseline:* Links an archived snapshot to the active project as:\n     - **Project Baseline (B1):** The contractual master benchmark (approved by Employer and Contractor).\n     - **Primary User Baseline:** Used for intermediate re-forecasts or contractor working plans.\n     - **Secondary / Tertiary Baselines:** Used for what-if scenarios and forensic claim comparisons.\n\n2. **The Golden Rule of Variance Analysis:**\n   - P6 calculates schedule slippage using variance fields tied to the Project Baseline:\n     $\\text{Variance - BL Project Finish Date} = \\text{BL Project Finish} - \\text{Current Forecast Finish}$\n   - A negative variance (`-35d`) immediately flags that the activity is trending 35 days later than the contract commitment.\n\n3. **When is Re-Baselining (B2, B3) Legally Permissible?**\n   - Re-baselining is **strictly prohibited** simply because the project is running late.\n   - *Permissible Triggers:* (1) A major Scope Variation (FIDIC Clause 13 / CPWD Clause 12) altering > 15% of project scope; (2) A formal, signed Determination granting an Extension of Time (EOT); (3) A mutual commercial settlement resetting completion milestones.\n   - *Protocol:* Never overwrite B1. Save the new approved schedule as **Baseline 2 (B2)**, preserving B1 intact in the database for forensic dispute analysis."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under international project controls and forensic delay auditing standards, when is a contractor legally permitted to re-baseline (create Baseline 2 / B2) in P6?",
+            "o": [
+              [
+                "Only when a formal contractual amendment, approved major scope variation, or signed Extension of Time (EOT) determination formally modifies contract completion dates with mutual employer sign-off",
+                true,
+                "Re-baselining requires formal contractual change control. It cannot be done unilaterally to disguise project delays or reset negative float."
+              ],
+              [
+                "Whenever the project falls more than two weeks behind schedule to make the reports look clean",
+                false,
+                "Silently re-baselining to hide delays is considered project controls fraud."
+              ],
+              [
+                "At the start of every month regardless of whether changes occurred",
+                false,
+                "Monthly updates move the Data Date and record actuals; they do not change the frozen baseline."
+              ],
+              [
+                "Whenever the contractor replaces a site project manager",
+                false,
+                "Internal personnel changes have zero contractual impact on approved baseline commitments."
+              ]
+            ]
+          },
+          {
+            "q": "What is the difference between 'Maintain Baseline' and 'Assign Baseline' in Primavera P6 software?",
+            "o": [
+              [
+                "'Maintain Baseline' creates, duplicates, or archives a frozen snapshot of the schedule; 'Assign Baseline' links that snapshot as the official Project Baseline or User Baseline for variance calculations",
+                true,
+                "Maintain Baseline manages the stored snapshot files; Assign Baseline designates which stored snapshot acts as the benchmark for variance calculations."
+              ],
+              [
+                "'Maintain Baseline' deletes the project, while 'Assign Baseline' recovers it from the cloud",
+                false,
+                "Neither command deletes project data."
+              ],
+              [
+                "'Maintain Baseline' is for civil works, and 'Assign Baseline' is for MEP packages",
+                false,
+                "Baseline commands apply to the entire integrated multi-discipline project database."
+              ],
+              [
+                "'Assign Baseline' can only be executed by the software vendor's customer support staff",
+                false,
+                "Any authorized P6 planning user can assign baselines according to project permissions."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Treat Baseline 1 (B1) as a sacred contractual legal artifact. Never update, overwrite, or delete B1. When formal EOTs or scope changes are approved, save the new baseline as B2 while keeping B1 permanently linked for historical variance auditing."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U74",
+    "day": 74,
+    "title": "Day 74: The Data Date (DD) & Progress Updates: Actuals, Remaining Duration & Out-of-Sequence",
+    "mins": 25,
+    "card": {
+      "id": "c-data-date-progress",
+      "title": "P6 Data Date: Progress cutoff, Remaining Duration & Retained Logic vs Progress Override",
+      "rule": "The Data Date (DD) is the temporal dividing line separating historical actuals (left of DD) from future planned forecast (right of DD). Progress updates require: 1) Actual Start (AS) date; 2) Physical % Complete; 3) Remaining Duration (RD) evaluated from site ground reality, NOT auto-calculated from elapsed time. When work occurs out-of-sequence, P6's F9 calculation option matters: 'Retained Logic' respects network logic and holds unstarted successors until predecessors finish; 'Progress Override' assumes logic has broken and allows successors to proceed immediately.",
+      "example": "Contractor started Level 3 drywall before Level 2 was cast; running P6 update with 'Retained Logic' accurately delayed Level 3 completion until Level 2 cured.",
+      "trap": "Setting Actual Finish date on an activity that still has physical work remaining on site, corrupting progress reporting and downstream logic."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹550 Crore hospital project, the monthly cut-off date was September 30th. The planning engineer received physical progress data from site, opened P6, typed in Actual Start dates, updated percent completes, and hit **F9 (Schedule)**.\n\nHowever, the planner forgot to advance the **Data Date (DD)**, leaving it set to August 31st!\n\nThe resulting schedule was a disaster: activities completed in September were displayed as occurring in the future relative to the Data Date! Progress lines were bent backward, and earned value curves crashed.\n\nNext came an out-of-sequence issue: the site team had started installing medical gas copper pipes on Level 3 before the Level 2 concrete floor slab was even poured. In P6's Schedule Options (F9), the calculation setting was set to **\"Progress Override\"**.\n\nP6 assumed that because the contractor started pipe installation out-of-sequence, the logic relationship to the slab pour was completely dead. It allowed Level 3 pipe testing to complete in October—even though the building structure below was physically missing!\n\nSwitching the setting to **\"Retained Logic\"** instantly restored physical reality: P6 held the remaining duration of pipe testing until the predecessor structural slab was completed."
+      },
+      {
+        "k": "read",
+        "t": "**Data Date & Progress Update Rules in P6:**\n\n1. **The Data Date (DD) — The Progress Dividing Line:**\n   - *Left of Data Date:* Historical past. All activities must have **Actual Start (AS)** and **Actual Finish (AF)** dates. No remaining duration or unfinished work allowed left of DD.\n   - *Right of Data Date:* Future forecast. Governed by remaining durations, logic relationships, and resource availability.\n   - *Cut-Off Rule:* When performing a monthly update, advance the Data Date to the exact cut-off date (e.g. 25th of the month at 17:00).\n\n2. **The 3 Step Update Protocol for Every Active Task:**\n   - *Step 1:* Record **Actual Start (AS)** date.\n   - *Step 2:* Enter verified **Physical % Complete** based on Rules of Credit.\n   - *Step 3:* Critically assess and manually adjust **Remaining Duration (RD)**. Never let P6 calculate RD automatically ($RD \\ne OD - \\text{Elapsed Days}$). If an activity is 50% physically complete but experiencing labor shortages, Remaining Duration might be 20 days instead of the remaining 10 days!\n\n3. **Out-of-Sequence Logic: Retained Logic vs Progress Override:**\n   - Occurs when a successor task starts before its predecessor finishes.\n   - *Retained Logic (SCL Recommended):* P6 respects the original network logic. Even though the successor has started, its remaining duration cannot finish until the predecessor finishes.\n   - *Progress Override:* P6 ignores network logic, treating the successor as completely detached from its predecessor. **Dangerous in structural and MEP hospital construction**, where physical work cannot proceed without supporting structure or upstream testing."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "In Primavera P6 progress updating, what is the critical difference between the 'Retained Logic' and 'Progress Override' calculation options when an activity is performed out-of-sequence?",
+            "o": [
+              [
+                "Retained Logic respects network logic by holding the remaining duration of the successor until its predecessor finishes, whereas Progress Override ignores logic and allows the successor to proceed independently",
+                true,
+                "Retained Logic (the industry standard under SCL Protocol) ensures physical dependencies are preserved even if work starts early. Progress Override treats logic as broken, creating unrealistic early finishes."
+              ],
+              [
+                "Retained Logic multiplies the budget by 2, while Progress Override deletes the baseline",
+                false,
+                "These are schedule calculation logic options, having no impact on budget values or baseline deletion."
+              ],
+              [
+                "Progress Override is mandatory for all hospital projects under Indian National Building Code",
+                false,
+                "Building codes govern physical life safety, not P6 calculation algorithm options."
+              ],
+              [
+                "Retained Logic can only be used if all activities are finished on time",
+                false,
+                "Retained logic is designed specifically to handle delays and out-of-sequence progress realistically."
+              ]
+            ]
+          },
+          {
+            "q": "Why must a planning engineer independently evaluate and enter 'Remaining Duration' during a progress update, rather than allowing P6 to auto-calculate it from elapsed time?",
+            "o": [
+              [
+                "Because actual site productivity, trade resource levels, and unforeseen impediments determine how many working days are truly required to finish remaining work, regardless of how much calendar time has elapsed",
+                true,
+                "Remaining Duration represents future reality. If a task has 5 days of work left physically, entering 5 days gives an accurate completion forecast, whereas auto-calculating from elapsed time masks productivity collapse."
+              ],
+              [
+                "Because P6 software automatically sets remaining duration to zero on every update",
+                false,
+                "P6 calculates remaining duration based on duration percent unless manually adjusted."
+              ],
+              [
+                "Because contractors are legally required to finish every activity within 24 hours of starting",
+                false,
+                "Activity durations depend on work scope, volume, and crew productivity."
+              ],
+              [
+                "Because labor unions demand that remaining duration be decided by a secret ballot of workers",
+                false,
+                "Fictional assertion; remaining duration is a professional engineering assessment."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The monthly P6 update is the heartbeat of project controls. Always advance the Data Date to the cutoff date, input verified Physical % Complete, manually evaluate Remaining Duration based on site productivity, and keep Schedule Options set to Retained Logic."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS8);
+const APPLY8 = {
+  "U66": {
+    "task": "Design an Enterprise Project Structure (EPS) and Organizational Breakdown Structure (OBS) for a healthcare infrastructure developer: 1) Structure an EPS hierarchy with at least 3 levels (Corporate -> Regional Business Unit -> Project Node); 2) Design a matching OBS hierarchy with defined roles; 3) Map user security privileges between OBS and EPS; 4) Define a strict Activity Code governance policy distinguishing Global vs Project-level codes.",
+    "good": [
+      "Decomposes EPS logically by business division, region, and hospital facility",
+      "Defines an OBS hierarchy representing project governance and management roles",
+      "Establishes role-based security access linking OBS elements to EPS branches",
+      "Restricts Global Activity Codes and enforces Project-level coding for site operations"
+    ],
+    "tmpl": "Healthcare Organization EPS/OBS Governance Framework:\n1. Enterprise Project Structure (EPS Hierarchy):\n   - Level 1 (Corporate Healthcare Division): \n   - Level 2 (Regional Sectors / Portfolios): \n   - Level 3 (Hospital Projects): \n2. Organizational Breakdown Structure (OBS Roles): \n3. Security Access Mapping (OBS -> EPS Privileges): \n4. Activity Code Governance Protocol (Global vs EPS vs Project-Level Scoping): "
+  },
+  "U67": {
+    "task": "Construct a 4-Level Deliverable-Oriented WBS and WBS Dictionary for a 500-bed hospital project: 1) Level 1 Facility -> Level 2 Sub-facilities (Towers, CUP) -> Level 3 Clinical Floors/Departments -> Level 4 Work Packages; 2) Verify adherence to the 100% Rule across all branches; 3) Draft a detailed WBS Dictionary entry for 'Level 2 - Modular Operation Theatre Suite' defining scope boundaries, deliverables, and acceptance criteria.",
+    "good": [
+      "Builds a strictly deliverable-oriented and spatial WBS hierarchy",
+      "Enforces the 100% Rule ensuring total contractual scope coverage",
+      "Avoids organizational subcontractor silos in the WBS structure",
+      "Drafts a comprehensive WBS Dictionary entry with explicit acceptance criteria"
+    ],
+    "tmpl": "Hospital Master Work Breakdown Structure (WBS):\nLevel 1 (Facility): \nLevel 2 (Physical Buildings & Blocks): \nLevel 3 (Floors & Clinical Departments): \nLevel 4 (Deliverable Work Packages): \n100% Rule Scope Audit & Boundary Verification: \nWBS Dictionary Entry (Modular OT Suite - Scope, Deliverables, Acceptance Criteria): "
+  },
+  "U68": {
+    "task": "Audit Activity Types and Percent Complete Types across a baseline P6 schedule: 1) Identify and correct misconfigured activity types (e.g. converting Task Dependent overheads into Level of Effort hammocks); 2) Eliminate Duration % Complete and set all discrete production tasks to Physical % Complete; 3) Map milestone types (Start vs Finish Milestones) for contractual handover gates; 4) Document the impact on critical path integrity.",
+    "good": [
+      "Differentiates Task Dependent, Resource Dependent, and LOE activity types",
+      "Eliminates driving logic from Level of Effort support activities",
+      "Mandates Physical % Complete across all discrete construction work",
+      "Audits contractual milestone configurations for start/finish compliance"
+    ],
+    "tmpl": "P6 Activity Type & Progress Configuration Audit:\n1. Discrete Work Tasks (Task Dependent vs Resource Dependent Assignments): \n2. Level of Effort (LOE) Hammock Audit (Overheads, Supervision, Security - Zero Driving Logic): \n3. Milestone Configuration (Start Milestones vs Finish Handover Gates): \n4. Percent Complete Type Standardization (Enforcing Physical % Complete): \n5. Schedule Health & Critical Path Verification Results: "
+  },
+  "U69": {
+    "task": "Design and configure a comprehensive multi-calendar system in P6 for a hospital construction project: 1) Define a 6-Day Civil Labor Calendar with shift hours and gazetted holidays; 2) Configure a continuous 7-Day 24h Calendar for concrete curing, dewatering, and testing; 3) Set up a 5-Day Statutory Inspection Calendar; 4) Model seasonal monsoon non-working exceptions; 5) Verify that all calendars are project-specific, not global.",
+    "good": [
+      "Establishes dedicated 6-day labor, 7-day curing, and 5-day statutory calendars",
+      "Applies the continuous 7-day 24h calendar to biochemical concrete curing",
+      "Incorporates planned seasonal monsoon weather exceptions transparently",
+      "Converts all global calendars to isolated Project Calendars"
+    ],
+    "tmpl": "Hospital Project Calendar Configuration Specification:\n1. Standard Civil Construction Calendar (6-Day, Shift Hours, Holiday Schedule): \n2. Continuous 7-Day / 24h Process Calendar (Concrete Curing, Dewatering, Auto-Testing): \n3. Statutory & Permitting Calendar (5-Day, Government Office Hours): \n4. Monsoon Season Adjustment Protocol (Planned Non-Work / Reduced Hours Exception Window): \n5. Project Calendar Isolation Audit (Zero Global Calendar Dependencies): "
+  },
+  "U70": {
+    "task": "Audit and refactor relationship logic in a P6 network: 1) Inspect relationship type distribution and verify >= 90% Finish-to-Start (FS); 2) Identify all negative lags (leads) and refactor into decomposed physical stages; 3) Audit Start-to-Start (SS) relationships and implement paired Finish-to-Finish (FF) laddering; 4) Eliminate Start-to-Finish (SF) logic.",
+    "good": [
+      "Achieves >= 90% Finish-to-Start (FS) relationship dominance",
+      "Eliminates 100% of unphysical negative lags via activity decomposition",
+      "Pairs Start-to-Start (SS) links with Finish-to-Finish (FF) laddering buffers",
+      "Verifies logic conductivity across the complete network"
+    ],
+    "tmpl": "P6 Logic Relationship Diagnostic & Refactoring Report:\n1. Relationship Distribution Analysis (% FS, % SS, % FF, % SF): \n2. Negative Lag (Lead) Elimination Schedule (Original Logic vs Decomposed Stages): \n3. Concurrent Work Laddering Audit (Paired SS + Lead Lag / FF + Tail Lag): \n4. Long Positive Lag Justification & Mitigation: \n5. Post-Refactoring Critical Path Verification: "
+  },
+  "U71": {
+    "task": "Conduct a Constraint Audit on a P6 schedule and replace hard constraints with defensible logic ties: 1) Identify all constrained activities and classify into Soft vs Hard constraints; 2) Ensure hard constraints do not exceed 5% of non-milestone activities; 3) Replace 'Mandatory Finish' constraints on work tasks with 'Finish On or Before' on milestones; 4) Verify restoration of dynamic CPM float calculations.",
+    "good": [
+      "Inventories all constraints and distinguishes Soft from Hard constraints",
+      "Enforces the DCMA <= 5% hard constraint ceiling",
+      "Replaces logic-breaking mandatory constraints with logic-respecting deadline milestones",
+      "Demonstrates restoration of dynamic CPM forward and backward pass calculations"
+    ],
+    "tmpl": "P6 Schedule Constraint Inventory & Health Audit:\n1. Constraint Summary (Total Activities, Total Constrained, % Constrained): \n2. Hard Constraint Analysis (Mandatory Start / Mandatory Finish Identification): \n3. Soft Constraint Application (Start On or After, Finish On or Before Justification): \n4. Hard Constraint Replacement Plan (Converting to Predecessor Logic & Contract Milestones): \n5. Dynamic Critical Path Float Verification (Pre vs Post Audit): "
+  },
+  "U72": {
+    "task": "Execute a full DCMA 14-Point Schedule Audit on a P6 baseline schedule and issue a Schedule Health Report: 1) Calculate all 14 metrics (open ends, negative lags, high float, high duration, invalid dates, constraints); 2) Perform the Critical Path Test (simulated delay injection); 3) Compute Critical Path Length Index (CPLI) and Baseline Execution Index (BEI); 4) Compile an action plan for non-compliant metrics.",
+    "good": [
+      "Evaluates all 14 DCMA assessment metrics against official industry thresholds",
+      "Executes Metric 12 Critical Path Test proving logic continuity",
+      "Calculates CPLI (>= 0.95) and BEI (>= 0.95) mathematically",
+      "Provides actionable remediation steps to achieve 100% schedule compliance"
+    ],
+    "tmpl": "DCMA 14-POINT SCHEDULE INTEGRITY AUDIT REPORT:\nProject Schedule Baseline Reference & Activity Count: \nMetric 1 - Logic (Open Ends <= 5%): \nMetric 2 - Leads / Negative Lags (0%): \nMetric 3 - Lags (<= 5%): \nMetric 4 - Relationship Types (>= 90% FS): \nMetric 5 - Hard Constraints (<= 5%): \nMetric 6 - High Float (> 44d, <= 5%): \nMetric 7 - Negative Float (0%): \nMetric 8 - High Duration (> 44d, <= 5%): \nMetric 9 - Invalid Dates (0%): \nMetric 10 - Resource Loading (100%): \nMetric 11 - Missed Tasks (<= 5%): \nMetric 12 - Critical Path Test (Pass/Fail): \nMetric 13 - Critical Path Length Index (CPLI >= 0.95): \nMetric 14 - Baseline Execution Index (BEI >= 0.95): \nRemediation Plan & Baseline Sign-Off Recommendation: "
+  },
+  "U73": {
+    "task": "Formulate a P6 Baseline Governance & Re-baselining Change Control Protocol: 1) Document procedure for taking the initial Baseline 1 (B1) snapshot using Maintain Baseline and Assign Baseline; 2) Define variance monitoring fields (BL Project Start, BL Project Finish, Variance - BL Project Finish); 3) Detail the strict contractual triggers and approval gates required to create Baseline 2 (B2); 4) Establish audit safeguards against unauthorized baseline updates.",
+    "good": [
+      "Establishes strict baseline preservation procedures for B1",
+      "Standardizes P6 variance monitoring layouts and variance threshold alerts",
+      "Defines formal change control triggers for authorized re-baselining (B2, B3)",
+      "Prohibits silent 'Update Baseline' operations to disguise delay"
+    ],
+    "tmpl": "P6 Baseline Management & Change Control Standard Operating Procedure:\n1. Initial Baseline (B1) Archival & Assignment Protocol: \n2. Variance Monitoring Architecture (BL Start/Finish, Float Variances, Layout Standards): \n3. Authorized Re-Baselining Triggers (Formal EOTs, Major Variations, Scope Redefinition): \n4. Change Control Approval Gateway (Contractor, PMC, Employer Sign-Off Matrix): \n5. Baseline Integrity & Security Safeguards (Preventing Unauthorized Overwrite): "
+  },
+  "U74": {
+    "task": "Conduct a Monthly P6 Progress Update and Schedule Variance Analysis: 1) Advance Data Date to cutoff date; 2) Input verified Actual Starts, Physical % Complete, and evaluated Remaining Durations; 3) Analyze out-of-sequence progress under Retained Logic vs Progress Override; 4) Generate critical path slippage and milestone variance report.",
+    "good": [
+      "Follows standard update protocol: Data Date advance, Actuals entry, Physical % Complete",
+      "Evaluates Remaining Duration independently based on verified field productivity",
+      "Enforces Retained Logic calculation to preserve physical predecessor integrity",
+      "Delivers a concise monthly schedule variance and critical path slippage report"
+    ],
+    "tmpl": "Monthly P6 Schedule Update & Variance Report:\nReporting Period & New Data Date (DD): \nPhysical Progress Data Source (Verified Rules of Credit Milestone Sheet): \nRemaining Duration Evaluation & Productivity Assessment: \nOut-of-Sequence Activity Audit & Retained Logic Resolution: \nCritical Path Movements & Key Milestone Slippage Summary (Variance - BL Finish): \nRecovery Recommendations for Negative Variance Paths: "
+  }
+};
+Object.assign(APPLY, APPLY8);
+UNITS8.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
