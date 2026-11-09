@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=40"></script>
+<script src="shim.js?v=41"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -16971,6 +16971,679 @@ const APPLY13 = {
 };
 Object.assign(APPLY, APPLY13);
 UNITS13.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS14 = [
+  {
+    "id": "U111",
+    "day": 111,
+    "title": "Day 111: The 60-Second Cold-Call Hot Seat: Structuring High-Stakes Answers under Fire",
+    "mins": 25,
+    "card": {
+      "id": "c-board-hotseat",
+      "title": "The 60-Second Cold-Call Hot Seat: Structuring High-Stakes Answers under Fire",
+      "rule": "Executive leadership and board members do not read 200-page monthly reports. When called on the spot ('Hot Seat') during a critical boardroom or investor meeting, a Master Project Controls Manager delivers a 3-Sentence Executive Defense within 60 seconds: Sentence 1: The Critical Reality (Exact milestone delayed, total days of drift, and the driving root cause); Sentence 2: The Commercial & Legal Exposure (Daily LD liability, bank drawdown risk, or contractor prolongation claims); Sentence 3: The Decisive Action Requested (Specific decision, capital sanction, or formal instruction required from the Board today).",
+      "example": "In a boardroom grilling, the Lead Planner defended: '1) Milestone 4 (OT Handover) is delayed by 28 days due to pending Fire Damper integration tests; 2) Delay exposes the project to ₹14 Lakhs/day in LDs and risks our 1st October clinical launch; 3) We require the Board to instruct the MEP contractor to mobilize a 2nd shift under Clause 8.6 today.'",
+      "trap": "Opening with excuses, weather narratives, or technical jargon before stating the milestone delay, causing the Board to lose patience and question your competence."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** The scene: A high-stakes Board of Directors meeting in the corporate headquarters of a healthcare conglomerate investing ₹850 Crores into a new regional cancer hospital.\n\nThe Chairman of the Board turns his eyes directly to you:\n*\"Our hospital opening was promised for October 15th. The doctors have been hired, equipment vendors are calling me, and the banks are getting nervous. What is the real status of this project? Are we on time or not?\"*\n\nYou have **60 seconds**.\n\nA junior planning engineer freezes, opens a 150-page Primavera P6 printout, and starts mumbling:\n*\"Well, sir... we had some rain in July, and the cement delivery was late, and our SPI is currently 0.88, although CPI is 0.94, and activity ID A1040 has some negative float...\"*\n\nThe Chairman cuts them off: *\"I don't care about activity IDs! Are we opening on October 15th or not?!\"*\n\nA Master Project Controls Manager takes a breath, makes eye contact, and delivers the **3-Sentence Executive Defense**."
+      },
+      {
+        "k": "read",
+        "t": "**The 3-Sentence Executive Defense Architecture:**\n\n```\n+-----------------------------------------------------------------------------------------------------+\n|                                 THE 60-SECOND BOARDROOM PROTOCOL                                     |\n+-----------------------------------------------------------------------------------------------------+\n| SENTENCE 1: THE CRITICAL REALITY (What & Why)                                                       |\n| \"Milestone 4—the Modular Surgical Complex—is currently tracking 26 calendar days behind schedule    |\n| due to delayed supply of imported medical air compressor valves.\"                                   |\n+-----------------------------------------------------------------------------------------------------+\n| SENTENCE 2: THE COMMERCIAL & LEGAL EXPOSURE (Money & Risk)                                          |\n| \"This delay consumes our final float corridor, exposes the project to ₹13 Lakhs per day in delay    |\n| damages, and threatens to push our Fire NOC inspection past the festive Diwali opening date.\"        |\n+-----------------------------------------------------------------------------------------------------+\n| SENTENCE 3: THE DECISIVE ACTION REQUESTED (The Decision)                                            |\n| \"We require the Board today to approve an emergency air-freight sanction of ₹18 Lakhs to fly the     |\n| valves from Munich this weekend, recovering 22 days on the critical path.\"                          |\n+-----------------------------------------------------------------------------------------------------+\n```\n\n**The Psychological Dynamic:**\nBoard members are decision-makers, not technicians. They respect leaders who state the brutal truth without dodging, quantify the commercial stakes, and give them a clear, binary decision to make."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "When asked on the spot by the Client CEO or Board Chairman about project delay, what is the mandatory sequence of information in the 3-Sentence Executive Defense?",
+            "o": [
+              [
+                "Sentence 1: The Critical Reality (Milestone delayed, net days, driving root cause) -> Sentence 2: Commercial & Legal Exposure (₹ impact, LDs, risk) -> Sentence 3: Decisive Action Requested (Specific decision needed today)",
+                true,
+                "This 3-step sequence cuts through noise, provides executive clarity, quantifies financial stakes, and drives an immediate executive decision."
+              ],
+              [
+                "Sentence 1: Blame the weather -> Sentence 2: Blame the subcontractor -> Sentence 3: Ask for a 6-month holiday",
+                false,
+                "Deflecting blame and evading responsibility destroys executive credibility."
+              ],
+              [
+                "Sentence 1: Read out the P6 software license key -> Sentence 2: Explain CPM math formulas -> Sentence 3: Recite IS 1200",
+                false,
+                "Board members need executive commercial impact, not academic or technical recitations."
+              ],
+              [
+                "Sentence 1: Assure the Board that everything is 100% fine even if the project is 6 months late",
+                false,
+                "Lying to the board of directors is a career-ending breach of governance."
+              ]
+            ]
+          },
+          {
+            "q": "Why is it a severe mistake to begin an executive boardroom status briefing with a detailed narrative of weather events or technical activity ID numbers?",
+            "o": [
+              [
+                "Because C-suite executives focus on strategic milestones and commercial liabilities; burying the bottom line under technical jargon frustrates decision-makers and creates the impression of evasion or lack of command",
+                true,
+                "Executives need the headline first. Lead with the critical milestone reality and commercial exposure before providing supporting technical context."
+              ],
+              [
+                "Because mentioning the weather in a boardroom is illegal under the Companies Act",
+                false,
+                "There is no legal ban on discussing weather; it is an issue of executive communication effectiveness."
+              ],
+              [
+                "Because activity IDs are confidential national security secrets",
+                false,
+                "Activity IDs are routine scheduling codes, not state secrets."
+              ],
+              [
+                "Because board members only understand numbers written in Roman numerals",
+                false,
+                "Financial and milestone figures are presented in standard business metrics."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The Boardroom Hot Seat is the ultimate test of leadership. Never wander through 100 slides; deliver the 3-Sentence Defense: 1) What is delayed and why; 2) The financial and milestone exposure; 3) The specific decision required from the Board today."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U112",
+    "day": 112,
+    "title": "Day 112: Executive Decision Memorandums (EDMs): Getting Instant Sign-Off on High-Stakes Variations",
+    "mins": 25,
+    "card": {
+      "id": "c-board-edm",
+      "title": "Executive Decision Memorandums (EDMs): Getting Instant Sign-Off on High-Stakes Variations",
+      "rule": "Critical project decisions (authorizing acceleration funds, issuing variation orders, encashing BGs, or approving revised baselines) stall in corporate hierarchies unless framed as an Executive Decision Memorandum (EDM). A bulletproof EDM is strictly limited to 1 page and structured in 5 mandatory sections: 1) Executive Summary & Urgency Clock (decision required within 48h to prevent critical path slippage); 2) Financial & Schedule Impact of DOING IT; 3) Commercial Catastrophe of DOING NOTHING (daily LDs or contract repudiation); 4) Risk Mitigation & Audit Defense; 5) Explicit Signature Box with binary 'APPROVED / REJECTED' options.",
+      "example": "A 1-page EDM for a ₹45 Lakh chiller acceleration fund forced executive approval within 24 hours by demonstrating that doing nothing would incur ₹1.2 Cr in delay liquidated damages, unlocking immediate procurement release.",
+      "trap": "Sending long, rambling emails with open-ended questions like 'Please advise what to do', which executives ignore for weeks."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹600 Crore hospital project, a critical design variation arose: The clinical director decided to expand the Bone Marrow Transplant (BMT) unit on Floor 5, requiring positive pressure HEPA filtration, dedicated exhaust risers, and structural lead shielding.\n\nThe cost of the variation was **₹1.8 Crores**.\n\nThe PMC Project Manager sent an email to the Client Vice President:\n*\"Dear Sir, attached please find the 45-page variation proposal from the contractor, along with 12 drawings and rate analyses. Please review and advise how to proceed.\"*\n\n**The Result:**\nThe Vice President was traveling, overwhelmed by emails, and did not open the attachment. Three weeks passed. The contractor halted ducting work on Floor 5, waiting for the variation order. The critical path slipped by **21 calendar days**.\n\nWhen the Chairman found out, he demanded: *\"Why was this variation sitting in someone's inbox for 3 weeks?!\"*\n\nElite Project Controls Managers never send open-ended 'Please advise' emails for major commercial decisions. They issue a **1-Page Executive Decision Memorandum (EDM)**."
+      },
+      {
+        "k": "read",
+        "t": "**The Anatomy of a 1-Page Executive Decision Memorandum (EDM):**\n\n```\n+-----------------------------------------------------------------------------------------------------+\n|                                EXECUTIVE DECISION MEMORANDUM (EDM)                                  |\n| Project: 600-Bed Cancer Hospital | Ref: EDM-VAR-042 | Date: 12-Nov-2026 | Decision Clock: 48 Hours  |\n+-----------------------------------------------------------------------------------------------------+\n| 1. EXECUTIVE ACTION SUMMARY                                                                         |\n| Approval requested for Variation Order #42: Expansion of Bone Marrow Transplant (BMT) Unit.         |\n| Financial Commitment: ₹1.80 Crores | Budget Head: Contingency Sub-Code 4.2 | Critical Path: YES     |\n+-----------------------------------------------------------------------------------------------------+\n| 2. FINANCIAL & SCHEDULE IMPACT (THE BENEFIT)                                                        |\n| - Increases hospital high-margin oncology bed capacity by 12 beds (+₹8.5 Cr projected annual revenue)|\n| - Recovers 14 days by pre-ordering custom HEPA canopies in parallel with slab core cutting.        |\n+-----------------------------------------------------------------------------------------------------+\n| 3. IMPACT OF INACTION (DOING NOTHING BY 14-NOV-2026)                                                |\n| - Contractor demobilizes MEP ducting crews on Floor 5 (Site Prelims delay claim: ₹3.5 Lakhs/day).   |\n| - Permanent slip of Milestone 3 (Inpatient Ward Handover) by 28 days (Delay Damages: ₹70 Lakhs).   |\n+-----------------------------------------------------------------------------------------------------+\n| 4. RISK MITIGATION & AUDIT TRAIL                                                                    |\n| Rates verified against CPWD DSR 2023 with 15% CP&OH cap. Third-party structural review approved.    |\n+-----------------------------------------------------------------------------------------------------+\n| 5. EXECUTIVE DETERMINATION & SIGN-OFF (MANDATORY ACTION)                                            |\n| [  ] APPROVED AS RECOMMENDED              [  ] REJECTED / RETENDER SEPARATELY                      |\n|                                                                                                     |\n| Signature: ____________________________   Date: ________________________                            |\n+-----------------------------------------------------------------------------------------------------+\n```\n\n**The Power of the Signature Box:**\nAn executive cannot ignore a document that explicitly quantifies the cost of inaction and forces a binary choice. It provides complete audit protection and eliminates bureaucratic paralysis."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why is a 1-page Executive Decision Memorandum (EDM) dramatically more effective at securing corporate approval than a long email with multiple PDF attachments?",
+            "o": [
+              [
+                "Because it distills the decision into a single page, explicitly quantifies the financial cost of doing nothing by a deadline, and provides a clear binary sign-off box (Approved/Rejected) for executive action",
+                true,
+                "Busy executives need the core trade-offs, financial stakes, and timeline summarized cleanly so they can authorize decisions without wading through dozens of pages of technical data."
+              ],
+              [
+                "Because EDMs are legally exempt from all corporate income tax",
+                false,
+                "An EDM is an internal project governance tool, not a tax exemption instrument."
+              ],
+              [
+                "Because contractors are legally required to accept all EDMs without charging any money",
+                false,
+                "EDMs authorize internal decisions and commitments; contractor pricing must still be audited."
+              ],
+              [
+                "Because 1-page documents automatically delete all project risks",
+                false,
+                "An EDM documents and manages risk; it does not magically eliminate physical reality."
+              ]
+            ]
+          },
+          {
+            "q": "What is the critical purpose of the 'Cost of Inaction (Doing Nothing)' section in an Executive Decision Memorandum?",
+            "o": [
+              [
+                "To demonstrate the immediate daily financial loss, contractual delay claims, or liquidated damages that the organization will incur if the decision is delayed beyond the 48-hour decision clock",
+                true,
+                "Framing the cost of delay creates urgency and shows leadership that delaying a decision is itself a costly commercial choice."
+              ],
+              [
+                "To threaten the Board with immediate physical arrest",
+                false,
+                "EDMs are professional governance documents, not criminal threats."
+              ],
+              [
+                "To calculate the total cost of purchasing sports cars for the planning team",
+                false,
+                "Inappropriate and irrelevant."
+              ],
+              [
+                "To explain the chemical composition of building bricks",
+                false,
+                "Technical material science does not belong in an executive decision memo."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Decisions die in long email threads. Author a 1-page Executive Decision Memorandum (EDM) with a 48-hour urgency clock, quantify the brutal cost of doing nothing, and force a binary 'Approved / Rejected' executive signature."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U113",
+    "day": 113,
+    "title": "Day 113: Board-Ready Visual Controls & EVM One-Pagers: Banana Envelopes & Milestone Trends",
+    "mins": 25,
+    "card": {
+      "id": "c-board-visuals",
+      "title": "Board-Ready Visual Controls & EVM One-Pagers: Banana Envelopes & Milestone Trends",
+      "rule": "Board-level visual reporting requires distilling complex P6 enterprise schedules and SAP/accounting ledgers into a single, unassailable visual dashboard. Three essential visual controls: 1) S-Curve Banana Envelope overlaying actual physical progress against early and late curves; 2) Milestone Trend Analysis (MTA) showing historical drift trajectories of key handover gates over time; 3) Earned Schedule & Multi-Model EAC One-Pager comparing budget at completion (BAC) against forecasted cost (EAC_1, EAC_2, EAC_3) and Earned Schedule completion dates.",
+      "example": "Presenting a 1-page Milestone Trend Analysis (MTA) revealed to the Board that while monthly progress reports claimed '90% on track', the Fire NOC milestone had systematically slipped by 14 days every month for 4 consecutive months, exposing the true opening delay.",
+      "trap": "Presenting a 5,000-line P6 Gantt chart printout with micro bars to C-suite executives, which overwhelms them and obscures executive project realities."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** At an annual hospital board review, the Project Director brought a 120-page A3 booklet containing the entire Primavera P6 schedule: 4,800 activity bars printed in 4-point font across 40 sheets of paper.\n\nThe lead investor flipped through two pages, pushed the binder away, and sighed:\n*\"I cannot read this. Are we ahead or behind? Will this project finish within our ₹750 Crore budget or will we need to raise more capital? Answer in one picture.\"*\n\nThe Project Director had no answer.\n\nA Gantt chart is an **operational coordination tool for site engineers**, not an **executive governance instrument for the Boardroom**.\n\nTo command authority in the boardroom, you must present the **Trinity of Board-Ready Visual Controls**:\n1. The **S-Curve Banana Envelope** (detecting whether float is burning);\n2. The **Milestone Trend Analysis (MTA)** (exposing cumulative historical drift);\n3. The **EVM Executive One-Pager** (synthesizing $CV, SV_t, CPI, SPI_t$, and Multi-Model $EAC$)."
+      },
+      {
+        "k": "read",
+        "t": "**The Trinity of Board-Ready Visual Controls:**\n\n```\n+-----------------------------------------------------------------------------------------------------+\n|                                1. S-CURVE BANANA ENVELOPE (FLOAT HEALTH)                            |\n|  100% |                                             ...--* Early S-Curve (Target)                   |\n|       |                                        ...--'    /                                          |\n|   %   |                                  ...--'     Actual Physical EV Curve                        |\n|       |                            ...--'          /                                                |\n|       |                      ...--'           ....* Late S-Curve (Zero Float Boundary)              |\n|    0% +----------------------------------------------------------------                             |\n|       [Rule: Actual curve piercing below Late Curve = CRITICAL PATH BREACH & PROJECT DELAY]         |\n+-----------------------------------------------------------------------------------------------------+\n|                                2. MILESTONE TREND ANALYSIS (MTA)                                    |\n|  Actual Date | Milestone Forecast Over Time (Report Month: Jan -> Jun)                              |\n|  Nov 2026    |                            ...--* Handover Milestone Target                          |\n|  Oct 2026    |                      ...--' (Slope upward = Milestone slipping every month!)         |\n|  Sep 2026    |                ...--'                                                                |\n|  Aug 2026    |  *-------*----'                                                                      |\n|              +--------------------------------------------------------                              |\n|              Jan   Feb   Mar   Apr   May   Jun (Reporting Period)                                   |\n+-----------------------------------------------------------------------------------------------------+\n|                                3. EVM MULTI-MODEL EXECUTIVE SUMMARY                                 |\n|  BAC: ₹750.0 Cr | EV: ₹480.0 Cr | AC: ₹510.0 Cr | CPI: 0.94 | SPI_t: 0.88 | SV_t: -42 Days          |\n|  Model 1 (Atypical): EAC = ₹780.0 Cr (+₹30 Cr) | Model 2 (Typical): EAC = ₹797.9 Cr (+₹47.9 Cr)      |\n|  Model 3 (Cost+Sched): EAC = ₹836.4 Cr (+₹86.4 Cr) | Board Decision: Sanction ₹50 Cr Contingency   |\n+-----------------------------------------------------------------------------------------------------+\n```\n\n**The Visual Executive Punch:**\nIn 30 seconds, the board understands: Progress has breached the lower Banana Envelope, the Handover Milestone is drifting upward by 10 days each month, and final cost will land between ₹780 Cr and ₹836 Cr unless decisive recovery action is approved."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What does an upward-sloping trajectory on a Milestone Trend Analysis (MTA) graph indicate to executive leadership?",
+            "o": [
+              [
+                "The forecasted completion date of that specific milestone is consistently slipping into the future with each successive monthly reporting period, exposing chronic schedule delay",
+                true,
+                "On an MTA chart, a horizontal line represents on-time performance; an upward slope indicates continuous schedule slippage over time."
+              ],
+              [
+                "The building is growing taller than originally designed",
+                false,
+                "MTA tracks milestone calendar dates, not physical building height."
+              ],
+              [
+                "The project is finishing months ahead of schedule",
+                false,
+                "Early completion produces a downward-sloping MTA line."
+              ],
+              [
+                "The contractor has hired more female civil engineers",
+                false,
+                "MTA measures schedule milestone dates, not demographic employment data."
+              ]
+            ]
+          },
+          {
+            "q": "Why is the S-Curve Banana Envelope (Early vs Late curves) superior to a single planned progress curve for boardroom decision-making?",
+            "o": [
+              [
+                "It defines the legitimate corridor of schedule flexibility (total float); as long as actual progress stays between the early and late curves, the project finish is safe, but piercing below the late curve triggers immediate alarm that the critical path is compromised",
+                true,
+                "A single curve ignores float. The banana envelope clearly demonstrates when float consumption has reached zero, proving critical path delay to the Board."
+              ],
+              [
+                "Because bananas are healthy fruit and make the board meeting friendly",
+                false,
+                "The name comes from the visual shape of early and late S-curves, not food."
+              ],
+              [
+                "Because the late curve guarantees that contractors will never ask for money",
+                false,
+                "Late curves track schedule timing, not commercial invoices."
+              ],
+              [
+                "Because P6 software will crash if early curves are displayed without late curves",
+                false,
+                "P6 can display either or both; the value is in their combined analytical power."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never bring raw Gantt charts to a board meeting. Present the Trinity of Visual Controls: S-Curve Banana Envelopes to prove float health, Milestone Trend Analysis (MTA) to expose monthly drift trajectories, and a 1-page Multi-Model EAC forecast."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U114",
+    "day": 114,
+    "title": "Day 114: Managing Hostile Progress Meetings with Contemporaneous Records",
+    "mins": 25,
+    "card": {
+      "id": "c-board-hostile-meetings",
+      "title": "Managing Hostile Progress Meetings with Contemporaneous Records",
+      "rule": "Progress review meetings on delayed projects often turn aggressive and adversarial. Contractors use emotional bluster, verbal claims, and shifting narratives to intimidate the project team. A Master Project Controls Manager controls hostile meetings using Contemporaneous Records: 1) Every verbal claim is immediately cross-checked against stamped Daily Progress Reports (DPRs), gate passes, and delivery challans; 2) The Minutes of Meeting (MOM) must be recorded live on screen and signed before participants leave the room; 3) SCL Protocol Core Principle 1 governs: unrecorded verbal agreements do not exist.",
+      "example": "When a contractor aggressively shouted that the PMC withheld drawing approvals for 60 days, the Lead Controls Manager pulled up the digital Document Transmittal Log showing drawings were approved in 4 days and that the contractor's rebar crew was absent for 3 weeks, instantly defusing the hostility with documented facts.",
+      "trap": "Leaving the meeting without issuing same-day signed Minutes of Meeting (MOM), allowing the contractor to repudiate verbal commitments and alter the narrative."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** The monthly progress review meeting of a delayed ₹500 Crore hospital project degenerated into chaos.\n\nThe contractor's Managing Director slammed his fist on the conference table:\n*\"Your PMC team is incompetent! You have delayed my drawings, your inspectors reject our pour cards out of malice, and you are trying to bankrupt my company with illegal penalty threats! We are stopping work until you approve an interim ₹10 Crore advance payment!\"*\n\nThe room fell silent. Junior engineers shrank back, intimidated by the aggressive confrontation.\n\nThe PMC Project Controls Lead remained calm, opened their laptop, connected to the overhead projector, and said:\n*\"Mr. Director, let us examine the contemporaneous site records together.\"*\n\n**The Power of Contemporaneous Facts:**\n1. **Drawing Delay Claim:** *\"You claim drawings were delayed for 60 days. Here is Document Transmittal Log #TR-402: Structural GFC drawings were issued on March 4th and acknowledged by your site chief on March 6th. You held the drawing for 48 days before placing the rebar order.\"*\n2. **Manpower Claim:** *\"You claim you deployed 250 skilled workers daily. Here are the biometric site turnstile logs and Daily Progress Reports (DPRs) signed by your own Project Manager: your average daily deployment was 62 workers.\"*\n\nThe shouting stopped. The contractor's bluster evaporated. Why? Because **contemporaneous written records defeat verbal theatricality 100% of the time**."
+      },
+      {
+        "k": "read",
+        "t": "**The 4-Step Hostile Meeting Governance Protocol:**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Meeting Phase         | Tactical Action                       | Governing Rule & Standard                   |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Phase 1: The          | Display live digital records:         | Ground all discussions in signed DPRs,      |\n| Evidence Anchor       | - Biometric labor turnout logs        | material delivery challans, and P6 schedule |\n|                       | - Stamped Document Transmittal Logs   | update logs. Disallow unvouched assertions. |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Phase 2: Refocus on   | Pivot from emotional grievances to    | SCL Protocol Principle 1:                   |\n| the Critical Path     | the master critical path:             | \"Does this issue drive the contractual      |\n|                       | \"Show me the fragnet impact on F9.\"   | completion milestone? If not, move on.\"     |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Phase 3: Actionable   | Formulate specific 7-day action items | Assign specific name, exact headcount target|\n| Commitments           | with clear ownership and deadlines    | and delivery date for every agreed item.    |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Phase 4: Live MOM     | Project Minutes of Meeting on screen; | Mandatory rule: No one leaves the room until|\n| Instant Sign-off      | print and obtain signatures BEFORE    | the MOM is signed by authorized reps.       |\n|                       | meeting adjourns!                     | Prevents post-meeting narrative revision.   |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The SCL Golden Rule:**\nUnder SCL Delay Protocol Core Principle 1 (*Contemporaneous Records*), arbitral tribunals give maximum evidentiary weight to records created at the time of the events. An agreed, signed MOM created on the day of the meeting is virtually impossible to challenge in future arbitration."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "During an aggressive, high-conflict progress review meeting, what is the most effective technique for a Project Controls Manager to defuse emotional bluster and establish professional control?",
+            "o": [
+              [
+                "Project signed contemporaneous records (biometric labor logs, stamped drawing transmittals, and P6 update logs) onto the screen to systematically evaluate every verbal assertion against verified factual evidence",
+                true,
+                "Objective, contemporaneous records immediately replace emotional shouting with indisputable physical and contractual facts, grounding the meeting in reality."
+              ],
+              [
+                "Shout back twice as loud and throw coffee cups across the table",
+                false,
+                "Unprofessional behavior destroys credibility and escalates conflict."
+              ],
+              [
+                "Immediately agree to all contractor demands and hand over all project funds",
+                false,
+                "Capitulating to unverified demands violates fiduciary duty and harms the project."
+              ],
+              [
+                "Turn off all lights and hide under the conference table",
+                false,
+                "Childish evasion has no place in executive project leadership."
+              ]
+            ]
+          },
+          {
+            "q": "Why must Minutes of Meeting (MOM) on contentious mega projects be projected on screen and signed by authorized representatives before participants leave the room?",
+            "o": [
+              [
+                "To prevent parties from later denying verbal agreements, repudiating agreed commitments, or disputing the contemporaneous record in subsequent arbitral proceedings",
+                true,
+                "Same-day live signed MOMs freeze the historical record, ensuring that agreed recovery actions and admissions cannot be altered days later."
+              ],
+              [
+                "Because printers stop working as soon as a meeting ends",
+                false,
+                "This is a legal evidence and governance practice, not a technical printer limitation."
+              ],
+              [
+                "Because the Indian Penal Code requires signatures in green ink every hour",
+                false,
+                "Inaccurate legal assertion."
+              ],
+              [
+                "To practice handwriting before taking an exam",
+                false,
+                "Signatures legally bind corporate entities to agreed meeting outcomes."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Adversarial meetings cannot be won with anger; they are won with contemporaneous records. Anchor every discussion in stamped transmittals and biometric turnstile logs, enforce the SCL critical path test, and never adjourn without signed, live-projected Minutes of Meeting."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U115",
+    "day": 115,
+    "title": "Day 115: Forensic Delay Expert Witness Preparation & Cross-Examination Survival",
+    "mins": 25,
+    "card": {
+      "id": "c-board-expert-witness",
+      "title": "Forensic Delay Expert Witness Preparation & Cross-Examination Survival",
+      "rule": "When high-value disputes reach arbitration or litigation, Project Controls Specialists are called as expert witnesses under oath. An expert witness is governed by the duty of independence to the tribunal (not an advocate for their employer). Cross-examination survival principles: 1) Answer only the question asked; never volunteer unrequested opinions; 2) Stand firmly behind your baseline calculation settings (Retained Logic, multi-calendars, unmanipulated constraints); 3) When pressed on concurrency, rely on contemporaneous records, not hypothetical simulations; 4) Acknowledge verifiable facts without becoming defensive.",
+      "example": "In a ₹45 Cr arbitration hearing, opposing counsel pressed the expert on whether P6 schedule calculation was run under Progress Override. The expert cited SCL Protocol and produced schedlog.txt proving Retained Logic was strictly maintained, destroying the contractor's manipulation claim.",
+      "trap": "Acting as an aggressive advocate for the employer rather than an independent expert, causing the arbitral tribunal to reject your entire forensic testimony as biased."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** The ₹800 Crore hospital dispute has reached a 3-member Arbitral Tribunal in New Delhi. You are summoned to the witness box as the **Forensic Delay Expert Witness**.\n\nYou swear an oath to tell the truth.\n\nOpposing senior counsel rises, smiles, and begins cross-examination:\n*\"Mr. Planner, you were paid by the Employer to write this forensic report, correct? And isn't it true that in your Primavera P6 schedule run on Month 14, you manipulated the schedule calculation options to falsely deny my client a 45-day extension of time?\"*\n\nThe tribunal members look up from their laptops, waiting to gauge your reaction.\n\nIf you get angry, argue aggressively, or act like a corporate mouthpiece, the tribunal writes down one fatal word in their notes: **'BIASED'**.\n\nUnder international arbitration law (IBA Rules on the Taking of Evidence), an expert witness owes an **overriding duty of objective independence to the Tribunal**, superseding any obligation to the party paying their fees. How do you survive cross-examination with authority?"
+      },
+      {
+        "k": "read",
+        "t": "**The 4 Rules of Expert Witness Cross-Examination Survival:**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Cross-Exam Trap       | Opposing Counsel Strategy             | Expert Witness Survival Rule                |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 1. The Advocacy Trap  | Baits you into making emotional       | Remain calm, neutral, and objective.        |\n|                       | attacks against the contractor        | State: 'My role is purely to assist the     |\n|                       | to prove you are a biased advocate    | Tribunal in analyzing the CPM mathematics.' |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 2. The P6 Settings    | Accuses you of altering calculation   | Produce schedlog.txt and state:             |\n| Challenge             | settings (Progress Override, leads)   | 'Retained Logic was maintained throughout,  |\n|                       | to artificially suppress delay        | preserving physical predecessor continuity.'|\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 3. The Concurrency    | Demands hypothetical answers:         | Anchor strictly to contemporaneous records: |\n| Ambush                | 'What IF the drawings had arrived?'   | 'I analyze what actually happened on site,   |\n|                       | Trying to force speculative answers   | not hypothetical alternative realities.'    |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 4. The Concession     | Asks you to confirm a true fact,      | Concede verifiable facts gracefully:         |\n| Test                  | hoping you stubbornly deny it and     | 'Yes, counsel, that drawing was late, but as|\n|                       | look dishonest to the arbitrators     | my fragnet proves, it possessed float.'     |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Golden Rule of Answering:**\nAnswer the exact question asked in as few words as possible. Never volunteer unsolicited information. If opposing counsel asks: *\"Did drawing 402 arrive on May 12th?\"*, answer: *\"Yes.\"* Do not ramble into an unasked 5-minute defense of why the contractor was at fault!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the IBA Rules on the Taking of Evidence and modern international arbitration standards, to whom does a Forensic Delay Expert Witness owe their primary duty?",
+            "o": [
+              [
+                "To the Arbitral Tribunal, to provide an objective, unbiased, and independent technical analysis of delay and critical path CPM mathematics, superseding any duty to the party paying their fees",
+                true,
+                "An expert witness is not a legal advocate; their legal and ethical duty is to assist the tribunal impartially. Acting as a biased partisan destroys expert credibility."
+              ],
+              [
+                "Exclusively to their employer, with an obligation to lie and distort facts to win the case",
+                false,
+                "Perjury and deliberate distortion under oath are criminal offenses and invalidate expert testimony."
+              ],
+              [
+                "To the software company that developed Primavera P6",
+                false,
+                "Software vendors have no standing in arbitral duties."
+              ],
+              [
+                "To the media and newspaper journalists",
+                false,
+                "Arbitration is a confidential legal dispute resolution forum."
+              ]
+            ]
+          },
+          {
+            "q": "During cross-examination, opposing counsel asks an expert witness to speculate on a hypothetical scenario that did not occur on site. How should the expert respond?",
+            "o": [
+              [
+                "Decline to speculate and firmly anchor testimony to verified contemporaneous site records and the actual historical facts documented in the schedule updates",
+                true,
+                "Expert delay analysis under the SCL Protocol is based on contemporaneous facts and actual project records, not speculative 'what-if' conjectures invented for litigation."
+              ],
+              [
+                "Make up wild stories to entertain the arbitrators",
+                false,
+                "Speculation and fabrication destroy credibility."
+              ],
+              [
+                "Refuse to answer any questions and storm out of the courtroom",
+                false,
+                "Contempt of tribunal and causes total forfeiture of the case."
+              ],
+              [
+                "Agree with whatever opposing counsel says to make the meeting end faster",
+                false,
+                "Conceding false points harms the client and breaches expert integrity."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The witness box tests integrity as much as intellect. Maintain strict independence to the Tribunal, anchor every answer in contemporaneous records and unmanipulated Retained Logic settings, concede undeniable facts with dignity, and never volunteer unrequested opinions."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U116",
+    "day": 116,
+    "title": "Day 116: Bank & Lender Consortia Presentations: Protecting Loan Drawdowns & CTC Adequacy",
+    "mins": 25,
+    "card": {
+      "id": "c-board-lender-audits",
+      "title": "Bank & Lender Consortia Presentations: Protecting Loan Drawdowns & CTC Adequacy",
+      "rule": "In project financing (consortium debt funding), banks do not disburse loan tranches unless the Lenders' Independent Engineer (LIE) certifies project milestone progress. The Project Controls Manager must defend the Cost-to-Complete (CTC) Budget Adequacy Ratio: Remaining Available Loan Funds + Promoter Equity >= Estimated Cost to Complete (EAC). If EAC exceeds available funding, the bank automatically freezes all debt disbursements, causing immediate site abandonment. Presentation to lenders requires reconciling physical Earned Value with escrow account disbursement waterfalls.",
+      "example": "When an LIE audit threatened to freeze a ₹120 Cr debt drawdown over cost overruns, the Controls Lead demonstrated that EAC was fully covered by promoter equity top-ups and contingency reserves, maintaining a 1.12 Budget Adequacy Ratio and releasing funds within 48h.",
+      "trap": "Concealing cost overruns from the LIE, which triggers sudden bank funding freezes upon discovery and causes instant project bankruptcy."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A ₹900 Crore hospital project was financed through a 70:30 debt-to-equity consortium led by State Bank of India.\n\nEvery quarter, the consortium of 5 banks appoints an external **Lenders' Independent Engineer (LIE)** to inspect the jobsite before releasing the next **₹75 Crore construction loan drawdown tranche**.\n\nDuring the Month 18 inspection, the LIE discovered:\n1. The physical project completion was at **42%**, while the contractor had already drawn **55% of the total loan budget**.\n2. Steel and MEP prices had escalated, and the project had spent ₹60 Crores of its emergency contingency reserves.\n\nThe LIE announced to the banking committee:\n*\"The project is suffering severe cost overruns. The remaining cost to complete (CTC) exceeds the remaining un-drawn loan balance. I am issuing a RED FLAG notice and recommending an IMMEDIATE LOAN DISBURSEMENT FREEZE until the promoters inject ₹80 Crores of fresh cash!\"*\n\nIf the loan is frozen on Friday, the contractor's payroll bounces on Monday, subcontractors demobilize, and the ₹900 Crore hospital collapses into insolvency.\n\nAs the Lead Project Controls Manager, you must step into the banking committee room and present the **Cost-to-Complete (CTC) Budget Adequacy Defense**."
+      },
+      {
+        "k": "read",
+        "t": "**The Lender Budget Adequacy & Waterfall Architecture:**\n\n```\n+-----------------------------------------------------------------------------------------------------+\n|                                THE LENDER BUDGET ADEQUACY FORMULA                                   |\n|                                                                                                     |\n|                    Total Remaining Available Funds (Debt + Equity + Reserves)                       |\n|    BAR (Ratio) =  ------------------------------------------------------------  >= 1.00            |\n|                                  Forecasted Cost to Complete (CTC)                                  |\n+-----------------------------------------------------------------------------------------------------+\n\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Audit Parameter       | Bank Formula / Metric                 | Threshold for Funding Approval / Release    |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 1. Physical Progress  | Physical EV (via verified RoC) vs     | Milestone variance <= 10%; verified through |\n| Alignment             | Bank Cumulative Disbursed Capital     | joint site physical inspection with LIE.    |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 2. Cost to Complete   | CTC = Multi-Model EAC - Actual Cost   | Must be fully covered by remaining loan     |\n| (CTC) Adequacy        | (Incurred to-date)                    | commitment + committed promoter equity.     |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 3. Escrow Waterfall   | TRA (Trust & Retention Account):      | Strict priority: Statutory (TDS/Cess) ->   |\n| Compliance            | Inflows directed to bank escrow       | Senior Debt Service -> Contractor Capex.    |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 4. Security Cover     | Value of Land + Physical Assets /     | Minimum 1.33x security coverage ratio       |\n| & DSCR                | Total Outstanding Debt Facility       | maintained throughout construction cycle.   |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Resolution Presentation:**\nYou present an audited Multi-Model EAC forecast showing that the cost overrun is limited to ₹32 Crores (not ₹80 Cr), demonstrate that the promoter has deposited a ₹35 Crore Corporate Fixed Deposit in the Escrow account, and prove that the Budget Adequacy Ratio is **1.08**. The banks vote unanimously to release the ₹75 Crore loan tranche!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the primary condition required by Lenders' Independent Engineers (LIE) before recommending the release of project debt drawdown tranches to a hospital developer?",
+            "o": [
+              [
+                "The Budget Adequacy Ratio must remain >= 1.00 (verified remaining available loan funds plus committed promoter equity must equal or exceed the forecasted Cost-to-Complete)",
+                true,
+                "Banks will not disburse loans if the project is underfunded; they require proof that enough money remains from debt and equity to finish the project completely."
+              ],
+              [
+                "The contractor must give free medical treatments to all bank managers",
+                false,
+                "Bribery and improper perks violate banking regulations and financial law."
+              ],
+              [
+                "The hospital must be 100% full of patients before the loan is issued",
+                false,
+                "Construction loans are disbursed during building construction, long before patients arrive."
+              ],
+              [
+                "The building must be constructed with zero concrete or steel",
+                false,
+                "Physical construction requires approved structural materials."
+              ]
+            ]
+          },
+          {
+            "q": "Why does concealing cost overruns or schedule delays from the Lenders' Independent Engineer (LIE) inevitably lead to catastrophic funding freezes?",
+            "o": [
+              [
+                "Because LIEs perform independent physical audits and ledger reconciliations; discovering unannounced cost overruns destroys banking trust, triggers immediate debt covenants, and forces an emergency loan freeze",
+                true,
+                "Transparency is paramount in project financing. Proactively presenting audited EAC forecasts with committed equity remedies preserves bank confidence, while deception triggers instant insolvency."
+              ],
+              [
+                "Because LIEs are equipped with satellite laser weapons that demolish buildings",
+                false,
+                "Absurd; LIEs are professional engineering auditors."
+              ],
+              [
+                "Because P6 software sends automatic WhatsApp messages to bank presidents",
+                false,
+                "P6 does not automatically notify banks; formal audit reports govern financing."
+              ],
+              [
+                "Because bank loans are cancelled if any concrete is poured on a Tuesday",
+                false,
+                "Construction schedules are governed by technical milestones, not superstitious days."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Projects die from cash starvation, not Gantt bars. Master the Lender Budget Adequacy Ratio (BAR >= 1.00), reconcile physical Earned Value against escrow waterfalls, and never hide cost realities from the Lenders' Independent Engineer."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U117",
+    "day": 117,
+    "title": "Day 117: Taking-Over Certificate (TOC), Snag List Monetization & Commercial Close-out",
+    "mins": 25,
+    "card": {
+      "id": "c-board-handover-closeout",
+      "title": "Taking-Over Certificate (TOC), Snag List Monetization & Commercial Close-out",
+      "rule": "Project completion is sealed under FIDIC Sub-Clause 10.1 (Taking-Over Certificate / TOC) or CPWD Completion Certificate. Issuing a conditional TOC requires: 1) Primary life-safety and municipal clearances (Fire NOC, CEIG, Occupancy Certificate) in hand; 2) Compiling the Master Snag List (Punch List) categorized into Category A (critical, must fix before occupancy) and Category B (minor cosmetic snags); 3) Monetizing the snag list: retaining 200% of the estimated completion value of Category B items from the final bill; 4) Activating the Defects Notification Period (DNP / DLP) and releasing 50% of retention money.",
+      "example": "On a 500-bed hospital handover, the PMC identified 340 Category B cosmetic snags valued at ₹28 Lakhs. Retaining ₹56 Lakhs (200% monetization) compelled the contractor to clear 100% of snags within 30 days, protecting the hospital's clinical launch.",
+      "trap": "Issuing an unqualified Taking-Over Certificate without a monetized snag list, losing all commercial leverage to compel the contractor to finish minor defects."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** The construction of a 450-bed superspecialty hospital was physically complete. The municipal Occupancy Certificate (OC) and Fire NOC were in hand. The client was desperate to accept the building and begin installing clinical furniture.\n\nThe contractor handed a pre-drafted document to the PMC Project Controls Lead:\n*\"Please sign this Taking-Over Certificate (TOC) stating the works are 100% complete so our bank can release our ₹18 Crore Performance Bank Guarantee and you can refund our ₹12 Crore retention money.\"*\n\nThe client's junior manager was about to sign, but the Lead Controls Manager intervened:\n*\"We cannot sign an unqualified TOC. We must execute the **Snag List Monetization Protocol**.\"*\n\n**The Snag List Reality:**\nDuring the pre-handover joint walk-through across 12 floors, the PMC inspection team identified **420 outstanding defects**:\n- 14 fire exit doors had sticking latches;\n- 28 patient bathrooms had chipped tiles or missing silicon sealant around sanitary fittings;\n- 4 modular OT touch-screen control panels were missing calibration certificates;\n- 150 meters of corridor vinyl flooring had air bubbles.\n\nIf you sign an unconditional Taking-Over Certificate, the contractor packs their bags, demobilizes their workers, and leaves. You will have to spend millions of rupees from your own pocket to fix their defects!"
+      },
+      {
+        "k": "read",
+        "t": "**The Snag List Monetization & TOC Close-out Protocol (FIDIC 10 / CPWD):**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Snag Classification   | Technical Definition                  | Contractual Action / Rule                   |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Category A Snags      | Life-safety, statutory, or clinical   | ZERO TOC PERMITTED. Handover is barred until|\n| (Pre-Occupancy Gates) | hazards (Fire alarm failure, MGPS leak| 100% of Category A snags are rectified and  |\n|                       | unsealed OTs, missing CEIG approval). | re-inspected on site.                       |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Category B Snags      | Minor cosmetic or non-critical defects| Conditional TOC issued with attached Punch  |\n| (Minor Punch List)    | (paint scratches, chipped tiles, missing| List. Contractor granted 30 days to finish. |\n|                       | escutcheon plates, door adjustments). |                                             |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Snag Monetization     | 200% Rule of Estimated Rectification  | Retain 2x the estimated market cost of all  |\n| Holdback              | Cost from contractor's final payment  | Category B snags from the final invoice.    |\n|                       | (e.g. ₹25 Lakhs snags = ₹50 Lakh hold)| Provides irresistible commercial leverage!  |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Retention Money       | FIDIC Sub-Clause 14.9                 | Release 50% of retention upon TOC issuance; |\n| Release Gateway       |                                       | Retain final 50% until expiry of 12-month   |\n|                       |                                       | Defects Notification Period (DNP / DLP).    |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Commercial Leverage:**\nBy attaching a monetized snag list ($200\\%$ value retained) to the Conditional Taking-Over Certificate, you give the client immediate operational use of the building while holding absolute financial power to compel the contractor to complete every last punch list item."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under FIDIC Sub-Clause 10.1 and standard professional project controls practice, what is the mandatory requirement when issuing a Conditional Taking-Over Certificate (TOC) with an attached snag list?",
+            "o": [
+              [
+                "All Category A life-safety/statutory defects must be 100% cured, and an amount equal to 200% of the estimated market cost of remaining Category B cosmetic snags must be monetized and retained from final payments",
+                true,
+                "Category A snags bar occupancy entirely. For minor Category B snags, retaining 200% of their estimated cost ensures the contractor finishes them promptly or finances third-party rectification."
+              ],
+              [
+                "The contractor is forgiven for all mistakes and given a free lifetime pass to the hospital",
+                false,
+                "Defects must be completed or remedied commercially."
+              ],
+              [
+                "All retention money must be wired to the contractor immediately with zero holdbacks",
+                false,
+                "Under FIDIC 14.9, only 50% of retention is released at TOC; the rest is held through the Defects Notification Period."
+              ],
+              [
+                "The snag list must be written in invisible ink so patients cannot see it",
+                false,
+                "Snag lists are official contractual audit documents."
+              ]
+            ]
+          },
+          {
+            "q": "What marks the legal transition of responsibility for building insurance, physical security, and operational care from the contractor to the Employer?",
+            "o": [
+              [
+                "The formal issuance of the Taking-Over Certificate (TOC) under FIDIC Clause 10 (or Completion Certificate under CPWD)",
+                true,
+                "Issuing the TOC marks the legal handover of care, custody, and control of the facility from contractor to employer, ending contractor delay liquidated damages liability and starting the Defects Notification Period."
+              ],
+              [
+                "The day the contractor buys insurance for their own office trucks",
+                false,
+                "Contractor vehicle insurance is unrelated to building handover."
+              ],
+              [
+                "The day the first patient enters the hospital without an appointment",
+                false,
+                "Legal transfer of care occurs via formal contractual certification."
+              ],
+              [
+                "When the project controls engineer graduates from college",
+                false,
+                "Graduation is a personal milestone, not a contractual building handover."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never surrender commercial leverage at the finish line. Never issue an unqualified TOC; bifurcate defects into Category A (zero handover) and Category B (monetized at 200%), release only 50% of retention money, and preserve the Defects Notification Period."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS14);
+const APPLY14 = {
+  "U111": {
+    "task": "Formulate a Boardroom Hot Seat 60-Second Defense Script for a high-stakes hospital milestone delay: 1) Structure Sentence 1 (Critical Reality: milestone, days, root cause); 2) Structure Sentence 2 (Commercial & Legal Exposure: daily LDs, hospital launch, bank tranches); 3) Structure Sentence 3 (Decisive Action Requested: capital sanction or contractual instruction needed today); 4) Deliver the oral presentation script with executive poise.",
+    "good": [
+      "Follows the strict 3-Sentence Executive Defense architecture with zero technical waffle",
+      "Identifies the specific critical path milestone and precise days of variance",
+      "Quantifies the exact daily financial liability and commercial consequence",
+      "Formulates a clear, actionable, binary decision requested from the Board today"
+    ],
+    "tmpl": "Boardroom Hot Seat 60-Second Executive Defense Script:\nContext (Project Profile, Distressed Milestone, Meeting Setting): \n1. Sentence 1 - The Critical Reality (Milestone Name, Days of Drift, Verified Root Cause): \n2. Sentence 2 - Commercial & Legal Exposure (Daily LDs ₹, Bank Drawdown Impact, Opening Date): \n3. Sentence 3 - Decisive Action Requested (Specific Capital Sanction or Instruction Needed Today): \n4. Supporting Executive Talking Points (Contemporaneous Backing Evidence & Recovery Confidence): \n5. Executive Presence Reflection (Poise, Brevity, Eye Contact, Eliminating Jargon): "
+  },
+  "U112": {
+    "task": "Author a 1-Page Executive Decision Memorandum (EDM) on a critical ₹1.8 Crore hospital technical variation: 1) Draft the Executive Action Summary with a 48-hour urgency clock; 2) Detail the financial and schedule benefits of approval; 3) Quantify the catastrophic cost of inaction (daily contractor claims and milestone delay); 4) Provide an audit trail defense; 5) Include an explicit executive signature box with Approved/Rejected options.",
+    "good": [
+      "Restricts the entire memorandum strictly to a concise, high-impact 1-page format",
+      "Establishes a firm 48-hour decision deadline tied to critical path schedule drift",
+      "Explicitly quantifies the daily financial cost of doing nothing (claims and delay damages)",
+      "Provides an unambiguous binary executive determination signature box"
+    ],
+    "tmpl": "EXECUTIVE DECISION MEMORANDUM (EDM):\nProject: [Project Name & Value] | Ref: [EDM Ref Code] | Urgency: 48-Hour Decision Clock\n1. Executive Action Summary & Funding Source: \n2. Financial & Schedule Benefit of Approval (Capacity Expansion & Days Saved): \n3. Commercial Cost of Inaction (Daily Delay Claims, Critical Path Slip, LD Exposure): \n4. Audit Trail & Rate Compliance (CPWD DSR Benchmarking, 15% CP&OH Cap, Consultant Sign-off): \n5. Executive Determination & Sign-off Box ([  ] APPROVED  /  [  ] REJECTED | Signature & Date): "
+  },
+  "U113": {
+    "task": "Develop a Board-Ready Visual Controls & EVM Executive One-Pager: 1) Synthesize S-Curve Banana Envelopes and explain float health implications; 2) Construct a Milestone Trend Analysis (MTA) showing historical drift trajectories over 6 months; 3) Formulate an EVM One-Pager detailing CV, SV_t, CPI, SPI_t, and Multi-Model EAC ($EAC_1, EAC_2, EAC_3$); 4) Provide an executive narrative for board members.",
+    "good": [
+      "Replaces detailed Gantt charts with high-level visual governance instruments",
+      "Explains S-Curve banana envelope float health (piercing lower curve = critical delay)",
+      "Visualizes chronic milestone drift trajectories using Milestone Trend Analysis (MTA)",
+      "Integrates Earned Schedule ($SV_t, SPI_t$) and Multi-Model EAC forecasting into a 1-page dashboard"
+    ],
+    "tmpl": "Board-Ready Project Controls Visual Dashboard:\nProject Profile (Capital Budget BAC ₹, Current Month Data Date, Status Overview): \n1. S-Curve Banana Envelope Analysis (Physical Progress vs Early/Late Target Curves): \n2. Milestone Trend Analysis (MTA) Trajectory (Historical Drift Patterns across 6 Reporting Cycles): \n3. EVM Performance Matrix (PV, EV, AC, Cost Variance CV, Earned Schedule SV_t, CPI, SPI_t): \n4. Multi-Model EAC Forecasting Summary (Model 1 Atypical ₹, Model 2 Typical ₹, Model 3 Combined ₹): \n5. Boardroom Executive Recommendation & Contingency Capital Strategy: "
+  },
+  "U114": {
+    "task": "Formulate a Hostile Progress Meeting Management & Contemporaneous MOM Protocol: 1) Define procedures for anchoring claims to digital records (biometric turnout, transmittals, DPRs); 2) Establish the SCL critical path test rule to defuse non-critical complaints; 3) Structure actionable 7-day commitments with single-point owners; 4) Mandate on-screen live Minutes of Meeting (MOM) projection and instant sign-off.",
+    "good": [
+      "Establishes a factual evidence anchor using contemporaneous biometric and transmittal records",
+      "Applies SCL Delay Protocol rules to isolate genuine critical path issues from bluster",
+      "Structures commitments with unambiguous names, quantities, and strict calendar deadlines",
+      "Enforces the non-negotiable rule requiring live MOM projection and same-day physical sign-off"
+    ],
+    "tmpl": "Hostile Meeting Management Protocol & Contemporaneous MOM Directive:\nMeeting Context (Contractor Profile, Dispute Escalation History, Stalled Progress Scope): \n1. Contemporaneous Evidence Deployment Protocol (Biometric Labor Logs, Stamped Transmittals, DPRs): \n2. Critical Path Filtration & Grievance De-escalation Technique (SCL Principle 1 Application): \n3. 7-Day Actionable Commitment Architecture (Single-Point Owners, Headcount, Due Dates): \n4. Live On-Screen Minutes of Meeting (MOM) Drafting & Formatting Protocol: \n5. Instant Sign-off Enforcement Rule (Pre-Adjournment Signatures & Legal Binding Strategy): "
+  },
+  "U115": {
+    "task": "Prepare an Arbitral Expert Witness Witness Statement & Cross-Examination Defense Plan: 1) Draft the Expert Declaration of Independence under the IBA Rules on Evidence; 2) Defend schedule calculation options (Retained Logic vs Progress Override) using schedlog.txt; 3) Formulate responses to hostile concurrency challenges based on contemporaneous records; 4) Structure rules for answering cross-examination questions.",
+    "good": [
+      "Affirms the expert's overriding duty of objective independence to the Arbitral Tribunal",
+      "Produces irrefutable technical defense of P6 calculation settings using schedlog.txt logs",
+      "Anchors concurrent delay testimony strictly in verified contemporaneous site documentation",
+      "Applies disciplined cross-examination conduct (brevity, conceding facts, avoiding advocacy)"
+    ],
+    "tmpl": "Arbitral Expert Witness Preparation & Cross-Examination Defense Bundle:\nDispute Profile (Tribunal Reference, Disputed EOT Claim Days, Financial Quantum ₹): \n1. Expert Declaration of Independence & Impartiality (IBA Rules Compliance Statement): \n2. Technical Defense of Schedule Integrity (Retained Logic, Negative Lag Audit, Schedlog.txt): \n3. Forensic Concurrency Defense under SCL Core Principle 10 (Contemporary Resource Shortages): \n4. Cross-Examination Tactical Strategy (Answering Direct Questions, Avoiding the Advocacy Trap): \n5. Re-examination & Expert Witness Summary of Opinions: "
+  },
+  "U116": {
+    "task": "Develop a Bank Consortium Project Controls Presentation & Cost-to-Complete (CTC) Budget Adequacy Dossier: 1) Reconcile physical Earned Value with bank cumulative disbursements; 2) Calculate the Budget Adequacy Ratio (BAR >= 1.00); 3) Structure the Trust & Retention Account (TRA) Escrow disbursement waterfall; 4) Formulate the promoter equity top-up plan to prevent debt disbursement freezes.",
+    "good": [
+      "Reconciles physical site progress (RoC) against lender financial loan disbursements",
+      "Demonstrates a robust Budget Adequacy Ratio (BAR >= 1.00) covering Multi-Model EAC",
+      "Outlines the strict priority order of the Escrow account disbursement waterfall",
+      "Delivers a persuasive, audit-proof presentation to secure unanimous bank loan release"
+    ],
+    "tmpl": "Bank Consortium Project Controls Dossier & Budget Adequacy Defense:\nFinancing Profile (Total Debt Facility ₹, Disbursed to Date ₹, Promoter Equity Committed ₹): \n1. Physical Earned Value Reconciliation (Verified Rules of Credit vs Drawn Capital): \n2. Cost-to-Complete (CTC) & Multi-Model EAC Analysis (EAC Forecast vs Available Debt/Equity): \n3. Budget Adequacy Ratio (BAR) Calculation (Total Available Funds / CTC >= 1.00 Verification): \n4. Escrow (Trust & Retention Account) Waterfall Compliance (Statutory -> Senior Debt -> Capex): \n5. Lender Consortium Action Proposal (Recommending Immediate Tranche Release): "
+  },
+  "U117": {
+    "task": "Design a Conditional Taking-Over Certificate (TOC) & Snag List Monetization Protocol for a 500-bed hospital: 1) Verify statutory prerequisites (Fire NOC, CEIG, Occupancy Certificate); 2) Categorize defects into Category A (zero handover) and Category B (minor cosmetic); 3) Monetize Category B snags at 200% of estimated rectification cost for final bill holdback; 4) Detail retention money release rules (50% at TOC, 50% at end of DNP/DLP).",
+    "good": [
+      "Establishes statutory approvals (Fire NOC, OC, CEIG) as absolute prerequisites for TOC",
+      "Bifurcates defect punch lists cleanly into Category A (blocking) and Category B (manageable)",
+      "Applies the 200% monetization holdback rule to ensure commercial leverage over minor defects",
+      "Manages retention release under FIDIC 14.9, safeguarding the Defects Notification Period"
+    ],
+    "tmpl": "Conditional Taking-Over Certificate (TOC) & Snag List Monetization Directive:\nHandover Scope (Hospital Facility Blocks, Gross Area, Completion Milestone): \n1. Statutory Prerequisite Verification Gate (CEIG Energization, Fire NOC, Municipal OC in Hand): \n2. Snag List Categorization Matrix (Category A Critical Life-Safety vs Category B Minor Cosmetic): \n3. Snag List 200% Monetization Holdback Schedule (Itemized Defects, Market Cost, Retained Amount ₹): \n4. Conditional TOC Contractual Notice Wording (Punch List Attachment, 30-Day Rectification Window): \n5. Retention Money Release & Defects Notification Period (DNP / DLP) Administration Plan: "
+  }
+};
+Object.assign(APPLY, APPLY14);
+UNITS14.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
