@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=35"></script>
+<script src="shim.js?v=36"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -13311,6 +13311,869 @@ const APPLY8 = {
 };
 Object.assign(APPLY, APPLY8);
 UNITS8.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS9 = [
+  {
+    "id": "U75",
+    "day": 75,
+    "title": "Day 75: Duration % vs Units % vs Physical % Complete: Why Duration % Lies on Site",
+    "mins": 25,
+    "card": {
+      "id": "c-percent-complete-types",
+      "title": "Percent Complete Types: Duration % vs Units % vs Physical % Complete",
+      "rule": "P6 calculates progress through three distinct mathematical algorithms: Duration % Complete [(OD - RD) / OD], Units % Complete [Actual Units / At Completion Units], and Physical % Complete [independent user input tied to physical milestones]. Duration % assumes progress is linear with elapsed calendar days, creating the infamous '90% complete syndrome' where an activity sits at 90% for months while real work is stalled. Physical % Complete is mandatory for Earned Value Management (EVM), decoupling time from work performed.",
+      "example": "On a hospital ducting activity with 30 days duration, 27 days elapsed with only 20% of ducts hung. Duration % reported 90% complete; Physical % accurately reported 20% complete, exposing a 70% progress deficit.",
+      "trap": "Allowing contractors to submit monthly progress using Duration % Complete, which converts schedule delay into false earned progress and triggers unearned advance payments."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹650 Crore hospital construction project, the PMC monthly progress dashboard proudly reported that the project was **78% complete**, comfortably tracking the target S-curve.\n\nTwo weeks later, the client CEO conducted a surprise site walkthrough of the clinical tower.\n\nOn Level 3, where medical gas piping was reported as *\"85% complete\"*, the copper pipes were lying in cardboard boxes on the floor, unbrazed. On Level 4, where HVAC ducting was reported as *\"90% complete\"*, only the primary horizontal trunk had been hung, with zero branch ducts, VAV boxes, or diffusers installed.\n\nThe CEO was furious: *\"Who authorized these progress numbers? The site is barely 30% complete!\"*\n\nThe culprit was the **Duration % Complete** setting in P6. The contractor had an activity *\"Level 4 HVAC Ducting\"* with an Original Duration of 60 days. Because 54 calendar days had passed since the Actual Start date, P6 calculated: $(60 - 6) / 60 = 90\\%$.\n\nDuration % Complete does not measure concrete poured, pipes brazed, or cables pulled. It merely counts how many days have elapsed on the calendar! Using Duration % Complete masks site paralysis and generates fraudulent earned value reports."
+      },
+      {
+        "k": "read",
+        "t": "**The 3 P6 Percent Complete Calculation Engines:**\n\n1. **Duration % Complete (The Calendar Trap):**\n   - Formula: $\\text{Duration } \\% = \\frac{\\text{Original Duration} - \\text{Remaining Duration}}{\\text{Original Duration}} \\times 100\\%$.\n   - *Flaw:* Assumes that every working day produces equal output. If a crew is stuck waiting for drawings for 3 weeks, P6 claims 3 weeks of earned progress! Causes the classic **\"90% syndrome\"**—reaching 90% in 9 weeks and staying at 90% for the next 9 months.\n\n2. **Units % Complete (The Expenditure Trap):**\n   - Formula: $\\text{Units } \\% = \\frac{\\text{Actual Labor or Material Units}}{\\text{At Completion Units}} \\times 100\\%$.\n   - *Flaw:* If an unproductive crew expends 1,000 man-hours doing rework, Units % reports high progress even though zero net physical scope was added to the building!\n\n3. **Physical % Complete (The Earned Value Standard):**\n   - **Decoupled from calendar duration and burned hours.**\n   - Progress is evaluated strictly against pre-agreed, objective, physical deliverable gates called **Rules of Credit (RoC)** (e.g. 15% shuttering, 35% rebar tied, 20% concrete poured, 15% curing passed).\n   - Remaining Duration (RD) is evaluated separately by the engineer based on actual daily production rates. This is the **only percent complete type accepted by international project auditors and Lenders' Independent Engineers (LIE)**."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why is 'Duration % Complete' considered a dangerous progress measurement method on active construction sites?",
+            "o": [
+              [
+                "Because it assumes progress is linear with elapsed calendar days, reporting high completion simply because time has passed even when physical work on site is stalled or incomplete",
+                true,
+                "Duration % divides elapsed time by original duration. If 27 days of a 30-day task elapse without work, it falsely reports 90% completion, masking delays and productivity collapse."
+              ],
+              [
+                "Because Duration % Complete multiplies all activity costs by 100 during billing runs",
+                false,
+                "Duration % affects schedule progress calculation, not contract unit cost rates."
+              ],
+              [
+                "Because P6 software will only run Duration % Complete on computers located in North America",
+                false,
+                "Software algorithms operate identically across all international regions."
+              ],
+              [
+                "Because Duration % Complete deletes all predecessor links whenever an update is saved",
+                false,
+                "Percent complete types do not delete network logic relationships."
+              ]
+            ]
+          },
+          {
+            "q": "How does 'Physical % Complete' protect a project against the infamous '90% complete syndrome'?",
+            "o": [
+              [
+                "By tying progress strictly to verified, objective physical milestone gates (Rules of Credit) and requiring remaining duration to be evaluated independently based on ground reality",
+                true,
+                "Physical % Complete requires actual physical proof (e.g. hydrotest passed, pour card signed) before % is earned, preventing subjective time-based progress inflation."
+              ],
+              [
+                "By legally forcing the contractor to work 24-hour night shifts without overtime pay",
+                false,
+                "Labor shifts are commercial site decisions, not software algorithm definitions."
+              ],
+              [
+                "By automatically setting the remaining duration of all activities to zero on every update",
+                false,
+                "Setting remaining duration to zero marks the activity as finished, which is the opposite of progress control."
+              ],
+              [
+                "By converting all concrete volumes into liquid liters before entering P6",
+                false,
+                "Units of measure have no bearing on the percent complete calculation engine."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never let your project controls dashboard mix Duration % and Physical %. Enforce 'Physical % Complete' across every discrete activity in P6, and tie every percentage point claimed to an audited Rule of Credit milestone sheet."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U76",
+    "day": 76,
+    "title": "Day 76: Designing Rules of Credit (RoC): Unbundling Activities into Verifiable Milestones",
+    "mins": 25,
+    "card": {
+      "id": "c-rules-of-credit",
+      "title": "Rules of Credit (RoC): Objective milestone weighting & step-gate progress",
+      "rule": "A Rule of Credit (RoC) is a contractually agreed, binary, objective weighting schedule that dictates exactly how much % completion can be earned as physical milestone gates are achieved. RoC eliminates subjective site opinions ('I feel it is 70% done') by unbundling work into verifiable steps (e.g. Step 1: Erection 30%, Step 2: Alignment 20%, Step 3: NDT/Hydrotest 30%, Step 4: Final Sign-off 20%). The 0/100 Rule applies to tasks < 1-2 weeks; Milestone Step Gates apply to long production packages.",
+      "example": "Contractor claimed 80% on medical gas distribution; under the agreed Rule of Credit, zero % was earnable beyond 50% until the 24-hour nitrogen pressure hold test certificate was signed, holding back ₹45 Lakhs in unearned billing.",
+      "trap": "Adopting vague RoC definitions like 'Work in Progress = 50%' without verifiable physical criteria (such as torque inspection, pour card, or hydrostatic test witness)."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹700 Crore hospital project, the monthly contractor billing meeting turned into an aggressive shouting match between the contractor's Project Manager and the PMC Billing Lead.\n\nThe contractor claimed **80% progress** on *\"Chilled Water Piping - Level 2\"*, demanding certification of ₹65 Lakhs on Running Account Bill #8.\n\nThe PMC engineer countered: *\"You only hung the pipes on the ceiling brackets! You haven't hydrotested them, you haven't insulated them, and half the flanges aren't torqued! In my opinion, it is only 40% complete!\"*\n\nThe contractor yelled back: *\"40% is an insult! We bought the pipes, we cut them, we grooved them—that's at least 75%! You are arbitrarily blocking our cash flow!\"*\n\nWhy did this dispute happen? Because the project had **no formal Rules of Credit (RoC)**. Progress was based on subjective human guesswork, personal bias, and emotional negotiations.\n\nHad the project instituted an approved Rule of Credit at contract inception (e.g. Hangers 15%, Pipe Erection 35%, Hydrotest 25%, Insulation 15%, Final Trim 10%), the progress calculation would have been an objective, mathematical certainty: $15\\% + 35\\% = 50\\%$. No arguments, no shouting, zero subjective bias."
+      },
+      {
+        "k": "read",
+        "t": "**Rule of Credit (RoC) Architecture & Methods:**\n\n1. **What is a Rule of Credit?**\n   - A standardized, contractually binding progress measurement procedure that converts physical site achievements into discrete, earned percentage points.\n   - **The Golden Principle:** Progress is **binary** at each milestone step. An intermediate step is either 0% or 100% complete—never \"almost done\" or \"in progress\".\n\n2. **The 3 Common RoC Methods:**\n   - *Method A: The 0 / 100 Rule (Short Tasks):* Used for activities with durations $< 1\\text{ to } 2\\text{ weeks}$. Zero percent ($0\\%$) is earned until the entire activity is physically complete and accepted ($100\\%$). Eliminates micro-management on short tasks.\n   - *Method B: The 50 / 50 Rule:* 50% earned the day work starts; remaining 50% earned strictly when final quality inspection is signed off. Used for short tasks spanning two reporting cut-off periods.\n   - *Method C: Milestone Weighting / Step Gates (The Standard):* Complex, high-value packages (structural slabs, façade, piping, electrical, cleanrooms) are unbundled into **4 to 6 discrete physical milestones**, each carrying a fixed, agreed percentage weight summing to exactly 100%.\n\n3. **The 3 Rules of RoC Design:**\n   - *1. Verifiable Verification Document:* Every step must require a physical document (e.g. Pour Card, Megger test sheet, Hydrotest gauge chart, Transmittal).\n   - *2. Quality Holdback:* The final sign-off / testing step must carry at least **$15\\%\\text{ to } 20\\%$** weight to ensure contractors don't abandon testing and punchlist rectification.\n   - *3. Zero Advance on Materials:* Merely delivering pipes or rebar to site earns **zero physical progress** (material advance is handled commercially under contract clauses, not earned as physical construction progress!)."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the primary function of a contractually agreed 'Rule of Credit' (RoC) in construction project controls?",
+            "o": [
+              [
+                "To establish an objective, verifiable milestone weighting schedule that eliminates subjective site guessing and dictates exactly what percentage of progress is earned as specific quality gates are achieved",
+                true,
+                "Rules of Credit define objective, verifiable milestone gates (e.g. brackets 15%, pipe hanging 35%, hydrotest 25%), removing personal bias and argument from monthly progress and billing certification."
+              ],
+              [
+                "To determine how much money the contractor can borrow from commercial banks",
+                false,
+                "Bank borrowing is governed by corporate credit facilities, not construction RoC progress schedules."
+              ],
+              [
+                "To allow the client to unilaterally withhold 90% of all contractor payments permanently",
+                false,
+                "RoC ensures fair, transparent, and predictable payment certification for completed work."
+              ],
+              [
+                "To calculate the interest rate on delayed client invoice payments under Indian law",
+                false,
+                "Delayed payment interest is governed by contract clauses and the MSME Act, not RoC."
+              ]
+            ]
+          },
+          {
+            "q": "Why must the final testing, commissioning, or handover step in a Rule of Credit carry a mandatory weighting of at least 15% to 20%?",
+            "o": [
+              [
+                "To provide a commercial safeguard that prevents contractors from claiming near-total completion while leaving critical testing, balancing, and statutory documentation unfinished",
+                true,
+                "If the final test/sign-off step has low weight (e.g. 2%), contractors take 98% of the cash and abandon difficult commissioning, snag rectification, and documentation."
+              ],
+              [
+                "Because testing equipment costs 20% of the entire building construction value",
+                false,
+                "The weighting is a commercial governance incentive, not a direct reflection of testing tool capital cost."
+              ],
+              [
+                "Because local municipal inspectors take 20% of the contract value as legal processing fees",
+                false,
+                "Municipal fees are minor statutory payments, completely separate from contractor milestone weighting."
+              ],
+              [
+                "Because concrete expands by 20% after final testing",
+                false,
+                "Physical concrete does not expand after curing; this is an engineering absurdity."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Agree on the Rules of Credit before the first shovel hits the dirt. Attach the RoC schedule as an appendix to the contract. When monthly progress is governed by binary physical milestones, progress certification takes 10 minutes instead of 10 days of fighting."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U77",
+    "day": 77,
+    "title": "Day 77: Structural Works Rule of Credit: Substructure, Columns, Shuttering, Rebar & Curing",
+    "mins": 25,
+    "card": {
+      "id": "c-structural-roc",
+      "title": "Structural Works RoC: The 6-step reinforced concrete milestone gate",
+      "rule": "Reinforced Concrete (RCC) structural elements must be governed by a standardized 6-step Rule of Credit: Step 1: Scaffolding, staging & bottom shuttering erected (15%); Step 2: Rebar cut, bent, tied & chairs/covers placed (35% - Cum 50%); Step 3: MEP embedded sleeves & boxouts placed (10% - Cum 60%); Step 4: Pre-pour joint inspection & Pour Card signed by PMC (5% - Cum 65%); Step 5: Concrete placed, vibrated & batch tickets reconciled (20% - Cum 85%); Step 6: Formwork stripped, 14-day curing finished & 28-day cube strength passed (15% - Cum 100%).",
+      "example": "Contractor claimed 100% on slab casting on pour day; under the RoC, progress was capped at 85% until 14-day curing and 28-day cube crush tests passed.",
+      "trap": "Granting 100% progress on concrete placement before cube compression test results are verified, leaving the project exposed if concrete fails compressive strength."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a hospital diagnostic block in Bengaluru, the structural contractor finished pouring $450\\text{ m}^3$ of M35 concrete for the second-floor transfer slab on October 28th.\n\nOn the October monthly progress claim, the contractor claimed **100% completion** on the transfer slab, billing ₹82 Lakhs.\n\nThe PMC planning engineer refused to certify 100%, capping progress at **85%**. The contractor was outraged: *\"The concrete is in the slab! You witnessed the pour! How can you hold 15%?\"*\n\nThree weeks later, the 28-day concrete cube compression test results arrived from the NABL laboratory. The required characteristic compressive strength was $35\\text{ N/mm}^2$. The average test result was only **$24.2\\text{ N/mm}^2$**—a catastrophic concrete failure due to bad batching plant water-cement ratios!\n\nThe slab was structurally defective. It required expensive carbon-fiber jacketing and structural retrofitting costing ₹34 Lakhs.\n\nBecause the PMC enforced the **Structural Works Rule of Credit**—holding the final 15% until 28-day cube strength verification and formwork stripping—the developer had retained ₹12.3 Lakhs in certified cash, giving them immediate commercial leverage to compel the contractor to remediate the defect."
+      },
+      {
+        "k": "read",
+        "t": "**The Standard 6-Step Structural RCC Rule of Credit:**\n\n```\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| Step | Physical Milestone Description                           | Weight | Cumulative | Verification Document                |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| 1    | Staging, scaffolding & soffit shuttering erected         | 15%    | 15%        | Line & level survey sign-off         |\n| 2    | Rebar BBS cut, bent, tied, chairs & cover blocks placed  | 35%    | 50%        | Rebar checklist & BBS inspection     |\n| 3    | MEP embedded conduit sleeves, boxouts & inserts placed   | 10%    | 60%        | MEP clearance sign-off sheet         |\n| 4    | Final cleaning, air-blow & Pre-Pour Card signed by PMC   | 5%     | 65%        | Jointly signed Concrete Pour Card    |\n| 5    | Concrete placement, vibration & batch ticket audit       | 20%    | 85%        | Pour log & RMC batch delivery slips  |\n| 6    | Formwork stripping, curing (14d) & 28-day cube pass      | 15%    | 100%       | NABL 28-day cube compression test    |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n```\n\n**Key Engineering Controls:**\n- *Step 3 (MEP Clearance - 10%):* Never allow rebar closure without MEP sign-off! Retrofitting plumbing sleeves through cast concrete cuts load-bearing rebar.\n- *Step 4 (Pour Card - 5%):* The formal gateway. Zero concrete may be batched until the structural engineer, MEP coordinator, and safety lead sign the physical Pour Card.\n- *Step 6 (Testing Holdback - 15%):* Ensures curing (IS 456 Part 13.5) is maintained for 14 continuous days and protects against sub-standard batching."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the standard 6-step Structural Works Rule of Credit, what is the maximum percentage of physical progress a contractor can claim immediately after pouring concrete into a slab, before curing and cube testing?",
+            "o": [
+              [
+                "Maximum 85%, holding the remaining 15% until formwork stripping, 14-day curing completion, and 28-day NABL cube compression test verification",
+                true,
+                "Concrete placement completes Step 5 (cumulative 85%). The final 15% is held as a quality gateway until 14-day curing is observed and 28-day cube strength is officially certified."
+              ],
+              [
+                "100% because once concrete leaves the truck chute, civil work is considered complete",
+                false,
+                "Claiming 100% before curing and cube testing exposes the project to catastrophic structural quality failure."
+              ],
+              [
+                "50% because concrete takes 5 years to achieve full chemical hydration",
+                false,
+                "28-day strength is the standard contractual design benchmark, not multi-year hydration."
+              ],
+              [
+                "Zero percent until the entire building is handed over to the client",
+                false,
+                "Zero progress would bankrupt contractors and destroy site cash flow."
+              ]
+            ]
+          },
+          {
+            "q": "Why does Step 3 of the Structural Rule of Credit allocate a dedicated 10% weight to MEP embedded conduits, sleeves, and boxouts before casting?",
+            "o": [
+              [
+                "To ensure that electrical conduits, plumbing sleeves, and medical gas boxouts are formally inspected and secured before pouring, preventing illegal and dangerous core drilling through structural rebar after casting",
+                true,
+                "Allocating 10% ensures MEP trades inspect and verify all pipe sleeves and conduit routes before concrete placement, eliminating destructive post-pour slab coring."
+              ],
+              [
+                "Because electrical copper wiring adds structural tensile strength to the concrete slab",
+                false,
+                "Electrical copper has zero structural load-bearing capacity; it is a clinical utility."
+              ],
+              [
+                "Because local municipal codes require MEP engineers to sign all building insurance policies",
+                false,
+                "Municipal codes govern permitting, not contractor progress weighting."
+              ],
+              [
+                "To reduce the weight of the concrete slab by filling it with empty plastic boxes",
+                false,
+                "Boxouts are functional service penetrations, not lightweight structural voids."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never allow a contractor to claim 100% on concrete casting on pour day. Hold the 15% quality gate until the 28-day cube crush certificate is on your desk. That single rule will save your project from paying full price for defective concrete."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U78",
+    "day": 78,
+    "title": "Day 78: Façade & External Envelope Rule of Credit: Brackets, Sub-framing, Glazing & Water Test",
+    "mins": 25,
+    "card": {
+      "id": "c-facade-roc",
+      "title": "Façade Works RoC: Unitized curtain wall & AAMA water test step gates",
+      "rule": "The Façade and External Envelope Rule of Credit unbundles unitized curtain wall / DGU structural glazing into 5 verifiable steps: Step 1: Cast-in embed plates & bracket anchor pull-testing (15%); Step 2: Aluminum mullions & transoms sub-framing erected and laser aligned (25% - Cum 40%); Step 3: DGU glass / ACP panels hoisted, installed and torqued (30% - Cum 70%); Step 4: Weather silicone sealant & backing rods applied (15% - Cum 85%); Step 5: AAMA 501.2 dynamic water hose pressure test passed & signed (15% - Cum 100%).",
+      "example": "Façade contractor claimed 90% completion after hanging glass panels; under the RoC, progress was capped at 70% because weather silicone was unsealed and AAMA hose testing had not commenced.",
+      "trap": "Certifying 100% on glass panel installation before conducting field water penetration testing (AAMA 501.2), leaving interior hospital rooms vulnerable to monsoon water damage."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a 450-bed tertiary hospital in Chennai, the façade subcontractor claimed **95% completion** on the exterior unitized glass curtain wall right before the monsoon season.\n\nThe PMC certified the billing, leaving only a 5% nominal retention. Interior teams mobilized: Level 4 drywalls were closed, acoustic ceilings hung, and ₹1.5 Crores worth of specialized medical imaging equipment installed in diagnostic suites.\n\nThen the October monsoons struck with $60\\text{ km/h}$ winds and driving rain.\n\nWater poured through the curtain wall mullion joints like a waterfall. Over 40 glass panel transoms had missing internal EPDM gasket seals, and weather silicone had been hastily applied over dusty aluminum frames without primer.\n\nWater flooded four clinical floors, destroying sterile ceilings, soaking gypsum partitions with mold, and shorting out two ultrasound machines. The interior damage exceeded ₹2.2 Crores.\n\nThe contractor abandoned the site, leaving behind a 5% retention that didn't even cover 10% of the rectification cost! Had the project enforced the **Façade Rule of Credit**—holding **15% for AAMA 501.2 Field Water Penetration Testing**—the defect would have been caught on Day 1 before interior fit-outs commenced."
+      },
+      {
+        "k": "read",
+        "t": "**The 5-Step Unitized Façade & Structural Glazing Rule of Credit:**\n\n```\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| Step | Physical Milestone Description                           | Weight | Cumulative | Verification Document                |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| 1    | Embed plates & bracket anchors fixed & pull-tested       | 15%    | 15%        | Calibrated anchor pull-test log      |\n| 2    | Mullions & transoms sub-framing erected & laser aligned  | 25%    | 40%        | Total-station 3D survey sign-off     |\n| 3    | DGU glass panels / ACP louvers hoisted, hung & torqued   | 30%    | 70%        | Torque wrench log & panel inspection |\n| 4    | Backing rods & structural weather silicone applied       | 15%    | 85%        | Sealant adhesion & thickness check   |\n| 5    | AAMA 501.2 field water hose penetration test passed      | 15%    | 100%       | Joint AAMA 501.2 Water Test Report   |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n```\n\n**The AAMA 501.2 Water Penetration Test (The Handover Gate):**\n- Governed by American Architectural Manufacturers Association standards.\n- *Procedure:* A calibrated Monarch Type B-25 water nozzle discharges water at **$200\\text{ to } 240\\text{ kPa}$ (30–35 PSI)** held perpendicular to joints at a distance of $300\\text{ mm}$, scanning every linear meter of joint for 5 minutes while inspectors observe the interior for water ingress.\n- **Zero leakage allowed.** Any drop of water fails the test, freezing progress at 85%."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why does the Façade Rule of Credit allocate a mandatory 15% weighting to the AAMA 501.2 Field Water Penetration Hose Test?",
+            "o": [
+              [
+                "To ensure the exterior building envelope is proven 100% watertight under pressurized driving rain conditions before interior drywalls, ceilings, and medical equipment can be damaged",
+                true,
+                "AAMA 501.2 water testing proves joint and gasket watertightness. Holding 15% ensures the contractor remediates leaks before interior fit-outs begin, preventing catastrophic water damage."
+              ],
+              [
+                "To wash the exterior glass panels clean so the building looks good for marketing photos",
+                false,
+                "AAMA 501.2 is a structural water penetration diagnostic test, not cosmetic window washing."
+              ],
+              [
+                "Because water pressure tests are required by the local municipal water department to bill for sewage",
+                false,
+                "Municipal water billing is unrelated to architectural building envelope testing."
+              ],
+              [
+                "To test whether the glass can withstand high-velocity artillery fire during wartime",
+                false,
+                "AAMA 501.2 evaluates wind-driven rain penetration, not ballistic armor."
+              ]
+            ]
+          },
+          {
+            "q": "What is the maximum cumulative progress a façade contractor can earn under the Rule of Credit after hoisting and fixing all DGU glass panels, before applying weather silicone sealant and water testing?",
+            "o": [
+              [
+                "70% cumulative (15% brackets + 25% sub-framing + 30% panel installation)",
+                true,
+                "Hoisting panels completes Step 3 (cumulative 70%). The remaining 30% is earned through weather sealant application (15%) and AAMA 501.2 water testing (15%)."
+              ],
+              [
+                "95% cumulative because weather sealant is just cosmetic caulking",
+                false,
+                "Weather sealant and water testing are critical functional barriers, carrying 30% total weight."
+              ],
+              [
+                "100% because glass panels are the most expensive material in the package",
+                false,
+                "Material cost does not override physical milestone testing and quality certification."
+              ],
+              [
+                "Zero percent until the hospital admits its first clinical patient",
+                false,
+                "Façade milestones are earned progressively upon verified completion of each physical gate."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The building envelope is the primary barrier protecting multi-crore interior hospital fit-outs. Enforce the AAMA 501.2 water test gate: never certify progress past 85% until the water hose test proves zero leakage across every linear meter of glass joint."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U79",
+    "day": 79,
+    "title": "Day 79: MEP Piping & Ducting Rule of Credit: Drops, Hangers, Hydrotest, Insulation & Trim",
+    "mins": 25,
+    "card": {
+      "id": "c-mep-piping-roc",
+      "title": "MEP Piping & Ducting RoC: Hydrostatic testing, insulation & stage gates",
+      "rule": "MEP Piping (Chilled Water, Fire Fighting, Drainage) and HVAC Ducting must follow a strict 6-step Rule of Credit: Step 1: Hangers, drop rods & seismic supports installed (15%); Step 2: Pipe spool routing, fitting & welding/grooving (35% - Cum 50%); Step 3: Hydrostatic pressure hold test at 1.5x working pressure for 24 hours witnessed (25% - Cum 75%); Step 4: Chemical flushing & passivation (10% - Cum 85%); Step 5: Thermal insulation & vapor barrier applied (10% - Cum 95%); Step 6: Valve tags, flow arrows & color coding (5% - Cum 100%). Applying insulation before hydrotest sign-off is strictly prohibited.",
+      "example": "Plumber insulated chilled water pipes before the hydrotest to hide leaky fittings; the RoC blocked billing at 50% and forced stripping of ₹6 Lakhs of wet insulation.",
+      "trap": "Allowing false ceiling closure over MEP corridors before Step 3 (24h Hydrostatic Hold Test) is formally signed off by the PMC."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a 500-bed hospital project in Hyderabad, the MEP contractor rushed to insulate $2,800\\text{ meters}$ of chilled water piping with expensive closed-cell nitrile rubber insulation to claim milestone payments on RA Bill #11.\n\nTwo weeks later, the third-party commissioning agency arrived to witness the **Hydrostatic Pressure Test**.\n\nWhen the system was pressurized to 12 bar ($1.5\\times$ working pressure), the pressure gauge dropped to 7 bar within 30 minutes. Water began dripping from the insulated pipes.\n\nBecause the contractor had insulated the pipes **before performing the hydrotest**, the water traveled horizontally inside the insulation jacket for 40 meters before emerging. Nobody knew which welded elbow or mechanical groove was leaking!\n\nThe contractor was forced to slit open and strip off **over 800 meters of brand-new insulation** (costing ₹14 Lakhs in destroyed material) to find three leaking victaulic couplings.\n\nEnforcing the **MEP Piping Rule of Credit**—where Step 3 (Hydrostatic Test) is a mandatory Finish-to-Start prerequisite before Step 5 (Thermal Insulation)—eliminates this costly mistake."
+      },
+      {
+        "k": "read",
+        "t": "**The 6-Step MEP Piping & HVAC Ducting Rule of Credit:**\n\n```\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| Step | Physical Milestone Description                           | Weight | Cumulative | Verification Document                |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| 1    | Hangers, seismic drop brackets & anchors installed       | 15%    | 15%        | Bracket spacing & torque sign-off    |\n| 2    | Pipe routing, spool erection & welded/grooved joints     | 35%    | 50%        | Alignment & visual weld inspection   |\n| 3    | 24-Hour Hydrostatic / Duct Pneumatic Leak Test (1.5x)    | 25%    | 75%        | Joint Hydrotest / Duct Leak Report   |\n| 4    | System flushing, chemical cleaning & passivation         | 10%    | 85%        | Water purity & chemical lab test     |\n| 5    | Thermal insulation, vapor barrier & protective cladding  | 10%    | 95%        | Insulation thickness & vapor seal    |\n| 6    | Identification banding, flow direction arrows & tags     | 5%     | 100%       | Final visual handover checklist      |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n```\n\n**Inviolable Engineering Rules:**\n- *The Hydrotest Hold Gate (Step 3 - 25%):* Tested at **$1.5\\times$ operating design pressure** (minimum $10\\text{ bar}$ for chilled water, $14\\text{ bar}$ for fire hydrants), held for **24 continuous hours** with calibrated master test gauges.\n- *No Insulation Before Test:* Never wrap thermal insulation or close false ceilings over un-tested pipe joints. An un-tested pipe is worth zero progress beyond 50%."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the MEP Piping Rule of Credit, why is it strictly forbidden to install thermal insulation or close false ceilings over pipes before Step 3 (24-Hour Hydrotest) is certified?",
+            "o": [
+              [
+                "Because thermal insulation conceals leaking joints, making leak detection impossible and requiring expensive stripping and destruction of insulation material during pressure testing",
+                true,
+                "Hydrostatic testing requires visual inspection of all bare joints and welds. Insulating before testing traps water, hides leaks, and destroys the insulation material."
+              ],
+              [
+                "Because thermal insulation makes the pipes too heavy for the water to circulate",
+                false,
+                "Insulation weight is accounted for in structural hanger design; it does not affect pump hydraulics."
+              ],
+              [
+                "Because local fire codes require all chilled water pipes to remain completely bare forever",
+                false,
+                "Uninsulated chilled water pipes sweat continuously, causing condensation damage and mold."
+              ],
+              [
+                "Because testing water boils if insulation is applied to the outside of the pipe",
+                false,
+                "Testing water is at ambient temperature; it does not boil."
+              ]
+            ]
+          },
+          {
+            "q": "What cumulative progress percentage can an MEP contractor claim after installing hangers and completing pipe welding, but prior to executing the hydrostatic pressure hold test?",
+            "o": [
+              [
+                "Exactly 50% cumulative (15% hangers + 35% pipe erection)",
+                true,
+                "Completing hangers and pipe erection brings cumulative earned progress to 50%. The remaining 50% requires hydrotesting (25%), flushing (10%), insulation (10%), and tagging (5%)."
+              ],
+              [
+                "90% cumulative because hydrotesting is just a 5-minute formality",
+                false,
+                "Hydrotesting carries 25% weight and takes 24 hours of witnessed pressure holding."
+              ],
+              [
+                "100% cumulative as soon as the pipes are delivered to the floor",
+                false,
+                "Material delivery earns zero physical construction progress."
+              ],
+              [
+                "5% cumulative because pipes must be inspected by the Chief Justice",
+                false,
+                "Progress is governed by engineering specifications, not judicial officers."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Enforce the hydrotest barrier: never permit thermal insulation or ceiling grid closure over piping networks until Step 3's 24-hour hydrostatic test certificate is stamped and signed. That single rule prevents millions in water damage."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U80",
+    "day": 80,
+    "title": "Day 80: Electrical HT/LT Rule of Credit: Cable Trays, Pulling, Megger Test & Energization",
+    "mins": 25,
+    "card": {
+      "id": "c-electrical-roc",
+      "title": "Electrical HT/LT RoC: Cable pulling, Megger testing & panel energization",
+      "rule": "Electrical Power Distribution (HT Transformers, LT Panels, Busducts, Sub-mains) requires a standardized 5-step Rule of Credit: Step 1: Cable tray/ladder network erected & continuous copper earth tape bonded (20%); Step 2: Power/control cables pulled, trefoil clamped, dressed & numbered (30% - Cum 50%); Step 3: Insulation resistance (Megger 1kV/5kV) & continuity testing witnessed (20% - Cum 70%); Step 4: Cable glanding, crimping lugs & panel termination (15% - Cum 85%); Step 5: Hi-Pot withstand test, breaker calibration & live panel energization (15% - Cum 100%).",
+      "example": "Contractor claimed 85% progress after pulling cables into switchgear; RoC capped progress at 50% because cables were un-glanded, un-terminated, and un-Meggered.",
+      "trap": "Energizing an electrical panel before Step 3 (Megger Insulation Test) is signed off, creating extreme arc flash and fatal short-circuit risks."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹500 Crore super-specialty hospital in Ahmedabad, the electrical contractor pulled $4,200\\text{ meters}$ of 4-core $300\\text{ mm}^2$ aluminum XLPE armoured power cables from the main LT substation to floor distribution panels.\n\nThe contractor billed **85% completion** on the power cabling package on RA Bill #9.\n\nWhen the PMC testing engineer arrived on site, they found the thick cables hanging loosely from the cable trays, unstrapped. In dozens of locations, the cable outer sheath was gouged and sliced against sharp sheet-metal tray edges during hurried winch pulling.\n\nThe contractor had not performed a **Megger Insulation Resistance Test**. When the PMC forced the contractor to megger the cables at $1,000\\text{ V DC}$, three primary sub-main feeder cables registered **zero resistance (dead short circuit to earth)**!\n\nHad the contractor energized the panels, a catastrophic phase-to-ground fault would have triggered an explosive arc flash, destroying the ₹45 Lakh main switchboard and causing fatal electrocution risks.\n\nEnforcing the **Electrical Rule of Credit**—allocating 20% to the Megger test and 15% to final energization—prevented a fatal disaster and forced the contractor to re-pull the damaged runs at their own expense."
+      },
+      {
+        "k": "read",
+        "t": "**The 5-Step Electrical HT/LT Power Distribution Rule of Credit:**\n\n```\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| Step | Physical Milestone Description                           | Weight | Cumulative | Verification Document                |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| 1    | Cable tray/ladder erected & continuous earth tape bonded | 20%    | 20%        | Tray alignment & earthing continuity |\n| 2    | Cables pulled, dressed, trefoil clamped & tagged         | 30%    | 50%        | Cable drum schedule & route check    |\n| 3    | Insulation resistance (Megger) & continuity test passed  | 20%    | 70%        | Signed Megger Test Certificate       |\n| 4    | Cable glanding, compression lugs crimped & terminated    | 15%    | 85%        | Termination torque & phase check     |\n| 5    | Hi-Pot withstand, relay calibration & live energization  | 15%    | 100%       | CEIG Clearance & Energization Record |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n```\n\n**The Megger Testing Gate (Step 3 - 20%):**\n- Low Voltage (LT 415V): Tested with a calibrated **1,000V DC Megger**. Minimum acceptable insulation resistance between phase-to-phase and phase-to-earth is **$\\ge 50\\text{ to } 100\\text{ M}\\Omega$**.\n- High Voltage (HT 11kV/33kV): Tested with a **5,000V DC Megger** followed by a high-potential (Hi-Pot) AC/DC withstand test witnessed by the Electrical Inspector."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the Electrical HT/LT Rule of Credit, why must cable insulation resistance (Megger testing) be certified at Step 3 before cables are glanded and terminated into switchgear panels?",
+            "o": [
+              [
+                "To detect internal insulation damage or ground faults caused during cable pulling before termination, preventing catastrophic switchboard short circuits and explosive arc flashes during energization",
+                true,
+                "Pulling heavy cables around bends can slice internal insulation. Megger testing (1kV/5kV) verifies dielectric integrity before terminating into expensive panels, preventing catastrophic electrical explosions."
+              ],
+              [
+                "To check whether the copper conductors are magnetic",
+                false,
+                "Copper is non-ferromagnetic; Megger tests measure electrical insulation resistance in mega-ohms."
+              ],
+              [
+                "Because local electric utilities will not sell power if cables are terminated first",
+                false,
+                "Utility supply requires statutory CEIG clearance, which depends on valid Megger and Hi-Pot certificates."
+              ],
+              [
+                "To cool down the cables after friction heating from the pulling winches",
+                false,
+                "Megger testing is an electrical dielectric test, not a thermal cooling process."
+              ]
+            ]
+          },
+          {
+            "q": "What cumulative progress percentage can an electrical contractor claim after erecting cable trays and pulling cables into place, but before performing Megger tests and panel terminations?",
+            "o": [
+              [
+                "Maximum 50% cumulative (20% trays + 30% cable pulling)",
+                true,
+                "Erecting trays (20%) and pulling cables (30%) totals 50%. The remaining 50% requires Megger testing (20%), glanding/termination (15%), and energization/clearance (15%)."
+              ],
+              [
+                "90% cumulative because pulling cables is the most physically exhausting work",
+                false,
+                "Physical fatigue does not dictate progress; testing, termination, and energization carry 50% weight."
+              ],
+              [
+                "100% cumulative as soon as the cable drums arrive on site",
+                false,
+                "Material delivery earns zero physical completion progress."
+              ],
+              [
+                "Zero percent until the entire hospital has zero electricity bills for 6 months",
+                false,
+                "Progress is earned progressively upon completion of each physical milestone."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never allow electrical sub-contractors to claim more than 50% progress for merely pulling cables. The true commercial and safety value lies in the Megger insulation test, glanded terminations, and live energization. Hold the 50% quality gates firmly."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U81",
+    "day": 81,
+    "title": "Day 81: Modular OT & Cleanroom Rule of Credit: Unistrut Grid, Panels, Vinyl, HEPA & Particle Count",
+    "mins": 25,
+    "card": {
+      "id": "c-cleanroom-roc",
+      "title": "Modular OT RoC: The 6-step cleanroom validation milestone gate",
+      "rule": "Modular Operation Theatres (MOT) and ISO Class 7 cleanrooms require a rigorous 6-step Rule of Credit: Step 1: Ceiling slab coring & Unistrut structural grid pull-tested to 300-500 kg (15%); Step 2: Antimicrobial wall panels, coving & hermetic doors installed (25% - Cum 40%); Step 3: Subfloor screed & conductive vinyl with copper earthing grid (< 1 Ω) laid & welded (20% - Cum 60%); Step 4: Cleanroom Enclosure Lock & deep vacuum sanitization (10% - Cum 70%); Step 5: Terminal HEPA filters installed & in-situ PAO/DOP scan (<= 0.01% leak) passed (15% - Cum 85%); Step 6: ISO Class 7 / Class 5 airborne particle counts & validation certificate (15% - Cum 100%).",
+      "example": "Contractor claimed 90% completion after laying conductive vinyl; RoC capped progress at 60% because cleanroom enclosure lock, HEPA installation, and particle validation were unexecuted.",
+      "trap": "Awarding progress for terminal HEPA installation while construction dust is still active in adjacent corridors, destroying filters before validation."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a private hospital project in Kolkata, the specialized Modular OT vendor submitted an invoice claiming **90% completion** across 10 surgical suites on RA Bill #14.\n\nThe vendor argued: *\"All wall panels are fixed, the laminar airflow plenums are hung, and the conductive vinyl flooring is welded! Only minor cleaning and testing remains!\"*\n\nThe PMC Project Director inspected the suite. The rooms looked finished to an untrained eye. But the **terminal HEPA filters** had not been installed, the **PAO/DOP filter leak scans** were unexecuted, the **conductive vinyl earthing resistance** had not been tested with a megohmmeter, and **airborne particle count validation** was weeks away!\n\nUnder the agreed **Modular OT Rule of Credit**, the vendor was entitled to only **60% cumulative progress**.\n\nTwo weeks later, during duct pressure balancing, the HVAC contractor discovered that the laminar flow plenum had a 15% air volume imbalance, and three antimicrobial wall panels were damaged by a scissor lift. Because the PMC held the remaining **40% milestone gates (₹1.2 Crores)**, the vendor mobilized day and night crews to rectify the duct imbalance and replace the damaged panels without delay."
+      },
+      {
+        "k": "read",
+        "t": "**The 6-Step Modular OT & Cleanroom Rule of Credit:**\n\n```\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| Step | Physical Milestone Description                           | Weight | Cumulative | Verification Document                |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| 1    | Ceiling slab unistrut grid erected & pull-tested (300kg) | 15%    | 15%        | Calibrated anchor pull-test log      |\n| 2    | Antimicrobial wall panels, coving & hermetic doors fixed | 25%    | 40%        | Plumb, seal & door operation sign-off|\n| 3    | Self-levelling screed & conductive vinyl (< 1 Ohm earth) | 20%    | 60%        | Earth resistance & continuity log    |\n| 4    | Cleanroom Enclosure Lock & deep industrial sanitization  | 10%    | 70%        | Dust-free enclosure clearance cert   |\n| 5    | Terminal HEPA installation & PAO/DOP leak scan (<=0.01%) | 15%    | 85%        | In-situ PAO Photometer Scan Report   |\n| 6    | ISO Class 7 / Class 5 particle validation & sign-off     | 15%    | 100%       | ISO 14644-1 Validation Certificate  |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n```\n\n**Critical Quality Gates:**\n- *Step 3 (Earthing Resistance - $< 1\\,\\Omega$):* Conductive vinyl must be verified using a megohmmeter to prove that electrostatic charges discharge safely into the hospital clean earth pit.\n- *Step 4 (Cleanroom Lock - 10%):* No HEPA filter boxes may be opened until all civil/electrical dust trades are sealed out.\n- *Step 6 (ISO 14644-1 Validation - 15%):* The ultimate clinical gate certifying $\\le 352,000$ particles $\\ge 0.5\\,\\mu\\text{m/m}^3$ under dynamic conditions."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the Modular OT Rule of Credit, what is the maximum cumulative progress earnable after installing antimicrobial wall panels and laying conductive vinyl flooring, before HEPA filter installation and ISO particle validation?",
+            "o": [
+              [
+                "Maximum 60% cumulative (15% unistrut grid + 25% wall panels + 20% conductive vinyl)",
+                true,
+                "Laying vinyl completes Step 3 (cumulative 60%). The remaining 40% is held for Cleanroom Enclosure Lock (10%), HEPA DOP testing (15%), and ISO 14644-1 particle validation (15%)."
+              ],
+              [
+                "95% cumulative because particle counts are just hospital administrative paperwork",
+                false,
+                "Particle count validation is the core clinical proof of cleanroom sterility, carrying 15% weight."
+              ],
+              [
+                "100% cumulative because the room looks visually finished to visitors",
+                false,
+                "Visual appearance does not equal cleanroom sterility or HEPA integrity."
+              ],
+              [
+                "Zero percent until the first open-heart surgery is successfully performed",
+                false,
+                "Contractor milestones are completed upon engineering commissioning and validation."
+              ]
+            ]
+          },
+          {
+            "q": "Why does Step 4 of the Cleanroom Rule of Credit allocate a dedicated 10% milestone weight to the 'Cleanroom Enclosure Lock' before terminal HEPA filters are unpacked?",
+            "o": [
+              [
+                "To ensure the room is completely sealed, deep-cleaned, and dust-free before exposing delicate terminal HEPA filters, preventing cement silica and construction dust from destroying filters worth ₹25,000 each",
+                true,
+                "Terminal HEPA filters are instantly blinded by ambient construction dust. The Cleanroom Lock enforces total physical isolation and sanitization before filters are unpacked."
+              ],
+              [
+                "To lock the doors so hospital nurses cannot enter the room during lunch breaks",
+                false,
+                "The lock is an architectural contamination isolation barrier, not a cafeteria restriction."
+              ],
+              [
+                "Because P6 software requires an activity called 'Lock' to run the backward pass",
+                false,
+                "P6 calculates CPM on logic relationships, not specific activity names."
+              ],
+              [
+                "To paint the door handles with luminous glow-in-the-dark paint",
+                false,
+                "Irrelevant to cleanroom environmental particle containment."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The Cleanroom Rule of Credit protects the hospital from taking over contaminated operating rooms. Hold the final 30% for in-situ HEPA DOP testing and ISO particle validation. Never pay for an OT until the cleanroom validation certificate is signed."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U82",
+    "day": 82,
+    "title": "Day 82: Medical Gas Pipeline Rule of Credit: Nitrogen Brazing, Riser Hold, Terminals & Purity",
+    "mins": 25,
+    "card": {
+      "id": "c-mgps-roc",
+      "title": "MGPS Works RoC: Nitrogen purging, 24h pressure hold & gas purity gates",
+      "rule": "The Medical Gas Pipeline System (MGPS per HTM 02-01 / NFPA 99) requires a 5-step Rule of Credit: Step 1: Degreased copper pipe (EN 13348) installed & silver brazed under continuous nitrogen purge (30%); Step 2: 24-hour pneumatic pressure hold test at 1.5x design pressure witnessed with zero temperature-corrected pressure loss (25% - Cum 55%); Step 3: Area valve service units (AVSU) & terminal bed head units installed (20% - Cum 75%); Step 4: Cross-connection anti-confusion testing across 100% of terminal outlets (15% - Cum 90%); Step 5: Gas purity, particulate, oil vapor, and dew point certification (10% - Cum 100%).",
+      "example": "Contractor claimed 80% on MGPS distribution; RoC capped progress at 30% because the 24-hour nitrogen pressure hold test had not been witnessed by the PMC.",
+      "trap": "Closing false ceilings or drywalls before Step 2 (24-hour Pneumatic Pressure Hold Test) is fully certified, concealing leaking brazed joints."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a 350-bed hospital project, the medical gas contractor ran all copper pipes across 6 ward floors and demanded **75% progress billing** on the MGPS package.\n\nThe contractor's reasoning: *\"All copper pipes are brazed and hung in the corridors, and terminal outlets are fixed on the walls!\"*\n\nThe PMC Project Controls Manager checked the quality test logs: the **24-hour Pneumatic Pressure Hold Test** had not been conducted, and zero **Cross-Connection Anti-Confusion Tests** had been witnessed.\n\nUnder the **MGPS Rule of Credit**, the contractor was entitled to only **30% progress**.\n\nWhen the contractor subsequently pressurized the ICU line with nitrogen to 6 bar, the pressure dropped by 1.2 bar in 6 hours. Because ceilings were still open, technicians quickly identified two leaking brazed tees on Level 3. Had the PMC certified 75% and permitted ceiling closure, locating the leaks would have required tearing down 200 square meters of finished ceilings."
+      },
+      {
+        "k": "read",
+        "t": "**The 5-Step MGPS Rule of Credit (HTM 02-01 / NFPA 99):**\n\n```\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| Step | Physical Milestone Description                           | Weight | Cumulative | Verification Document                |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| 1    | Degreased copper pipe installed & purged silver brazing  | 30%    | 30%        | Nitrogen purge log & joint checklist |\n| 2    | 24-Hour pneumatic pressure hold test (1.5x design)       | 25%    | 55%        | Signed 24-Hour Pressure Chart Log    |\n| 3    | AVSU zone valves & terminal bed head units installed     | 20%    | 75%        | Terminal unit installation sign-off  |\n| 4    | Cross-connection anti-confusion test (100% of outlets)   | 15%    | 90%        | Gas-specific anti-confusion protocol |\n| 5    | Gas purity, particulate, dew point & clinical sign-off   | 10%    | 100%       | HTM 02-01 Gas Purity Certificate     |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n```\n\n**The Anti-Confusion Testing Gate (Step 4 - 15%):**\n- Testing every single outlet using gas-specific probe indices to ensure an Oxygen terminal discharges only Oxygen, and Nitrous Oxide discharges only Nitrous Oxide.\n- Interchanging lines is a fatal medical error that causes patient asphyxiation during surgery."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the MGPS Rule of Credit, what is the maximum progress percentage earnable by a medical gas contractor after brazing copper lines, prior to passing the 24-hour pneumatic pressure hold test?",
+            "o": [
+              [
+                "Maximum 30% cumulative, holding the remaining 70% until pressure testing, terminal installation, anti-confusion testing, and gas purity validation are achieved",
+                true,
+                "Brazing pipes completes Step 1 (30%). Step 2 requires the 24-hour pressure hold test (cumulative 55%), followed by terminal units (75%), anti-confusion (90%), and purity sign-off (100%)."
+              ],
+              [
+                "85% cumulative because copper pipe is an expensive commodity",
+                false,
+                "Material cost does not substitute for life-critical pressure integrity and cross-connection testing."
+              ],
+              [
+                "100% cumulative as soon as the pipes are brazed",
+                false,
+                "Claiming 100% before pressure testing leaves lethal gas leaks completely undiscovered."
+              ],
+              [
+                "Zero percent until all doctors graduate from medical school",
+                false,
+                "Medical education is independent of hospital engineering commissioning."
+              ]
+            ]
+          },
+          {
+            "q": "Why does Step 4 of the MGPS Rule of Credit mandate a dedicated 15% weight for the 'Cross-Connection Anti-Confusion Test' across every individual terminal outlet?",
+            "o": [
+              [
+                "To verify point-by-point that gas pipelines have not been accidentally cross-connected, ensuring an Oxygen port never delivers lethal Nitrous Oxide or asphyxiating nitrogen to a patient",
+                true,
+                "Cross-connection testing is a non-negotiable life-safety check ensuring every terminal outlet delivers only its designated medical gas."
+              ],
+              [
+                "To verify that all terminal outlets are painted with fluorescent gold leaf",
+                false,
+                "Terminal outlets follow standard international color codes (e.g. white for O2, blue for N2O)."
+              ],
+              [
+                "Because anti-confusion testing generates electricity to power hospital emergency lighting",
+                false,
+                "MGPS is a mechanical gas distribution network, not an electrical power generation system."
+              ],
+              [
+                "To clean dust out of the copper pipes using industrial vacuum cleaners",
+                false,
+                "Internal purity is established via nitrogen purging, not vacuuming terminal ports."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Medical gas pipelines carry life-support gases directly into patient lungs. Never certify progress past 30% without a witnessed 24-hour pressure hold chart, and never certify past 75% without a point-by-point anti-confusion test sign-off."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U83",
+    "day": 83,
+    "title": "Day 83: Commissioning & Statutory RoC: Pre-Commissioning, Witness Tests, Fire NOC & Handover",
+    "mins": 25,
+    "card": {
+      "id": "c-statutory-roc",
+      "title": "Statutory & Handover RoC: Live witness testing, Fire NOC & Taking-Over",
+      "rule": "The final 10%–15% of total project value sits in Commissioning, Statutory Approvals, and Handover, governed by a 5-step Rule of Credit: Step 1: Pre-commissioning static checks & snag rectification (20%); Step 2: Integrated systems live witness testing (fire pumps, damper interlocks, lift drop) (25% - Cum 45%); Step 3: Statutory clearances secured (CEIG electrical + Lift license + PCB CTO) (20% - Cum 65%); Step 4: Chief Fire Officer Final Fire NOC issued (20% - Cum 85%); Step 5: Municipal Occupancy Certificate (OC) & Taking-Over Certificate (TOC) signed (15% - Cum 100%).",
+      "example": "Contractor claimed 100% on hospital electrical substation; RoC capped progress at 45% because the Chief Electrical Inspector to Govt (CEIG) clearance had not been granted.",
+      "trap": "Releasing final contract retention or certifying 100% handover before the local municipal authority issues the physical, signed Occupancy Certificate (OC)."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹600 Crore super-specialty hospital project, the general contractor declared that all construction was complete on November 30th and demanded issuance of the **Taking-Over Certificate (TOC)** and release of ₹30 Crores in retention money.\n\nThe contractor argued: *\"Every wall is painted, every light bulb is working, and our equipment is ready! Any remaining paperwork with the municipal corporation is the client's responsibility!\"*\n\nThe PMC Project Controls Director refused to issue the Taking-Over Certificate, citing the **Statutory & Handover Rule of Credit**.\n\nThe contractor had not secured the **CEIG Electrical Substation Approval**, the **Lift Inspectorate License**, the **Pollution Control Board Consent to Operate (CTO)** for the sewage treatment plant, or the **Chief Fire Officer Final Fire NOC**.\n\nWithout these four statutory clearances, the local municipal corporation refused to issue the **Occupancy Certificate (OC)**. Under Indian law, occupying a hospital building without an OC is a criminal offense subject to immediate sealing and demolition orders.\n\nBecause the PMC held the final **35% statutory milestone gates (₹21 Crores)**, the contractor was forced to deploy dedicated liaison teams, complete pump witness testing, and secure all statutory licenses before claiming final project completion."
+      },
+      {
+        "k": "read",
+        "t": "**The 5-Step Commissioning, Statutory & Handover Rule of Credit:**\n\n```\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| Step | Physical Milestone Description                           | Weight | Cumulative | Verification Document                |\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n| 1    | Pre-commissioning static checks & snag list clearance    | 20%    | 20%        | Signed Pre-Commissioning Checklists  |\n| 2    | Integrated cause & effect live witness testing           | 25%    | 45%        | Integrated Commissioning Test Report |\n| 3    | Statutory clearances secured (CEIG, Lifts, PCB CTO)      | 20%    | 65%        | Official Government Clearance Letters|\n| 4    | Chief Fire Officer Final Fire NOC issued                 | 20%    | 85%        | Certified Final Fire NOC Document    |\n| 5    | Municipal Occupancy Certificate (OC) & TOC signed        | 15%    | 100%       | Municipal OC & Taking-Over Cert (TOC)|\n+------+----------------------------------------------------------+--------+------------+--------------------------------------+\n```\n\n**The Ultimate Legal Gate:**\n- Zero project can reach 100% completion in P6 without the **Municipal Occupancy Certificate (OC)** and the formal **Taking-Over Certificate (TOC)** issued under FIDIC Clause 10 / CPWD Clause 8."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the Statutory & Handover Rule of Credit, what is the mandatory prerequisite before a contractor can claim the final 15% completion milestone and receive the Taking-Over Certificate (TOC)?",
+            "o": [
+              [
+                "The issuance of the official Municipal Occupancy Certificate (OC) confirming that all statutory life safety, electrical, lift, and environmental clearances are legally approved",
+                true,
+                "A project cannot be legally occupied or contractually taken over until the municipal authority issues the Occupancy Certificate (OC) based on Fire NOC, CEIG, Lift, and PCB clearances."
+              ],
+              [
+                "The contractor's CEO issuing an oral guarantee that nothing will break for 1 year",
+                false,
+                "Oral promises carry zero legal weight in statutory building occupancy."
+              ],
+              [
+                "Painting the exterior building facade with gold-plated trim",
+                false,
+                "Cosmetic additions do not replace statutory municipal occupancy permits."
+              ],
+              [
+                "Publishing a newspaper advertisement thanking the local politicians",
+                false,
+                "Marketing advertisements have no standing in statutory contract administration."
+              ]
+            ]
+          },
+          {
+            "q": "What cumulative progress percentage can a contractor earn for commissioning after completing integrated cause-and-effect witness testing, but prior to obtaining statutory CEIG, Lift, and Fire NOC clearances?",
+            "o": [
+              [
+                "Maximum 45% cumulative (20% pre-commissioning + 25% integrated witness testing)",
+                true,
+                "Completing pre-commissioning (20%) and integrated testing (25%) brings progress to 45%. The remaining 55% requires CEIG/Lifts/PCB (20%), Fire NOC (20%), and Occupancy Certificate/TOC (15%)."
+              ],
+              [
+                "98% cumulative because government clearances are just paperwork",
+                false,
+                "Treating statutory clearances as 'just paperwork' causes catastrophic hospital opening delays."
+              ],
+              [
+                "100% cumulative because the contractor is not responsible for government inspectors",
+                false,
+                "Contractors are contractually bound to deliver a compliant, legally certifiable building."
+              ],
+              [
+                "Zero percent until all hospital doctors receive their medical board licenses",
+                false,
+                "Contractor commissioning milestones evaluate facility systems, not medical staff licensing."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "The Commissioning & Statutory Rule of Credit is the ultimate safeguard of project controls. Protect the final 35% of the commissioning package until the Fire NOC and Occupancy Certificate are physically in your hands. Never sign the Taking-Over Certificate on an un-certifiable building."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS9);
+const APPLY9 = {
+  "U75": {
+    "task": "Conduct a Comparative Analysis of Percent Complete Types across your project: 1) Select 5 active activities (e.g. concrete slab, ducting, piping, electrical cable, painting); 2) Calculate progress using Duration % Complete [(OD-RD)/OD]; 3) Calculate progress using Physical % Complete based on field deliverables; 4) Contrast the two figures, quantify the progress distortion gap, and document why Duration % misleads executive stakeholders.",
+    "good": [
+      "Compares Duration % Complete against Physical % Complete across real site activities",
+      "Demonstrates mathematical distortion caused by linear elapsed calendar time",
+      "Quantifies the progress gap and exposes hidden site slippages",
+      "Justifies why Physical % Complete is mandatory for defensible Earned Value Management"
+    ],
+    "tmpl": "P6 Percent Complete Comparative Analysis Report:\nActivities Audited (5 Active Scope Items): \n1. Activity Name & Scope: \n   - Duration % Complete Calculation: \n   - Verified Physical % Complete: \n   - Distortion Gap (% Over/Under-reported): \n2. Analysis of the '90% Complete Syndrome' on Site: \n3. Recommendations for PMO Standardization on Physical % Complete: "
+  },
+  "U76": {
+    "task": "Build a Master Rule of Credit (RoC) Architecture for your project: 1) Identify short tasks (< 2 weeks) suitable for the 0/100 Rule; 2) Identify standard tasks suitable for the 50/50 Rule; 3) Design a multi-step milestone gateway for a major production package (e.g. Masonry & Plastering or Waterproofing); 4) Specify mandatory verification documents for each milestone step; 5) Establish the minimum 15% testing holdback gate.",
+    "good": [
+      "Selects appropriate RoC methods (0/100, 50/50, Milestone Step Gates) based on task duration",
+      "Unbundles complex work into 4-6 objective, binary milestone steps",
+      "Binds every percentage increment to an explicit physical verification document",
+      "Enforces a minimum 15-20% holdback for final quality inspection and testing"
+    ],
+    "tmpl": "Master Rule of Credit (RoC) Specification:\n1. 0/100 Rule Application Scope (Short Tasks < 2 Weeks): \n2. 50/50 Rule Application Scope: \n3. Milestone Step-Gate Schedule (Package Name & Scope): \n   - Step 1 (% & Physical Milestone & Verification Doc): \n   - Step 2 (% & Physical Milestone & Verification Doc): \n   - Step 3 (% & Physical Milestone & Verification Doc): \n   - Step 4 (% & Physical Milestone & Verification Doc): \n   - Step 5 (Final Testing Holdback >= 15% & Sign-off Doc): \n4. Contractual Implementation Protocol & Billing Integration: "
+  },
+  "U77": {
+    "task": "Build an RCC Structural Package Rule of Credit Table for floor slab and column casting: 1) Implement the 6-step milestone hierarchy (Staging 15%, Rebar 35%, MEP 10%, Pour Card 5%, Pouring 20%, Stripping & 28d Cube 15%); 2) Detail the inspection criteria for Step 3 MEP embedded conduits; 3) Formulate the mandatory sign-off workflow for the Step 4 Pour Card; 4) Define the protocol for handling 28-day cube strength failures.",
+    "good": [
+      "Adheres to the standardized 6-step structural RCC milestone weights",
+      "Protects structural integrity by requiring MEP boxout clearance before pour",
+      "Enforces the formal Pour Card sign-off gateway before concrete placement",
+      "Holds 15% until 14-day curing and 28-day NABL cube crush test certification"
+    ],
+    "tmpl": "Structural RCC Works Rule of Credit Specification:\n1. 6-Step Milestone Weighting Table (Staging, Rebar, MEP, Pour Card, Pouring, Curing/Cubes): \n2. Step 3 MEP Embedded Conduit Clearance Protocol: \n3. Step 4 Concrete Pour Card Mandatory Sign-Off Matrix: \n4. Step 6 Formwork Stripping, 14-Day Curing & Cube Strength Protocol: \n5. Defective Concrete Remediation & Commercial Penalty Clause: "
+  },
+  "U78": {
+    "task": "Build a Façade & External Envelope Rule of Credit Specification for a unitized glass curtain wall package: 1) Map the 5-step milestone gates (Brackets 15%, Sub-framing 25%, Glass Panels 30%, Weather Silicone 15%, AAMA Water Test 15%); 2) Detail the bracket anchor pull-test criteria; 3) Specify the AAMA 501.2 dynamic water hose testing procedure (pressure, duration, zero-leak criteria); 4) Draft the pre-requisite gate protecting interior fit-outs.",
+    "good": [
+      "Defines the 5-step unitized curtain wall milestone hierarchy summing to 100%",
+      "Incorporates anchor bolt pull-testing and structural alignment verification",
+      "Mandates AAMA 501.2 field water penetration testing carrying 15% weight",
+      "Establishes watertight envelope sign-off before interior drywalls can commence"
+    ],
+    "tmpl": "Façade Unitized Curtain Wall Rule of Credit Specification:\n1. 5-Step Milestone Weighting Table (Embeds, Framing, Panels, Silicone, AAMA Test): \n2. Anchor Bracket Pull-Test & Alignment Criteria: \n3. AAMA 501.2 Field Water Penetration Hose Test Protocol: \n4. Interior Fit-out Protection Gate (Watertightness Sign-off Prerequisite): \n5. Commercial Retention & Punchlist Rectification Terms: "
+  },
+  "U79": {
+    "task": "Build an MEP Piping & HVAC Ducting Rule of Credit Matrix: 1) Establish the 6-step milestone weights (Hangers 15%, Erection 35%, Hydrotest 25%, Flushing 10%, Insulation 10%, Tagging 5%); 2) Specify the 24-hour hydrostatic test parameters (1.5x design pressure, calibrated chart log); 3) Formulate the strict prohibition against premature thermal insulation before testing; 4) Define the handover gate before false ceiling closure.",
+    "good": [
+      "Deploys the 6-step MEP piping milestone structure with 25% hydrotest weighting",
+      "Enforces 24-hour hydrostatic hold test at 1.5x design pressure with zero drop",
+      "Prohibits pipe insulation or ceiling closure before signed hydrotest reports",
+      "Integrates chemical flushing, passivation, and identification tagging"
+    ],
+    "tmpl": "MEP Piping & Ducting Rule of Credit Specification:\n1. 6-Step Milestone Weighting Table (Hangers, Erection, Hydrotest, Flushing, Insulation, Tags): \n2. 24-Hour Hydrostatic / Duct Pneumatic Test Procedure & Pass Criteria: \n3. Thermal Insulation Quality Gate (Prohibition of Pre-Test Insulation): \n4. Pre-requisite Sign-off Gate Before False Ceiling Grid Closure: \n5. System Flushing, Passivation & Water Quality Certification: "
+  },
+  "U80": {
+    "task": "Build an Electrical HT/LT Power Distribution Rule of Credit Specification: 1) Formulate the 5-step milestone gates (Trays 20%, Cable Pulling 30%, Megger Test 20%, Termination 15%, Energization 15%); 2) Detail the Megger insulation resistance testing protocol (1kV/5kV, >= 50 MΩ); 3) Detail the cable dressing, trefoil clamping, and glanding requirements; 4) Map statutory CEIG inspection milestones.",
+    "good": [
+      "Applies the 5-step electrical power distribution milestone weights",
+      "Requires Megger insulation resistance testing (20%) before panel terminations",
+      "Enforces trefoil clamping and proper cable glanding standards",
+      "Links final 15% energization to statutory CEIG clearance"
+    ],
+    "tmpl": "Electrical HT/LT Power Distribution Rule of Credit:\n1. 5-Step Milestone Weighting Table (Trays, Pulling, Megger, Glanding, Energization): \n2. Insulation Resistance (Megger 1kV/5kV) Testing Protocol & Pass Thresholds: \n3. Cable Dressing, Trefoil Clamping & Earthing Continuity Standards: \n4. Switchgear Panel Termination & Phase Rotation Verification: \n5. CEIG Electrical Inspectorate Clearance & Live Energization Gate: "
+  },
+  "U81": {
+    "task": "Build a Modular OT & Cleanroom Rule of Credit Matrix for an operating theatre complex: 1) Deploy the 6-step cleanroom milestone weights (Unistrut 15%, Panels 25%, Conductive Vinyl 20%, Cleanroom Lock 10%, HEPA DOP 15%, ISO Validation 15%); 2) Specify conductive vinyl earthing resistance criteria (< 1 Ohm); 3) Detail the Cleanroom Enclosure Lock criteria; 4) Formulate the in-situ PAO/DOP scan (<= 0.01% leak) and ISO 14644-1 particle count verification protocol.",
+    "good": [
+      "Deploys the 6-step cleanroom milestone structure with 30% testing holdback",
+      "Enforces conductive vinyl earthing resistance testing (< 1 Ohm)",
+      "Protects terminal HEPA filters via the mandatory Cleanroom Enclosure Lock gate",
+      "Establishes ISO 14644-1 non-viable particle count validation criteria"
+    ],
+    "tmpl": "Modular OT & Cleanroom Rule of Credit Specification:\n1. 6-Step Cleanroom Milestone Weighting Table: \n2. Ceiling Unistrut Grid Load Pull-Test (300-500 kg) Protocol: \n3. Conductive Vinyl Earthing Grid (< 1 Ohm) Megohmmeter Test: \n4. Cleanroom Enclosure Lock Criteria (Dust Elimination Sign-Off): \n5. In-situ HEPA Filter PAO/DOP Scan (<= 0.01%) & ISO 14644-1 Particle Validation: "
+  },
+  "U82": {
+    "task": "Build an MGPS Milestone Weighting & Rule of Credit Protocol under HTM 02-01 / NFPA 99: 1) Establish the 5-step milestone gates (Nitrogen Purging Brazing 30%, 24h Pressure Hold 25%, Terminals/AVSU 20%, Anti-Confusion Test 15%, Gas Purity 10%); 2) Detail the continuous dry nitrogen purge quality check; 3) Formulate the 24-hour pneumatic pressure test protocol at 1.5x design pressure; 4) Detail point-by-point cross-connection anti-confusion testing.",
+    "good": [
+      "Applies the 5-step MGPS milestone hierarchy under HTM 02-01 / NFPA 99",
+      "Mandates continuous dry nitrogen purging during all copper brazing",
+      "Enforces 24-hour pneumatic pressure hold testing with zero allowable drop",
+      "Details 100% outlet cross-connection anti-confusion verification"
+    ],
+    "tmpl": "Medical Gas Pipeline System (MGPS) Rule of Credit:\n1. 5-Step Milestone Weighting Table (Purging, Pressure Hold, Outlets, Anti-Confusion, Purity): \n2. Continuous Nitrogen Purge Brazing Quality Control Protocol: \n3. 24-Hour Pneumatic Pressure Hold Test (1.5x Design Pressure, Zero Loss): \n4. 100% Terminal Outlet Cross-Connection Anti-Confusion Testing Procedure: \n5. HTM 02-01 Gas Purity, Dew Point & Clinical Sign-Off Protocol: "
+  },
+  "U83": {
+    "task": "Build a Statutory Permitting & Taking-Over Rule of Credit Schedule for a hospital project: 1) Deploy the 5-step commissioning and statutory milestone gates (Pre-commissioning 20%, Integrated Testing 25%, CEIG/Lifts/PCB 20%, Fire NOC 20%, Occupancy Certificate/TOC 15%); 2) Detail the integrated cause-and-effect live witness testing matrix; 3) Map statutory clearance prerequisites leading to the Fire NOC; 4) Draft the Municipal Occupancy Certificate (OC) condition precedent for final payment.",
+    "good": [
+      "Allocates progressive weights across the 5-step statutory commissioning hierarchy",
+      "Enforces live integrated cause-and-effect systems witness testing",
+      "Links statutory agency clearances (CEIG, Lifts, PCB CTO, Fire NOC)",
+      "Makes the physical Municipal Occupancy Certificate a hard prerequisite for TOC"
+    ],
+    "tmpl": "Statutory Permitting & Taking-Over Rule of Credit Specification:\n1. 5-Step Statutory Commissioning Milestone Weighting Table: \n2. Integrated Systems Cause-and-Effect Witness Test Matrix (Pumps, Dampers, Lifts): \n3. Statutory Clearance Sequencing (CEIG Substation, Lifts, PCB CTO -> Fire NOC): \n4. Municipal Occupancy Certificate (OC) Verification & Legal Gate: \n5. Taking-Over Certificate (TOC) Issuance & Retention Release Schedule: "
+  }
+};
+Object.assign(APPLY, APPLY9);
+UNITS9.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
