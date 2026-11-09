@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=39"></script>
+<script src="shim.js?v=40"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -16298,6 +16298,679 @@ const APPLY12 = {
 };
 Object.assign(APPLY, APPLY12);
 UNITS12.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS13 = [
+  {
+    "id": "U104",
+    "day": 104,
+    "title": "Day 104: Forensic Schedule Autopsy: Diagnosing a Stalled Project (-90 Days Delayed)",
+    "mins": 25,
+    "card": {
+      "id": "c-crisis-autopsy",
+      "title": "Forensic Schedule Autopsy: Diagnosing a Stalled Project (-90 Days Delayed)",
+      "rule": "When a mega project slips by 90+ days, standard variance reports fail because contractors manipulate schedules using hidden floats, artificial relationship lags, and unlinked successor activities. A forensic schedule autopsy requires 4 forensic diagnostic passes: 1) True Critical Path tracing (filtering for Total Float <= 0 under Retained Logic); 2) Float trend decay analysis over the last 3 update periods; 3) Baseline Execution Index (BEI = Completed Tasks / Tasks Scheduled to Complete) and Critical Path Length Index (CPLI = (Remaining Duration + Total Float) / Remaining Duration); 4) Diagnostic identification of 'near-critical paths' with float <= 10 days that will immediately become the new critical path if crashed.",
+      "example": "On a stalled hospital project running 94 days late, an autopsy revealed the contractor was logging 98% progress on non-critical civil painting while the true driving critical path (HVAC chiller piping and Fire NOC) had completely stalled, exposing an unmitigated 94-day critical delay.",
+      "trap": "Relying solely on the contractor's executive summary or Duration % complete, which conceals critical path paralysis behind progressing non-critical tasks."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** You are brought in as the Lead Project Controls Forensic Specialist for a ₹700 Crore, 500-bed university hospital project that is in visible distress.\n\nThe contractor's monthly report claims:\n*\"Overall project physical progress is at 68% against a planned 74%—we are only 6% behind and expect to recover easily next quarter!\"*\n\nHowever, the client board suspects deception. The project was supposed to achieve 'Dry Envelope' 3 months ago, yet rain is still leaking through unfinished roof joints, and no MEP rough-ins have been inspected.\n\nYou open the contractor's latest native Primavera P6 `.XER` file and execute a **Forensic Schedule Autopsy**.\n\n**The Diagnostic Findings:**\n1. **Critical Path Total Float:** $-94\\text{ Calendar Days}$! The project completion milestone has slipped by over 3 months.\n2. **Baseline Execution Index ($BEI$):** Out of 120 activities scheduled to finish by the current Data Date, only **38 activities** actually completed. $BEI = \\frac{38}{120} = \\mathbf{0.32}$ (A score below 0.85 indicates total project execution breakdown).\n3. **Critical Path Length Index ($CPLI$):** $CPLI = \\frac{\\text{Remaining Critical Path Duration} + \\text{Total Float}}{\\text{Remaining Critical Path Duration}} = \\frac{210 + (-94)}{210} = \\mathbf{0.55}$ (Benchmark is $\\ge 0.95$; $0.55$ signals the project is mathematically impossible to complete on time without massive structural intervention).\n4. **Artificial Float Hiding:** The contractor had attached a *\"Mandatory Finish\"* constraint to a non-critical landscaping activity, artificially forcing P6 to show a bogus critical path through garden curbs to hide the fact that the Substation and Medical Gas systems were 94 days behind!"
+      },
+      {
+        "k": "read",
+        "t": "**The 4-Step Forensic Schedule Autopsy Procedure:**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Diagnostic Step       | P6 Analysis Technique & Metrics       | Red Flag Threshold & Forensic Meaning       |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 1. True Critical Path | Filter: Longest Path (or TF <= 0)     | Multiple open ends; activities progressing  |\n| Tracing               | Run F9 under Retained Logic           | out-of-sequence; hidden negative lag tricks.|\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 2. Execution Health   | BEI = Actual Finished / Planned Target| BEI < 0.80: Chronic failure to execute      |\n| Indices               | CPLI = (RD + TF) / RD                 | CPLI < 0.90: Severe critical path erosion.  |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 3. Near-Critical Path | Filter: Total Float between 1 and 10d | High risk: crashing the primary path will   |\n| Identification        | (Secondary & Tertiary float chains)   | immediately shift delay to these paths!     |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 4. Software Setting   | Inspect schedlog.txt for:             | Progress Override active; hard constraints; |\n| & Constraint Audit    | - Calculation mode                    | relationship leads (negative lags);         |\n|                       | - Hard constraints (Mandatory Finish) | invalid calendars assigned to driving tasks.|\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Boardroom Deliverable:**\nA Forensic Schedule Autopsy strips away contractor propaganda. It presents the exact driving chain of delayed activities, proves that non-critical progress was used to mask critical failure, and calculates the precise net recovery days required."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "During a forensic schedule autopsy of a delayed hospital project, the planner calculates a Baseline Execution Index (BEI) of 0.35 and a Critical Path Length Index (CPLI) of 0.58. What do these metrics prove?",
+            "o": [
+              [
+                "The project is in acute systemic failure: the contractor is completing only 35% of planned baseline tasks, and critical path recovery is mathematically impossible without radical restructuring",
+                true,
+                "A BEI of 0.35 indicates massive execution failure (healthy >= 0.95), and CPLI of 0.58 confirms severe critical path erosion (healthy >= 0.95)."
+              ],
+              [
+                "The project is 35% ahead of schedule and will finish 58 days early",
+                false,
+                "Both indices are far below 1.0, indicating catastrophic delay, not early completion."
+              ],
+              [
+                "The contractor has saved 35% of the project budget",
+                false,
+                "BEI and CPLI measure schedule execution efficiency, not financial cost savings."
+              ],
+              [
+                "P6 software has run out of memory and needs to be restarted",
+                false,
+                "These are standard DCMA and forensic project controls performance metrics."
+              ]
+            ]
+          },
+          {
+            "q": "Why must a forensic schedule auditor identify 'near-critical paths' (Total Float between 1 and 10 days) before approving an acceleration or crashing plan?",
+            "o": [
+              [
+                "Because crashing the primary critical path will immediately cause near-critical paths to become the new driving critical path, rendering further crashing on the primary path useless unless both are accelerated simultaneously",
+                true,
+                "If the primary path is -90 days and a parallel secondary path has only +4 days of float, recovering 10 days on the primary path will cause the secondary path to dictate project finish!"
+              ],
+              [
+                "Because near-critical paths do not require any materials or labor",
+                false,
+                "All construction activities require materials and resources."
+              ],
+              [
+                "Because IS 1200 forbids measuring activities that have float between 1 and 10 days",
+                false,
+                "IS 1200 governs physical bill of quantities measurement, not CPM float logic."
+              ],
+              [
+                "Because near-critical paths automatically double the contract price",
+                false,
+                "Float values indicate time flexibility, not automatic contract cost inflation."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never believe a progress percentage when a project feels out of control. Conduct a 4-step forensic schedule autopsy: filter for the true driving longest path under Retained Logic, compute BEI and CPLI, audit hard constraints in schedlog.txt, and map secondary near-critical paths."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U105",
+    "day": 105,
+    "title": "Day 105: Re-Sequencing & Fast-Tracking: Safe Logic Restructuring & Vertical Laddering",
+    "mins": 25,
+    "card": {
+      "id": "c-crisis-fasttrack",
+      "title": "Re-Sequencing & Fast-Tracking: Safe Logic Restructuring & Vertical Laddering",
+      "rule": "Fast-tracking compresses schedule duration by performing activities in parallel that were originally planned in series. Unlike simple duration crashing, fast-tracking introduces severe coordination and rework risks. Safe logic re-sequencing rules: 1) Structural curing cannot be compromised (IS 456); 2) Vertical laddering (converting Finish-to-Start into Start-to-Start with minimum lag L_min = Production Rate * Lead Floor Buffer) requires maintaining a minimum 2-floor safety and curing separation; 3) Internal finishes and drywalls can be decoupled from the external façade only if temporary perimeter weather protection (shrink-wrap/tarpaulins) is installed to prevent monsoon water damage.",
+      "example": "Vertical laddering of MEP risers with structural slabs (SS with 2-floor buffer) alongside temporary façade shrink-wrapping recovered 45 days on the hospital critical path without a single rain-damaged drywall or structural incident.",
+      "trap": "Overlapping wet trade finishes with upper-floor structural concrete pours without weather protection, leading to ruined drywall, rusted MEP conduits, and complete rework."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** When faced with a 90-day critical path delay on an 8-story hospital project, the contractor suggested an aggressive recovery plan:\n\n*\"We will start masonry, gypsum drywall partitions, and electrical conduit wiring on Floors 1, 2, and 3 immediately tomorrow, while our civil teams continue pouring the reinforced concrete slabs on Floors 6, 7, and 8 above!\"*\n\nOn paper, this saved **55 calendar days** by converting traditional Finish-to-Start (FS) relationships into parallel Start-to-Start (SS) fast-tracking.\n\nThe PMC Project Controls Manager immediately raised red flags:\n1. **Water Ingress & Rework Risk:** The external unitized glass façade had not been installed. The monsoon season was starting in 3 weeks. If rainwater enters unfinished window openings, all installed gypsum drywall partitions, acoustic ceiling tiles, and mineral wool insulation will absorb water, grow mold, and require **100% demolition and replacement**!\n2. **Structural Live Load & Dropping Debris:** Pouring concrete and flying aluminum formwork tables on Floor 7 creates severe vibration and the risk of falling concrete slurry, nails, or tools through MEP vertical service shafts onto workers below.\n\nFast-tracking is not just changing arrows in Primavera P6; it is an industrial re-engineering operation that requires strict physical safety buffers and weather protection."
+      },
+      {
+        "k": "read",
+        "t": "**The Safe Fast-Tracking & Vertical Laddering Protocol:**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Re-sequencing Strategy| Engineering Safeguard Required        | Hard Safety & Quality Rule                  |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Vertical Trade        | Structural floor buffer: minimum 2    | Never work directly beneath a live concrete |\n| Laddering (SS + Lag)  | floors between wet concrete & fit-out | pour; cover shafts with 50mm timber lids.   |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Internal Finishes     | Temporary perimeter weatherproofing   | Heavy-duty 250-micron reinforced poly sheets|\n| before Façade Glass   | (Weather-tight envelope simulation)   | clamped over window openings prior to board.|\n+-----------------------+---------------------------------------+---------------------------------------------+\n| MEP Risers before     | Core drill sleeves cast in slab;      | Firestop collars and watertight bunds around|\n| Plant Room Equipment  | Risers prefabricated in 3-story spools| floor penetrations to prevent water cascades|\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Modular Bathroom Pods | Delivered fully fitted & tiled;       | Hoisted onto slab edge BEFORE perimeter     |\n| (Off-site Prefab)     | Rolled into place via pallet jacks    | walls or façade framing are erected.        |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Laddering Lag Formula:**\nWhen laddering trades (e.g. Structure $\\rightarrow$ MEP Rough-ins $\\rightarrow$ Drywall), calculate the mandatory lead lag ($L_{SS}$) as:\n$L_{SS} = N_{\\text{floors buffer}} \\times T_{\\text{floor cycle time}}$\nIf floor cycle time is 7 days and minimum safety buffer is 2 floors, $L_{SS} = 2 \\times 7 = \\mathbf{14\\text{ days}}$. Setting a 0-day lag or 2-day lag is a suicidal planning error!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the primary physical risk of fast-tracking internal gypsum drywall partitions and electrical cabling before the building's exterior façade or windows are sealed?",
+            "o": [
+              [
+                "Monsoon rainfall and wind-driven water will penetrate open window reveals, soaking gypsum boards and insulation, causing mold contamination and requiring complete demolition and replacement",
+                true,
+                "Gypsum drywall and acoustic insulation disintegrate when exposed to rain; internal finishes require a weather-tight envelope (permanent or temporary) before installation."
+              ],
+              [
+                "Gypsum partitions will explode due to high atmospheric oxygen levels",
+                false,
+                "Gypsum is non-explosive and inert."
+              ],
+              [
+                "Primavera P6 will refuse to save the schedule file if windows are missing",
+                false,
+                "P6 does not inspect physical site weatherization."
+              ],
+              [
+                "The building foundation will settle by 500mm due to drywall weight",
+                false,
+                "Drywall is lightweight construction and does not cause foundation settlement."
+              ]
+            ]
+          },
+          {
+            "q": "When converting a traditional Finish-to-Start (FS) relationship between structural concrete and interior MEP trades into a Start-to-Start (SS) vertical laddering relationship, what is the mandatory safety buffer?",
+            "o": [
+              [
+                "Maintain a minimum 2-floor vertical separation buffer with sealed shaft openings to protect finishing trades from overhead concrete slurry, dropped tools, and formwork vibration",
+                true,
+                "A 2-floor separation ensures that curing and formwork stripping on upper floors do not compromise safety or quality for finishing trades working below."
+              ],
+              [
+                "Zero days buffer so electricians can hold the wet concrete formwork while it is being poured",
+                false,
+                "Extremely dangerous and violates all basic construction safety norms."
+              ],
+              [
+                "A 10-year buffer to ensure complete carbonation of the concrete",
+                false,
+                "Waiting 10 years would make hospital construction impossible."
+              ],
+              [
+                "Buffers are only required if the building is painted in red color",
+                false,
+                "Color is irrelevant; this is an occupational health, safety, and structural integrity mandate."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Fast-tracking without physical safeguards is just planning future rework. When laddering trades vertically, enforce a minimum 2-floor safety buffer, seal all vertical service penetrations, and never start moisture-sensitive interior finishes without a verified weather-tight envelope."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U106",
+    "day": 106,
+    "title": "Day 106: Resource Crashing Economics: The Cost-per-Day-Saved Frontier & Marginal Productivity",
+    "mins": 25,
+    "card": {
+      "id": "c-crisis-crashing",
+      "title": "Resource Crashing Economics: The Cost-per-Day-Saved Frontier & Marginal Productivity",
+      "rule": "Crashing compresses critical path activity durations by adding resources (overtime, second shifts, additional equipment). The Crash Cost Slope dictates optimization: S = (C_c - C_n) / (D_n - D_c), where C_c is crash cost, C_n is normal cost, D_n is normal duration, and D_c is minimum crash duration. Crashing must ONLY target activities strictly on the critical path, selecting activities with the lowest crash cost slope first. As manpower density increases beyond 1 worker per 10 m², Brooks's Law / MCAA trade crowding factors erode marginal labor productivity by 20% to 40%, creating negative returns.",
+      "example": "On a critical path with 3 activities, crashing Activity A cost ₹40,000/day, Activity B cost ₹1,20,000/day, and Activity C cost ₹2,50,000/day. Crashing A by 15 days and B by 10 days recovered 25 days for ₹18 Lakhs, avoiding ₹1.2 Cr in delay liquidated damages.",
+      "trap": "Crashing non-critical activities, which burns cash and increases project expenditure without recovering a single calendar day of project completion delay."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** The Project Director of a delayed hospital project announced: *\"We are 30 days behind schedule. I have authorized ₹2 Crores in emergency acceleration funds. I want every contractor to work double shifts and 7 days a week starting tomorrow!\"*\n\nFour weeks later, the ₹2 Crores were spent, the labor payroll had exploded, and the project was **still 28 days behind schedule**!\n\n**What went wrong?**\n1. **Crashing the Wrong Activities:** The site team added 50 painters and 40 tilers to architectural finishing in Basement 2—which had **35 days of positive float**! Accelerating non-critical activities consumed ₹60 Lakhs but did not move the project completion date by a single second.\n2. **Ignoring the Cost Slope:** On the true critical path (Substation HT Cabling), they deployed an expensive helicopter crane instead of simply adding a second shift of cable pullers, paying 5 times the necessary cost-per-day-saved.\n3. **Trade Stacking & Congestion:** They crammed 60 electricians into a 200 m² ICU ceiling corridor. Workers were tripping over each other's ladders and fighting over scaffolding. Productivity dropped from 8 meters of conduit per hour down to **2.5 meters per hour**!\n\nCrashing is a rigorous mathematical optimization discipline. If you do not calculate the **Cost Slope**, you are simply throwing money into a black hole."
+      },
+      {
+        "k": "read",
+        "t": "**The Cost-per-Day-Saved Optimization Model:**\n\n```\n+-----------------------+------------+------------+------------+------------+-------------------------+\n| Critical Activity     | Normal Dur | Crash Dur  | Normal Cost| Crash Cost | Cost Slope (₹ / Day)    |\n|                       | (D_n days) | (D_c days) | (C_n ₹)    | (C_c ₹)    | S = (C_c - C_n)/(D_n-D_c)|\n+-----------------------+------------+------------+------------+------------+-------------------------+\n| Act 1: Chilled Water  | 40 days    | 25 days    | ₹30 Lakhs  | ₹36 Lakhs  | ₹40,000 / day (LOWEST)  |\n| Act 2: MOT Wall Panels| 30 days    | 20 days    | ₹50 Lakhs  | ₹62 Lakhs  | ₹1,20,000 / day (MEDIUM)|\n| Act 3: CEIG Testing   | 20 days    | 15 days    | ₹20 Lakhs  | ₹35 Lakhs  | ₹3,00,000 / day (HIGH)  |\n+-----------------------+------------+------------+------------+------------+-------------------------+\n```\n\n**The Crashing Algorithm:**\n1. Identify the **Current Critical Path** (activities with Total Float $\\le 0$).\n2. Compute the Cost Slope $S$ for every critical activity.\n3. Crash the activity with the **lowest Cost Slope first** (Activity 1: recovers 15 days at ₹40k/day = ₹6 Lakhs).\n4. Check if a parallel path has become critical. If not, crash the next lowest (Activity 2: recovers 10 days at ₹120k/day = ₹12 Lakhs).\n5. **Stop crashing** when the marginal cost-per-day-saved exceeds the daily rate of Liquidated Damages or employer prolongation loss!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why is it an unforgivable project controls mistake to crash (accelerate) activities that possess positive total float?",
+            "o": [
+              [
+                "Because accelerating non-critical activities expends additional labor and overtime budget without recovering a single calendar day of overall project completion milestone delay",
+                true,
+                "Only activities on the critical path dictate the final project completion date; speeding up an activity that already has float only creates more float while wasting money."
+              ],
+              [
+                "Because non-critical activities are legally exempt from safety regulations",
+                false,
+                "Safety regulations apply universally to all construction activities."
+              ],
+              [
+                "Because positive float activities automatically turn into negative float if worked on at night",
+                false,
+                "Float calculations depend on network logic and durations, not the time of day work is performed."
+              ],
+              [
+                "Because Indian tax authorities impose a 200% GST fine on non-critical overtime",
+                false,
+                "GST applies normally to construction contracts; this is a pure scheduling and financial controls rule."
+              ]
+            ]
+          },
+          {
+            "q": "On a hospital project, Activity X has normal duration of 30 days costing ₹20 Lakhs and crash duration of 20 days costing ₹26 Lakhs. Activity Y has normal duration of 40 days costing ₹40 Lakhs and crash duration of 30 days costing ₹52 Lakhs. Both are on the critical path. Which activity should be crashed first?",
+            "o": [
+              [
+                "Activity X, because its cost slope of ₹60,000/day is lower than Activity Y's cost slope of ₹1,20,000/day, delivering faster schedule recovery at half the daily cost",
+                true,
+                "Cost slope for X = (26 - 20) / (30 - 20) = ₹60,000/day. Cost slope for Y = (52 - 40) / (40 - 30) = ₹1,20,000/day. Always crash the lower cost slope first."
+              ],
+              [
+                "Activity Y, because spending more money impresses the client board faster",
+                false,
+                "Project controls optimizes cost efficiency, not reckless expenditure."
+              ],
+              [
+                "Neither activity can be crashed because durations cannot be reduced in construction",
+                false,
+                "Durations can be crashed through additional shifts, overtime, and prefabricated components."
+              ],
+              [
+                "Both activities should be completely deleted from the schedule",
+                false,
+                "Deleting contractual scope is not schedule crashing."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Schedule crashing is an economic frontier. Never crash across the board; calculate the Cost Slope ($S = \\Delta C / \\Delta D$), target only driving critical path tasks, prioritize the lowest cost-per-day-saved, and stop when marginal crashing costs exceed daily liquidated damages."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U107",
+    "day": 107,
+    "title": "Day 107: Supply Chain Bottlenecks: Long-Lead Hospital Equipment & Customs Import Rescue",
+    "mins": 25,
+    "card": {
+      "id": "c-crisis-supplychain",
+      "title": "Supply Chain Bottlenecks: Long-Lead Hospital Equipment & Customs Import Rescue",
+      "rule": "Hospital critical paths are vulnerable to overseas procurement lead times (chillers, medical air compressors, specialized surgical lights, MRI helium, lead glass). When maritime shipping disruptions or customs clearance delays threaten project completion, Project Controls Managers deploy 4 supply chain rescue mechanisms: 1) Split-shipping / Air-freighting internal sub-assemblies (compressor heads, electronic control panels) while shipping heavy casings by sea; 2) Procuring localized temporary rental units (e.g. rental mobile chillers or DG sets) to enable pre-commissioning; 3) Parallel customs bonding and advance Bill of Entry filing; 4) Offsetting expedite costs against liquidated damages exposure.",
+      "example": "When imported European water-cooled chillers were delayed 8 weeks at port, mobilizing two temporary 250-TR air-cooled rental chillers on site allowed HVAC flushing, duct testing, and MOT air balancing to proceed on schedule, preventing ₹80 Lakh in hospital opening delay.",
+      "trap": "Assuming ocean freight transit times are fixed and waiting passively at site, allowing customs hold-ups to consume all float and trigger months of delay."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A 500-bed multispecialty hospital in Bengaluru was 12 weeks away from its scheduled opening. The entire MEP distribution network was installed, but the heart of the central plant—**three 600-TR centrifugal chillers imported from Germany**—was stuck.\n\nA global maritime shipping strike delayed the container vessel by 6 weeks, and upon arrival at Chennai port, customs flagged the shipment for complex technical valuation review, projecting another 3 to 4 weeks of port storage!\n\nWithout chilled water:\n- HVAC Air Handling Units (AHUs) could not produce cold air.\n- The Modular Operating Theatres could not undergo TABS air balancing or particle count validation.\n- The 3.0-Tesla MRI scanner could not be powered up because its superconducting magnet helium compressor requires continuous $7^\\circ\\text{C}$ chilled water to prevent liquid helium 'quench' boiling!\n\nThe contractor threw their hands up: *\"This is Force Majeure! We cannot control international shipping or Indian Customs. We are entitled to an 8-week Extension of Time.\"*\n\nIf the client accepts an 8-week delay, the hospital misses its seasonal opening, forfeits ₹6 Crores in projected clinical revenue, and faces doctor cancellation penalties. How does an elite Project Controls Lead break the supply chain deadlock?"
+      },
+      {
+        "k": "read",
+        "t": "**The 4-Pillar Supply Chain Rescue Framework:**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Rescue Mechanism      | Operational Action                    | Schedule & Cost Benefit                     |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 1. Temporary Rental   | Mobilize localized rental chillers/   | Decouples system testing from import date;  |\n| Bridging              | DGs connected to building manifolds   | enables TABS & pre-commissioning on time.   |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 2. Split-Freight &    | Air-freight critical micro-components | Recovers 25 to 30 days of maritime transit; |\n| Air Expediting        | (VFDs, controls, valves); sea for iron| cost offset against daily LD exposure.      |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 3. Advance Customs    | File Advance Bill of Entry (Sec 46);  | Eliminates port dwell time; cargo cleared   |\n| Bonding (Section 59)  | Transfer under bond to CFS warehouse  | within 24–48 hours under provisional duty.  |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 4. Factory Acceptance | Remote virtual live FAT witnessing via| Releases shipping approval immediately      |\n| Test (FAT) Streaming  | calibrated digital instrumentation    | without 2-week international travel delay.  |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Commercial Trade-off Calculation:**\n$\\text{Daily LD Rate} = 0.05\\% \\times ₹600\\text{ Cr} = ₹30\\text{ Lakhs / day}$\n$\\text{Cost of 2-Month Rental Mobile Chillers} = ₹18\\text{ Lakhs (Total)}$\nSpending ₹18 Lakhs on temporary rental equipment saves **₹1.8 Crores** in potential liquidated damages and preserves the clinical opening milestone!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "When long-lead imported central chillers are delayed at port and threaten to halt HVAC commissioning and hospital opening, what is the most effective project controls recovery action?",
+            "o": [
+              [
+                "Mobilize temporary localized rental chillers connected to the primary pipe manifold to permit immediate pipe flushing, duct testing, and cleanroom air balancing without waiting for permanent equipment delivery",
+                true,
+                "Temporary rental units decouple downstream commissioning from overseas shipping delays, protecting the clinical opening milestone at a fraction of the cost of delay."
+              ],
+              [
+                "Cancel the air conditioning entirely and install ceiling fans in the Operating Theatres",
+                false,
+                "Ceiling fans are strictly prohibited in surgical suites under NABH and ISO cleanroom rules."
+              ],
+              [
+                "Halt all construction across the entire hospital for 6 months until the ship arrives",
+                false,
+                "Shutting down the entire project causes massive commercial disaster."
+              ],
+              [
+                "Order the contractor to fabricate centrifugal chillers by hand on site using scrap sheet metal",
+                false,
+                "Precision chiller compressors cannot be handmade on a construction jobsite."
+              ]
+            ]
+          },
+          {
+            "q": "Under Indian Customs regulations, what procedural mechanism allows critical imported hospital equipment to be moved out of congested sea ports within 48 hours to avoid weeks of assessment delays?",
+            "o": [
+              [
+                "Filing an Advance Bill of Entry prior to vessel arrival and executing a Customs Section 59 Warehouse Bond for provisional clearance to an inland facility",
+                true,
+                "Advance filing and bonded warehouse clearance allow immediate cargo movement from port quays, deferring final assessment disputes without holding up site delivery."
+              ],
+              [
+                "Declaring that the medical equipment is personal luggage of the site engineer",
+                false,
+                "Falsifying customs declarations is illegal and will lead to cargo confiscation."
+              ],
+              [
+                "Waiting at the port gate and honking truck horns until customs officers open the barrier",
+                false,
+                "Customs clearance requires statutory legal filings, not physical site protests."
+              ],
+              [
+                "Smuggling 8-ton chillers across the beach at night",
+                false,
+                "Smuggling is criminal and impossible for multi-ton industrial machinery."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Supply chain disruptions cannot be solved by staring at shipping tracking websites. Deploy proactive workarounds: mobilize temporary rental plants to enable pre-commissioning, split-ship electronic controls by air, and leverage customs bonding to keep the master critical path moving."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U108",
+    "day": 108,
+    "title": "Day 108: Contractor Default, Cure Notice (FIDIC 15.2 / CPWD Cl 3) & Risk-and-Cost Tendering",
+    "mins": 25,
+    "card": {
+      "id": "c-crisis-termination",
+      "title": "Contractor Default, Cure Notice (FIDIC 15.2 / CPWD Cl 3) & Risk-and-Cost Tendering",
+      "rule": "When a contractor fails to proceed with due diligence (FIDIC Sub-Clause 8.1 / CPWD Clause 5) and falls irrecoverably behind, termination for default (FIDIC 15.2 / CPWD Clause 3) is the nuclear option. Mandatory legal sequence: 1) Issue formal Notice to Correct (FIDIC 15.1, granting 14–28 days to cure specific breaches); 2) Joint measurement inventory of works completed and materials on site within 7 days of termination; 3) Seizure of contractor equipment, temporary works, and encashment of Performance Bank Guarantees; 4) Re-tendering remaining scope on a 'Risk and Cost' basis, holding the defaulting contractor legally liable for any financial excess.",
+      "example": "Following chronic abandonment by an MEP contractor, the employer issued a 14-day FIDIC 15.1 Notice to Correct, executed joint MB inventory, encashed the ₹8 Cr Performance BG, and re-tendered remaining work under Risk-and-Cost, recovering the ₹3.5 Cr cost differential from the contractor in court.",
+      "trap": "Terminating a contractor without establishing a documented Notice to Correct record or conducting joint inventory, exposing the employer to unlawful termination damages in court."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹500 Crore government hospital project, the primary MEP subcontractor began slowing down. Manpower on site plummeted from 280 electricians down to 25. Equipment deliveries stopped. The subcontractor blamed cash flow and demanded an uncontracted ₹5 Crore advance payment.\n\nThe project was falling behind by **1.5 days for every calendar day that passed**.\n\nThe frustrated Employer representative announced in a meeting:\n*\"Get off my site! You are fired! We are locking the gates today and bringing in a new contractor tomorrow!\"*\n\n**The Legal Catastrophe:**\nThe contractor immediately approached the High Court, alleging **unlawful, wrongful termination**:\n1. The Employer had failed to serve a contractually mandated **Notice to Correct** under FIDIC Sub-Clause 15.1 (or CPWD Clause 3), depriving the contractor of their statutory 14-day cure period.\n2. No **joint inventory measurement** was recorded, allowing the contractor to claim that ₹15 Crores of unbilled materials were left on site.\n3. The High Court granted an **interim stay order** halting all work on site for 6 months until arbitration commenced!\n\nTermination for default is construction's nuclear weapon. If you do not follow the exact legal protocol, the weapon will explode in your own hands."
+      },
+      {
+        "k": "read",
+        "t": "**The 4-Stage Legal Termination Protocol (FIDIC 15 / CPWD Cl 3):**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Procedural Stage      | Governing Clause & Legal Action       | Mandatory Evidence & Documentation          |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Stage 1: Notice to    | FIDIC 15.1 / CPWD Clause 3            | Specify exact contractual failures          |\n| Correct               | Formal notice granting 14–28 days cure| (manpower deficiency, missed milestones);   |\n|                       | period to remedy specific defaults    | cite DPR headcount and schedule drift.      |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Stage 2: Notice of    | FIDIC 15.2 / CPWD Clause 3            | Formal notice terminating contract;         |\n| Termination           | Served upon expiry of cure period     | grounds: failure to proceed with due        |\n|                       | with zero demonstrable remedy         | diligence or persistent defiance of notices.|\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Stage 3: Joint Site   | FIDIC 15.3 / CPWD Works Manual        | Detailed joint survey within 7 days;        |\n| Inventory & Freezing  | Freeze gates; measure all completed   | Record every loose pipe, cable drum, and    |\n|                       | works and materials on site           | tool in official Measurement Book (MB).     |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Stage 4: BG Call &    | Encash Performance Bank Guarantee    | Retender balance scope on 'Risk and Cost' of|\n| Risk-and-Cost Tender  | (FIDIC 4.2); re-tender remaining scope| defaulting contractor; difference recoverable|\n|                       | via expedited emergency bidding       | from contractor's unpaid dues or in court.  |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Golden Rule of Inventory:**\nIf the defaulting contractor refuses to attend the joint measurement, issue a 48-hour final notice, engage an independent chartered surveyor, and video-record the entire site inventory with timestamped footage. This prevents bogus claims for 'lost materials' in arbitration."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under FIDIC Sub-Clause 15.1 / 15.2 and standard construction contract law, what is the mandatory legal prerequisite before an Employer can lawfully terminate a contractor for default?",
+            "o": [
+              [
+                "The Engineer/Employer must issue a formal Notice to Correct (Sub-Clause 15.1) specifying the exact contractual failures and granting a reasonable cure period (typically 14 to 28 days) to remedy the breach",
+                true,
+                "Termination for default without prior formal notice to correct is legally considered wrongful repudiation by the employer, entitling the contractor to massive damages."
+              ],
+              [
+                "The Employer must pay the contractor a 50% bonus as a polite farewell gift",
+                false,
+                "Employers are not required to pay bonuses to defaulting contractors."
+              ],
+              [
+                "The Employer must delete the Primavera P6 schedule file permanently",
+                false,
+                "Schedule files must be preserved as crucial contemporaneous evidence for dispute resolution."
+              ],
+              [
+                "The Employer must wait until the entire building collapses on its own",
+                false,
+                "Contracts provide specific remedies for persistent failure to proceed with due diligence."
+              ]
+            ]
+          },
+          {
+            "q": "What does re-tendering remaining project works on a 'Risk and Cost' basis mean after terminating a defaulting contractor?",
+            "o": [
+              [
+                "The Employer hires a replacement contractor to complete the remaining scope, and any financial cost excess over the original contract value is legally recovered from the defaulting contractor",
+                true,
+                "Under standard risk-and-cost clauses, the defaulting party bears the commercial burden of the extra costs incurred to finish their unfinished work."
+              ],
+              [
+                "The new contractor works completely for free with zero cost to anyone",
+                false,
+                "Replacement contractors must be paid market rates."
+              ],
+              [
+                "The Employer gives up ownership of the hospital building to the bank",
+                false,
+                "Risk and cost is a contractor liability mechanism, not a property surrender."
+              ],
+              [
+                "All future engineering risks are transferred to local municipal ward officers",
+                false,
+                "Municipal officers are regulatory authorities, not commercial guarantors."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Termination for default requires military-grade procedural precision. Always issue a formal 14-day Notice to Correct, conduct exhaustive joint MB inventories with video evidence, encash Performance BGs, and re-tender strictly on a 'Risk and Cost' basis."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U109",
+    "day": 109,
+    "title": "Day 109: Interim Forensic Claims Defense: Defeating Multi-Crore Delay Claims under Retained Logic",
+    "mins": 25,
+    "card": {
+      "id": "c-crisis-claimdefense",
+      "title": "Interim Forensic Claims Defense: Defeating Multi-Crore Delay Claims under Retained Logic",
+      "rule": "Stalled contractors invariably submit massive delay and prolongation claims (blaming late drawing releases or delayed client decisions) to shield themselves from Liquidated Damages. Forensic schedule rebuttal uses the 4-Gate Defense: Gate 1 (Condition Precedent): Verify if notice was served within 28 days (FIDIC 20.1); Gate 2 (Critical Path Proof): Run Time-Impact Analysis (TIA) under Retained Logic to verify if the alleged event drove the master completion milestone; Gate 3 (True Concurrency): Prove that contractor's own resource shortages drove the path simultaneously; Gate 4 (Financial Substantiation): Disallow unvouched overhead markups and apply actual audited payroll records.",
+      "example": "A contractor claimed ₹28 Cr prolongation for a 120-day delay in GFC drawings. The forensic defense proved: 1) Notice was served 42 days late (barred); 2) Retained Logic TIA proved the drawing delay had 18 days of float; 3) Manpower was 60% below baseline. Net claim awarded: ₹0.",
+      "trap": "Rejecting a contractor's claim with a 1-line dismissal letter without forensic fragnet proof, inviting immediate adverse arbitral awards."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** As the project neared its original contractual completion date running 110 days late, the primary civil contractor submitted a massive **₹34 Crore Extension of Time and Prolongation Cost Claim**.\n\nThe contractor's claim package contained 8 thick binders alleging:\n- The Employer was 45 days late in releasing the Good-for-Construction (GFC) drawings for the 4th-floor Operation Theatre structural slab.\n- The Employer delayed approvals for the specialized Façade Mockup by 60 days.\n- Therefore, the Employer is solely responsible for 105 days of project delay, owes **₹34 Crores** in site prelims and head office overheads, and cannot levy a single rupee of Liquidated Damages!\n\nThe Employer's Chief Executive called you in:\n*\"Are we really liable for ₹34 Crores? Did our team ruin this project?\"*\n\nAs the PMC Project Controls Claims Specialist, you do not write an emotional letter. You execute a **4-Gate Forensic Defense** under the SCL Delay Protocol 2nd Edition."
+      },
+      {
+        "k": "read",
+        "t": "**The 4-Gate Forensic Claims Defense Matrix:**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Defense Gate          | Legal / Technical Principle           | Forensic Audit Rebuttal Finding             |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Gate 1: Notice        | FIDIC 20.1 / CPWD Clause 5            | Event occurred on 12 Jan; formal notice     |\n| Condition Precedent   | Mandatory 28-day notice bar           | served on 18 March (65 days later!).        |\n|                       | (Strict awareness bar rule)           | -> CLAIM IS TIME-BARRED UNDER CONTRACT.     |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Gate 2: Critical Path | SCL Protocol Core Principle 4         | Fragnet inserted into contemporary XER:     |\n| Driving Delay Test    | Run F9 under RETAINED LOGIC           | 4th floor GFC drawings had +22 days float;  |\n|                       |                                       | -> EVENT NEVER DROVE CONTRACT COMPLETION.   |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Gate 3: True          | SCL Protocol Core Principle 10        | Contemporaneous DPR audit reveals:          |\n| Concurrency Defense   | Employer drawing delay overlapped with| Rebar crew was mobilized at only 30% of plan|\n|                       | contractor's critical labor shortage  | -> ZERO PROLONGATION COSTS OWED.            |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Gate 4: Financial     | Indian Contract Act Section 73        | Rejected Hudson formula; contractor failed  |\n| Audit & Vouching      | Actual incurred loss rule             | to prove lost overhead opportunity;         |\n|                       | (Proof of audited vouchers)           | -> UNVOUCHED HOOH CLAIMS STRUCK OUT.        |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Engineer's Determination:**\nInstead of a vague rejection, you issue a 25-page **Forensic Schedule Determination** complete with before-and-after CPM fragnets, daily labor histograms, and drawing log timestamps. The contractor's legal counsel reviews the report, withdraws the arbitration notice, and commits to a negotiated completion schedule."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under the SCL Delay Protocol 2nd Edition and modern construction contract arbitration, what is the effect of demonstrating 'True Concurrency' during an alleged Employer delay window?",
+            "o": [
+              [
+                "The contractor may be entitled to an Extension of Time (time relief against Liquidated Damages) under the Prevention Principle, but is entitled to ZERO prolongation costs for the concurrent delay period",
+                true,
+                "Under SCL Core Principle 10, when employer delay and contractor delay overlap concurrently on the critical path, the contractor cannot recover money (prolongation costs) because they would have incurred those site prelims anyway due to their own delay."
+              ],
+              [
+                "The contractor is awarded double the financial compensation",
+                false,
+                "Concurrency defeats delay cost claims, never doubles them."
+              ],
+              [
+                "The Employer must immediately transfer 50% company shares to the contractor",
+                false,
+                "This is commercially absurd and legally impossible."
+              ],
+              [
+                "The contract is automatically cancelled by the Supreme Court",
+                false,
+                "Concurrency is evaluated within standard contractual claims determination."
+              ]
+            ]
+          },
+          {
+            "q": "Why must a forensic claims auditor reject an unvouched Head Office Overhead (HOOH) claim calculated purely using the theoretical Hudson Formula?",
+            "o": [
+              [
+                "Because under Indian Contract Act Section 73 and modern arbitration law, theoretical mathematical formulas cannot replace evidence; the contractor must prove actual overhead costs incurred and demonstrable loss of other revenue-generating project opportunities",
+                true,
+                "Indian Supreme Court rulings (e.g. McDermott International, Kailash Nath) require proof of actual loss; formulaic theoretical claims without audited financial ledgers are legally unsustainable."
+              ],
+              [
+                "Because Hudson formula was invented for maritime wooden ships and cannot be used on land",
+                false,
+                "Hudson formula is a construction claims formula, but it assumes theoretical profitability without proving actual loss."
+              ],
+              [
+                "Because overhead costs are prohibited by the World Health Organization",
+                false,
+                "WHO has no jurisdiction over construction contract overheads."
+              ],
+              [
+                "Because contractors are not allowed to have head offices in India",
+                false,
+                "Contractors maintain corporate headquarters; they simply must prove their actual accounting losses."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Defeating bogus delay claims requires forensic rigor, not anger. Apply the 4-Gate Defense: enforce the 28-day notice time-bar, prove lack of critical path impact under Retained Logic, establish concurrent contractor defaults, and strike out unvouched overhead formulas under Section 73."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U110",
+    "day": 110,
+    "title": "Day 110: Re-Baselining Governance: Negotiating B2/B3 Baselines with Boards & Lenders",
+    "mins": 25,
+    "card": {
+      "id": "c-crisis-rebaseline",
+      "title": "Re-Baselining Governance: Negotiating B2/B3 Baselines with Boards & Lenders",
+      "rule": "Re-baselining (creating Target Baseline B2 or B3) is NOT an excuse to erase past failures. In project controls governance, re-baselining is legitimate only under 3 conditions: 1) Formal Extension of Time (EOT) awarded; 2) Major scope addition approved via Variation Order (FIDIC Clause 13); 3) Formal tripartite recovery agreement between Employer, Contractor, and Lenders' Consortium. Golden rule: NEVER overwrite or delete the approved Original Baseline (B1). Maintain B1 permanently in P6 as the contractual benchmark for historical variance and dispute resolution, while using B2 for forward-looking operational control.",
+      "example": "Following a formal 45-day EOT award, the project controls team created Baseline B2 (Target Recovery). They locked B1 (Original Contract) as 'Project Baseline' for arbitral claims and assigned B2 as 'User Baseline 1' for tracking the weekly recovery curve.",
+      "trap": "Overwriting the contract baseline (B1) with a new recovery schedule, which legally destroys the employer's ability to claim Liquidated Damages in arbitration."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** The hospital project has completed its crisis turnaround: dispute claims have been settled, fast-tracking and crashing plans have been approved, and a formal 45-day Extension of Time (EOT) was granted by the Employer.\n\nThe planning engineer opens Primavera P6 and says:\n*\"I will just click 'Maintain Baselines', delete our old Baseline, and save this new schedule as the new Baseline. That way, all our variance columns will show 0 days and look clean for the Board of Directors!\"*\n\nThe Lead Project Controls Manager shouts: **\"STOP! DO NOT TOUCH THAT BUTTON!\"**\n\n**The Legal Disaster of Overwriting Baselines:**\nIf you overwrite or delete the **Original Contract Baseline ($B_1$)**:\n1. You erase the contractual benchmark that defines the contractor's original scope, durations, and logic.\n2. In future arbitration or litigation, the arbitral tribunal will hold that the Employer **waived all historical contractor delays** by destroying the baseline!\n3. You permanently forfeit the legal right to claim **Liquidated Damages (LDs)** for past contractor default.\n\nRe-baselining is an enterprise governance event governed by strict multi-baseline architecture."
+      },
+      {
+        "k": "read",
+        "t": "**The Multi-Baseline Enterprise Architecture (B1 vs B2 vs B3):**\n\n```\n+-----------------------+-----------------------+-----------------------------------------------------+\n| Baseline Tier         | P6 Assignment Role    | Commercial Function & Governance Rule               |\n+-----------------------+-----------------------+-----------------------------------------------------+\n| B1: Contract Baseline | Project Baseline      | LOCKED PERMANENTLY. Never modified or overwritten.  |\n| (Approved at Award)   | (Contract BL)         | Sole legal benchmark for EOT claims & LDs.          |\n+-----------------------+-----------------------+-----------------------------------------------------+\n| B2: Revised Recovery  | Primary / User BL 1   | Created ONLY upon formal approved EOT / Variation.  |\n| Baseline (Mid-term)   |                       | Used for weekly site coordination and recovery track|\n+-----------------------+-----------------------+-----------------------------------------------------+\n| B3: Commissioning     | Secondary / User BL 2 | Created upon physical building envelope completion; |\n| Baseline (Handover)   |                       | Tracks clinical licensing, TABS, and Fire NOC gates.|\n+-----------------------+-----------------------+-----------------------------------------------------+\n```\n\n**The Re-Baselining Approval Gate:**\nA new baseline ($B_2$ or $B_3$) cannot be activated until a formal **Re-Baselining Protocol Document** is signed by:\n1. Contractor Project Director\n2. PMC Lead Project Controls Manager\n3. Employer's Authorized Representative (Client VP)\n4. Lenders' Independent Engineer (LIE - Bank representative)\n\nThis ensures that bank loan disbursement schedules, S-Curve milestone envelopes, and contractor billing milestones are 100% realigned across all stakeholders!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why must the Original Approved Contract Baseline (B1) never be deleted or overwritten in Primavera P6 when a project adopts a revised recovery schedule (B2)?",
+            "o": [
+              [
+                "Because B1 is the permanent legal and contractual benchmark for measuring historical performance, assessing delay entitlements, and defending Liquidated Damages in arbitration; overwriting it destroys legal proof of contractor delay",
+                true,
+                "Deleting B1 wipes out the contractual foundation of the project. P6 allows multiple baselines (Project BL, Primary, Secondary) specifically so that B1 remains permanent while B2 tracks ongoing operations."
+              ],
+              [
+                "Because P6 software will delete all user licenses if B1 is replaced",
+                false,
+                "P6 licensing is unrelated to baseline database records."
+              ],
+              [
+                "Because B1 contains secret bank passwords that cannot be recovered",
+                false,
+                "P6 schedules do not store banking passwords."
+              ],
+              [
+                "Because IS 1200 mandates that all buildings must be built according to the first drawing made",
+                false,
+                "IS 1200 is a measurement standard, not a baseline schedule retention law."
+              ]
+            ]
+          },
+          {
+            "q": "Under what specific conditions is it legally and commercially legitimate to formally create and adopt a Revised Target Baseline (B2)?",
+            "o": [
+              [
+                "Only when a formal Extension of Time (EOT) has been determined, a major variation order has been executed, or a formal tripartite recovery agreement is executed between Employer, Contractor, and Lenders",
+                true,
+                "Re-baselining requires formal commercial and contractual authorization; it cannot be done casually just because a contractor is falling behind."
+              ],
+              [
+                "Whenever the site engineer wants the Gantt chart to look greener for a Monday morning meeting",
+                false,
+                "Re-baselining to hide delays is an unethical and fraudulent project control practice."
+              ],
+              [
+                "Whenever it rains for more than 10 minutes",
+                false,
+                "Routine weather events do not justify re-baselining the entire enterprise master schedule."
+              ],
+              [
+                "Every Friday at 5:00 PM automatically",
+                false,
+                "Weekly updates record actual progress against the baseline, they do not create new baselines."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "A baseline is a legal covenant. Never overwrite the original contract baseline (B1); preserve it permanently as the Project Baseline in P6 for legal and claims protection, and adopt B2 as an operational recovery baseline only under formal tripartite governance."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS13);
+const APPLY13 = {
+  "U104": {
+    "task": "Execute a Comprehensive Forensic Schedule Autopsy on a 90-day delayed hospital project: 1) Trace the true driving critical path under Retained Logic; 2) Calculate Baseline Execution Index (BEI) and Critical Path Length Index (CPLI); 3) Identify near-critical paths (Total Float between 1 and 10 days); 4) Audit schedlog.txt for hard constraints and negative lag manipulation; 5) Formulate an executive diagnosis for the board of directors.",
+    "good": [
+      "Traces the true longest critical path and identifies artificial constraints in schedlog.txt",
+      "Calculates BEI and CPLI metrics to quantitatively prove systemic execution breakdown",
+      "Maps secondary and tertiary near-critical float chains to prevent secondary bottleneck surprises",
+      "Delivers a clear, authoritative, C-suite forensic diagnosis distinguishing actual from masked progress"
+    ],
+    "tmpl": "Forensic Schedule Autopsy & Crisis Diagnostic Report:\nProject Baseline Parameters (Contract Completion Date, Data Date, Variance Days): \n1. True Critical Path Forensic Trace (Driving Activities, Total Float <= 0 under Retained Logic): \n2. Execution Health Metrics Calculation (BEI Actual vs Target, CPLI Ratio): \n3. Near-Critical Secondary Float Chains (Activities with TF between 1 and 10 Days): \n4. Schedlog.txt Audit Findings (Progress Override Errors, Hard Constraints, Artificial Lags): \n5. Executive Root-Cause Diagnostic & Boardroom Action Directives: "
+  },
+  "U105": {
+    "task": "Develop a Fast-Tracking & Vertical Trade Laddering Safety Directive for an 8-story hospital tower: 1) Convert FS sequential relationships into safe SS + Lag vertical ladders; 2) Calculate mandatory minimum lag based on floor cycle time and a 2-floor safety buffer; 3) Formulate weather-tight envelope protection rules for starting internal drywall before façade completion; 4) Define penetration sealing protocols to prevent vertical slurry/water cascades.",
+    "good": [
+      "Applies the mathematical lag formula (L_ss = N_floors * T_cycle) with a mandatory 2-floor buffer",
+      "Establishes strict temporary perimeter weather-proofing standards prior to gypsum board delivery",
+      "Details structural and safety protections for trades working beneath live concrete operations",
+      "Provides a robust risk-benefit evaluation of schedule compression vs rework exposure"
+    ],
+    "tmpl": "Fast-Tracking & Vertical Trade Laddering Protocol Directive:\nFacility Profile & Critical Path Target (Floors Count, Current Delay Days, Recovery Target): \n1. Vertical Trade Laddering Architecture (SS + Lag Relationships between Structure & Finishes): \n2. Mathematical Lag Calculation (Floor Cycle Times, Safety Buffers, Production Rates): \n3. Weather-Tight Envelope Simulation Protocol (Temporary Facade Seals for Drywall Protection): \n4. Multi-Level Safety & Vertical Penetration Protection (Covering Shafts, Falling Debris): \n5. Rework Prevention & Quality Assurance Sign-off Gates: "
+  },
+  "U106": {
+    "task": "Formulate a Critical Path Resource Crashing & Cost-per-Day-Saved Optimization Plan: 1) Identify candidate activities strictly on the driving critical path; 2) Calculate the Crash Cost Slope (S = Delta C / Delta D) for each activity; 3) Prioritize crashing order from lowest to highest cost slope; 4) Establish trade crowding thresholds (worker density <= 1 per 10 m²) to prevent Brooks's Law productivity collapse; 5) Compare total crashing cost against daily Liquidated Damages.",
+    "good": [
+      "Restricts crashing analysis strictly to verified critical path activities",
+      "Computes accurate Crash Cost Slopes and sequences acceleration in order of financial efficiency",
+      "Applies labor density and trade stacking limits to prevent productivity erosion",
+      "Demonstrates favorable commercial trade-off against contractual liquidated damages exposure"
+    ],
+    "tmpl": "Critical Path Resource Crashing & Cost Slope Optimization Plan:\nProject Schedule Parameters (Critical Path Duration, Required Recovery Days, Daily LD Rate): \n1. Critical Activity Crashing Matrix (Normal Dur/Cost vs Crash Dur/Cost for Driving Tasks): \n2. Cost-per-Day-Saved Slope Calculation & Ranking (S = Delta C / Delta D from Lowest to Highest): \n3. Phased Crashing Implementation Plan (Days Recovered per Step, Incremental Investment): \n4. Trade Crowding & Manpower Density Safeguards (MCAA Factors, Maximum Workers/m²): \n5. Commercial Cost-Benefit Reconciliation (Total Crashing Spend vs Avoided LD Liability): "
+  },
+  "U107": {
+    "task": "Design an Emergency Supply Chain Rescue & Temporary Commissioning Plan for delayed imported hospital equipment: 1) Analyze maritime shipping and customs delay impacts on critical path milestones; 2) Detail the mobilization of temporary rental equipment (chillers/DGs) to enable pre-commissioning; 3) Formulate a split-freight and air-expedite protocol for electronic controls; 4) Execute an Advance Bill of Entry and Customs Section 59 Bond clearance strategy.",
+    "good": [
+      "Quantifies schedule and commercial exposure resulting from overseas equipment delays",
+      "Develops a technically viable temporary rental equipment bridging strategy for early testing",
+      "Details split-shipment logistics balancing air freight cost against daily liquidated damages",
+      "Outlines the precise Indian customs bonding mechanism (Sec 59) to release cargo without port dwell"
+    ],
+    "tmpl": "Imported Equipment Supply Chain Rescue & Temporary Bridging Directive:\nEquipment Scope & Critical Path Impact (Chillers, Medical Compressors, Lead Time Delays): \n1. Temporary Equipment Rental Bridging Plan (Mobile Chillers/DGs, Manifold Tie-in, TABS Continuity): \n2. Split-Freight & Air-Expediting Protocol (Air-freight Components, Ocean Freight Heavy Iron): \n3. Indian Customs Fast-Track Procedure (Advance Bill of Entry, Section 59 Bonded Warehouse): \n4. Remote Virtual Factory Acceptance Testing (FAT) Protocol (Calibrated Video Witnessing): \n5. Financial Justification & LD Offset Analysis (Expediting Spend vs Daily Delay Savings): "
+  },
+  "U108": {
+    "task": "Draft a Contractual Notice to Correct (FIDIC 15.1) and Risk-and-Cost Termination Strategy for a defaulting subcontractor: 1) Document specific material breaches and lack of due diligence under contemporaneous records; 2) Define the mandatory cure period (14 to 28 days) and remedial milestones; 3) Formulate the 7-day joint site measurement inventory protocol; 4) Outline the encashment of Performance BGs and re-tendering on a Risk-and-Cost basis.",
+    "good": [
+      "Drafts a legally precise Notice to Correct citing contract clauses, DPR logs, and missed gates",
+      "Enforces the mandatory contractual cure period to avoid unlawful repudiation liability",
+      "Establishes a rigorous joint site inventory procedure with independent survey and video logs",
+      "Defines a watertight Risk-and-Cost re-tendering framework to recover excess completion costs"
+    ],
+    "tmpl": "Subcontractor Default Governance: Notice to Correct & Risk-and-Cost Strategy:\nSubcontract Profile & Performance Default History (Scope, Contract Value, Chronic Drift): \n1. Formal Notice to Correct under FIDIC 15.1 / CPWD Clause 3 (Specific Breaches, Cure Period): \n2. Performance Cure Milestones & Verification Criteria (Manpower Surge, Material Influx): \n3. Termination Execution Procedure upon Expiry (Formal Notice 15.2, Site Eviction, Gate Freezing): \n4. Joint Site Inventory & Measurement Book Protocol (Survey Team, Video Recording, Stock Freezing): \n5. Risk-and-Cost Re-Tendering & Commercial Recovery Architecture (BG Encashment, Excess Claims): "
+  },
+  "U109": {
+    "task": "Formulate an Interim Forensic Delay Claims Defense & Determination Rebuttal: 1) Apply the 4-Gate Defense (28-day notice bar, critical path TIA, concurrency, audited accounting); 2) Execute a Time-Impact Analysis (TIA) under Retained Logic to disprove employer driving delay; 3) Document contemporaneous contractor labor shortages proving true concurrency; 4) Strike out unvouched Hudson/Emden formula overhead claims under Indian Contract Act Section 73.",
+    "good": [
+      "Applies the complete 4-Gate forensic rebuttal architecture to defeat contractor claims",
+      "Demonstrates that alleged employer delays possessed positive float under Retained Logic",
+      "Proves true concurrency using daily progress reports (DPRs) and labor muster rolls",
+      "Rejects theoretical formulaic overhead markups, enforcing Section 73 actual audited proof standards"
+    ],
+    "tmpl": "Forensic Claims Defense & Engineer's Determination Rebuttal:\nContractor Claim Scope (Alleged Causes, Claimed EOT Days, Prolongation & HOOH Amount ₹): \n1. Gate 1 - Contractual Notice Bar Evaluation (FIDIC 20.1 28-Day Condition Precedent Analysis): \n2. Gate 2 - Retained Logic Critical Path TIA (Fragnet Insertion, Float Consumption, Milestone Impact): \n3. Gate 3 - Concurrent Delay Determination (Contemporaneous Resource Shortages & Site Defaults): \n4. Gate 4 - Financial Audit of Prolongation & Overheads (Striking Hudson Formula, Section 73 Standards): \n5. Formal Determination Summary & Revised Contractual Milestone Assessment: "
+  },
+  "U110": {
+    "task": "Develop an Enterprise Re-Baselining Governance Protocol (B1 vs B2 vs B3) following a formal EOT award: 1) Establish the non-negotiable rule preserving B1 (Contract Baseline) permanently in P6; 2) Define criteria for creating B2 (Revised Recovery Baseline); 3) Structure the 4-party sign-off gateway (Employer, Contractor, PMC, Lenders' Independent Engineer); 4) Re-align S-Curve Banana Envelopes and bank loan drawdown schedules.",
+    "good": [
+      "Strictly mandates the permanent preservation of B1 for legal, arbitral, and LD protection",
+      "Establishes rigorous governance criteria and change control approvals for adopting B2",
+      "Defines a 4-party institutional sign-off protocol including bank lenders (LIE)",
+      "Re-aligns enterprise cost and schedule curves to reflect achievable, monitored recovery targets"
+    ],
+    "tmpl": "Enterprise Re-Baselining Governance Directive & Milestone Alignment Plan:\nProject Context & Re-Baselining Trigger (Approved EOT Days, Scope Variations, Recovery Agreement): \n1. Multi-Baseline Enterprise Architecture (Permanently Locking B1 vs User BL 1 B2): \n2. Legal & Commercial Safeguards (Preserving Employer's Rights to Historical Delay Damages): \n3. Operational S-Curve Realignment (Revising Early/Late Curves, Manpower Peak Profiles): \n4. Lenders' Independent Engineer (LIE) Bank Waterfall Synchronization: \n5. 4-Party Executive Re-Baselining Covenant (Sign-off Matrix & Implementation Directives): "
+  }
+};
+Object.assign(APPLY, APPLY13);
+UNITS13.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
