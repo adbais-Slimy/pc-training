@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=38"></script>
+<script src="shim.js?v=39"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -15530,6 +15530,774 @@ const APPLY11 = {
 };
 Object.assign(APPLY, APPLY11);
 UNITS11.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS12 = [
+  {
+    "id": "U96",
+    "day": 96,
+    "title": "Day 96: Hospital Project Mobilization, Soil Strata Surprises & Deep Piling Baselines",
+    "mins": 25,
+    "card": {
+      "id": "c-sim-piling",
+      "title": "Hospital Project Mobilization, Strata Surprises & Deep Piling Baselines",
+      "rule": "On large hospital projects, geotechnical investigations (IS 1892) frequently underestimate bedrock variations, boulder strata, or high water table conditions. Deep bored cast-in-situ piles (IS 2911) require bentonite slurry density monitoring (1.05–1.10 g/cm³) to prevent borehole collapse, sonic logging (ASTM D6760) / Low Strain Integrity Testing (ASTM D5882) on 100% of critical columns, and rock socket verification. Any strata variation requires instant baseline adjustment (re-drilling vs socketing) to prevent foundation drift.",
+      "example": "On a ₹750 Cr hospital in Mumbai, soft marine clay over hard basalt caused pile boring refusal 4 meters shallower than assumed. Sonic logging revealed necking in 6 piles; prompt forensic rock socket depth adjustment and grout re-injection prevented a 6-week foundation critical path delay.",
+      "trap": "Pouring pile caps before receiving cross-hole sonic logging (CSL) or PIT test clearance certificates, risking catastrophic structural condemnation after loading."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹750 Crore, 600-bed superspecialty hospital project in Mumbai, the PMC team assumed foundation work would proceed smoothly according to the initial soil investigation report.\n\nThe borehole log indicated hard basalt rock at 18 meters depth across the entire footprint. Based on this, the contractor mobilized 4 hydraulic rotary drilling rigs and planned to cast 450 bored cast-in-situ piles ($1,000\\text{mm}$ and $1,200\\text{mm}$ diameter) in 90 calendar days.\n\nWithin 3 weeks, disaster struck:\n- In Zone C (under the future Radiation Oncology bunker), the rigs hit hard basalt refusal at only **14 meters**—4 meters shallower than planned.\n- In Zone A (under the 14-story Bed Tower), rigs drilled to **23 meters** without finding continuous competent rock, hitting fractured weathered shale and water-bearing sand strata instead!\n\nThe contractor halted work, submitted a ₹3.2 Crore idle equipment claim, and demanded a 45-day extension of time.\n\nAs the Project Controls Lead, how do you handle strata surprises without destroying the master project schedule?"
+      },
+      {
+        "k": "read",
+        "t": "**The Foundation Baseline Governance Framework (IS 2911 & IS 1892):**\n\n```\n+---------------------------+-----------------------------------+---------------------------------------------+\n| Foundation Risk Item      | Governing Standard & Field Test   | Acceptance Threshold / Mandatory Action     |\n+---------------------------+-----------------------------------+---------------------------------------------+\n| Bentonite Slurry Control  | Marsh Funnel / Hydrometer (IS 2911)| Density: 1.05–1.10 g/cm³; Viscosity 30–40s  |\n| Borehole Cleaning         | Air-lift / Submersible Slurry Pump| Sludge thickness at base < 50mm before pour |\n| Rock Socket Verification  | Rock Core Recovery & RQD (IS 1892)| Min 1.5D to 3D socketing into sound rock    |\n| Pile Integrity Testing    | Low Strain PIT (ASTM D5882)       | 100% of working piles tested (No necking)   |\n| Cross-Hole Sonic (CSL)    | CSL Ultrasonic Pulse (ASTM D6760) | 100% of heavy columns & bunker foundations  |\n+---------------------------+-----------------------------------+---------------------------------------------+\n```\n\n**Field Actions for Strata Variations:**\n1. **Dynamic Socket Depth Adjustment:** Implement an agreed rock socket criteria (e.g. embedment depth = $1.5 \\times \\text{Pile Diameter}$ into rock with Core Recovery $> 80\\%$ and $RQD > 50\\%$) rather than a fixed terminal depth.\n2. **Pile Cap Hold Points:** Insert mandatory contractual hold points. No pile cap shuttering or rebar placement is permitted until CSL / PIT test reports are signed off by the Structural Consultant."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "During bored cast-in-situ pile execution under IS 2911, what is the mandatory acceptance threshold for bentonite drilling mud density prior to tremie concrete pouring?",
+            "o": [
+              [
+                "Density between 1.05 and 1.10 g/cm³, ensuring borehole wall stability while allowing tremie concrete to cleanly displace the slurry without entrapment",
+                true,
+                "Under IS 2911, bentonite mud density must be controlled within 1.05–1.10 g/cm³. If too dense (> 1.15), concrete cannot displace it, causing mud inclusion; if too light (< 1.03), borehole walls collapse."
+              ],
+              [
+                "Density of exactly 2.40 g/cm³, matching the specific gravity of RCC concrete",
+                false,
+                "Bentonite slurry is a drilling fluid, not concrete; a density of 2.4 g/cm³ would be solid rock/heavy concrete."
+              ],
+              [
+                "Density below 0.85 g/cm³ so that the mud floats on surface water",
+                false,
+                "A density below 1.0 is lighter than water and physically impossible for bentonite mud in water."
+              ],
+              [
+                "Bentonite density is only measured after concrete has cured for 28 days",
+                false,
+                "Bentonite mud must be tested immediately before concrete pouring to prevent catastrophic pile defects."
+              ]
+            ]
+          },
+          {
+            "q": "The contractor completes casting 60 piles for a hospital Bed Tower and immediately begins erecting pile cap formwork to maintain schedule speed. Why must the Project Controls Lead halt pile cap work?",
+            "o": [
+              [
+                "Contractual and technical hold point: Pile Integrity Testing (PIT) / Sonic Logging (CSL) must be certified by the Structural Consultant to ensure zero necking, bulb formation, or honeycombing before covering with pile caps",
+                true,
+                "Once a pile cap is cast, defective piles cannot be repaired without massive structural underpinning. Testing must clear every pile before casting the cap."
+              ],
+              [
+                "Because P6 software automatically deletes piles if pile caps are modeled before day 60",
+                false,
+                "P6 does not delete project data; this is a physical quality assurance and structural safety mandate."
+              ],
+              [
+                "Because the contractor must wait 90 days for soil around the piles to desiccate completely",
+                false,
+                "Soil desiccation is not required; integrity testing is performed within 7–14 days of casting."
+              ],
+              [
+                "Because pile caps can only be measured under IS 1200 if poured simultaneously with the ground floor slab",
+                false,
+                "IS 1200 Part 2 measures pile caps independently as substructure concrete."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Foundation surprises are the #1 cause of mega project delay. Never treat pile depths as fixed numbers on a drawing; define dynamic rock socketing criteria, audit bentonite slurry density before every pour, and enforce 100% pile integrity clearance before permitting pile caps."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U97",
+    "day": 97,
+    "title": "Day 97: Deep Basements, Diaphragm Walls & Retaining Structures under Monsoon Water Table",
+    "mins": 25,
+    "card": {
+      "id": "c-sim-basement",
+      "title": "Deep Basements, Diaphragm Walls & Retaining Structures under Monsoon Water Table",
+      "rule": "Tertiary care hospitals require 3–4 basement levels for radiation oncology bunkers, imaging suites, central sterile supply (CSSD), and parking. Construction under high water tables requires anchored diaphragm walls or contiguous bored piles with secant guide walls. Dewatering systems (deep well / wellpoint) must operate 24/7 with dual DG backup; buoyant uplift forces (Fb = gamma_w * V) require pressure relief valves or ground anchors until the superstructure dead weight overcomes buoyancy (FS >= 1.25).",
+      "example": "During a 14m deep hospital basement excavation in Kolkata, groundwater rose 3m during monsoon. Continuous deep-well dewatering and 120 rock anchors prevented raft uplift, while diaphragm wall polymer waterstops eliminated leakage into the future MRI suite.",
+      "trap": "Shutting down dewatering pumps prematurely before superstructure weight exceeds hydrostatic uplift pressure, causing catastrophic raft uplift cracking or basement floating."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹800 Crore cancer institute with a 14-meter deep, 3-level basement situated 500 meters from a major river, excavation reached the bottom-most formation level in early June.\n\nThe basement raft slab was designed as a massive $1,800\\text{mm}$ thick concrete mat over a $4,500\\text{ m}^2$ footprint to house radiation bunkers, heavy water chillers, and emergency power stations.\n\nThree weeks after pouring the lower raft section, heavy monsoon rains struck. The site engineer decided to switch off 6 of the 10 deep-well dewatering pumps overnight to *\"save diesel and electricity costs since the concrete had already set\"*.\n\nAt 4:00 AM, the site watchman reported deafening cracking sounds from Basement 3.\n\n**The Hydrostatic Reality:**\n- Groundwater table rose by **4.2 meters** above the raft formation level.\n- Total upward buoyant water pressure ($u$): $\\gamma_w \\times h = 10\\text{ kN/m}^3 \\times 4.2\\text{ m} = 42\\text{ kN/m}^2$ ($4.2\\text{ tonnes/m}^2$).\n- Total upward buoyant force across $4,500\\text{ m}^2$: $4,500 \\times 42 = \\mathbf{189,000\\text{ kN}}$ (**18,900 Metric Tonnes of Uplift Force!**)\n- Total downward dead weight of the partially cast raft: $4,500\\text{ m}^2 \\times 1.2\\text{ m} \\times 25\\text{ kN/m}^3 = \\mathbf{135,000\\text{ kN}}$ ($13,500\\text{ Tonnes}$).\n\nThe upward buoyant force exceeded the downward weight by **5,400 Tonnes**! The raft lifted by 28mm, snapping waterstops and cracking the structural slab. A ₹12 Crore repair and 3-month project halt ensued."
+      },
+      {
+        "k": "read",
+        "t": "**The Deep Basement Protection Framework:**\n\n```\n+--------------------------------+----------------------------------------+--------------------------------------------+\n| Structural / Geo Element       | Engineering Standard                   | Critical Safeguard / Criteria              |\n+--------------------------------+----------------------------------------+--------------------------------------------+\n| Perimeter Retaining System     | Diaphragm Wall / Secant Piles (IS 9556)| Watertight joints with dual hydrophilic stops|\n| Dewatering System Reliability  | Deep Well Array (IS 9759)              | 24/7 continuous pumping with N+1 DG backup |\n| Uplift Buoyancy Safety Factor  | IS 456 / IS 1904                       | FS = Downward Weight / Buoyancy >= 1.25    |\n| Temporary Uplift Relief        | Pressure Relief Valves (PRVs)          | Sump weep-holes until superstructure dead load|\n| Ground Uplift Anchors          | Pre-stressed Rock Anchors (IS 10270)   | Resists hydraulic uplift before columns rise|\n+--------------------------------+----------------------------------------+--------------------------------------------+\n```\n\n**The Golden Rule of Hospital Dewatering:**\nNever demobilize or deactivate the deep-well dewatering system until:\n$\\frac{\\text{Total Accumulated Dead Load of Superstructure}}{\\text{Maximum Possible Buoyant Uplift Force}} \\ge 1.25$\nThis typically requires casting the superstructure up to the **3rd or 4th floor above ground level** before pumps can safely be dialed down!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why is it strictly forbidden to terminate basement dewatering operations as soon as the foundation raft slab has cured?",
+            "o": [
+              [
+                "Because the downward dead weight of the empty raft alone is insufficient to resist hydrostatic buoyant uplift (water pressure); dewatering must continue until superstructure dead load provides a Factor of Safety >= 1.25 against floating",
+                true,
+                "Until multiple floors of superstructure dead weight are built, upward groundwater pressure can easily lift, crack, or float the basement raft."
+              ],
+              [
+                "Because concrete dissolves if groundwater touches it within 6 months of pouring",
+                false,
+                "Concrete cures and gains strength under water; water does not dissolve cured concrete."
+              ],
+              [
+                "Because municipal water authorities require dewatering water for city drinking pipelines",
+                false,
+                "Construction dewatering water is discharged to stormwater drains, not municipal drinking networks."
+              ],
+              [
+                "Because P6 software cannot calculate schedule float if dewatering activities are closed early",
+                false,
+                "This is a fundamental geotechnical and structural engineering safety rule, not a software issue."
+              ]
+            ]
+          },
+          {
+            "q": "What engineering feature is installed in basement diaphragm wall joints to prevent groundwater ingress into underground hospital imaging and radiation suites?",
+            "o": [
+              [
+                "Hydrophilic rubber waterstop profiles and re-injectable grout hoses embedded within the precast/cast-in-situ panel stop-ends",
+                true,
+                "Hydrophilic strips swell upon contact with water, sealing joint imperfections, while re-injectable hoses allow acrylic/polyurethane grouting if micro-leaks occur."
+              ],
+              [
+                "Ordinary cardboard filler strips and bitumen primer paint",
+                false,
+                "Cardboard and basic paint fail completely under high hydrostatic head pressure."
+              ],
+              [
+                "Open weep gaps that allow groundwater to flow across the MRI floor into a bucket",
+                false,
+                "Hospital imaging suites have strict zero-humidity and zero-water ingress standards."
+              ],
+              [
+                "Lead shielding sheets used to absorb groundwater radiation",
+                false,
+                "Lead shielding attenuates diagnostic X-rays, not groundwater."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Basement water uplift can float a 5,000-tonne building like a ship. Always calculate the Factor of Safety against buoyancy (FS >= 1.25) and enforce uninterrupted 24/7 dewatering with dedicated backup power until superstructure weight overcomes the water table."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U98",
+    "day": 98,
+    "title": "Day 98: Superstructure Speed: Formwork Optimization, Cycle Time Compression & Post-Tensioning",
+    "mins": 25,
+    "card": {
+      "id": "c-sim-superstructure",
+      "title": "Superstructure Speed: Formwork Optimization, Cycle Time Compression & Post-Tensioning",
+      "rule": "Hospital superstructures feature large spans (8.4m x 8.4m grid for clinical flexibility). Post-Tensioned (PT) flat slabs reduce structural depth and eliminate beam drops, opening vertical ceiling clearance for heavy MEP routing. Floor cycle time optimization uses early-stripping tables with back-propping (IS 456 / ACI 347); slab cycle compression from 14 days to 7 days per floor requires achieving 0.70 f_ck before striking, monitored by maturity meters or field-cured cubes.",
+      "example": "Switching from conventional RCC beam-slab (14-day cycle) to Post-Tensioned flat slabs with aluminum table forms (7-day cycle) on a 12-story ward block saved 77 calendar days on the critical path and eliminated 300mm of vertical beam obstructions for MEP ducting.",
+      "trap": "Stripping slab formwork before post-tensioning tendons are stressed to 75% UTS and grouted, causing severe shear cracking and progressive slab deflection."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** In hospital construction, the superstructure is on the critical path during the first half of the project, but it also dictates MEP success in the second half.\n\nConsider an 8.4m × 8.4m column grid—the gold standard for modern hospital design because it permits flexible layout of standard 2-bed patient rooms, ICU bays, and modular surgical suites.\n\nTwo structural framing options were debated for a 12-story, 500-bed hospital tower:\n- **Option A (Conventional RCC Beam & Slab):** $150\\text{mm}$ slab with $600\\text{mm}$ deep drop beams. Shuttering cycle: **14 calendar days per floor** (requiring bottom props to remain for 14 days under IS 456 for spans $> 6\\text{m}$). Overall superstructure duration: $12 \\times 14 = \\mathbf{168\\text{ days}}$.\n- **Option B (Post-Tensioned Flat Slab):** $250\\text{mm}$ uniform flat plate without drop beams. Shuttering cycle: **7 calendar days per floor** (stressing tendons at Day 4 when concrete reaches $0.70 f_{ck}$, allowing immediate formwork stripping and re-propping). Overall superstructure duration: $12 \\times 7 = \\mathbf{84\\text{ days}}$.\n\n**The Commercial & Engineering Impact:**\n1. **Schedule Compression:** Saved **84 calendar days** on the master critical path.\n2. **MEP Vertical Clearance:** Eliminating $600\\text{mm}$ beam drops recovered **350mm of clear ceiling void**, resolving 90% of clashes between $500\\text{mm}$ HVAC supply ducts and gravity drainage pipes!"
+      },
+      {
+        "k": "read",
+        "t": "**The 7-Day Slab Cycle Protocol (IS 456 & ACI 347):**\n\n```\n+-----------+---------------------------------------+------------------------------------------------+\n| Day       | Primary Site Activities               | Milestone Verification / Hold Point            |\n+-----------+---------------------------------------+------------------------------------------------+\n| Day 1     | Column & Shear Wall rebar + shuttering| Plumb check & laser level sign-off             |\n| Day 2     | Pour vertical columns; fly table forms| Concrete curing starts; table leveling         |\n| Day 3     | Slab bottom rebar + PT tendon ducts   | Tendon profile & burst rebar inspection        |\n| Day 4     | MEP conduit sleeves + top rebar       | MEP box-out sign-off; Pour Card approved       |\n| Day 5 (AM)| Pour PT slab concrete (M40 / M50)     | Cube sampling; thermal/maturity sensor log     |\n| Day 6     | Wet curing; cube crushing at 24/48 hrs| Verify concrete strength >= 0.70 f_ck (28 MPa) |\n| Day 7     | Stress PT tendons to 75% UTS; de-shutter| Elongation check (+/- 7%); strike forms & re-prop|\n+-----------+---------------------------------------+------------------------------------------------+\n```\n\n**Mandatory Re-Propping Rule:**\nStriking slab forms early does NOT mean the slab can carry construction loads! Under ACI 347 and IS 456, **at least 2 consecutive lower floors must remain back-propped** to distribute the weight of the newly poured wet concrete above until all slabs reach full 28-day design strength."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "On a Post-Tensioned (PT) hospital flat slab, what is the mandatory structural milestone that must be completed before stripping table formwork on Day 7?",
+            "o": [
+              [
+                "Concrete compressive strength must reach >= 70% of design f_ck, and all post-tensioning tendons must be stressed to target load with tendon elongation verified within +/- 7%",
+                true,
+                "Until tendons are stressed and locked, the slab cannot carry its own self-weight; stressing activates the prestress forces, allowing safe formwork removal."
+              ],
+              [
+                "The contractor must wait for the entire building roof to be completed",
+                false,
+                "Formwork must be cycled floor-by-floor; waiting for the roof would make construction impossibly slow and expensive."
+              ],
+              [
+                "False ceiling frames and air conditioning ducts must be hung from the bottom of the slab",
+                false,
+                "MEP installation occurs months after structural formwork is stripped."
+              ],
+              [
+                "All PT tendons must be cut flush with the slab edge using an oxy-acetylene torch before stressing",
+                false,
+                "Cutting tendons before stressing would completely destroy the prestressing system."
+              ]
+            ]
+          },
+          {
+            "q": "Why is Post-Tensioned (PT) flat slab construction especially favored for hospital ward and surgical tower superstructures compared to conventional beam-slab systems?",
+            "o": [
+              [
+                "It compresses floor cycle time to 6–7 days and eliminates downstand beam drops, opening continuous horizontal ceiling voids for heavy hospital HVAC ducts, medical gases, and drainage runs",
+                true,
+                "Flat soffits without beam drops remove the primary physical barrier to routing complex, multi-tiered hospital MEP services."
+              ],
+              [
+                "It eliminates the need for any cement or water in the concrete mix",
+                false,
+                "PT slabs use high-grade concrete with cement, water, aggregates, and admixtures."
+              ],
+              [
+                "It completely removes the requirement for column foundations",
+                false,
+                "All vertical loads must still be transferred down through columns to foundations."
+              ],
+              [
+                "It allows electrical cables to be cast naked inside concrete without conduit pipes",
+                false,
+                "Electrical wiring must always be protected inside heavy-duty conduits."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Floor cycle speed is an operational discipline, not luck. Adopting PT flat slabs eliminates beam drops for MEP and compresses cycle times from 14 to 7 days, provided tendon stressing and back-propping across 2 lower floors are rigorously controlled."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U99",
+    "day": 99,
+    "title": "Day 99: MEP Hot Floor Shaft Coordination, BIM Clash Surgery & Above-Ceiling Congestion",
+    "mins": 25,
+    "card": {
+      "id": "c-sim-mep-clash",
+      "title": "MEP Hot Floor Shaft Coordination, BIM Clash Surgery & Above-Ceiling Congestion",
+      "rule": "Hospital 'Hot Floors' (OTs, ICUs, Imaging) house 5 times the MEP service density of residential or commercial buildings. Chilled water pipes, rectangular supply/return HVAC ducts, medical gas copper pipelines, fire sprinkler mains, cable trays (HT/LT/ELV/LAN), and pneumatic tubes compete for 900mm–1200mm above-ceiling space. Golden rule of MEP spatial hierarchy: Gravity drainage lines claim primary slope -> Large HVAC ductwork -> Pressurized piping (Chilled water/Fire) -> Electrical & ELV cable trays at highest elevation to avoid water drip damage.",
+      "example": "In an ICU corridor ceiling void with 1,000mm clear space, BIM coordination layered 100mm slope drainage at bottom, 450mm HVAC ducts in middle, chilled water/fire piping above, and electrical/ELV trays at the top, preventing 48 on-site trade clashes and ₹35 Lakh in rework.",
+      "trap": "Allowing electrical cable trays to run directly beneath chilled water or drainage piping, creating catastrophic water leak damage and CEIG safety shutdown."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On Level 3 of a 500-bed hospital—the 'Hot Floor' housing 12 Modular OTs, a 24-bed Surgical ICU, and Central Sterile Supply (CSSD)—disaster erupted during MEP rough-in installation.\n\nThe structural floor-to-floor height was $4.2\\text{ meters}$. The finished ceiling height was specified at $3.0\\text{ meters}$ to accommodate surgical pendant booms and laminar flow canopies.\n\nThis left a net ceiling void of **$1,200\\text{mm}$**.\n\nWithout an enforced 3D BIM coordination protocol, each subcontractor raced to claim the void on a first-come, first-served basis:\n1. The firefighting contractor installed $150\\text{mm}$ fire sprinkler mains right across the center of the corridor at $3.5\\text{m}$ elevation.\n2. The HVAC contractor arrived with $1,200\\text{mm} \\times 500\\text{mm}$ sheet metal supply air ducts and found their route completely blocked by the fire pipes!\n3. The plumbing contractor discovered they could not achieve the mandatory 1:100 gravity fall for soiled drainage lines without piercing through the HVAC ducts.\n4. The electrical contractor laid heavy LT cable trays directly *under* the chilled water pipes—guaranteeing that condensation drips would cause electrical short-circuits!\n\nWork ground to a halt. Tearing down and re-fabricating 300 meters of installed ducts and pipes delayed the Hot Floor handover by **8 weeks** and cost **₹42 Lakhs** in wasted labor."
+      },
+      {
+        "k": "read",
+        "t": "**The Above-Ceiling MEP Spatial Hierarchy Protocol:**\n\n```\n+-----------------------+-----------------------+-----------------------------------------------------+\n| Vertical Tier         | MEP System / Trade    | Engineering Rule & Clearances                       |\n+-----------------------+-----------------------+-----------------------------------------------------+\n| Top Tier (Under Slab) | Electrical & ELV Trays| HT/LT power trays, Data/LAN, Nurse Call, Fire Alarm.|\n|                       |                       | MUST BE ABOVE all water and condensate pipes!       |\n+-----------------------+-----------------------+-----------------------------------------------------+\n| Upper-Middle Tier     | Pressurized Liquid    | Chilled Water Supply/Return (50mm nitrile insul.),  |\n|                       | & Fire Sprinkler Mains| Fire Sprinkler piping (tested to 14 bar).           |\n+-----------------------+-----------------------+-----------------------------------------------------+\n| Middle Tier           | Medical Gas (MGPS)    | Medical O2, Air, Vac, N2O in dedicated EN 13348    |\n|                       | Copper Pipes          | copper; >= 150mm clearance from electrical cables.  |\n+-----------------------+-----------------------+-----------------------------------------------------+\n| Lower-Middle Tier     | HVAC Air Distribution | Large supply & return air ducts with acoustic/      |\n|                       | & Smoke Extract Ducts | thermal insulation; access doors for fire dampers.  |\n+-----------------------+-----------------------+-----------------------------------------------------+\n| Bottom Tier (Sloped)  | Gravity Drainage &    | Strict 1:80 to 1:100 slope; cleanout access hatches;|\n|                       | Waste Water Pipes     | Must never run over OTs or electrical switchboards. |\n+-----------------------+-----------------------+-----------------------------------------------------+\n```\n\n**The BIM Sign-off Rule:**\nNo MEP trade contractor is allowed to install a single pipe, hanger, or duct on site until the **Combined Services Drawing (CSD)** and **Structural Electrical Mechanical (SEM)** drawings are clash-resolved in 3D BIM and stamped *\"APPROVED FOR CONSTRUCTION\"* by the Lead MEP Consultant."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under hospital MEP above-ceiling spatial coordination protocols, what is the mandatory vertical relationship between electrical cable trays and chilled water/drainage pipes?",
+            "o": [
+              [
+                "Electrical and ELV cable trays must be installed at the highest elevation (directly under the structural slab) and strictly ABOVE all liquid, drainage, and chilled water pipes to prevent water leak damage and electrical short-circuits",
+                true,
+                "Water flows downward under gravity. Running electrical wiring above wet pipes ensures that pipe condensation, valve leaks, or drainage overflows never drip onto energized power or data trays."
+              ],
+              [
+                "Electrical cable trays must be submerged inside the drainage pipe to keep cables cool",
+                false,
+                "Cables must never contact sewage or drainage water."
+              ],
+              [
+                "Electrical cable trays must be placed on the finished floor under the carpet",
+                false,
+                "Hospital corridor floors cannot have exposed electrical cable trays."
+              ],
+              [
+                "Vertical hierarchy does not matter as long as all pipes are painted the same color",
+                false,
+                "Pipe color coding (IS 2379) and vertical spatial zoning are critical life-safety standards."
+              ]
+            ]
+          },
+          {
+            "q": "What is the primary technical reason gravity drainage pipes take spatial priority over HVAC ducts during ceiling void clash resolution?",
+            "o": [
+              [
+                "Gravity drainage lines cannot be offset up and down because they require a continuous, uninterrupted downward slope (1:80 to 1:100) to function; HVAC ducts and pressurized pipes can be transitioned around obstacles",
+                true,
+                "Pressurized water and air can be routed around obstructions with fittings; gravity wastewater relies solely on continuous downward pitch and cannot flow uphill."
+              ],
+              [
+                "Because plumbing pipes are much more expensive than sheet metal air ducts",
+                false,
+                "HVAC ductwork and chillers are generally more capital-intensive than drainage pipes; this is a physics constraint, not a cost issue."
+              ],
+              [
+                "Because municipal bylaws mandate that drainage pipes be visible through the ceiling tiles",
+                false,
+                "Drainage pipes are concealed above ceilings."
+              ],
+              [
+                "Because drainage pipes must connect directly to the medical gas manifold",
+                false,
+                "Medical gas and drainage are completely separate, isolated systems."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Hospital ceiling voids are three-dimensional puzzles. Enforce the universal layering rule: Electrical at the top, pressurized water and medical gases in the middle, HVAC ducts below, and sloped gravity drainage at its required pitch. Never permit installation without an approved Combined Services Drawing (CSD)."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U100",
+    "day": 100,
+    "title": "Day 100: Radiation Bunker High-Density Concrete & Medical Equipment Rigging Windows",
+    "mins": 25,
+    "card": {
+      "id": "c-sim-equipment",
+      "title": "Radiation Bunker High-Density Concrete & Medical Equipment Rigging Windows",
+      "rule": "Heavy medical imaging equipment (LINAC, MRI, PET-CT, Cath Lab) requires precisely sequenced architectural and structural coordination. Linear Accelerator (LINAC) bunkers demand high-density concrete (3,200–3,600 kg/m³) with zero cold joints; RF shielding (MRI Faraday cage) requires continuous copper enclosure; equipment delivery windows require leaving temporary structural wall knock-out panels (rigging openings) that cannot be sealed until multi-ton machines are landed on vibration-isolated inertia pads.",
+      "example": "Leaving a 3.0m x 3.2m temporary structural knockout opening in the ground floor slab edge allowed an 8-tonne MRI magnet to be rigged directly onto its 2nd-basement inertia pad via mobile crane, avoiding ₹1.5 Cr in structural demolition and re-building.",
+      "trap": "Closing the external façade or masonry walls before heavy medical equipment (LINAC gantry, 7-ton MRI magnet) is rigged into place, forcing structural demolition."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** A state-of-the-art Regional Cancer Center was designed with two underground Linear Accelerator (LINAC) bunkers and a 3.0-Tesla MRI suite in Basement 1.\n\nDuring project review, the civil team reported: *\"Great news! We finished the external perimeter retaining walls and closed the ground floor concrete podium slab 3 weeks ahead of schedule!\"*\n\nThe Medical Equipment Project Manager turned pale.\n\n*\"How are we going to get the 8.5-tonne LINAC gantry and the 7.2-tonne MRI magnet into the basement?\"*\n\nThe civil contractor had sealed the temporary equipment entry route (the **rigging knockout opening**) shown on the architectural coordination drawings, assuming it was an omission!\n\n**The Aftermath:**\n- No basement passenger or service elevator has the weight capacity ($> 8\\text{ Tonnes}$) or physical dimensions ($3.2\\text{m} \\times 2.8\\text{m}$) to transport a LINAC or MRI magnet.\n- The project had to bring in diamond-wire concrete saw cutters to cut a $3.5\\text{m} \\times 3.5\\text{m}$ hole through the newly poured $300\\text{mm}$ post-tensioned slab.\n- Cost of cutting, structural carbon-fiber strengthening, and re-casting: **₹38 Lakhs**.\n- Schedule delay for bunker handover: **6 weeks**."
+      },
+      {
+        "k": "read",
+        "t": "**The Heavy Medical Equipment Delivery Protocol:**\n\n```\n+-------------------------+-----------------------------------+-----------------------------------------------+\n| Equipment Type          | Structural & Civil Requirements   | Rigging & Delivery Window Rule                |\n+-------------------------+-----------------------------------+-----------------------------------------------+\n| Linear Accelerator      | High-density concrete walls       | Temporary knockout opening (min 3.2m x 3.0m); |\n| (LINAC - 6 to 15 MV)    | (3,200 kg/m³, 1.5m–2.2m thick)    | Heavy-duty crane access path; floor loading   |\n|                         | Serpentine conduits; no cold joints| design >= 25 kN/m² along transport route.     |\n+-------------------------+-----------------------------------+-----------------------------------------------+\n| 3.0-Tesla MRI Scanner   | Concrete inertia base (1.5x mass);| Non-magnetic transport path; Rigging hatch    |\n| (Weight: ~7.5 Tonnes)   | RF Faraday cage (copper panels);  | remains open until magnet landed; Cryogenic   |\n|                         | 5-Gauss line magnetic exclusion.  | quench vent pipe (300mm SS) routed to terrace.|\n+-------------------------+-----------------------------------+-----------------------------------------------+\n| PET-CT & SPECT Scanner  | Lead-lined walls (2.5mm–3.5mm Pb);| Rigging via hospital service elevator if rated|\n|                         | Hot lab radiochemistry shielding. | >= 3.0 Tonnes; floor levelness <= 3mm/3m.     |\n+-------------------------+-----------------------------------+-----------------------------------------------+\n```\n\n**The Milestone Lock:**\nIn the P6 master schedule, the activity *\"Seal External Rigging Knockout Opening & Finish Façade\"* must have a mandatory **Finish-to-Start (FS)** relationship with *\"Rig & Land Heavy Medical Equipment on Inertia Pads\"*! Closing the wall before equipment delivery is a fatal planning defect."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why must a temporary structural knockout panel or rigging opening be maintained in the hospital façade/slab until heavy imaging equipment arrives?",
+            "o": [
+              [
+                "Because heavy machines like LINAC gantries (8+ tonnes) and MRI magnets (7+ tonnes) are too large and heavy for standard doors, elevators, or corridors, requiring direct crane rigging into their final bunker locations",
+                true,
+                "Medical equipment cannot be disassembled without voiding factory warranties and vacuum seals. Specialized rigging hatches provide the only viable transit route into basement or upper-floor suites."
+              ],
+              [
+                "Because AERB rules require medical bunkers to be open to fresh air at all times",
+                false,
+                "Bunkers must be heavily shielded with thick concrete and lead doors, never open to fresh air."
+              ],
+              [
+                "Because local municipal authorities require temporary openings to inspect concrete batch tickets",
+                false,
+                "Batch tickets are inspected on delivery trucks, not through structural slab holes."
+              ],
+              [
+                "Because high-density concrete takes 5 years to dry and must be ventilated",
+                false,
+                "High-density concrete cures normally within 28 days with appropriate temperature control."
+              ]
+            ]
+          },
+          {
+            "q": "What is the primary operational consequence of routing electrical or plumbing conduits straight through a LINAC radiation bunker wall instead of in a serpentine (Z-bend) configuration?",
+            "o": [
+              [
+                "Direct radiation beam leakage through the straight penetration hole, violating AERB safety limits and endangering hospital staff and patients outside the bunker",
+                true,
+                "High-energy radiation travels in straight lines. Conduit penetrations must follow serpentine (staggered Z or S bends) with lead packing to ensure radiation scattered inside cannot escape."
+              ],
+              [
+                "Conduits will melt immediately due to radio waves",
+                false,
+                "Medical LINACs do not melt conduits; radiation protection is the issue."
+              ],
+              [
+                "Water inside plumbing pipes will turn into flammable hydrogen gas instantly",
+                false,
+                "This does not happen in diagnostic or therapy hospital environments."
+              ],
+              [
+                "P6 software will crash when scheduling MEP activities",
+                false,
+                "This is a fundamental radiation physics and life-safety requirement."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Heavy equipment procurement and civil schedules must be locked in sync. Never seal a structural rigging opening or finish exterior landscaping until the multi-tonne LINAC and MRI magnets have been physically rigged onto their inertia pads."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U101",
+    "day": 101,
+    "title": "Day 101: Cleanroom Envelope Lock, Air Balancing (TABS) & HEPA Filter Certification Crisis",
+    "mins": 25,
+    "card": {
+      "id": "c-sim-cleanroom",
+      "title": "Cleanroom Envelope Lock, Air Balancing (TABS) & HEPA Filter Certification Crisis",
+      "rule": "Modular Operation Theatres (MOT) cannot achieve ISO Class 7/5 cleanliness until the architectural envelope is 100% sealed (Cleanroom Lock). Any subsequent drilling or sanding inside the OT suite contaminates HEPA filters and voids particle count certifications. Testing, Adjusting, and Balancing Systems (TABS, NEBB/ASHRAE) must balance air flow across the entire hospital cascade (+15 Pa in clean OTs, -15 Pa in airborne infection isolation rooms) before in-situ PAO/DOP aerosol HEPA leak testing (<= 0.01% penetration) and particle count validation.",
+      "example": "Enforcing Cleanroom Lockout on 14 OTs prevented civil trades from generating dust, allowing TABS balancing to achieve +15 Pa positive pressure in 5 days, passing DOP filter leak tests (0.002% penetration) on the first pass.",
+      "trap": "Permitting trade contractors into OT suites after cleanroom envelope lock without cleanroom suits, ruining terminal HEPA filters and failing NABH audits."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a premier 450-bed hospital project, the Modular Operation Theatre (MOT) suite consisting of 10 surgical rooms was scheduled for NABH pre-commissioning audits in 10 days.\n\nThe specialized cleanroom contractor had installed the SS304 wall panels, conductive vinyl flooring, hermetically sealing sliding doors, and ceiling HEPA filter modules ($0.3\\,\\mu\\text{m}$ at $99.997\\%$ efficiency).\n\nTwo days before the scheduled particle count validation, the biomedical contractor arrived to mount surgical monitor arms and ceiling pendant lights.\n\nTheir technicians drilled **48 anchor holes** into the concrete ceiling slab above the cleanroom grid without dust extractors or plastic tenting. Concrete dust and silica powder rained down across the OT suites, being drawn directly into the return air plenums and coating the newly installed HEPA filters!\n\nWhen the independent validation agency ran the ISO Class 7 particle count test:\n- Allowable particles ($0.5\\,\\mu\\text{m}$): Max **$352,000\\text{ particles/m}^3$**.\n- Measured particles: **$4,800,000\\text{ particles/m}^3$** (**13 Times Above Allowable Limit!**)\n\nEvery single terminal HEPA filter canopy had to be scrapped and replaced. The OT suite had to undergo three rounds of clinical fogging and deep decontamination. Cost: **₹22 Lakhs**. Delay: **4 weeks**."
+      },
+      {
+        "k": "read",
+        "t": "**The Cleanroom Commissioning Protocol (ISO 14644 & NEBB TABS):**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Commissioning Stage   | Technical Prerequisites & Tests       | Quality Gate & Enforcement Rule             |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Stage 1: Envelope Lock| All civil, MEP, medical gas, pendants | 'CLEANROOM LOCK': No tools, drilling, or    |\n|                       | installed; monolithic silicone sealing| non-cleanroom personnel permitted inside.   |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Stage 2: TABS Air     | AHU VFD calibration, damper balance;   | Achieve +15 Pa in sterile OTs vs corridor;  |\n| Balancing             | 20–25 Air Changes per Hour (ACPH)     | -15 Pa in Airborne Infection Isolation (AII)|\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Stage 3: In-Situ DOP  | Poly-Alpha-Olefin (PAO) / DOP aerosol | Max penetration <= 0.01% across entire filter|\n| Integrity Scan        | upstream challenge; photometer scan   | face and perimeter frame gasket seal.       |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Stage 4: Particle     | Calibrated discrete particle counter; | ISO Class 7 (at rest): <= 352,000 part/m³   |\n| Count Validation      | 1.0 CFM sample rate at grid points    | ISO Class 5 under laminar flow canopy       |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**The Golden Rule of Cleanroom Lock:**\nFrom the moment terminal HEPA filters are uncrated and installed, the entire OT floor must be treated as a sterile surgical zone. Anyone entering must wear cleanroom shoe covers, Tyvek suits, and hairnets. All rough-in drilling must be completed 100% before Stage 1!"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What does 'Cleanroom Envelope Lock' mean in hospital project scheduling and site management?",
+            "o": [
+              [
+                "A strict site milestone where all architectural, structural, and rough-in trade work inside the OT suite is 100% frozen, all penetrations are hermetically sealed, and dirty trades are barred from entry prior to HEPA uncrating and air balancing",
+                true,
+                "Cleanroom lock prevents construction dust from contaminating terminal HEPA filters and cleanroom surfaces, ensuring successful ISO 14644 validation."
+              ],
+              [
+                "A requirement that hospital room doors must be locked with padlocks so doctors cannot enter",
+                false,
+                "This is a contamination control and air-quality milestone during commissioning, not physical door locking against doctors."
+              ],
+              [
+                "A software setting in P6 that locks activity durations from being changed",
+                false,
+                "This refers to physical jobsite cleanroom protocols, not P6 schedule software."
+              ],
+              [
+                "A method of painting walls with epoxy paint without turning on ventilation",
+                false,
+                "Epoxy painting occurs well before cleanroom lock and requires active exhaust ventilation."
+              ]
+            ]
+          },
+          {
+            "q": "During HVAC TABS testing of a surgical suite, what are the target differential pressure relationships required to maintain aseptic infection control?",
+            "o": [
+              [
+                "+15 Pascals positive pressure in sterile Operating Theatres relative to semi-restricted corridors, and -15 Pascals negative pressure in Airborne Infection Isolation rooms",
+                true,
+                "Positive pressure forces clean air outward, preventing corridor microbes from entering OTs; negative pressure draws air inward, preventing contagious pathogens in isolation rooms from escaping into corridors."
+              ],
+              [
+                "Zero pressure differential everywhere so that doors swing open freely with no resistance",
+                false,
+                "Neutral pressure allows uncontrolled air and microbe migration, violating infection control."
+              ],
+              [
+                "-50 Pascals negative pressure in all Operating Theatres to suck out surgical smoke",
+                false,
+                "Negative pressure in an OT would suck dirty corridor air directly onto the open surgical patient!"
+              ],
+              [
+                "+100 Pascals positive pressure in patient bathrooms to blow odors outside",
+                false,
+                "Excessive pressure makes doors impossible to open and damages wall panels; target differentials are typically 10 to 15 Pa."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "A single drill hole can ruin a ₹50 Lakh HEPA canopy installation. Enforce Cleanroom Lockout before uncrating filters, achieve stable TABS cascade pressure balancing (+15 Pa OT / -15 Pa Isolation), and mandate in-situ DOP leak testing before inviting NABH inspectors."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U102",
+    "day": 102,
+    "title": "Day 102: Medical Gas Pipeline Systems (MGPS), CSSD Autoclaves & Pneumatic Chute Validation",
+    "mins": 25,
+    "card": {
+      "id": "c-sim-mgps-cssd",
+      "title": "Medical Gas Pipeline Systems (MGPS), CSSD Autoclaves & Pneumatic Chute Validation",
+      "rule": "Medical gas pipelines (HTM 02-01 / NFPA 99) deliver life-sustaining Oxygen, Nitrous Oxide, Medical Air (4 bar), Surgical Air (7 bar), and Vacuum (-60 kPa). Commissioning mandates 5 mandatory checks: 1) Particulate blow-out with dry nitrogen; 2) 24-hour static pressure decay test at 1.5x working pressure (zero drop allowed); 3) Anti-confusion cross-connection test (verifying every terminal unit delivers the designated gas); 4) Gas purity and dew point (< -40°C) verification; 5) Area Valve Service Unit (AVSU) and central alarm panel signaling.",
+      "example": "Forensic MGPS testing across 850 terminal outlets identified 2 cross-connected lines (Medical Air swapped with Oxygen in Day Care ICU) during the anti-confusion gas test, eliminating a lethal clinical hazard before patient admission.",
+      "trap": "Skipping the anti-confusion cross-connection test on gas terminal outlets, leading to fatal clinical cross-connection between Nitrous Oxide and Oxygen."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On an international hospital project, a fatal incident sent shockwaves through the global healthcare engineering community:\n\nDuring pediatric surgeries, two patients suffered fatal cardiac arrest within 48 hours of each other in newly opened Operating Theatre 4.\n\nThe forensic investigation discovered a horrific construction error:\n- The plumbing subcontractor had accidentally cross-connected the **Nitrous Oxide ($N_2O$, an anesthetic)** pipeline into the **Oxygen ($O_2$)** terminal wall outlet during above-ceiling connection!\n- When the anesthetist plugged the patient's breathing circuit into the wall outlet labeled *'OXYGEN'*, the child received 100% Nitrous Oxide instead of Oxygen.\n\n**How did this happen?**\n1. The contractor performed a bulk pneumatic pressure test on the entire piping network at once.\n2. But the contractor **skipped the Anti-Confusion Test**—the mandatory individual verification of every single gas terminal unit using calibrated gas analyzers!\n\nAs a Project Controls Manager, you must treat MGPS commissioning not as routine plumbing, but as a life-safety critical path discipline governed by international healthcare standards (HTM 02-01 and NFPA 99)."
+      },
+      {
+        "k": "read",
+        "t": "**The 5-Stage MGPS Commissioning Protocol (HTM 02-01 / NFPA 99):**\n\n```\n+-----------------------+---------------------------------------+---------------------------------------------+\n| Inspection Stage      | Technical Requirement & Pressure      | Mandatory Pass Criteria                     |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 1. High-Pressure      | 1.5x working pressure (e.g. 6.0 bar   | Zero pressure drop over 24 hours            |\n| Leakage Hold Test     | for 4-bar systems; 10.5 bar for 7-bar)| (temperature corrected; no bubble leaks).  |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 2. Particulate Purge  | Oil-free dry nitrogen at high velocity| White cloth target test at terminal outlets |\n| & Blow-out            | through all main distribution risers  | reveals zero discoloration or copper debris.|\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 3. Anti-Confusion     | Pressurize ONE gas system with N2     | Test EVERY outlet: only the targeted gas    |\n| Cross-Connection Test | while all other systems are at 0 bar  | outlet must discharge; all others must be 0!|\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 4. Purity & Moisture  | Moisture analyzer & gas chromatography| Atmospheric dewpoint < -40°C; zero oil/CO;  |\n| Verification          | at farthest remote terminal outlet    | Oxygen concentration >= 99.5% at bed heads. |\n+-----------------------+---------------------------------------+---------------------------------------------+\n| 5. AVSU & Alarm Panel | Trip pressure switches at Area Valve  | Visual/audible alarm triggers at Nurse      |\n| Integration           | Service Units (AVSU) and Plant Room   | Stations and BMS within 2 seconds of fault. |\n+-----------------------+---------------------------------------+---------------------------------------------+\n```\n\n**CSSD Validation Gateway:**\nSimilarly, in the Central Sterile Services Department (CSSD), steam autoclaves must pass the **Bowie-Dick steam penetration test** and **biological spore challenge ($Geobacillus\\,stearothermophilus$)** to prove 100% microbial kill before the department can be certified."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the specific purpose of the MGPS 'Anti-Confusion Test' under HTM 02-01 / NFPA 99?",
+            "o": [
+              [
+                "To systematically verify that each specific gas pipeline (Oxygen, Nitrous Oxide, Medical Air, Vacuum) connects exclusively to its designated terminal outlet with zero cross-connection across the entire hospital",
+                true,
+                "By pressurizing one gas system at a time while leaving others unpressurized, engineers verify that no pipes were accidentally crossed during installation, preventing fatal patient poisoning."
+              ],
+              [
+                "To ensure that hospital doctors do not get confused when reading patient charts",
+                false,
+                "This is an engineering piping verification test, not a clinical charting review."
+              ],
+              [
+                "To test whether the copper pipes will expand or contract during earthquakes",
+                false,
+                "Seismic restraint testing is a structural check, not the anti-confusion gas test."
+              ],
+              [
+                "To check whether the fire alarm sirens are loud enough to wake sleeping patients",
+                false,
+                "Acoustic alarm checks belong to the Fire Alarm testing protocol."
+              ]
+            ]
+          },
+          {
+            "q": "What is the mandatory threshold for medical gas pipeline moisture content (dew point) before the system can be approved for patient use?",
+            "o": [
+              [
+                "Atmospheric dew point must be below -40°C at line pressure to prevent moisture condensation and bacterial growth inside pipelines",
+                true,
+                "Moisture in medical air or oxygen can condense, corrode pipes, promote virulent bacterial biofilm, and freeze inside ventilator pressure regulators."
+              ],
+              [
+                "Dew point must be +25°C so the gas stays humid and comfortable to breathe",
+                false,
+                "Pipeline gas must be bone-dry; clinical humidification is added artificially at the patient's bedside via sterile water bottles."
+              ],
+              [
+                "Moisture content does not matter as long as line pressure is at least 20 bar",
+                false,
+                "Excess moisture is a severe clinical infection risk and will cause equipment failure."
+              ],
+              [
+                "Dew point is only checked after 5 years of hospital operations",
+                false,
+                "Gas purity and dewpoint certification are mandatory preconditions for initial commissioning."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Medical gas pipelines deliver medicine directly into patients' lungs. Never accept a simple hydrostatic or bulk pressure test; mandate the 5-stage protocol including 24h pressure hold, dewpoint testing (< -40°C), and 100% anti-confusion testing of every single outlet."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U103",
+    "day": 103,
+    "title": "Day 103: Fire NOC Emergency, Substation Energization & Multi-Agency Statutory Clearances",
+    "mins": 25,
+    "card": {
+      "id": "c-sim-statutory",
+      "title": "Fire NOC Emergency, Substation Energization & Multi-Agency Statutory Clearances",
+      "rule": "Hospital opening hinges on a strict statutory precedence waterfall. Primary prerequisite: HT/LT Substation energization by the Chief Electrical Inspector to Government (CEIG), followed by DG synchronization. Secondary prerequisite: Lift Inspectorate passenger/bed lift licenses. Tertiary prerequisite: Fire Department live testing (NBC 2016 Part 4: 3.5 bar pressure at terrace hydrant, auto-start of jockey and diesel fire pumps, motorized smoke damper trips within 15 seconds) for Fire NOC. Only upon Fire NOC and Pollution Control Board (PCB CTO for STP/ETP) can the Municipal Corporation issue the Occupancy Certificate (OC), unlocking AERB and NABH/Clinical Establishments Act licensing.",
+      "example": "On a ₹600 Cr hospital project in Delhi NCR, synchronizing CEIG electrical clearance (Day 1) with Fire NOC pump flow tests (Day 7) and Lift Inspectorate approvals (Day 14) allowed the Municipal Occupancy Certificate to be obtained in 30 days instead of the typical 6-month bureaucratic stall.",
+      "trap": "Scheduling the Fire Department final inspection before CEIG electrical energization or wet riser water charging, guaranteeing immediate statutory rejection and 60-day delay."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** The civil, MEP, and architectural fit-outs of a ₹600 Crore tertiary care hospital were 100% physically finished. The client announced the grand opening date with VIP dignitaries invited in 4 weeks.\n\nThe Project Controls Lead looked at the statutory approvals tracker and sounded the alarm:\n*\"We cannot open. We do not have statutory permission to occupy the building.\"*\n\nThe client's managing director replied: *\"Can't we just pay an expedited fee and get the Municipal Occupancy Certificate (OC) next week?\"*\n\nThe answer was an absolute **NO**.\n\nIn Indian statutory law, municipal corporations cannot legally issue an Occupancy Certificate (OC) for an institutional healthcare facility without a **Fire Safety NOC** issued by the Chief Fire Officer.\n\nAnd the Fire Department cannot conduct their live fire drill inspection because:\n1. The **HT Substation had not received CEIG energization approval**, meaning the electric fire pumps could only run on temporary construction power, which is illegal under NBC 2016!\n2. The **Lift Inspectorate had not issued licenses for the Fireman's Evacuation Lifts**.\n3. The **Pollution Control Board Consent to Operate (CTO)** for the Sewage and Effluent Treatment Plants (STP/ETP) was still pending water sample laboratory test results.\n\nAttempting to shortcut the statutory chain resulted in the local municipal authority sealing the hospital gates on opening day, triggering massive public embarrassment and a ₹5 Crore commercial delay."
+      },
+      {
+        "k": "read",
+        "t": "**The Multi-Agency Statutory Precedence Waterfall:**\n\n```\n+-----------------------------------------------------------------------------------------------------+\n|                                 STAGE 1: UTILITY ENERGIZATION                                       |\n|  [CEIG Substation & Transformer Approval] ---> [DG Set Synchronization & Grid Interconnection]      |\n+-----------------------------------------------------------------------------------------------------+\n                                                  |\n                                                  v\n+-----------------------------------------------------------------------------------------------------+\n|                                 STAGE 2: LIFE-SAFETY SYSTEM GATES                                   |\n|  - Wet Riser charged to 3.5 bar at highest terrace outlet                                           |\n|  - Main Electric, Diesel Engine & Jockey Fire Pumps tested on auto-start                            |\n|  - 2-Hour Motorized Smoke Dampers trip within 15s of Fire Alarm Panel (FAP) signal                  |\n|  - Lift Inspectorate Passenger & Fireman Bed Lift Certification                                     |\n+-----------------------------------------------------------------------------------------------------+\n                                                  |\n                                                  v\n+-----------------------------------------------------------------------------------------------------+\n|                                 STAGE 3: STATUTORY OCCUPANCY GATES                                  |\n|  [State Pollution Control Board (PCB) CTO] + [Chief Fire Officer FIRE NOC]                          |\n|                                                 |                                                   |\n|                                                 v                                                   |\n|                         [MUNICIPAL BUILDING OCCUPANCY CERTIFICATE (OC)]                             |\n+-----------------------------------------------------------------------------------------------------+\n                                                  |\n                                                  v\n+-----------------------------------------------------------------------------------------------------+\n|                                 STAGE 4: CLINICAL LICENSING GATES                                   |\n|  [AERB Diagnostic / Bunker License] ---> [Clinical Establishments Act / NABH Hospital Accreditation]|\n+-----------------------------------------------------------------------------------------------------+\n```\n\n**The Hard FS Dependency Rule:**\nNever schedule a downstream agency inspection until the upstream certification document is physically stamped and in hand! An inspector will turn around and cancel the visit the moment an upstream prerequisite is missing."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Under NBC 2016 Part 4 and Indian municipal regulations, what is the mandatory sequence of approvals required before a municipal corporation can issue an Occupancy Certificate (OC) for a hospital?",
+            "o": [
+              [
+                "CEIG electrical energization -> Fire pump & smoke damper operational tests -> Chief Fire Officer Fire NOC & State PCB CTO -> Municipal Building Occupancy Certificate (OC)",
+                true,
+                "Electrical energization powers life-safety systems; operational fire pumps enable Fire NOC inspection; Fire NOC and PCB CTO are mandatory legal prerequisites for the Municipal OC."
+              ],
+              [
+                "Municipal OC is granted on Day 1 of construction before any work starts",
+                false,
+                "The initial permit is the Building Sanction / Commencement Certificate; OC is only granted after full building completion and safety audits."
+              ],
+              [
+                "Fire NOC can be issued without running water or electricity in the building",
+                false,
+                "Fire departments require live water flow and pressure testing (3.5 bar at terrace) and live smoke damper actuation."
+              ],
+              [
+                "AERB radiation licenses are granted by the local police station without technical review",
+                false,
+                "AERB is the national atomic regulatory authority with strict physical shielding and safety testing protocols."
+              ]
+            ]
+          },
+          {
+            "q": "During the final Fire NOC inspection, the Chief Fire Officer opens the hydrant landing valve on the highest hospital terrace. What is the minimum residual water pressure required under NBC 2016?",
+            "o": [
+              [
+                "Minimum 3.5 bar (0.35 MPa) residual pressure at the highest and most remote terrace hydrant outlet with two adjacent landing valves discharging simultaneously",
+                true,
+                "NBC 2016 Part 4 mandates a minimum residual pressure of 3.5 bar at the roof outlet to ensure firefighters can produce effective fire extinguishing streams on upper floors."
+              ],
+              [
+                "Zero pressure as long as water drips out of the hose within 30 minutes",
+                false,
+                "A weak trickle of water cannot fight high-rise hospital fires."
+              ],
+              [
+                "Exactly 50 bar pressure, which will shatter standard glass windows",
+                false,
+                "50 bar is dangerously excessive for municipal hydrants and would burst standard hoses."
+              ],
+              [
+                "Terrace hydrants are purely ornamental and are not connected to water",
+                false,
+                "Terrace hydrants are the primary life-safety firefighting defense for multi-story buildings."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Statutory approvals form an unforgiving critical path waterfall. Map out every dependency: CEIG energization powers the pumps, the pumps enable Fire NOC testing, Fire NOC and PCB CTO unlock the Municipal Occupancy Certificate, which finally allows clinical licensing."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS12);
+const APPLY12 = {
+  "U96": {
+    "task": "Formulate a Geotechnical Foundation Risk & Pile Integrity Management Plan for a 600-bed hospital project: 1) Define bentonite slurry testing and borehole cleaning protocols under IS 2911; 2) Establish dynamic rock socketing criteria for strata variations; 3) Specify non-destructive testing requirements (CSL vs PIT) and column hold points; 4) Draft a contractual protocol for handling strata surprises and rig refusal without schedule collapse.",
+    "good": [
+      "Specifies precise bentonite density (1.05–1.10 g/cm³) and marsh funnel viscosity criteria",
+      "Defines dynamic rock socketing parameters (1.5D to 3D) tied to RQD and core recovery",
+      "Establishes 100% CSL / PIT integrity hold points before pile cap shuttering",
+      "Provides a clear commercial and schedule mitigation protocol for unexpected bedrock variations"
+    ],
+    "tmpl": "Geotechnical Foundation Risk & Piling Quality Protocol:\nProject Scope & Foundation Profile (Piles Count, Diameters, Design Loads): \n1. Borehole Slurry & Drilling Quality Standards (IS 2911 Density & Desanding Limits): \n2. Dynamic Rock Socket Verification Protocol (Core Recovery, RQD, Embedment Depth): \n3. Non-Destructive Pile Testing Architecture (100% PIT & CSL for Bunker/Bed Towers): \n4. Subcontractor Hold Point & Pile Cap Release Gate: \n5. Strata Surprise Mitigation & Commercial / EOT Dispute Prevention Procedure: "
+  },
+  "U97": {
+    "task": "Develop a Deep Basement Dewatering, Buoyancy & Waterproofing Protection Plan for a 3-level hospital basement under high water table conditions: 1) Calculate buoyant uplift force vs dead weight Factor of Safety across construction stages; 2) Define 24/7 dewatering system requirements with N+1 DG redundancy; 3) Specify diaphragm wall joint waterstops and injection systems; 4) Establish the exact superstructure milestone when dewatering can safely be terminated.",
+    "good": [
+      "Performs rigorous hydrostatic uplift force calculations across foundation stages",
+      "Enforces the mandatory Factor of Safety (FS >= 1.25) against buoyant floating",
+      "Specifies 24/7 dewatering logistics, standby pump capacities, and dual DG backup",
+      "Defines the exact structural completion milestone required before dewatering deactivation"
+    ],
+    "tmpl": "Deep Basement Dewatering & Hydrostatic Buoyancy Governance Plan:\nExcavation Depth, Basement Levels & Hydrostatic Water Table Profile: \n1. Hydrostatic Buoyancy Uplift Calculation (Uplift Force vs Foundation Dead Weight): \n2. Factor of Safety Verification (FS >= 1.25 Threshold by Construction Floor Level): \n3. 24/7 Deep-Well Dewatering System Architecture (Pump Array, Standby Units, DG Power): \n4. Diaphragm Wall & Slab Waterproofing Joint Details (Hydrophilic Profiles & Grouting Hoses): \n5. Dewatering De-escalation & Safe Shutdown Milestone Sign-off Protocol: "
+  },
+  "U98": {
+    "task": "Design an Accelerated Superstructure Formwork Cycle & Post-Tensioned Slab Reshoring Strategy for a 12-story hospital tower: 1) Compare conventional beam-slab vs PT flat slab on cycle time, cost, and MEP ceiling void clearance; 2) Detail the day-by-day 7-day slab cycle schedule; 3) Define concrete maturity and tendon stressing criteria (75% UTS, elongation +/- 7%); 4) Establish the multi-floor back-propping protocol under IS 456 / ACI 347.",
+    "good": [
+      "Provides quantitative schedule compression and MEP ceiling height recovery comparisons",
+      "Maps the granular Day 1 through Day 7 slab construction cycle with specific hold points",
+      "Defines rigorous PT tendon stressing prerequisites (concrete strength >= 70% f_ck)",
+      "Specifies back-propping across 2 consecutive lower floors to ensure structural integrity"
+    ],
+    "tmpl": "Accelerated Superstructure 7-Day Cycle & PT Slab Execution Protocol:\nStructural Framing System & Floor Plate Scope (Grid Spacing, Slab Thickness, Concrete Grade): \n1. Shuttering System Selection & Cycle Time Comparison (Conventional 14d vs PT 7d): \n2. Day-by-Day 7-Day Slab Construction Schedule (Rebar, PT Ducts, MEP Sleeves, Pouring): \n3. Prestressing Quality Control & Formwork Striking Gate (0.70 f_ck, 75% UTS, Elongation Limits): \n4. Multi-Floor Back-Propping & Load Distribution Architecture (IS 456 / ACI 347): \n5. MEP Vertical Clearance Recovery & Above-Ceiling Optimization Benefit: "
+  },
+  "U99": {
+    "task": "Create an Above-Ceiling MEP Coordination & Spatial Hierarchy Directive for a hospital surgical Hot Floor: 1) Establish the 5-tier vertical spatial layering hierarchy from slab to finished ceiling; 2) Define clearance rules between electrical cable trays and wet piping systems; 3) Formulate the gravity drainage slope reservation protocol; 4) Detail the 3D BIM clash resolution and Combined Services Drawing (CSD) sign-off process.",
+    "good": [
+      "Establishes an unambiguous vertical zoning order for all MEP trades above ceilings",
+      "Strictly enforces electrical tray positioning above all liquid and drainage pipes",
+      "Protects gravity drainage pitch (1:80 to 1:100) as an unalterable spatial constraint",
+      "Mandates approved 3D BIM CSD/SEM drawings prior to physical site fabrication"
+    ],
+    "tmpl": "Hospital Hot Floor Above-Ceiling MEP Coordination Directive:\nCorridor & Ceiling Void Parameters (Floor-to-Floor Height, Ceiling Height, Net Void): \n1. 5-Tier Above-Ceiling Spatial Hierarchy (Vertical Elevation Bands from Slab to Ceiling): \n2. Critical Trade Separation Rules (Electrical above Water, 150mm MGPS Clearance, Insulation): \n3. Gravity Drainage Routing & Fall Protection Protocol (1:80 to 1:100 Fall Integrity): \n4. Access Hatch Placement & Maintenance Clearance Strategy (Dampers, Valves, VAVs): \n5. BIM Clash Resolution Workflow & Combined Services Drawing (CSD) Approval Gate: "
+  },
+  "U100": {
+    "task": "Develop a Medical Equipment Rigging & Radiation Bunker Structural Coordination Schedule for LINAC, MRI, and CT suites: 1) Specify high-density concrete pour and testing procedures for LINAC bunkers; 2) Detail serpentine conduit penetrations to prevent radiation leakage; 3) Define dimensions and structural loads for temporary external knockout rigging openings; 4) Create P6 predecessor logic linking equipment landing to façade closure.",
+    "good": [
+      "Defines high-density concrete mix (3,200 kg/m³) and temperature control protocols",
+      "Details serpentine conduit Z-bends and lead shielding to satisfy AERB standards",
+      "Calculates rigging knockout panel dimensions and crane transport path load capacities",
+      "Establishes non-negotiable P6 FS logic linking equipment rigging to structural closure"
+    ],
+    "tmpl": "Heavy Medical Equipment Structural Coordination & Rigging Protocol:\nEquipment Scope (Linear Accelerators, 3.0T MRI, PET-CT, Cath Labs): \n1. LINAC Bunker Civil Engineering (High-Density Concrete 3,200 kg/m³, Continuous Pour): \n2. Radiation Protection & Serpentine Penetration Detailing (AERB Compliance): \n3. MRI Suite Structural Requirements (Inertia Slab, RF Faraday Cage, Cryogenic Quench Vent): \n4. Temporary Rigging Knockout Openings (Dimensions, Slab Edge Loading, Crane Route): \n5. P6 Schedule Logic & Equipment Arrival Precedence Gates (FS Links to Façade Closure): "
+  },
+  "U101": {
+    "task": "Formulate a Cleanroom Envelope Lockout & HVAC TABS Air Balancing Commissioning Protocol for a 10-room hospital Modular OT complex: 1) Define the 4-stage commissioning gateway (Envelope Lock, TABS, DOP Leak Scan, Particle Counts); 2) Specify differential pressure cascade targets across surgical suites; 3) Establish cleanroom access restrictions and gowning rules; 4) Create a recovery plan for failing ISO Class 7/5 particle count audits.",
+    "good": [
+      "Defines the strict 'Cleanroom Lock' milestone preventing trade work after HEPA uncrating",
+      "Specifies precise differential pressure cascade standards (+15 Pa OT / -15 Pa Isolation)",
+      "Details in-situ PAO/DOP filter integrity testing criteria (<= 0.01% penetration)",
+      "Provides actionable forensic troubleshooting steps for particle count failures"
+    ],
+    "tmpl": "Modular Operation Theatre Cleanroom Commissioning & TABS Balancing Protocol:\nSurgical Suite Scope (Number of OTs, Cleanroom Class ISO 7/5, Air Handling Units): \n1. Cleanroom Envelope Lock Milestone Criteria (Architectural Seal, MEP Freeze, Barred Trades): \n2. TABS Air Balancing Strategy (Supply/Exhaust CFM, 20–25 ACPH, Pressure Differentials): \n3. In-Situ PAO/DOP HEPA Filter Integrity Testing Protocol (Upstream Challenge, Scan Method): \n4. ISO 14644-1 Particle Count Validation Procedure (Sample Locations, Particle Limits): \n5. Contamination Remediation & Retesting Protocol (Air Purge, Clinical Fogging, Recertification): "
+  },
+  "U102": {
+    "task": "Design a Medical Gas Pipeline System (MGPS) 5-Stage Commissioning & Verification Directive under HTM 02-01 / NFPA 99: 1) Specify pressure decay test parameters (1.5x working pressure for 24h); 2) Detail the step-by-step Anti-Confusion Cross-Connection test procedure; 3) Define gas purity and moisture dewpoint criteria (< -40°C); 4) Integrate Area Valve Service Units (AVSU) and central alarm testing into project milestones.",
+    "good": [
+      "Specifies rigorous 24-hour static pressure hold testing with zero allowable drop",
+      "Provides a foolproof individual-outlet Anti-Confusion test procedure",
+      "Defines moisture dew point (< -40°C) and purity thresholds for patient breathing gases",
+      "Integrates emergency valve and alarm panel monitoring with BMS and nurse stations"
+    ],
+    "tmpl": "Medical Gas Pipeline System (MGPS) 5-Stage Commissioning Protocol:\nSystem Scope (O2, N2O, Medical Air 4-bar, Surgical Air 7-bar, Vacuum, AGSS Outlets Count): \n1. 24-Hour High-Pressure Leakage Test (Test Pressures, Duration, Zero-Decay Acceptance): \n2. Particulate Purge & Oil-Free Nitrogen Blow-Out Standards: \n3. Systematic Anti-Confusion Cross-Connection Test Protocol (Individual Outlet Gas Identification): \n4. Gas Purity & Moisture Dew Point Analysis (Dewpoint < -40°C, Hydrocarbon/CO Limits): \n5. AVSU & Master Alarm Integration Test (Low/High Pressure Cut-in, Visual/Audible Signals): "
+  },
+  "U103": {
+    "task": "Create a Comprehensive Hospital Statutory Precedence Waterfall & Licensing Critical Path Plan: 1) Map the strict dependency chain from Substation CEIG energization to Fire NOC, Municipal OC, and NABH; 2) Detail Fire Department live test parameters (3.5 bar terrace hydrant, smoke dampers, fire lifts); 3) Formulate a risk mitigation strategy for statutory review delays; 4) Draft an Executive Briefing on statutory readiness for the hospital board.",
+    "good": [
+      "Maps the complete statutory approval critical path with non-negotiable FS logic links",
+      "Specifies exact NBC 2016 Part 4 fire testing parameters (3.5 bar residual terrace pressure)",
+      "Identifies statutory prerequisites (CEIG, Lifts, STP/ETP CTO) required before Municipal OC",
+      "Delivers a crisp, executive-grade statutory handover schedule for boardroom presentation"
+    ],
+    "tmpl": "Hospital Statutory Approvals Precedence Waterfall & Handover Strategy:\nFacility Profile (Gross Built-up Area, Bed Capacity, Height, Municipal Jurisdiction): \n1. The 4-Stage Statutory Precedence Waterfall (CEIG -> Lifts/PCB -> Fire NOC -> Municipal OC): \n2. Chief Electrical Inspectorate (CEIG) Substation & DG Synchronization Clearance Gate: \n3. Fire Department Live Testing Criteria (3.5 Bar Hydrant Head, Smoke Dampers, Fire Lifts): \n4. Municipal Building Occupancy Certificate (OC) Filing & Document Prerequisite Matrix: \n5. Clinical Licensing Phase (AERB, Clinical Establishments Act, NABH Accreditation Milestones): "
+  }
+};
+Object.assign(APPLY, APPLY12);
+UNITS12.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
