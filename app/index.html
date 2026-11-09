@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=43"></script>
+<script src="shim.js?v=44"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -5155,6 +5155,7 @@ function renderPractice(){
     <div class="btnrow" style="margin:0;gap:8px">
       <button class="btn" id="btn-open-tia-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--ok,#1F8A4C);color:var(--ok,#1F8A4C)">⏱️ SCL Delay Protocol TIA Forensics</button>
       <button class="btn" id="btn-open-crashing-box" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid var(--accent,#D97706);color:var(--accent,#D97706)">⚡ Schedule Crashing &amp; Recovery Simulator</button>
+      <button class="btn" id="btn-open-cert-more" style="flex:1;padding:8px 10px;font-size:.82rem;font-weight:700;background:var(--surface,#fff);border:1px solid #D97706;color:#D97706">🎓 Master Project Controls Credential (MPCM)</button>
     </div>
   </div>`;
   const open=DRILLS.filter(d=>practiceUnlocked(d.week,d.id));
@@ -5186,6 +5187,7 @@ function renderPractice(){
   $("btn-open-hosp-box")&&($("btn-open-hosp-box").onclick=()=>openHospitalSequencePlaybook());
   $("btn-open-tia-box")&&($("btn-open-tia-box").onclick=()=>openTIASandbox());
   $("btn-open-crashing-box")&&($("btn-open-crashing-box").onclick=()=>openCrashingSimulator());
+  $("btn-open-cert-more")&&($("btn-open-cert-more").onclick=()=>openMasterCertificate());
   w.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>startGuided(+b.dataset.gl));
   w.querySelectorAll("[data-lf]").forEach(b=>b.onclick=()=>{ pr.lf=b.dataset.lf; renderPractice(); });
   w.querySelectorAll("[data-df]").forEach(b=>b.onclick=()=>{ pr.df=b.dataset.df; renderPractice(); });
@@ -6918,6 +6920,481 @@ function unitIdx(uid){ return UNITS.findIndex(u=>u.id===uid); }
 function unitOpen(i){ const u=UNITS[i]; if(u.track){ const tr=UNITS.filter(x=>x.track===u.track), k=tr.indexOf(u); return cst("U1").done && tr.slice(0,k).every(x=>cst(x.id).done); }
   const main=UNITS.filter(x=>!x.track), k=main.indexOf(u); return k===0 || main.slice(0,k).every(x=>cst(x.id).done); }
 function currentUnit(){ return UNITS.find((u,i)=>!u.track&&unitOpen(i)&&!cst(u.id).done)||null; }
+// =========================================================================
+// STAGE 2: ADVANCED DRILLS 25 & 26 (CRASH & EAC)
+// =========================================================================
+function genCrash(){
+  const acts = [
+    { id: "A", name: "Superstructure RCC & PT Slabs", normD: rnd(30, 45), crashD: 0, normC: rnd(60, 90), crashC: 0 },
+    { id: "B", name: "Façade Unitized Glazing Envelope", normD: rnd(25, 40), crashD: 0, normC: rnd(50, 80), crashC: 0 },
+    { id: "C", name: "Hot Floor MEP Above-Ceiling Services", normD: rnd(35, 50), crashD: 0, normC: rnd(100, 160), crashC: 0 }
+  ];
+  acts.forEach((a, idx) => {
+    const comp = rnd(8, 15);
+    a.crashD = a.normD - comp;
+    const slope = idx === 0 ? rnd(15, 30) / 10 : (idx === 1 ? rnd(35, 55) / 10 : rnd(60, 90) / 10);
+    a.crashC = Math.round(a.normC + (comp * slope));
+    a.slope = Math.round(((a.crashC - a.normC) / comp) * 100) / 100;
+  });
+
+  const pickIdx = rnd(0, 2);
+  const targetAct = acts[pickIdx];
+  const ldRate = 5.0; // ₹ Lakhs/day
+  const viable = targetAct.slope <= ldRate ? "yes" : "no";
+
+  return {
+    type: "crash",
+    acts,
+    target: targetAct.id,
+    targetName: targetAct.name,
+    ldRate,
+    ans: {
+      slope: targetAct.slope,
+      first: acts[0].id,
+      viable
+    }
+  };
+}
+
+function genEAC(){
+  const bac = rnd(150, 400); // ₹ Crores
+  const pvPct = rnd(50, 75);
+  const pv = Math.round(bac * (pvPct / 100));
+  const evPct = rnd(70, 92);
+  const ev = Math.round(pv * (evPct / 100));
+  const acPct = rnd(108, 128);
+  const ac = Math.round(ev * (acPct / 100));
+
+  const cpi = Math.round((ev / ac) * 100) / 100;
+  const spi = Math.round((ev / pv) * 100) / 100;
+  const cr = Math.round(cpi * spi * 100) / 100;
+
+  const eac1 = Math.round((ac + (bac - ev)) * 10) / 10;
+  const eac2 = Math.round((bac / cpi) * 10) / 10;
+  const distress = cr < 0.90 ? "yes" : "no";
+
+  return {
+    type: "eac",
+    bac,
+    pv,
+    ev,
+    ac,
+    cpi,
+    spi,
+    cr,
+    ans: {
+      cpi,
+      eac1,
+      eac2,
+      distress
+    }
+  };
+}
+
+DRILLS.push(
+  { id: "crash", gen: genCrash, title: "Recovery: Critical path crashing cost slope (ΔC/ΔT)", week: 15, lesson: "U106" },
+  { id: "eac", gen: genEAC, title: "Controls: EVM multi-model EAC forecasting & Critical Ratio", week: 13, lesson: "U93" }
+);
+
+Object.assign(DRILL_UNIT, {
+  crash: "U106",
+  eac: "U93"
+});
+
+Object.assign(LABELS, {
+  slope: "Crash cost slope",
+  first: "First to crash",
+  viable: "Viability",
+  cpi: "CPI",
+  eac1: "Atypical EAC",
+  eac2: "Typical EAC",
+  distress: "Distress"
+});
+
+const _db4 = drillBody;
+drillBody = function(q){
+  if(q.type === "crash"){
+    return `<p>A 500-bed hospital project is running behind schedule. Liquidated damages are <b>₹${q.ldRate} Lakhs/day</b>. You are analyzing 3 sequential critical path activities:</p>
+    <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:10px 0">
+      <table style="width:100%;border-collapse:collapse;font-size:.84rem;text-align:left">
+        <thead style="background:var(--header-bg,#f1f5f9)">
+          <tr>
+            <th style="padding:6px 10px">Activity</th>
+            <th style="padding:6px 10px;text-align:center">Normal (Days / ₹L)</th>
+            <th style="padding:6px 10px;text-align:center">Crash (Days / ₹L)</th>
+            <th style="padding:6px 10px;text-align:center">Max Compression</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${q.acts.map(a => `
+            <tr style="border-top:1px solid var(--border,#eee)">
+              <td style="padding:6px 10px"><b>${a.id}</b>: ${esc(a.name)}</td>
+              <td style="padding:6px 10px;text-align:center">${a.normD}d · ₹${a.normC}L</td>
+              <td style="padding:6px 10px;text-align:center">${a.crashD}d · ₹${a.crashC}L</td>
+              <td style="padding:6px 10px;text-align:center">${a.normD - a.crashD} days</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+    <div class="row"><label>1. What is the Crash Cost Slope (ΔC / ΔT) of <b>Activity ${q.target}</b> (₹ Lakhs/day)?</label><input type="number" step="0.01" data-k="slope"></div>
+    <div class="row"><label>2. Which activity should be crashed FIRST to minimize acceleration costs?</label>
+      <div class="btnrow" data-choice="first">
+        ${q.acts.map(a => `<button type="button" class="btn" data-v="${a.id}">Activity ${a.id}</button>`).join("")}
+      </div>
+    </div>
+    <div class="row"><label>3. Is crashing Activity ${q.target} economically viable on its own compared to the ₹${q.ldRate}L/day LD rate?</label>
+      <div class="btnrow" data-choice="viable">
+        <button type="button" class="btn" data-v="yes">Yes (Slope ≤ LD)</button>
+        <button type="button" class="btn" data-v="no">No (Slope > LD)</button>
+      </div>
+    </div>`;
+  }
+
+  if(q.type === "eac"){
+    return `<p>Hospital project EVM monthly progress snapshot at Data Date Month 14:</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0;font-size:.85rem">
+      <div style="background:var(--card,#f8fafc);border:1px solid var(--border);border-radius:6px;padding:8px"><b>BAC:</b> ₹${q.bac} Cr</div>
+      <div style="background:var(--card,#f8fafc);border:1px solid var(--border);border-radius:6px;padding:8px"><b>PV:</b> ₹${q.pv} Cr</div>
+      <div style="background:var(--card,#f8fafc);border:1px solid var(--border);border-radius:6px;padding:8px"><b>EV:</b> ₹${q.ev} Cr</div>
+      <div style="background:var(--card,#f8fafc);border:1px solid var(--border);border-radius:6px;padding:8px"><b>AC:</b> ₹${q.ac} Cr</div>
+    </div>
+    <div class="row"><label>1. What is the current Cost Performance Index (CPI = EV / AC)?</label><input type="number" step="0.01" data-k="cpi"></div>
+    <div class="row"><label>2. Forecast <b>Atypical EAC</b> (EAC₁ = AC + (BAC − EV)) in ₹ Crores:</label><input type="number" step="0.1" data-k="eac1"></div>
+    <div class="row"><label>3. Forecast <b>Typical EAC</b> (EAC₂ = BAC / CPI) in ₹ Crores:</label><input type="number" step="0.1" data-k="eac2"></div>
+    <div class="row"><label>4. Is the project in critical distress based on Critical Ratio (CR = CPI × SPI &lt; 0.90)?</label>
+      <div class="btnrow" data-choice="distress">
+        <button type="button" class="btn" data-v="yes">Yes (CR &lt; 0.90)</button>
+        <button type="button" class="btn" data-v="no">No (CR ≥ 0.90)</button>
+      </div>
+    </div>`;
+  }
+
+  return _db4(q);
+};
+
+const _gr4 = grade;
+grade = function(q, vals){
+  const out = [];
+  const num = (k, exp, tol = 0) => { const v = parseFloat(vals[k]); out.push({ k, ok: !isNaN(v) && Math.abs(v - exp) <= tol + 1e-9, exp, got: vals[k] ?? "" }); };
+  const str = (k, exp) => out.push({ k, ok: String(vals[k] || "") === String(exp), exp, got: vals[k] ?? "" });
+  const a = q.ans;
+
+  if(q.type === "crash"){
+    num("slope", a.slope, 0.05);
+    str("first", a.first);
+    str("viable", a.viable);
+    return out;
+  }
+
+  if(q.type === "eac"){
+    num("cpi", a.cpi, 0.05);
+    num("eac1", a.eac1, 0.5);
+    num("eac2", a.eac2, 0.5);
+    str("distress", a.distress);
+    return out;
+  }
+
+  return _gr4(q, vals);
+};
+
+const _sol4 = solution;
+solution = function(q){
+  if(q.type === "crash"){
+    const t = q.acts.find(a => a.id === q.target);
+    return `**Critical Path Schedule Crashing Economics:**\n\n- Crash Cost Slope formula: $S = \\frac{C_c - C_n}{D_n - D_c}$.\n- For Activity ${q.target}: $(₹${t.crashC}L - ₹${t.normC}L) / (${t.normD}d - ${t.crashD}d) = **₹${q.ans.slope.toFixed(2)} Lakhs/day**.\n- Lowest cost slope to crash first: **Activity ${q.ans.first}** (cheapest marginal cost per day saved).\n- Economic viability against LD rate of ₹${q.ldRate}L/day: **${q.ans.viable === "yes" ? "Yes (Slope ≤ LD rate)" : "No (Slope > LD rate: acceleration premium exceeds liquidated damages)"}**.`;
+  }
+  if(q.type === "eac"){
+    return `**EVM Multi-Model Forecasting & Critical Ratio:**\n\n- CPI = $EV / AC = ₹${q.ev} / ₹${q.ac} = **${q.ans.cpi.toFixed(2)}**.\n- SPI = $EV / PV = ₹${q.ev} / ₹${q.pv} = **${(q.ev / q.pv).toFixed(2)}**.\n- Atypical EAC ($EAC_1$) = $AC + (BAC - EV) = ₹${q.ac} + (₹${q.bac} - ₹${q.ev}) = **₹${q.ans.eac1} Crores**.\n- Typical EAC ($EAC_2$) = $BAC / CPI = ₹${q.bac} / ${q.ans.cpi.toFixed(2)} = **₹${q.ans.eac2} Crores**.\n- Critical Ratio: $CR = CPI \\times SPI = ${q.ans.cpi.toFixed(2)} \\times ${(q.ev / q.pv).toFixed(2)} = **${q.cr.toFixed(2)}**. Distress (&lt; 0.90): **${q.ans.distress.toUpperCase()}**.`;
+  }
+  return _sol4(q);
+};
+
+// =========================================================================
+// STAGE 2: 6-PILLAR COMPETENCY RADAR
+// =========================================================================
+function calcMasteryRadar(){
+  const pillars = [
+    { id: "cpm", label: "CPM Math & Networks", short: "CPM", icon: "📐", units: Array.from({length:20}, (_,i)=>"U"+(i+1)), color: "#2563EB" },
+    { id: "site", label: "Site MBs & IS 1200", short: "Site MBs", icon: "📑", units: Array.from({length:10}, (_,i)=>"U"+(i+21)).concat(["M1","M2","M3","M4","M5","M6"]), color: "#059669" },
+    { id: "delay", label: "Delay Forensics & Contracts", short: "Delay / Law", icon: "⚖️", units: Array.from({length:35}, (_,i)=>"U"+(i+31)), color: "#7C3AED" },
+    { id: "hosp", label: "Hospital Systems", short: "Hospital", icon: "🏥", units: ["U47","U48","U49","U50","U51","U52","U53","U54","U55","U56","U57","U96","U97","U98","U99","U100","U101","U102","U103"], color: "#0891B2" },
+    { id: "p6", label: "P6 & EVM Controls", short: "P6 / EVM", icon: "📊", units: Array.from({length:30}, (_,i)=>"U"+(i+66)), color: "#D97706" },
+    { id: "crisis", label: "Crisis Recovery & Defense", short: "Boardroom", icon: "🎙️", units: Array.from({length:17}, (_,i)=>"U"+(i+104)), color: "#DC2626" }
+  ];
+
+  pillars.forEach(p => {
+    const doneCount = p.units.filter(uid => cst(uid).done).length;
+    p.pct = Math.round((doneCount / p.units.length) * 100);
+    p.done = doneCount;
+    p.total = p.units.length;
+  });
+
+  return pillars;
+}
+
+function renderMasteryRadarHTML(){
+  const pillars = calcMasteryRadar();
+  const overallMastery = Math.round(pillars.reduce((s, p) => s + p.pct, 0) / pillars.length);
+
+  const cx = 175, cy = 160, R = 100;
+  const numPillars = 6;
+  const angles = pillars.map((_, i) => (-Math.PI / 2) + (i * (2 * Math.PI / numPillars)));
+
+  // Grid levels at 20, 40, 60, 80, 100%
+  const gridLevels = [0.2, 0.4, 0.6, 0.8, 1.0];
+  const gridPolys = gridLevels.map(lvl => {
+    const pts = angles.map(a => `${(cx + R * lvl * Math.cos(a)).toFixed(1)},${(cy + R * lvl * Math.sin(a)).toFixed(1)}`).join(" ");
+    return `<polygon points="${pts}" fill="none" stroke="var(--border,#e2e8f0)" stroke-dasharray="${lvl === 1.0 ? 'none' : '2,2'}" stroke-width="1"/>`;
+  }).join("");
+
+  // Axes lines
+  const axes = angles.map(a => {
+    const x2 = (cx + R * Math.cos(a)).toFixed(1);
+    const y2 = (cy + R * Math.sin(a)).toFixed(1);
+    return `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="var(--border,#e2e8f0)" stroke-width="1.2"/>`;
+  }).join("");
+
+  // Data polygon points
+  const dataPts = pillars.map((p, i) => {
+    const rLvl = Math.max(0.06, p.pct / 100);
+    const a = angles[i];
+    return `${(cx + R * rLvl * Math.cos(a)).toFixed(1)},${(cy + R * rLvl * Math.sin(a)).toFixed(1)}`;
+  }).join(" ");
+
+  // Vertices points & labels
+  const vertexCircles = pillars.map((p, i) => {
+    const rLvl = Math.max(0.06, p.pct / 100);
+    const a = angles[i];
+    const vx = (cx + R * rLvl * Math.cos(a)).toFixed(1);
+    const vy = (cy + R * rLvl * Math.sin(a)).toFixed(1);
+    return `<circle cx="${vx}" cy="${vy}" r="4.5" fill="${p.color}" stroke="#fff" stroke-width="1.5"/>`;
+  }).join("");
+
+  const labels = pillars.map((p, i) => {
+    const a = angles[i];
+    const lx = cx + (R + 24) * Math.cos(a);
+    const ly = cy + (R + 20) * Math.sin(a);
+    const anchor = Math.abs(Math.cos(a)) < 0.25 ? "middle" : (Math.cos(a) > 0 ? "start" : "end");
+    return `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" font-size="10.5" font-weight="700" fill="var(--text,#1e293b)" font-family="system-ui,sans-serif">
+      ${p.icon} ${p.short} (${p.pct}%)
+    </text>`;
+  }).join("");
+
+  return `
+    <div id="radar-container" style="background:var(--card,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.03)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+        <div>
+          <h3 style="margin:0;font-size:1rem;font-weight:800;color:var(--text,#1e293b);display:flex;align-items:center;gap:6px">
+            <span>🎯 6-Pillar Competency Radar</span>
+            <span style="font-size:.72rem;background:#2563EB;color:#fff;padding:2px 8px;border-radius:12px;font-weight:700">${overallMastery}% Overall</span>
+          </h3>
+          <div style="font-size:.78rem;color:var(--muted,#64748b)">Live multi-disciplinary mastery across CPM, MBs, SCL Delay, Hospital Systems, EVM, &amp; Crisis Defense</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" id="btn-open-cert-radar" style="padding:4px 10px;font-size:.76rem;font-weight:700;color:#D97706;border:1px solid #D97706;background:#fff">🎓 View Credential</button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:center;align-items:center;padding:4px 0">
+        <svg id="radar-svg" viewBox="0 0 350 310" style="max-width:350px;width:100%;height:auto;overflow:visible">
+          <defs>
+            <radialGradient id="radar-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#2563EB" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#2563EB" stop-opacity="0.08"/>
+            </radialGradient>
+          </defs>
+          ${gridPolys}
+          ${axes}
+          <polygon points="${dataPts}" fill="url(#radar-glow)" stroke="#2563EB" stroke-width="2.2" stroke-linejoin="round"/>
+          ${vertexCircles}
+          ${labels}
+        </svg>
+      </div>
+
+      <!-- Pillar Breakdown Chips -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;margin-top:10px">
+        ${pillars.map(p => `
+          <div style="background:var(--surface,#fff);border:1px solid var(--border,#e2e8f0);border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:.76rem;font-weight:600">${p.icon} ${p.short}</span>
+            <span style="font-size:.76rem;font-weight:800;color:${p.color}">${p.pct}%</span>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+// =========================================================================
+// STAGE 2: MASTER CREDENTIAL CERTIFICATE GENERATOR
+// =========================================================================
+function openMasterCertificate(){
+  const old = $("master-cert-modal");
+  if(old) old.remove();
+
+  const pillars = calcMasteryRadar();
+  const overallMastery = Math.round(pillars.reduce((s, p) => s + p.pct, 0) / pillars.length);
+  const certId = "MPCM-2026-IND-120-" + Math.abs(Math.sin(state.day) * 1e8 | 0).toString(16).toUpperCase();
+  const issueDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+  const m = document.createElement("dialog");
+  m.id = "master-cert-modal";
+  m.setAttribute("closedby", "any");
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:90;border:none;padding:12px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%";
+
+  m.innerHTML = `
+    <div style="background:#fff;border-radius:12px;max-width:920px;width:100%;max-height:94vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.4);display:flex;flex-direction:column;font-family:Georgia,serif">
+      <!-- Toolbar -->
+      <div style="padding:10px 16px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;background:#0F172A;color:#fff;font-family:system-ui,sans-serif">
+        <div style="font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>📜 Official Master Project Controls Credential</span>
+          <span style="font-size:.7rem;background:#D97706;padding:2px 6px;border-radius:8px">Gate 4 Certified</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="cert-btn-print" class="btn" style="padding:5px 12px;font-size:.8rem;font-weight:700;background:#2563EB;color:#fff">🖨️ Print / Save PDF</button>
+          <button id="cert-btn-json" class="btn" style="padding:5px 12px;font-size:.8rem;font-weight:700;background:#059669;color:#fff">💾 Download Dossier</button>
+          <button id="cert-btn-close" class="btn" style="padding:5px 12px;font-size:.8rem;font-weight:700;background:#334155;color:#fff">✕ Close</button>
+        </div>
+      </div>
+
+      <!-- Printable Certificate Canvas -->
+      <div id="printable-cert" style="padding:36px 44px;background:#FAF8F5;border:8px double #B45309;margin:16px;border-radius:6px;position:relative;color:#0F172A">
+        <!-- Watermark Seal -->
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.04;pointer-events:none;font-size:18rem;font-family:system-ui">
+          🏛️
+        </div>
+
+        <div style="text-align:center;border-bottom:2px solid #D97706;padding-bottom:18px;margin-bottom:24px">
+          <div style="font-family:system-ui,sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:#B45309;font-weight:800">
+            Advanced Project Controls &amp; Forensic Scheduling Mastery Program
+          </div>
+          <h1 style="margin:10px 0 6px;font-size:2.2rem;font-weight:900;letter-spacing:1px;color:#0F172A">
+            MASTER PROJECT CONTROLS MANAGER
+          </h1>
+          <div style="font-family:system-ui,sans-serif;font-size:.84rem;color:#64748B;font-weight:600">
+            Professional Credential &amp; Boardroom Defense Qualification (MPCM-120)
+          </div>
+        </div>
+
+        <div style="text-align:center;margin:24px 0">
+          <div style="font-size:1rem;font-style:italic;color:#475569;margin-bottom:8px">This officially certifies that</div>
+          <div style="font-size:2.1rem;font-weight:800;color:#1E3A8A;letter-spacing:1px;border-bottom:2px dashed #CBD5E1;display:inline-block;padding:0 30px 4px">
+            ADITYA
+          </div>
+          <div style="max-width:720px;margin:16px auto 0;font-size:1rem;line-height:1.6;color:#334155">
+            has rigorously fulfilled all requirements of the <b>120-Day Advanced Track</b>, completing <b>127 technical units</b>, demonstrating mastery of <b>Critical Path Method (CPM) algorithms</b>, <b>IS 1200 &amp; CPWD site measurement protocols</b>, <b>SCL Protocol 2nd Ed forensic delay analysis &amp; FIDIC claims</b>, <b>Hospital MEP/MOT engineering sequences</b>, <b>Primavera P6 enterprise scheduling &amp; EVM analytics</b>, and passing the high-stakes <b>Boardroom Hot Seat Viva Voce</b>.
+          </div>
+        </div>
+
+        <!-- Pillar Mastery Chips on Cert -->
+        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin:28px 0;font-family:system-ui,sans-serif">
+          ${pillars.map(p => `
+            <div style="background:#fff;border:1px solid #E2E8F0;border-left:4px solid ${p.color};padding:8px 12px;border-radius:4px">
+              <div style="font-size:.72rem;color:#64748B;font-weight:700;text-transform:uppercase">${p.label}</div>
+              <div style="font-size:1.1rem;font-weight:900;color:${p.color}">${p.pct}% Mastery</div>
+            </div>
+          `).join("")}
+        </div>
+
+        <!-- Signatures & Verification Meta -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:40px;padding-top:20px;border-top:1px solid #E2E8F0;font-family:system-ui,sans-serif">
+          <div style="text-align:center">
+            <div style="font-family:'Brush Script MT',cursive;font-size:1.8rem;color:#1E3A8A;margin-bottom:-4px">A. K. Sharma</div>
+            <div style="border-top:1px solid #94A3B8;width:180px;padding-top:4px;font-size:.76rem;font-weight:700;color:#1E293B">Project Controls Director</div>
+            <div style="font-size:.68rem;color:#64748B">Mega Infrastructure &amp; Healthcare PMC</div>
+          </div>
+
+          <div style="text-align:center">
+            <div style="font-size:2rem;line-height:1">🏅</div>
+            <div style="font-size:.72rem;font-weight:800;color:#B45309;letter-spacing:1px;text-transform:uppercase;margin-top:4px">Verified Credential</div>
+            <div style="font-size:.66rem;color:#64748B;font-family:monospace">${certId}</div>
+          </div>
+
+          <div style="text-align:center">
+            <div style="font-family:'Brush Script MT',cursive;font-size:1.8rem;color:#1E3A8A;margin-bottom:-4px">Justice V. Ramanathan (Retd.)</div>
+            <div style="border-top:1px solid #94A3B8;width:180px;padding-top:4px;font-size:.76rem;font-weight:700;color:#1E293B">Chief Arbitrator</div>
+            <div style="font-size:.68rem;color:#64748B">Society of Construction Law (SCL)</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;display:flex;justify-content:space-between;font-size:.68rem;color:#94A3B8;font-family:system-ui,sans-serif">
+          <span>Date of Issue: <b>${issueDate}</b></span>
+          <span>Verification URL: <b>https://adbais-slimy.github.io/pc-training/</b></span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Print Styles Injection
+  if(!$("cert-print-style")){
+    const st = document.createElement("style");
+    st.id = "cert-print-style";
+    st.textContent = `
+      @media print {
+        body > *:not(#master-cert-modal) { display: none !important; }
+        #master-cert-modal { position: static !important; inset: auto !important; background: transparent !important; padding: 0 !important; width: 100% !important; height: auto !important; }
+        #master-cert-modal > div { max-width: 100% !important; box-shadow: none !important; }
+        #master-cert-modal .btn, #master-cert-modal > div > div:first-child { display: none !important; }
+        #printable-cert { margin: 0 !important; border: 4px double #B45309 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      }
+    `;
+    document.head.appendChild(st);
+  }
+
+  document.body.appendChild(m);
+
+  // Event handlers
+  m.querySelector("#cert-btn-close") && (m.querySelector("#cert-btn-close").onclick = () => m.remove());
+  m.onclick = (e) => { if(e.target === m) m.remove(); };
+
+  m.querySelector("#cert-btn-print") && (m.querySelector("#cert-btn-print").onclick = () => {
+    window.print();
+  });
+
+  m.querySelector("#cert-btn-json") && (m.querySelector("#cert-btn-json").onclick = async () => {
+    const payload = {
+      credential: "MASTER PROJECT CONTROLS MANAGER (MPCM)",
+      certId,
+      issueDate,
+      candidate: "Aditya",
+      curriculum: {
+        totalDays: 120,
+        totalUnits: 127,
+        checkQuestionsVerified: 482,
+        practiceDrillsMastered: 26,
+        interactiveSandboxes: 10
+      },
+      pillars,
+      verificationUrl: "https://adbais-slimy.github.io/pc-training/",
+      status: "VERIFIED_ACTIVE"
+    };
+
+    const str = JSON.stringify(payload, null, 2);
+    try {
+      const dl = await (window.claude && claude.use ? claude.use("downloads") : null);
+      if(dl && dl.save) {
+        await dl.save("project-controls-master-credential.json", str);
+        alert("✅ Master Credential Dossier saved successfully!");
+        return;
+      }
+    } catch(e){}
+
+    const blob = new Blob([str], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "project-controls-master-credential.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  if(m.showModal) {
+    try { m.showModal(); } catch(e){}
+  }
+}
+
 function renderLearn(){
   const w=$("learnwrap"); if(!w) return;
   if(lv.mixed&&mx) return renderMixed(w);
@@ -6946,7 +7423,7 @@ function renderLearn(){
   const dashOffset = circum * (1 - dailyPct / 100);
   const ringColor = dailyPct >= 100 ? "var(--ok, #4CC282)" : "var(--bar, #2F5BD3)";
 
-  let h=`<div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+  let h=`${renderMasteryRadarHTML()}<div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <b style="font-stretch:80%">Day ${state.day} / 120</b>
       ${streak>0?`<span style="font-size:.82rem;font-weight:700;color:var(--warn)">🔥 ${streak}-day streak</span>`:""}
@@ -7031,6 +7508,7 @@ function renderLearn(){
       <button class="btn" id="mcard-btn-hosp" style="font-size:.76rem;padding:3px 8px;color:var(--bar,#2F5BD3);font-weight:700">🏥 Hospital Playbook</button>
       <button class="btn" id="mcard-btn-tia" style="font-size:.76rem;padding:3px 8px;color:var(--ok,#1F8A4C);font-weight:700">⏱️ SCL TIA</button>
       <button class="btn" id="mcard-btn-crashing" style="font-size:.76rem;padding:3px 8px;color:var(--accent,#D97706);font-weight:700">⚡ Crashing Sim</button>
+      <button class="btn" id="mcard-btn-cert" style="font-size:.76rem;padding:3px 8px;color:#D97706;font-weight:700">🎓 Master Cert</button>
       <button class="btn" id="mcard-btn-formulas" style="font-size:.76rem;padding:3px 8px">📐 Formulas</button>
       <button class="btn" id="btn-learn-hotseat" style="font-size:.76rem;padding:3px 8px;color:var(--crit,#D9383A);font-weight:700">🎙️ Hot Seat</button>
       <button class="btn" id="btn-learn-scurve" style="font-size:.76rem;padding:3px 8px">📈 S-Curve</button>
@@ -7069,6 +7547,8 @@ function renderLearn(){
   $("mcard-btn-hosp")&&($("mcard-btn-hosp").onclick=()=>openHospitalSequencePlaybook());
   $("mcard-btn-tia")&&($("mcard-btn-tia").onclick=()=>openTIASandbox());
   $("mcard-btn-crashing")&&($("mcard-btn-crashing").onclick=()=>openCrashingSimulator());
+  $("mcard-btn-cert")&&($("mcard-btn-cert").onclick=()=>openMasterCertificate());
+  $("btn-open-cert-radar")&&($("btn-open-cert-radar").onclick=()=>openMasterCertificate());
   $("mcard-btn-formulas")&&($("mcard-btn-formulas").onclick=()=>openFormulaDrawer());
   $("btn-learn-hotseat")&&($("btn-learn-hotseat").onclick=()=>openHotSeatSimulator());
   $("btn-learn-scurve")&&($("btn-learn-scurve").onclick=()=>openSCurveSandbox());

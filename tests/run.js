@@ -130,7 +130,7 @@ async function completeUnit(env, uid) {
     P("your saved progress loads (Day 2, Days 0–1 passed)", d.getElementById("daytag").textContent === `Day ${PROGRESS.state.day} / 120` && w.eval('cst("U1").done'));
     P("settings button (⚙) present", [...d.querySelectorAll("button")].some(b => b.textContent === "⚙"));
     P("status confirms Director is active", /ready|due|Day|Director/i.test(d.getElementById("status").textContent));
-    P("All 10 interactive visual sandboxes (Deliverables, S-Curve, LPS, Scale/Volume, MB Audit, Hot Seat, Schedule Doctor, Hospital Playbook, SCL TIA, Schedule Crashing) render and operate cleanly", await w.eval(`(async () => {
+    P("All 10 interactive visual sandboxes, 6-Pillar Competency Radar & Master Credential Certificate render and operate cleanly", await w.eval(`(async () => {
       openDeliverableStudio(1);
       const dlvOk = !!document.getElementById("deliverable-modal");
       document.getElementById("dlv-close")?.click();
@@ -161,7 +161,11 @@ async function completeUnit(env, uid) {
       openCrashingSimulator();
       const crashOk = !!document.getElementById("crashing-simulator-modal") && document.getElementById("crashing-days-recovered")?.textContent !== "";
       document.getElementById("crashing-close")?.click();
-      return dlvOk && scOk && lpsOk && scvOk && mbOk && hsOk && docOk && hospOk && tiaOk && crashOk;
+      openMasterCertificate();
+      const certOk = !!document.getElementById("master-cert-modal") && !!document.getElementById("printable-cert");
+      document.getElementById("cert-btn-close")?.click();
+      const radarOk = !!document.getElementById("radar-svg") && !!document.getElementById("radar-container");
+      return dlvOk && scOk && lpsOk && scvOk && mbOk && hsOk && docOk && hospOk && tiaOk && crashOk && certOk && radarOk;
     })()`));
     P("no runtime errors (standalone)", env.errs.length === 0, env.errs.join(" | "));
   }
