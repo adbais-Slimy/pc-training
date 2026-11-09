@@ -4284,7 +4284,33 @@ function renderProg(){
     h+=`</details>`;
   });
   h+=`<h2 class="sec">Parking lot</h2>`+(state.parking.length?state.parking.map(p=>`<div class="rt"><div>${esc(p)}</div></div>`).join(""):`<div class="empty">Empty.</div>`);
-  h+=`<h2 class="sec">Backup</h2><div class="btnrow" style="margin-top:0"><button class="btn" id="exp">Download backup</button><button class="btn" id="pack">Handoff pack for another app</button><label class="btn" style="cursor:pointer">Restore backup<input id="restore" type="file" accept=".json,application/json" style="display:none"></label><button class="btn danger" id="rst">Reset programme</button></div>`;
+  const totalProgDone = UNITS.filter(u=>cst(u.id).done).length;
+  const lastBkUnits = state.lastBackupUnits || 0;
+  const progUnitsSinceLast = Math.max(0, totalProgDone - lastBkUnits);
+  const progBackupDue = progUnitsSinceLast >= 5 || (state.day >= 20 && !state.lastBackupAt);
+  const lastBkDateStr = state.lastBackupAt ? new Date(state.lastBackupAt).toLocaleDateString(undefined, {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : "Never";
+
+  h+=`<h2 class="sec">Data Safety &amp; Backup</h2>
+  <div class="card" style="padding:12px 14px;margin-bottom:12px;border:1px solid ${progBackupDue ? 'var(--warn,#C77A12)' : 'var(--line)'};background:var(--surface)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:1.1rem">🛡️</span>
+        <b style="font-size:.92rem">Local Storage Protection</b>
+      </div>
+      <span style="font-size:.74rem;padding:2px 8px;border-radius:10px;font-weight:700;${progBackupDue ? 'background:var(--warnSoft,#fff3cd);color:var(--warn,#C77A12)' : 'background:var(--okSoft,#e6f4ea);color:var(--ok,#1F8A4C)'}">
+        ${progBackupDue ? '⚠️ Backup Recommended' : '✓ Backed Up & Safe'}
+      </span>
+    </div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px">
+      Last backup: <b>${lastBkDateStr}</b> · <b>${progUnitsSinceLast}</b> unit${progUnitsSinceLast===1?'':'s'} completed since last backup.
+    </div>
+    <div class="btnrow" style="margin-top:0">
+      <button class="btn" id="exp" style="${progBackupDue ? 'background:var(--bar);color:#fff;border:none;font-weight:700' : ''}">Download backup</button>
+      <button class="btn" id="pack">Handoff pack</button>
+      <label class="btn" style="cursor:pointer">Restore backup<input id="restore" type="file" accept=".json,application/json" style="display:none"></label>
+      <button class="btn danger" id="rst">Reset programme</button>
+    </div>
+  </div>`;
   $("progwrap").innerHTML=h;
   $("prog-btn-hotseat")&&($("prog-btn-hotseat").onclick=()=>openHotSeatSimulator());
   $("prog-btn-mb")&&($("prog-btn-mb").onclick=()=>openMBAuditSandbox());
@@ -6722,6 +6748,17 @@ function renderLearn(){
       </div>
     </div>
   </div>`;
+  const totalUnitsDone = UNITS.filter(u=>cst(u.id).done).length;
+  const unitsSinceLastBk = Math.max(0, totalUnitsDone - (state.lastBackupUnits || 0));
+  const isBkReminder = totalUnitsDone >= 5 && unitsSinceLastBk >= 5;
+  if(isBkReminder){
+    h+=`<div class="card" style="background:var(--barSoft,#E8EEFA);border:1px solid var(--bar,#2F5BD3);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <div style="font-size:.82rem;color:var(--ink)">
+        <b>🛡️ Data Safety:</b> You've completed <b>${unitsSinceLastBk}</b> units since your last backup. Keep your streak and notes safe.
+      </div>
+      <button class="btn" id="btn-quick-backup" style="font-size:.78rem;padding:5px 12px;background:var(--surface,#fff);border:1px solid var(--bar,#2F5BD3);color:var(--bar,#2F5BD3);font-weight:700;white-space:nowrap">📥 Download Backup</button>
+    </div>`;
+  }
   h+=`<p class="lead">One unit a day. Each one teaches, shows, lets you try, then checks. You move on when you pass the check (4 out of 5).</p>`;
   if(cur) h+=`<div class="drill" style="border-color:var(--bar);border-width:2px"><small style="color:var(--muted)">${cur.day===0?"Start here":"Today"} · about ${cur.mins} min</small><div class="q">Day ${cur.day}: ${esc(cur.title.replace(/^Day 0: /,""))}</div>
     ${cst(cur.id).screen>0?`<p style="margin:0 0 8px;color:var(--muted)">You're on step ${cst(cur.id).screen+1} of ${cur.screens.length}.</p>`:""}
@@ -6807,6 +6844,17 @@ function renderLearn(){
   $("btn-learn-hotseat")&&($("btn-learn-hotseat").onclick=()=>openHotSeatSimulator());
   $("btn-learn-scurve")&&($("btn-learn-scurve").onclick=()=>openSCurveSandbox());
   $("btn-learn-lps")&&($("btn-learn-lps").onclick=()=>openLPSBoard());
+  $("btn-quick-backup")&&($("btn-quick-backup").onclick=async()=>{
+    const btn = $("btn-quick-backup");
+    btn.disabled = true;
+    const ok = await exportData();
+    if(ok){
+      btn.textContent = "✓ Backed Up";
+      setTimeout(() => renderLearn(), 1400);
+    } else {
+      btn.disabled = false;
+    }
+  });
   $("mx-start")&&($("mx-start").onclick=startMixed);
 }
 function renderUnit(w){
@@ -6927,11 +6975,56 @@ function renderUnitDone(body,u,s,gate){
     renderAll(); save();
   }
   const nx=u.track?UNITS.filter(x=>x.track===u.track)[UNITS.filter(x=>x.track===u.track).indexOf(u)+1]:UNITS.filter(x=>!x.track)[UNITS.filter(x=>!x.track).indexOf(u)+1];
+
+  const totalDone = UNITS.filter(x=>cst(x.id).done).length;
+  const isGate = (u.title||"").toLowerCase().includes("gate") || u.id === "U20";
+  const unitsSinceLast = totalDone - (state.lastBackupUnits || 0);
+  const backupDue = isGate || unitsSinceLast >= 5;
+
+  let backupCardHtml = "";
+  if(ok && backupDue){
+    backupCardHtml = `<div class="card" style="background:var(--barSoft,#E8EEFA);border:2px solid var(--bar,#2F5BD3);border-radius:12px;padding:14px;margin:12px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span style="font-size:1.3rem">🛡️</span>
+        <div>
+          <b style="color:var(--bar,#2F5BD3);font-size:.92rem">${isGate ? "Milestone Passed: Gate Complete!" : "5 Units Milestone: Backup Recommended"}</b>
+          <div style="font-size:.76rem;color:var(--muted)">Local Storage Backup Safeguard</div>
+        </div>
+      </div>
+      <p style="margin:4px 0 10px;font-size:.82rem;color:var(--ink);line-height:1.4">
+        ${isGate ? "Outstanding achievement clearing this gate! Because your streak and flashcards live in your browser's local storage, export a backup copy now so you never lose your progress." : `You have completed ${unitsSinceLast} units since your last backup. Keep your study streak, notes, and flashcard review schedule safe against browser cache clearing.`}
+      </p>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="send" id="btn-done-backup" style="font-size:.82rem;padding:6px 14px">📥 Download Progress Backup</button>
+        <span id="done-backup-status" style="font-size:.8rem;color:var(--ok);font-weight:700;display:none">✓ Backup downloaded &amp; saved!</span>
+      </div>
+    </div>`;
+  }
+
   body.innerHTML=ok?`<div class="drill" style="border-color:var(--ok);border-width:2px"><div class="q">✓ ${u.track?u.id:"Day "+u.day} complete</div>
      ${u.card?`<p><b>Your card</b> (now in Notes; it comes back for review in 2 days, then further apart):</p><div class="note"><b>${esc(u.card.title)}</b><br>${esc(u.card.rule)}</div>`:""}
+     ${backupCardHtml}
      <p style="color:var(--muted);font-size:.86rem">${u.track?(nx?`Next in the measurement track: <b>${nx.id}: ${esc(nx.title)}</b>. Carry on with your main day too (main schedule track remains on Day ${state.day}).`:"Measurement track complete."):nx?`Tomorrow: <b>Day ${nx.day}: ${esc(nx.title)}</b>. One unit a day works better than three in one sitting.`:"Block finished."}</p></div>`
    :`<div class="note">Pass the check first. Go <b>Back</b> to it.</div>`;
-  $("u-next").textContent="Back to all units"; $("u-next").disabled=false; $("u-next").onclick=()=>{ lv={unit:null}; renderLearn(); $("learnwrap").parentElement.scrollTop=0; };
+  $("u-next").textContent="Back to all units"; $("u-next").disabled=false; $("u-next").onclick=()=>{
+    const bm = $("backup-modal"); if(bm) bm.remove();
+    lv={unit:null}; renderLearn(); $("learnwrap").parentElement.scrollTop=0;
+  };
+
+  const doneBkBtn = $("btn-done-backup");
+  if(doneBkBtn){
+    doneBkBtn.onclick = async () => {
+      doneBkBtn.disabled = true;
+      const ok = await exportData();
+      if(ok){
+        const st = $("done-backup-status");
+        if(st) st.style.display = "inline";
+        doneBkBtn.textContent = "✓ Backed Up";
+      } else {
+        doneBkBtn.disabled = false;
+      }
+    };
+  }
 }
 // ================= APPLY-AT-WORK + MIXED REVIEW =================
 const APPLY={
@@ -7730,9 +7823,82 @@ async function sendPack(){
 }
 
 // ---------- misc ----------
+function openBackupModal(reason, isGate = false){
+  const old = $("backup-modal");
+  if(old) old.remove();
+
+  const totalDone = UNITS.filter(u=>cst(u.id).done).length;
+  state.lastBackupPromptUnits = totalDone;
+  save();
+
+  const m = document.createElement("div");
+  m.id = "backup-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box";
+  m.innerHTML = `
+    <div style="background:var(--surface,#fff);color:var(--ink,#111);width:100%;max-width:440px;border-radius:14px;padding:20px;box-shadow:0 12px 32px rgba(0,0,0,.25);box-sizing:border-box">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:1.6rem">🛡️</span>
+        <div>
+          <b style="font-size:1.05rem;color:var(--ink,#111)">${isGate ? "Milestone Passed: Gate Complete!" : "5 Units Milestone: Backup Recommended"}</b>
+          <div style="font-size:.76rem;color:var(--muted)">Local Data Safety Safeguard</div>
+        </div>
+      </div>
+      <p style="font-size:.84rem;color:var(--muted);line-height:1.45;margin:0 0 16px">
+        ${isGate 
+          ? "Outstanding work clearing this gate! Your progress, test scores, and spaced-repetition cards live in your browser's local storage. Download a backup now so your hard-earned progress is always safe."
+          : "You have completed 5 units since your last backup! Download a quick progress JSON file to safeguard your study streak, notes, and flashcard review schedule against browser cache clearing."}
+      </p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="send" id="modal-btn-download-backup" style="width:100%;padding:10px 14px;font-size:.9rem;font-weight:700">📥 Download Backup Now (.json)</button>
+        <button class="btn" id="modal-btn-dismiss-backup" style="width:100%;padding:8px 14px;font-size:.84rem;color:var(--muted)">Remind me after 5 more units</button>
+      </div>
+      <div id="modal-backup-status" style="display:none;margin-top:10px;padding:8px 12px;background:var(--okSoft,#e6f4ea);color:var(--ok,#1F8A4C);border-radius:6px;font-size:.82rem;font-weight:700;text-align:center">
+        ✓ Progress backup saved to your downloads!
+      </div>
+    </div>
+  `;
+  document.body.appendChild(m);
+
+  const dlBtn = m.querySelector("#modal-btn-download-backup");
+  if(dlBtn){
+    dlBtn.onclick = async () => {
+      dlBtn.disabled = true;
+      const ok = await exportData();
+      if(ok){
+        dlBtn.textContent = "✓ Downloaded";
+      } else {
+        dlBtn.disabled = false;
+      }
+    };
+  }
+  const disBtn = m.querySelector("#modal-btn-dismiss-backup");
+  if(disBtn){
+    disBtn.onclick = () => { m.remove(); };
+  }
+  m.onclick = e => { if(e.target === m) m.remove(); };
+}
+
 async function exportData(){
-  const dl=await claude.use("downloads").catch(()=>null); if(!dl){ setStatus("Download isn't available in this view."); return; }
-  try{ await dl.save({filename:`pc-training-backup-${today()}.json`, data:JSON.stringify({exported:new Date().toISOString(),state,chat},null,2)}); }catch(e){}
+  const dl=await claude.use("downloads").catch(()=>null); if(!dl){ setStatus("Download isn't available in this view."); return false; }
+  try{
+    const fname = `pc-training-backup-${today()}.json`;
+    await dl.save({filename: fname, data:JSON.stringify({exported:new Date().toISOString(),state,chat},null,2)});
+    const totalDone = UNITS.filter(u=>cst(u.id).done).length;
+    state.lastBackupUnits = totalDone;
+    state.lastBackupAt = new Date().toISOString();
+    state.lastBackupPromptUnits = totalDone;
+    await save();
+    setStatus("Backup saved to downloads (" + fname + ").");
+    const m = $("backup-modal");
+    if(m){
+      const st = m.querySelector("#modal-backup-status");
+      if(st) st.style.display = "block";
+      setTimeout(() => { if($("backup-modal")) $("backup-modal").remove(); }, 1200);
+    }
+    return true;
+  }catch(e){
+    return false;
+  }
 }
 async function resetAll(){
   if(!confirm("Reset all progress and restart from the diagnostic?")) return;
