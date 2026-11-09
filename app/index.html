@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
-<script src="shim.js?v=37"></script>
+<script src="shim.js?v=38"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
@@ -14847,6 +14847,689 @@ const APPLY10 = {
 };
 Object.assign(APPLY, APPLY10);
 UNITS10.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
+
+const UNITS11 = [
+  {
+    "id": "U91",
+    "day": 91,
+    "title": "Day 91: EVM Core Metrics: PV, EV, AC, CV, SV, CPI, SPI & Critical Ratio",
+    "mins": 25,
+    "card": {
+      "id": "c-evm-core-metrics",
+      "title": "EVM Core Metrics: PV, EV, AC, CV, SV, CPI, SPI & Critical Ratio",
+      "rule": "Earned Value Management (EVM) measures performance through three primary metrics: Planned Value (PV = BAC * Planned %), Earned Value (EV = BAC * Physical % via Rules of Credit), and Actual Cost (AC from accounting ledgers). Variances: Cost Variance (CV = EV - AC; negative = over budget) and Schedule Variance (SV = EV - PV; negative = behind planned value). Indices: CPI = EV / AC (< 1.0 = over budget) and SPI = EV / PV (< 1.0 = behind schedule). The Critical Ratio (CR = CPI * SPI) indicates composite project health; CR < 0.90 signals severe distress.",
+      "example": "On a ₹100 Cr package, PV was ₹50 Cr, EV was ₹40 Cr, and AC was ₹48 Cr. CV = -₹8 Cr (over budget), SV = -₹10 Cr (behind schedule), CPI = 0.83, SPI = 0.80, and CR = 0.66, triggering board intervention.",
+      "trap": "Using Duration % Complete to calculate EV, which converts schedule delay into false earned value and inflates CPI and SPI."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹600 Crore cancer hospital project, the monthly finance report and monthly planning report presented completely contradictory stories.\n\nThe contractor's accounts department reported: *\"We spent ₹180 Crores against a budget of ₹200 Crores—we are ₹20 Crores under budget!\"*\n\nThe planning engineer reported: *\"Physical progress is 25% complete against a target of 33%.\"*\n\nThe client's CFO asked: *\"Are we performing well or poorly? We spent less money than planned, so shouldn't we be happy?\"*\n\nThe newly appointed Project Controls Lead stepped forward and presented the **Earned Value Management (EVM)** analysis:\n- **Planned Value ($PV$):** $33.3\\% \\times ₹600\\text{ Cr} = ₹200\\text{ Crores}$\n- **Earned Value ($EV$):** $25.0\\% \\times ₹600\\text{ Cr} = ₹150\\text{ Crores}$\n- **Actual Cost ($AC$):** $₹180\\text{ Crores}$\n\nThe truth was laid bare:\n- **Cost Variance ($CV$):** $EV - AC = ₹150\\text{ Cr} - ₹180\\text{ Cr} = -₹30\\text{ Crores}$ (**₹30 Cr Over Budget!**)\n- **Schedule Variance ($SV$):** $EV - PV = ₹150\\text{ Cr} - ₹200\\text{ Cr} = -₹50\\text{ Crores}$ (**₹50 Cr Behind Schedule!**)\n- **Cost Performance Index ($CPI$):** $150 / 180 = \\mathbf{0.83}$ (For every rupee spent, only 83 paise of work was earned)\n- **Schedule Performance Index ($SPI$):** $150 / 200 = \\mathbf{0.75}$\n- **Critical Ratio ($CR$):** $CPI \\times SPI = 0.83 \\times 0.75 = \\mathbf{0.62}$ (**Severe Distress!**)\n\nThe project wasn't \"under budget\"—it had spent ₹180 Crores to deliver only ₹150 Crores of physical work! EVM eliminated financial self-deception in 60 seconds."
+      },
+      {
+        "k": "read",
+        "t": "**The Core EVM Mathematical Framework:**\n\n```\n+-----------------------+----------------------------------+--------------------------------------------+\n| Metric Name           | Mathematical Formula             | Interpretation Rule                        |\n+-----------------------+----------------------------------+--------------------------------------------+\n| Planned Value (PV)    | BAC * Planned %                  | Budgeted value of work scheduled to-date   |\n| Earned Value (EV)     | BAC * Physical % (via RoC)       | Budgeted value of physical work completed  |\n| Actual Cost (AC)      | Incurred Cost from Ledgers       | Total actual cost incurred to-date         |\n+-----------------------+----------------------------------+--------------------------------------------+\n| Cost Variance (CV)    | EV - AC                          | > 0 Under Budget; < 0 OVER BUDGET          |\n| Schedule Variance (SV)| EV - PV                          | > 0 Ahead; < 0 BEHIND SCHEDULE (Monetary)  |\n+-----------------------+----------------------------------+--------------------------------------------+\n| Cost Perf Index (CPI) | EV / AC                          | > 1.0 Efficient; < 1.0 COST OVERRUN        |\n| Sched Perf Index (SPI)| EV / PV                          | > 1.0 Fast; < 1.0 SCHEDULE SLIPPAGE        |\n+-----------------------+----------------------------------+--------------------------------------------+\n| Critical Ratio (CR)   | CPI * SPI                        | > 1.0 Healthy; 0.9–1.0 OK; < 0.90 CRITICAL |\n+-----------------------+----------------------------------+--------------------------------------------+\n```\n\n**The Critical Ratio (CR) Diagnosis:**\n- $CR = 1.0$: Project is exactly on track.\n- $CR > 1.0$: Project is outperforming (e.g. $CPI = 1.05, SPI = 1.02 \\implies CR = 1.07$).\n- $CR < 0.90$: High-risk alarm. One index cannot compensate for the other; both schedule slippage and cost overruns are compounding."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "On a hospital MEP package with a Budget at Completion (BAC) of ₹50 Crores, Planned Value is ₹25 Crores, Earned Value is ₹20 Crores, and Actual Cost is ₹24 Crores. What are the Cost Variance (CV), Schedule Variance (SV), and CPI?",
+            "o": [
+              [
+                "CV = -₹4 Crores (Over Budget), SV = -₹5 Crores (Behind Schedule), and CPI = 0.83",
+                true,
+                "CV = EV - AC = 20 - 24 = -4 Cr. SV = EV - PV = 20 - 25 = -5 Cr. CPI = EV / AC = 20 / 24 = 0.833."
+              ],
+              [
+                "CV = +₹4 Crores (Under Budget), SV = +₹5 Crores (Ahead), and CPI = 1.20",
+                false,
+                "Positive variances imply favorable performance; here the package has spent more than earned and delivered less than planned."
+              ],
+              [
+                "CV = -₹1 Crore, SV = -₹2 Crores, and CPI = 1.00",
+                false,
+                "Incorrect arithmetic calculations."
+              ],
+              [
+                "CV and SV are both zero because the project is 50% complete",
+                false,
+                "Progress is at 40% (20/50), not 50%; variances are significant."
+              ]
+            ]
+          },
+          {
+            "q": "What does a project Critical Ratio (CR = CPI * SPI) of 0.72 indicate to executive project leadership?",
+            "o": [
+              [
+                "The project is in severe distress: cost overruns and schedule delays are mutually reinforcing, requiring immediate executive intervention and recovery action",
+                true,
+                "A Critical Ratio below 0.90 indicates serious project trouble where neither cost nor schedule is performing well, requiring decisive corrective action."
+              ],
+              [
+                "The project is performing 72% ahead of schedule and will finish early",
+                false,
+                "A ratio of 0.72 indicates poor performance, far below the healthy benchmark of 1.0."
+              ],
+              [
+                "The project has saved 28% of its total budget and can refund money to the client",
+                false,
+                "CR < 1.0 indicates value erosion, not financial savings."
+              ],
+              [
+                "P6 software has automatically extended all activity durations by 72 days",
+                false,
+                "EVM metrics are diagnostic indicators, not automated software duration modifiers."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never evaluate cost without physical earned value. Spending less than planned does not mean you are under budget if you completed even less physical work. Always compute CV, SV, CPI, SPI, and the Critical Ratio to reveal the unvarnished truth."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U92",
+    "day": 92,
+    "title": "Day 92: Earned Schedule (ES) & Time-Based Performance: Why SPI Fails at Project End",
+    "mins": 25,
+    "card": {
+      "id": "c-earned-schedule",
+      "title": "Earned Schedule (ES): Overcoming SPI failure at project end with SV_t and SPI_t",
+      "rule": "Traditional Schedule Performance Index (SPI = EV / PV) suffers a fatal mathematical flaw: as a project nears completion, EV and PV both converge toward BAC, forcing SPI to 1.00 and SV to ₹0, even if the project is 12 months late! Earned Schedule (ES, Lipke / PMI standard) solves this by mapping EV horizontally back onto the Planned Value curve to find when that progress should have been earned. Time-based metrics: SV_t = ES - AT (measured directly in calendar months/days; negative = delay) and SPI_t = ES / AT, which reliably reflects schedule delay through final handover.",
+      "example": "A hospital project finished 4 months late. At completion, traditional SPI was 1.00 and SV was ₹0 (masking the delay); Earned Schedule calculated SV_t = -4.0 months and SPI_t = 0.80, accurately reflecting the 4-month liquidated damages exposure.",
+      "trap": "Reporting traditional SPI to an arbitral tribunal or executive board during the final 20% of project duration, where SPI mathematically lies by improving toward 1.0 despite ongoing delays."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On a ₹500 Crore hospital project scheduled for a 20-month duration, the project reached Month 20. The hospital was only **85% physically complete** and suffered a severe 4-month delay.\n\nYet, when the project manager ran the traditional EVM report, P6 showed:\n- **Planned Value ($PV$):** ₹500 Crores (100%)\n- **Earned Value ($EV$):** ₹425 Crores (85%)\n- **Schedule Performance Index ($SPI$):** $425 / 500 = \\mathbf{0.85}$\n\nTwo months later at Month 22, the project reached 95% completion ($EV = ₹475\\text{ Cr}$):\n- **$SPI$ jumped to:** $475 / 500 = \\mathbf{0.95}$!\n\nAt Month 24, when the delayed hospital finally opened **4 months late**, $EV$ equaled $PV = ₹500\\text{ Crores}$. P6 reported:\n- **$SPI = 500 / 500 = \\mathbf{1.00}$!**\n- **Schedule Variance ($SV$) = $500 - 500 = \\mathbf{₹0}$!**\n\nThe CEO was baffled: *\"How can our schedule performance index be 1.00 ('Perfect') and Schedule Variance be Zero when the hospital opened 4 months late and we lost ₹18 Crores in delayed revenues?\"*\n\nThis is the **Fatal Flaw of Traditional SPI**: because $EV$ must eventually reach $BAC$, traditional $SPI$ is mathematically forced to revert to 1.0 at project completion! To measure time delay accurately, project controls uses **Earned Schedule (ES)**."
+      },
+      {
+        "k": "read",
+        "t": "**Earned Schedule (ES) Theory & Time-Based Metrics:**\n\n```\nProgress (₹)\n  ^\nBAC +---------------------------------------------+ PV Curve\n    |                                            /|\n    |                                      . - '\n EV +----------------------------+ . - '          | Actual Time (AT = 24m)\n    |                           /|\n    |                     . - '  | Earned Schedule (ES = 20m)\n    |               . - '\n    |         . - '\n  0 +-------+--------------------+----------------+---------> Time (Months)\n            0                   ES               AT\n                                 <--- SV_t = -4m --->\n```\n\n1. **The Earned Schedule ($ES$) Concept (Lipke / PMI Standard):**\n   - Instead of measuring schedule variance in money ($SV = EV - PV$ in Rupees), Earned Schedule measures variance in **time units (months or days)**.\n   - *How it works:* Take current Earned Value ($EV$). Trace it horizontally across to the Planned Value ($PV$) curve. Drop down to the time axis. That time coordinate is the **Earned Schedule ($ES$)**—the exact point in calendar time when that value was scheduled to be achieved.\n\n2. **The Exact Time-Based Performance Formulas:**\n   - *Time-Based Schedule Variance ($SV_t$):*\n     $SV_t = ES - AT$\n     (Where $AT$ = Actual Time elapsed to-date). If $AT = 24\\text{ months}$ and $ES = 20\\text{ months}$, then $SV_t = 20 - 24 = \\mathbf{-4\\text{ months}}$. Negative $SV_t$ directly equals **4 calendar months of delay**!\n   - *Time-Based Schedule Performance Index ($SPI_t$):*\n     $SPI_t = \\frac{ES}{AT}$\n     $SPI_t = 20 / 24 = \\mathbf{0.83}$. Unlike traditional $SPI$, $SPI_t$ **never reverts to 1.0 at project end**; if the project is late, $SPI_t < 1.0$ permanently records the delay.\n\n3. **Independent Time at Completion Forecast ($EAC_t$):**\n   - Formula (assuming current time performance continues):\n     $EAC_t = \\frac{\\text{Planned Duration (PD)}}{SPI_t} = \\frac{20\\text{ months}}{0.833} = \\mathbf{24.0\\text{ months}}$"
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "What is the primary mathematical failure of traditional Schedule Variance (SV = EV - PV) and Schedule Performance Index (SPI = EV / PV) during the final stages of a delayed project?",
+            "o": [
+              [
+                "Because EV and PV both eventually converge to BAC at project completion, traditional SV is mathematically forced to ₹0 and SPI is forced to 1.00, falsely indicating perfect schedule performance even when the project is months or years late",
+                true,
+                "At project completion, work is 100% done, so EV = BAC and PV = BAC. Hence EV - PV = 0 and EV / PV = 1.0, completely hiding late project delivery."
+              ],
+              [
+                "Traditional SPI values become negative numbers that cannot be graphed",
+                false,
+                "SPI is always positive; the problem is that it falsely improves to 1.0 at project end."
+              ],
+              [
+                "Traditional SPI only works on projects built entirely of structural timber",
+                false,
+                "Traditional EVM was applied across aerospace, defense, and construction."
+              ],
+              [
+                "Traditional SPI causes P6 databases to delete all monthly actual dates",
+                false,
+                "This is a mathematical formula limitation, not a software bug."
+              ]
+            ]
+          },
+          {
+            "q": "On a hospital project with a Planned Duration of 18 months, 15 months of actual time (AT) have elapsed. Earned Value corresponds to the Planned Value scheduled for Month 12 (ES = 12 months). What are the Time-Based Schedule Variance (SV_t) and Time-Based Performance Index (SPI_t)?",
+            "o": [
+              [
+                "SV_t = -3 months (3 months behind schedule) and SPI_t = 0.80",
+                true,
+                "SV_t = ES - AT = 12 - 15 = -3.0 months. SPI_t = ES / AT = 12 / 15 = 0.80."
+              ],
+              [
+                "SV_t = +3 months (ahead of schedule) and SPI_t = 1.25",
+                false,
+                "Positive SV_t implies ahead of schedule; here the project has only completed 12 months of work in 15 months."
+              ],
+              [
+                "SV_t = -₹3 Crores and SPI_t = 1.00",
+                false,
+                "SV_t is measured in time units (months/days), not rupees."
+              ],
+              [
+                "SV_t = 0 because the project is still in progress",
+                false,
+                "SV_t is active throughout project execution."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Adopt Earned Schedule (ES) to report schedule performance in calendar days and months, not misleading monetary rupees. When an executive or board member asks 'How late are we?', report SV_t and SPI_t to provide the true calendar forecast."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U93",
+    "day": 93,
+    "title": "Day 93: Estimate at Completion (EAC) & Cost-to-Complete (CTC) Forecasting: The 4 Models",
+    "mins": 25,
+    "card": {
+      "id": "c-eac-forecasting",
+      "title": "EAC Forecasting: 4 predictive models & the To-Complete Performance Index (TCPI)",
+      "rule": "Estimate at Completion (EAC) forecasts final total project cost using 4 standardized models: 1) Atypical (future work at budget rate): EAC = AC + (BAC - EV); 2) Typical Cost Trend: EAC = BAC / CPI; 3) Combined Cost & Schedule (acceleration/overtime impact): EAC = AC + [(BAC - EV) / (CPI * SPI)]; 4) Comprehensive Bottom-Up Reassessment: EAC = AC + ETC_bottom-up. To-Complete Performance Index (TCPI = (BAC - EV) / (BAC - AC)) measures the cost efficiency required on remaining work to hit original budget; TCPI > 1.20 is virtually unachievable without scope cuts.",
+      "example": "On an ₹850 Cr hospital, BAC was ₹850 Cr, EV was ₹400 Cr, AC was ₹480 Cr, CPI was 0.83, and SPI was 0.80. The combined EAC model predicted a final cost of ₹1,157 Cr, alerting the board to a ₹307 Cr funding gap.",
+      "trap": "Using Model 1 (Atypical EAC) by default, assuming future work will suddenly perform at 100% efficiency despite months of cost overruns."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** On an ₹850 Crore super-specialty hospital, the project had reached Month 14. Original budget was **$BAC = ₹850\\text{ Crores}$**.\n\nThe project controls dashboard showed:\n- **Earned Value ($EV$):** $₹400\\text{ Crores}$\n- **Actual Cost ($AC$):** $₹480\\text{ Crores}$ (Cost overrun of ₹80 Cr to date; $CPI = 0.833$)\n- **Planned Value ($PV$):** $₹500\\text{ Crores}$ (Schedule delay; $SPI = 0.800$)\n\nThe contractor's commercial director submitted a forecast claiming final cost would be **₹930 Crores** ($AC + \\text{remaining budget} = 480 + 450 = 930$).\n\nThe client's CFO asked the PMC: *\"Is ₹930 Crores a realistic final figure?\"*\n\nThe PMC Project Controls Lead answered: *\"No. That forecast uses the Atypical Model, assuming that starting tomorrow, all contractor inefficiencies will magically vanish and the remaining work will achieve 100% productivity.\"*\n\nThe PMC ran the **Combined Cost & Schedule Model (Model 3)**: because the project is also 20% behind schedule, recovering critical path medical gas and OT packages will require night shifts, premium overtime wages, and trade congestion, degrading future cost efficiency:\n$EAC = AC + \\frac{BAC - EV}{CPI \\times SPI} = 480 + \\frac{850 - 400}{0.833 \\times 0.800} = 480 + 675 = \\mathbf{₹1,155\\text{ Crores}}!$\n\nFacing an impending **₹305 Crore budget blowout**, the developer immediately intervened to renegotiate equipment contracts and restructure management."
+      },
+      {
+        "k": "read",
+        "t": "**The 4 Standard EAC Predictive Forecasting Models:**\n\n```\n+-------+------------------------------------------+-----------------------------------------------------------+---------------------------------------------------------+\n| Model | Forecasting Philosophy                   | Mathematical Formula                                      | When to Use                                             |\n+-------+------------------------------------------+-----------------------------------------------------------+---------------------------------------------------------+\n| 1     | Atypical Variances (Budget Rate)         | EAC = AC + (BAC - EV)                                     | Past overruns were one-off (e.g. unexpected rock strike)|\n| 2     | Typical Cost Trend (CPI Rate)            | EAC = BAC / CPI   [or AC + (BAC-EV)/CPI]                  | Current labor/material cost trend expected to continue  |\n| 3     | Combined Cost & Schedule (CPI * SPI)     | EAC = AC + [ (BAC - EV) / (CPI * SPI) ]                   | Critical path delay forces overtime / acceleration costs|\n| 4     | Comprehensive Bottom-Up Reassessment     | EAC = AC + ETC_bottom-up                                  | Original baseline flawed; full re-pricing of scope      |\n+-------+------------------------------------------+-----------------------------------------------------------+---------------------------------------------------------+\n```\n\n**To-Complete Performance Index (TCPI) — The Reality Check:**\n- TCPI calculates the cost efficiency the contractor **MUST achieve on all remaining work** to complete within the original approved budget ($BAC$):\n  $TCPI_{BAC} = \\frac{\\text{Remaining Work}}{\\text{Remaining Budget}} = \\frac{BAC - EV}{BAC - AC}$\n- In our hospital example: $TCPI = (850 - 400) / (850 - 480) = 450 / 370 = \\mathbf{1.22}$.\n- *Interpretation:* The contractor, who has been performing at an efficiency of $0.83$, would have to suddenly achieve an efficiency of **$1.22$ (a 47% productivity jump)** for the rest of the project! Project management research confirms that an efficiency improvement $> 10\\%$ is statistically impossible without major scope de-scoping."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "On a project with BAC = ₹100 Crores, EV = ₹40 Crores, AC = ₹50 Crores, and CPI = 0.80, what is the Estimate at Completion (EAC) using Model 2 (assuming current cost efficiency continues)?",
+            "o": [
+              [
+                "EAC = ₹125 Crores (BAC / CPI = 100 / 0.80 = 125), indicating a projected cost overrun of ₹25 Crores",
+                true,
+                "Model 2 assumes the observed cost efficiency (CPI = 0.80) will persist for remaining work. EAC = BAC / CPI = 100 / 0.80 = ₹125 Crores."
+              ],
+              [
+                "EAC = ₹100 Crores because the original budget cannot be exceeded by law",
+                false,
+                "EAC is a dynamic mathematical forecast of actual final cost, independent of legal budget caps."
+              ],
+              [
+                "EAC = ₹90 Crores because the contractor will offer a discount",
+                false,
+                "Mathematical forecasting is grounded in demonstrated performance data, not hypothetical discounts."
+              ],
+              [
+                "EAC = ₹200 Crores by doubling the budget automatically",
+                false,
+                "EAC follows the rigorous formula BAC / CPI = 125 Cr."
+              ]
+            ]
+          },
+          {
+            "q": "What does a To-Complete Performance Index (TCPI) of 1.28 indicate to a Project Controls Manager regarding the likelihood of finishing within the original budget?",
+            "o": [
+              [
+                "It is statistically unrealistic: the contractor would have to achieve an unfeasible 28% efficiency premium on all remaining work, indicating that the original budget cannot be met and an updated EAC budget must be established",
+                true,
+                "Empirical project controls research proves that a project with TCPI > 1.15 to 1.20 cannot recover its original budget without reducing scope or securing additional authorized funds."
+              ],
+              [
+                "The project is performing exceptionally well and will return 28% cash back to the owner",
+                false,
+                "TCPI is a required future target, not past performance; a target of 1.28 is practically unachievable."
+              ],
+              [
+                "The contractor can take 28 days of paid vacation immediately",
+                false,
+                "TCPI is a productivity index, not a vacation allowance."
+              ],
+              [
+                "All remaining activities should be converted to Level of Effort",
+                false,
+                "Activity types have no connection to TCPI mathematical feasibility."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Never present a single EAC number to executive boards or lenders. Present the range: Model 1 (Atypical Best Case), Model 2 (Current Trend), and Model 3 (Delay Acceleration Worst Case). Calculate TCPI to prove whether finishing within the original budget is statistically feasible."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U94",
+    "day": 94,
+    "title": "Day 94: The P6-to-Claim Bridge Day: Retained Logic vs Progress Override & Forensic Claim Mechanics",
+    "mins": 25,
+    "card": {
+      "id": "c-p6-claim-bridge",
+      "title": "P6-to-Claim Bridge: How F9 Retained Logic vs Progress Override alters legal claim outcomes",
+      "rule": "The ultimate intersection of software scheduling and contract law: out-of-sequence progress updates under F9 (Schedule Options) can fundamentally alter legal delay claims. Under Retained Logic (SCL Protocol standard), P6 respects physical dependencies, holding the remaining duration of out-of-sequence successors until predecessors finish, demonstrating true critical path delay. Under Progress Override, P6 treats predecessor logic as overridden, allowing successors to proceed, artificially collapsing delay and erasing valid EOT entitlement. Forensic schedule auditors must inspect schedlog.txt to uncover software option manipulation.",
+      "example": "Re-running a hospital medical gas claim in P6 under Retained Logic demonstrated 28 days critical path delay (awarding full EOT); switching to Progress Override collapsed the delay to 3 days, falsely exposing the contractor to ₹12 Cr in LDs.",
+      "trap": "Allowing an opposing party's delay expert to submit a Time-Impact Analysis (TIA) run under Progress Override without inspecting the P6 schedule options log (schedlog.txt)."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**Why it matters.** This is the **P6-to-Claim Bridge Day**—the crucial bridge uniting Block 2's Contract Law & Forensic Delay Analysis with Block 3's P6 Software Mastery.\n\nRecall the major dispute from Block 2 on our ₹850 Crore hospital project: the Employer delayed issuing revised medical gas riser penetrations on Level 2 by 45 days. To mitigate downtime, the contractor started Level 3 drywall partitioning out-of-sequence before the Level 2 riser was complete.\n\nThe contractor submitted a **Time-Impact Analysis (TIA)** claim requesting a **28-day Extension of Time (EOT)** to protect against ₹14 Crores in Liquidated Damages.\n\nThe Employer hired a claims consultant who re-ran the contractor's `.XER` schedule update and produced a report stating: *\"The contractor's claim is fraudulent! When we calculate the schedule in P6, the critical path delay is only 3 calendar days! Claim is rejected and ₹12.5 Crores in LDs are deducted!\"*\n\nHow could two professional planners take the **exact same `.XER` file** and arrive at 28 days delay versus 3 days delay? The answer lay inside a single hidden radio button in P6's **F9 Schedule Options**!"
+      },
+      {
+        "k": "read",
+        "t": "**The Anatomy of the Bridge: Retained Logic vs Progress Override in Forensic Disputes:**\n\n1. **The Software Mechanism (F9 Schedule Options):**\n   - *When work occurs out-of-sequence (Successor starts before Predecessor finishes):*\n     - **Setting 1: Retained Logic (The Engineering Reality):** P6 calculates that although the successor has started, its remaining work physically cannot finish until the predecessor finishes. The remaining duration is pushed out to follow the predecessor's late finish.\n     - **Setting 2: Progress Override (The Logic Killer):** P6 assumes that because the contractor started early, the predecessor relationship has been permanently abandoned! It allows the successor to finish immediately on its own, ignoring the unfinished predecessor!\n\n2. **The Legal & Arbitration Impact:**\n   - In our hospital case study:\n     - Under **Retained Logic**, Level 3 drywall cannot be completed, tested, or painted until Level 2 medical gas risers are tested and sealed. P6 calculates: **Critical path slips by 28 calendar days $\\implies$ EOT is granted $\\implies$ LDs are defeated**!\n     - Under **Progress Override**, P6 assumes drywall can be completely finished and sealed while the riser below is wide open. P6 calculates: **Critical path slips by only 3 days $\\implies$ EOT rejected $\\implies$ ₹12.5 Cr in LDs deducted**!\n\n3. **The Forensic Auditor's Smoking Gun (`schedlog.txt`):**\n   - Whenever P6 runs `F9`, it generates a text audit file called `schedlog.txt`.\n   - *What to look for in arbitration:* Open `schedlog.txt` and search for:\n     `Calculation mode: Retained Logic` vs `Calculation mode: Progress Override`.\n   - Under **SCL Delay Protocol Core Principle 12**, prospective Time-Impact Analysis must be modeled using **Retained Logic**. Exposing that an opposing expert used Progress Override immediately discredits their expert testimony before the arbitral tribunal."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Why is 'Retained Logic' mandated by the SCL Delay Protocol over 'Progress Override' when conducting a Time-Impact Analysis (TIA) for an arbitration claim?",
+            "o": [
+              [
+                "Because Retained Logic preserves true physical and contractual dependencies, ensuring that remaining work on out-of-sequence activities cannot finish until predecessor works are completed, accurately modeling critical path delay",
+                true,
+                "Retained Logic respects network logic and physical construction sequencing. Progress Override assumes logic is broken, artificially compressing critical path delay and masking valid contractor entitlement."
+              ],
+              [
+                "Because Progress Override causes P6 to delete all historical contractor payments",
+                false,
+                "Schedule options govern date calculations, having no connection to accounting payment databases."
+              ],
+              [
+                "Because Retained Logic can only be calculated on supercomputers operated by NASA",
+                false,
+                "Retained Logic is a standard calculation option available in all P6 desktop and enterprise versions."
+              ],
+              [
+                "Because the Indian Arbitration Act bans all software calculation settings except Progress Override",
+                false,
+                "Arbitration law evaluates expert methodology against professional standards like SCL Protocol."
+              ]
+            ]
+          },
+          {
+            "q": "Where in Primavera P6 can an independent forensic schedule auditor verify which calculation algorithm was used during a schedule update?",
+            "o": [
+              [
+                "In the P6 Schedule Log file (schedlog.txt) generated during the F9 calculation run, which explicitly records the selected calculation mode, out-of-sequence activities, and open ends",
+                true,
+                "The schedlog.txt log file provides an unalterable audit record of F9 settings: Retained Logic vs Progress Override, open ends, out-of-sequence tasks, and critical path activities."
+              ],
+              [
+                "In the Windows Control Panel under system sound settings",
+                false,
+                "Operating system sound settings have zero relevance to CPM scheduling."
+              ],
+              [
+                "By opening the printer ink cartridge compartment",
+                false,
+                "Hardware mechanics are unrelated to software audit logs."
+              ],
+              [
+                "In the local municipal tax collector's property deed register",
+                false,
+                "P6 schedule logs are software-generated text files stored in the user profile or database."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "Always demand the native .XER file AND the matching schedlog.txt when auditing or submitting a claim. A claim worth crores can be manufactured or destroyed simply by switching between Retained Logic and Progress Override. Master this bridge, and you will command complete authority in any dispute."
+      },
+      {
+        "k": "done"
+      }
+    ]
+  },
+  {
+    "id": "U95",
+    "day": 95,
+    "title": "Day 95: Gate 3 Milestone Exam: P6 Enterprise Mastery, Rules of Credit, S-Curve & EVM Controls",
+    "mins": 45,
+    "card": {
+      "id": "c-gate3-capstone",
+      "title": "Gate 3 Capstone: Mastery across P6 Enterprise Architecture, RoC, S-Curves & EVM Controls",
+      "rule": "Gate 3 certifies complete professional mastery across Block 3 (Days 66–95): P6 Enterprise architecture (EPS/OBS, WBS 100% Rule, Activity Types), multi-calendar coordination (7-day curing, monsoon shifts), DCMA 14 logic auditing, baseline change control (B1 preservation), Physical % Complete vs Duration % calendar traps, specialized Hospital Rules of Credit (Structural 6-step, Façade AAMA water test, MEP piping hydrotest, Electrical Megger test, MOT cleanroom validation), Resource & Cost Loading (Cost Accounts, BOQ integration, leveling within total float), S-Curve Banana Envelopes, Cash Flow realization waterfalls, LIE budget adequacy, EVM metrics (CV, SV, CPI, SPI), Earned Schedule (ES, SV_t, SPI_t), EAC multi-model forecasting, and F9 Retained Logic vs Progress Override claim mechanics.",
+      "example": "Auditing a ₹850 Cr hospital schedule: fixing DCMA 14 logic defects, unbundling MOT cleanroom progress via Rules of Credit, generating an S-Curve Banana Envelope, calculating Earned Schedule (SV_t = -3.2 months), and proving a 28-day EOT claim using F9 Retained Logic.",
+      "trap": "Relying on theoretical guessing without executing exact mathematical calculations and verifying software options."
+    },
+    "screens": [
+      {
+        "k": "read",
+        "t": "**GATE 3 MILESTONE ASSESSMENT: THE P6 ENTERPRISE & PROJECT CONTROLS MASTER'S DEFENSE**\n\nWelcome to **Gate 3**. You have conquered 95 days of intensive project controls engineering.\n\nYou are the Project Controls Director for a **₹850 Crore, 600-Bed Tertiary Care Hospital & Regional Cancer Center**.\n\nThe project is entering its most critical phase: structural works are 70% complete, the building envelope is being closed, MEP and medical gas rough-ins are advancing across 12 floors, and cleanroom installation is underway in the 16 Modular Operation Theatres.\n\nA consortium of 4 commercial banks and the institutional healthcare board of directors have convened for the **Annual Comprehensive Controls & Solvency Audit**:\n1. The contractor has submitted a monthly P6 schedule update claiming 68% progress and requesting ₹35 Crores in milestone payments.\n2. The Lenders' Independent Engineer (LIE) has raised red flags regarding budget adequacy and S-curve divergence.\n3. The contractor's claims consultant has submitted an accelerated TIA claim for ₹14 Crores.\n\nThis 10-question master examination evaluates your complete command of Primavera P6 enterprise architecture, DCMA 14 schedule auditing, specialized hospital Rules of Credit, S-Curve Banana Envelopes, cash flow waterfalls, Earned Schedule time analytics, and forensic claim mechanics. You must score **100%** to clear Gate 3 and unlock **Block 4 (Mega Project Flight Simulations, Executive Hot Seat Defense & Master Certification)**."
+      },
+      {
+        "k": "read",
+        "t": "**Gate 3 Assessment Domains:**\n\n- **Domain 1: P6 Architecture & Schedule Health** (EPS/OBS security, WBS 100% Rule, Activity Types, Multi-calendar 7-day curing, DCMA 14 logic thresholds).\n- **Domain 2: Physical % Complete & Hospital Rules of Credit** (Duration % calendar trap, Structural 6-step RCC gate, Façade AAMA water test, MEP 24h hydrotest, Electrical Megger test, MOT cleanroom ISO validation).\n- **Domain 3: Resource/Cost Loading, S-Curves & Cash Flow** (Cost Accounts BOQ mapping, Leveling within total float, Banana Envelope risk corridors, Cash flow realization waterfall, LIE budget adequacy).\n- **Domain 4: EVM, Earned Schedule & Forensic Bridge** (CPI/SPI, Earned Schedule $SV_t / SPI_t$, EAC multi-model forecasting, F9 Retained Logic vs Progress Override claim mechanics).\n\nAnalyze each scenario with precision. Check the formulas, audit the software settings, and apply the exact project controls standards."
+      },
+      {
+        "k": "quiz",
+        "bank": [
+          {
+            "q": "Scenario 1 (P6 Activity Types & Critical Path): On a hospital schedule, the activity 'Site Security & PMC Health Oversight' is driving the project completion date into next year. What is the root cause, and how must it be rectified?",
+            "o": [
+              [
+                "The activity was incorrectly configured as a Task Dependent activity with driving logic; it must be converted to a Level of Effort (LOE) hammock spanning project start to finish with zero driving logic to discrete tasks",
+                true,
+                "Level of Effort (LOE) activities exist to track ongoing overheads and expand/contract with the network; they must never drive network logic or push completion dates."
+              ],
+              [
+                "The site security guards must be replaced with automated robotic cameras",
+                false,
+                "Operational security choices do not resolve P6 CPM logic misconfigurations."
+              ],
+              [
+                "The activity duration must be set to negative 365 days",
+                false,
+                "Negative durations do not exist in CPM scheduling."
+              ],
+              [
+                "The activity must be assigned a 7-day 24h concrete curing calendar",
+                false,
+                "Curing calendars apply to chemical concrete hydration, not security guards."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 2 (DCMA 14 Schedule Health): During a baseline audit of an 800-activity hospital schedule, the auditor finds 12 activities with no successors (open ends), 0 negative lags, 15 relationships with positive lags, 92% Finish-to-Start relationships, and 2 hard constraints. Does this baseline pass the DCMA 14 criteria for Logic, Leads, Lags, Relationships, and Constraints?",
+            "o": [
+              [
+                "Yes: Open ends are 1.5% (<= 5%), negative lags are 0%, positive lags are 1.9% (<= 5%), FS relationships are 92% (>= 90%), and hard constraints are 0.25% (<= 5%), meeting all official thresholds",
+                true,
+                "All five metrics satisfy official DCMA 14 thresholds: Logic (<= 5%), Leads (0%), Lags (<= 5%), Relationship types (>= 90% FS), and Hard Constraints (<= 5%)."
+              ],
+              [
+                "No: Because DCMA 14 requires exactly 100% of relationships to be Finish-to-Start with zero exceptions",
+                false,
+                "DCMA 14 mandates >= 90% FS, permitting up to 10% valid SS/FF relationships for concurrent laddering."
+              ],
+              [
+                "No: Because open ends are strictly illegal under the Indian Penal Code",
+                false,
+                "DCMA metrics are engineering quality guidelines, not criminal statutory codes."
+              ],
+              [
+                "Yes, but only if the contractor pays a ₹5 Lakh inspection fee to the auditor",
+                false,
+                "Audit compliance is based on objective mathematical data, not fees."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 3 (Percent Complete Types): A contractor has a 40-day activity 'Level 3 Drywall Framing'. 36 calendar days have elapsed, but only 25% of metal studs are erected. Why does Duration % Complete report 90% complete, and what percent complete type must be enforced?",
+            "o": [
+              [
+                "Duration % divides elapsed time by original duration [(40-4)/40 = 90%], completely ignoring physical output; 'Physical % Complete' must be enforced, reporting the true 25% progress",
+                true,
+                "Duration % is a calendar ratio that falsely claims progress simply because days pass. Physical % Complete reflects ground reality (25%) and forces independent evaluation of remaining duration."
+              ],
+              [
+                "Duration % is correct because time is money, so the contractor has legally earned 90% of the cash",
+                false,
+                "Billing for work not physically installed constitutes over-certification and commercial fraud."
+              ],
+              [
+                "Units % Complete must be used by counting how many hours the workers spent eating lunch",
+                false,
+                "Units % measures productive work units or labor hours, not meal breaks."
+              ],
+              [
+                "The activity must be deleted and replaced with a Finish Milestone",
+                false,
+                "Production work requires discrete duration tasks with Physical % Complete."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 4 (Structural Works Rule of Credit): A contractor pours a 500 m³ transfer slab on October 30th and claims 100% progress on the monthly bill. Under the standard 6-step Structural RCC Rule of Credit, what is the maximum progress the PMC can certify on pour day?",
+            "o": [
+              [
+                "Maximum 85% cumulative progress (Step 5), holding the final 15% (Step 6) until formwork stripping, 14-day curing, and 28-day NABL cube compression test verification",
+                true,
+                "Concrete placement completes Step 5 (cumulative 85%). The final 15% is held as a quality gateway until 14-day curing is completed and 28-day cube strength is officially certified."
+              ],
+              [
+                "100% because the wet concrete is already inside the formwork",
+                false,
+                "Certifying 100% leaves the owner unprotected if concrete fails 28-day compressive strength."
+              ],
+              [
+                "50% because concrete only achieves half its strength in the first year",
+                false,
+                "Concrete achieves approximately 65-70% strength in 7 days and 100% design strength in 28 days."
+              ],
+              [
+                "Zero percent until the entire 12-story building is painted",
+                false,
+                "Progress is earned progressively upon completion of each physical milestone gate."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 5 (MEP Piping Rule of Credit): An MEP contractor hangs chilled water pipes and immediately wraps them in closed-cell nitrile rubber insulation before conducting a hydrostatic pressure test. Under the MEP Piping Rule of Credit, why is this rejected?",
+            "o": [
+              [
+                "Applying insulation before Step 3 (24-Hour Hydrotest) conceals pipe joints and welds, making visual leak detection impossible and causing costly destruction of insulation during testing",
+                true,
+                "Hydrostatic testing requires visual inspection of all bare joints and fittings. Insulating before testing traps water, hides leaks, and destroys the insulation material."
+              ],
+              [
+                "Because rubber insulation reacts chemically with water to produce toxic explosive gas",
+                false,
+                "Nitrile rubber is an inert thermal insulator; the issue is leak detection and material damage."
+              ],
+              [
+                "Because chilled water pipes must always be insulated with solid concrete",
+                false,
+                "Piping insulation uses elastomeric foam, rockwool, or fiberglass, never solid concrete."
+              ],
+              [
+                "Because P6 software refuses to calculate schedule progress if insulation is installed",
+                false,
+                "P6 calculates whatever is entered; the rejection is an engineering quality rule."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 6 (S-Curve Banana Envelope Interpretation): A hospital's Actual Earned Value (EV) curve tracks midway between the Early Curve (PV_early) and Late Curve (PV_late) for Months 1 through 8. In Month 9, EV drops below the lower Late Curve. What does this mean?",
+            "o": [
+              [
+                "All available total float across the project has been fully exhausted, and project completion is now mathematically guaranteed to be delayed unless immediate critical path acceleration is deployed",
+                true,
+                "The Late Curve represents the absolute latest work can finish without delaying completion. Dropping below the Late Curve means total float is negative and contract completion has slipped."
+              ],
+              [
+                "The project has achieved maximum efficiency and can lay off 50% of the workforce",
+                false,
+                "Breaching the late curve is a severe distress signal requiring workforce reinforcement, not layoffs."
+              ],
+              [
+                "The project has transitioned into an Agile software development model",
+                false,
+                "Hospital physical construction operates under CPM network engineering, not software sprints."
+              ],
+              [
+                "The bank will automatically double the loan disbursement without interest",
+                false,
+                "Breaching the late curve alerts lenders to potential default, threatening a funding freeze."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 7 (Construction Cash Flow Waterfall): A contractor's monthly gross certified earned value (P6 EV) is ₹20 Crores. The contract mandates 15% mobilization advance recovery, 5% retention money holdback, 2% TDS, and 1% Labor Cess. What is the net cash transfer into the contractor's bank account?",
+            "o": [
+              [
+                "₹15.4 Crores (Gross ₹20 Cr - ₹3 Cr advance recovery - ₹1 Cr retention - ₹60 Lakhs TDS/Cess = ₹15.4 Cr net, or 77% realization)",
+                true,
+                "Gross ₹20 Cr minus 15% advance (₹3 Cr), 5% retention (₹1 Cr), and 3% statutory deductions (₹0.6 Cr) leaves net cash of ₹15.4 Crores (77%)."
+              ],
+              [
+                "Full ₹20 Crores because deductions are only calculated at project completion",
+                false,
+                "Advance recovery, retention, and statutory taxes are deducted progressively from every running account bill."
+              ],
+              [
+                "₹10 Crores because clients always keep 50% of contractor bills as a deposit",
+                false,
+                "Deductions are strictly governed by contractual percentages and statutory tax rates."
+              ],
+              [
+                "Zero rupees because contractors only get paid when the hospital is accredited by NABH",
+                false,
+                "Interim monthly progress payments are a mandatory contractual right under FIDIC and CPWD contracts."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 8 (EVM Metrics & Critical Ratio): On a hospital package with BAC = ₹120 Crores, Planned Value is ₹60 Crores, Earned Value is ₹48 Crores, and Actual Cost is ₹64 Crores. What are the CPI, SPI, and Critical Ratio (CR)?",
+            "o": [
+              [
+                "CPI = 0.75, SPI = 0.80, and Critical Ratio (CR) = 0.60, indicating severe project distress across both cost and schedule",
+                true,
+                "CPI = EV / AC = 48 / 64 = 0.75. SPI = EV / PV = 48 / 60 = 0.80. Critical Ratio = CPI * SPI = 0.75 * 0.80 = 0.60 (severe distress, < 0.90)."
+              ],
+              [
+                "CPI = 1.33, SPI = 1.25, and Critical Ratio = 1.66, indicating outstanding performance",
+                false,
+                "Calculations inverted; package is significantly over budget and behind schedule."
+              ],
+              [
+                "CPI = 1.00, SPI = 1.00, and Critical Ratio = 1.00",
+                false,
+                "Incorrect arithmetic; variances are negative."
+              ],
+              [
+                "Critical Ratio cannot be calculated when Earned Value is below 50%",
+                false,
+                "EVM metrics are calculated throughout the entire project lifecycle."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 9 (Earned Schedule Time Analytics): On a hospital project with a 24-month Planned Duration (PD), 18 months of actual time (AT) have elapsed. Earned Schedule is calculated as ES = 14.4 months. What is the Time-Based Schedule Variance (SV_t) and Time at Completion Forecast (EAC_t)?",
+            "o": [
+              [
+                "SV_t = -3.6 months (3.6 months behind schedule) and EAC_t = 30.0 months (a projected 6-month delay to final completion)",
+                true,
+                "SV_t = ES - AT = 14.4 - 18.0 = -3.6 months. SPI_t = ES / AT = 14.4 / 18.0 = 0.80. EAC_t = PD / SPI_t = 24.0 / 0.80 = 30.0 months."
+              ],
+              [
+                "SV_t = +3.6 months (ahead of schedule) and EAC_t = 20 months",
+                false,
+                "Negative SV_t denotes schedule delay; the project is trending toward a 30-month completion."
+              ],
+              [
+                "SV_t = -₹3.6 Crores and EAC_t = ₹30 Crores",
+                false,
+                "Earned Schedule metrics are expressed in time units (months/days), not currency."
+              ],
+              [
+                "EAC_t = 24 months because completion dates cannot change once baselined",
+                false,
+                "EAC_t is a dynamic forecast of actual completion time based on demonstrated efficiency."
+              ]
+            ]
+          },
+          {
+            "q": "Scenario 10 (The P6-to-Claim Bridge: F9 Calculation Options): A contractor performs Level 3 drywall partitioning out-of-sequence before Level 2 medical gas risers are complete. In P6's Schedule Options (F9), how does the choice between 'Retained Logic' and 'Progress Override' affect a contractor's 28-day EOT delay claim?",
+            "o": [
+              [
+                "Retained Logic respects physical dependencies, holding the remaining duration of drywall until the medical gas riser finishes (proving 28 days critical path delay and winning the EOT claim); Progress Override assumes logic is broken, allowing drywall to proceed independently (collapsing delay to 3 days and exposing the contractor to ₹12 Cr in LDs)",
+                true,
+                "Retained Logic accurately models physical dependencies during out-of-sequence work, demonstrating legitimate critical path delay. Progress Override ignores logic, artificially erasing delays and invalidating claims."
+              ],
+              [
+                "Both settings produce the exact same date calculations down to the second",
+                false,
+                "Retained Logic and Progress Override produce drastically different dates whenever work is done out-of-sequence."
+              ],
+              [
+                "Progress Override is required by international arbitration law under SCL Core Principle 1",
+                false,
+                "SCL Delay Protocol recommends Retained Logic because it preserves physical network dependencies."
+              ],
+              [
+                "Retained Logic automatically converts the contract currency into British Pounds",
+                false,
+                "Schedule calculation options affect CPM mathematics, not financial currency."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "k": "explain",
+        "p": "CONGRATULATIONS! You have cleared Gate 3 with distinction! You now command complete technical, mathematical, and contractual mastery across Primavera P6 enterprise scheduling, specialized hospital Rules of Credit, S-Curve Banana Envelopes, cash flow waterfalls, Earned Schedule analytics, and forensic claim mechanics. You are now officially cleared to enter BLOCK 4: Mega Project Flight Simulations, Executive Boardroom Defense & Master Certification!"
+      },
+      {
+        "k": "done"
+      }
+    ]
+  }
+];
+UNITS.push(...UNITS11);
+const APPLY11 = {
+  "U91": {
+    "task": "Build an Integrated EVM Calculation & Performance Dashboard for a project package: 1) Extract Planned Value (PV), Earned Value (EV via Rules of Credit), and Actual Cost (AC); 2) Compute Cost Variance (CV) and Schedule Variance (SV); 3) Compute Cost Performance Index (CPI) and Schedule Performance Index (SPI); 4) Calculate the Critical Ratio (CR = CPI * SPI); 5) Provide an executive diagnosis interpreting cost and schedule health.",
+    "good": [
+      "Extracts PV, EV, and AC accurately and reconciles them against contract BAC",
+      "Calculates CV, SV, CPI, and SPI with correct mathematical signage",
+      "Computes the Critical Ratio (CR = CPI * SPI) and classifies project health zone",
+      "Provides an executive performance diagnosis with actionable recovery recommendations"
+    ],
+    "tmpl": "Earned Value Management (EVM) Performance Dashboard:\nPackage Name & Budget at Completion (BAC ₹): \n1. Primary Metrics (PV ₹, EV ₹, AC ₹ as of Data Date): \n2. Variance Analysis (Cost Variance CV ₹, Schedule Variance SV ₹): \n3. Performance Indices (Cost Performance Index CPI, Schedule Performance Index SPI): \n4. Critical Ratio Analysis (CR = CPI * SPI & Health Classification): \n5. Executive Performance Diagnosis & Corrective Recovery Strategy: "
+  },
+  "U92": {
+    "task": "Execute an Earned Schedule (ES) & Time-Based Performance Analysis for a delayed project: 1) Trace current Earned Value (EV) onto the Planned Value (PV) timeline and calculate Earned Schedule (ES) in months/days; 2) Compute Time-Based Schedule Variance (SV_t = ES - AT); 3) Compute Time-Based Schedule Performance Index (SPI_t = ES / AT); 4) Calculate Time at Completion forecast (EAC_t); 5) Contrast SV_t against traditional SV.",
+    "good": [
+      "Calculates Earned Schedule (ES) in calendar months/days using linear interpolation",
+      "Computes Time-Based Schedule Variance (SV_t = ES - AT) reflecting true time delay",
+      "Calculates SPI_t (ES / AT) and demonstrates why it does not revert to 1.0 at project end",
+      "Forecasts Independent Time at Completion (EAC_t = PD / SPI_t) in calendar months"
+    ],
+    "tmpl": "Earned Schedule (ES) Time Analytics Report:\nProject Reference & Planned Duration (PD Months): \nActual Time Elapsed (AT Months) as of Data Date: \n1. Earned Schedule (ES) Calculation (Months via PV Curve Interpolation): \n2. Time-Based Schedule Variance (SV_t = ES - AT Months / Days of Delay): \n3. Time-Based Performance Index (SPI_t = ES / AT): \n4. Forecast Time at Completion (EAC_t = PD / SPI_t Months & Projected Completion Date): \n5. Comparative Analysis: Traditional SV (₹) vs Earned Schedule SV_t (Calendar Time): "
+  },
+  "U93": {
+    "task": "Build an EAC Multi-Model Forecasting & TCPI Recovery Analysis for an ongoing project: 1) Model 1 Atypical EAC = AC + (BAC - EV); 2) Model 2 Typical CPI EAC = BAC / CPI; 3) Model 3 Combined CPI*SPI EAC = AC + [(BAC - EV)/(CPI*SPI)]; 4) Compute Variance at Completion (VAC = BAC - EAC) across models; 5) Calculate To-Complete Performance Index (TCPI_BAC and TCPI_EAC) and evaluate recovery feasibility.",
+    "good": [
+      "Computes all 3 formulaic EAC predictive models with transparent mathematics",
+      "Evaluates Variance at Completion (VAC) and projected budget blowouts",
+      "Calculates To-Complete Performance Index (TCPI_BAC and TCPI_EAC)",
+      "Assesses whether required future productivity improvements (> 10-15%) are statistically feasible"
+    ],
+    "tmpl": "Estimate at Completion (EAC) Multi-Model Forecasting Report:\nProject Baseline Parameters (Contract Budget BAC ₹, Current EV ₹, AC ₹, CPI, SPI): \n1. Model 1 - Atypical Budget Rate Forecast (EAC_1 ₹ & Variance VAC_1 ₹): \n2. Model 2 - Typical Cost Trend Forecast (EAC_2 ₹ & Variance VAC_2 ₹): \n3. Model 3 - Combined Cost & Schedule Acceleration Forecast (EAC_3 ₹ & VAC_3 ₹): \n4. To-Complete Performance Index Analysis (TCPI_BAC vs TCPI_EAC): \n5. Executive Feasibility Assessment & Commercial Scope/Budget Adjustment Recommendation: "
+  },
+  "U94": {
+    "task": "Execute a P6-to-Claim Bridge Audit and Schedule Options Forensic Report on an out-of-sequence hospital claim: 1) Identify out-of-sequence activities from the schedule update; 2) Run P6 Schedule (F9) under Retained Logic and record completion milestone date and critical path delay; 3) Run P6 Schedule under Progress Override and record the collapsed delay; 4) Inspect schedlog.txt and document how the F9 setting alters legal claim entitlement.",
+    "good": [
+      "Identifies out-of-sequence activities and analyzes the physical predecessor break",
+      "Demonstrates critical path divergence between Retained Logic and Progress Override",
+      "Extracts and interprets the P6 schedule calculation log (schedlog.txt)",
+      "Formulates a legally robust forensic argument applying SCL Delay Protocol standards"
+    ],
+    "tmpl": "The P6-to-Claim Bridge Forensic Schedule Audit Report:\nClaim Reference & Out-of-Sequence Activity Scope: \n1. Physical Dependency Breakdown (Predecessor Incomplete vs Successor Started): \n2. Simulation A - Retained Logic Run (Completion Date, Critical Path Float, Net Delay Days): \n3. Simulation B - Progress Override Run (Completion Date, Logic Collapse, Net Delay Days): \n4. Schedlog.txt Audit Analysis (Calculation Mode, Out-of-Sequence Tasks, Open Ends): \n5. Legal & Commercial Determination under SCL Protocol (Defeating LDs / Validating EOT): "
+  },
+  "U95": {
+    "task": "Gate 3 Comprehensive Milestone Portfolio: Assemble an Integrated P6 Enterprise & Project Controls Master Pack for a 600-bed hospital project: 1) DCMA 14 schedule integrity audit report; 2) Specialized Hospital Rules of Credit matrix (Structural, Façade, MEP, MOT, MGPS, Statutory); 3) S-Curve Banana Envelope with monthly cash flow realization waterfall; 4) Earned Schedule & Multi-Model EAC forecast; 5) P6-to-Claim Bridge forensic determination.",
+    "good": [
+      "Demonstrates comprehensive mastery across all Block 3 technical domains",
+      "Integrates DCMA 14 schedule health, Rules of Credit, and S-Curve Banana Envelopes",
+      "Applies Earned Schedule (ES) time analytics and multi-model EAC cost forecasting",
+      "Presents an executive-ready project controls governance and claims defense portfolio"
+    ],
+    "tmpl": "GATE 3 COMPREHENSIVE PROJECT CONTROLS MASTER PORTFOLIO:\nProject Profile: 600-Bed Tertiary Care Hospital & Regional Cancer Center (₹850 Cr)\nPart 1: P6 Enterprise Architecture & DCMA 14 Schedule Health Audit: \nPart 2: Specialized Hospital Package Rules of Credit & Physical % Complete Matrix: \nPart 3: S-Curve Banana Envelope, Cash Flow Realization Waterfall & LIE Bank Audit: \nPart 4: EVM Performance, Earned Schedule (ES / SV_t) & Multi-Model EAC Forecast: \nPart 5: The P6-to-Claim Bridge Forensic Schedule Determination (Retained Logic): \nPart 6: Boardroom Executive Action Summary & Gate 3 Certification Sign-off: "
+  }
+};
+Object.assign(APPLY, APPLY11);
+UNITS11.forEach(u => { if (APPLY[u.id] && !u.screens.some(s => s.k === "apply")) { const di = u.screens.findIndex(s => s.k === "done"); u.screens.splice(di, 0, { k: "apply" }); } });
 
 const ROADMAP=[
  {days:"31–65",title:"Block 2: Forensic Delay Analysis, Claims, FIDIC/CPWD & Hospital Packages",items:"SCL Delay Protocol (2nd Ed) · Fragnet & Time-Impact Analysis (TIA) · Concurrent delay & prolongation costs · FIDIC Red/Yellow & CPWD GCC · Star/extra items & Clause 12 · Bank Guarantees & LIE bank audits · Hospital technical sequencing (Cleanroom ISO 7, MGPS HTM 02-01, LINAC/MRI AERB) · Fire NOC & TABS air balancing · Gate 2 on Day 65"},
